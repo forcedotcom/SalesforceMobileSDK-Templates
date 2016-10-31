@@ -34,18 +34,22 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
     replaceInFiles(templateOrgName, config.orgname, [templateProjectFile]);
 
     // app id
-    replaceInFiles(templateAppId, config.appid, [templateAppDelegateFile]);
+    if (config.appid) {
+        replaceInFiles(templateAppId, config.appid, [templateAppDelegateFile]);
+    }
                    
     // callback uri
-    replaceInFiles(templateCallbackUri, config.callbackuri, [templateAppDelegateFile]);
+    if (config.callbackuri) {
+        replaceInFiles(templateCallbackUri, config.callbackuri, [templateAppDelegateFile]);
+    }
 
     //
     // Rename files
     //
     moveFile(templateSchemeFile, path.join(config.appname + '.xcodeproj', 'xcshareddata', 'xcschemes', config.appname + '.xcscheme'));
-    moveFile(templatePrefixFile, config.appname + '-Prefix.pch');
-    moveFile(templateInfoFile, config.appname + '-Info.plist');
-    moveFile(templateEntitlementsFile, config.appname + '.entitlements');
+    moveFile(templatePrefixFile, path.join(config.appname, config.appname + '-Prefix.pch'));
+    moveFile(templateInfoFile, path.join(config.appname, config.appname + '-Info.plist'));
+    moveFile(templateEntitlementsFile, path.join(config.appname, config.appname + '.entitlements'));
     moveFile(templateProjectDir, config.appname + '.xcodeproj');
 
     //
