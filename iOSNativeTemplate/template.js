@@ -47,10 +47,11 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
     // Rename files
     //
     moveFile(templateSchemeFile, path.join(config.appname + '.xcodeproj', 'xcshareddata', 'xcschemes', config.appname + '.xcscheme'));
-    moveFile(templatePrefixFile, path.join(config.appname, config.appname + '-Prefix.pch'));
-    moveFile(templateInfoFile, path.join(config.appname, config.appname + '-Info.plist'));
-    moveFile(templateEntitlementsFile, path.join(config.appname, config.appname + '.entitlements'));
+    moveFile(templatePrefixFile, path.join(templateAppName, config.appname + '-Prefix.pch'));
+    moveFile(templateInfoFile, path.join(templateAppName, config.appname + '-Info.plist'));
+    moveFile(templateEntitlementsFile, path.join(templateAppName, config.appname + '.entitlements'));
     moveFile(templateProjectDir, config.appname + '.xcodeproj');
+    movefile(templateAppName, config.appname);
 
     //
     // Run npm and pod
