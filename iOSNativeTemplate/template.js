@@ -6,7 +6,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
     var templateAppName = 'iOSNativeTemplate';
     var templateCompanyId = 'com.salesforce.iosnativetemplate';
     var templateOrgName = 'iOSNativeTemplateOrganizationName';
-    var tempalteAppId = '3MVG9Iu66FKeHhINkB1l7xt7kR8czFcCTUhgoA8Ol2Ltf1eYHOU4SqQRSEitYFDUpqRWcoQ2.dBv_a1Dyu5xa';
+    var templateAppId = '3MVG9Iu66FKeHhINkB1l7xt7kR8czFcCTUhgoA8Ol2Ltf1eYHOU4SqQRSEitYFDUpqRWcoQ2.dBv_a1Dyu5xa';
     var templateCallbackUri = 'testsfdc =///mobilesdk/detect/oauth/done';
 
     // Key files
