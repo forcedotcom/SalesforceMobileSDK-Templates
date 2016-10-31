@@ -86,5 +86,5 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
     //
     // Run install.sh
     //
-    runProcessThrowError('install.sh');
+    runProcessThrowError('sh install.sh');
 };
