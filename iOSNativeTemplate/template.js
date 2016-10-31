@@ -51,7 +51,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
     moveFile(templateInfoFile, path.join(templateAppName, config.appname + '-Info.plist'));
     moveFile(templateEntitlementsFile, path.join(templateAppName, config.appname + '.entitlements'));
     moveFile(templateProjectDir, config.appname + '.xcodeproj');
-    movefile(templateAppName, config.appname);
+    moveFile(templateAppName, config.appname);
 
     //
     // Run npm and pod
