@@ -37,7 +37,7 @@ import {
     NavigatorIOS
 } from 'react-native';
 
-import {oauth, net} from 'salesforcemobile-reactnative';
+import {oauth, net} from 'react.force';
 
 var App = React.createClass({
     getInitialState: function() {
