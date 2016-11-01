@@ -78,10 +78,10 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
         //
         // Rename files
         //
-        moveFile(templateSchemeFile, path.join(templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', config.appname + '.xcscheme'));
-        moveFile(templateEntitlementsFile, path.join(templateAppName, config.appname + '.entitlements'));
-        moveFile(templateProjectDir, config.appname + '.xcodeproj');
-        moveFile(templateAppName, config.appname);
+        moveFile(templateSchemeFile, path.join('ios', templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', config.appname + '.xcscheme'));
+        moveFile(templateEntitlementsFile, path.join('ios', templateAppName, config.appname + '.entitlements'));
+        moveFile(templateProjectDir, path.join('ios', config.appname + '.xcodeproj'));
+        moveFile(path.join('ios', templateAppName), path.join('ios', config.appname));
 
         //
         // Run install.sh
