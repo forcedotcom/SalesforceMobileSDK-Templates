@@ -45,7 +45,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
     var templateProjectDir = templateAppName + '.xcodeproj';
     var templateProjectFile = path.join(templateProjectDir, 'project.pbxproj');
     var templateSchemeFile = path.join(templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', templateAppName + '.xcscheme');
-    var templatePrefixFile = path.join(templateAppName, templateAppName + '-Prefix.pch');
+    var templateBridgingHeaderFile = path.join(templateAppName, templateAppName + '-Bridging-Header.pch');
     var templateInfoFile = path.join(templateAppName, templateAppName + '-Info.plist');
     var templateEntitlementsFile = path.join(templateAppName, templateAppName + '.entitlements');
     var templateAppDelegateFile = path.join(templateAppName, 'AppDelegate.swift');
@@ -77,7 +77,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
     // Rename files
     //
     moveFile(templateSchemeFile, path.join(templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', config.appname + '.xcscheme'));
-    moveFile(templatePrefixFile, path.join(templateAppName, config.appname + '-Prefix.pch'));
+    moveFile(templateBridgingHeaderFile, path.join(templateAppName, config.appname + '-Bridging-Header.pch'));
     moveFile(templateInfoFile, path.join(templateAppName, config.appname + '-Info.plist'));
     moveFile(templateEntitlementsFile, path.join(templateAppName, config.appname + '.entitlements'));
     moveFile(templateProjectDir, config.appname + '.xcodeproj');
