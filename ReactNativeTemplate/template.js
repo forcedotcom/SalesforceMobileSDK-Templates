@@ -43,7 +43,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
 
         // Key files
         var templatePackageFile = 'package.json';
-        var templateIndexFile = path.join('ios', 'index.ios.js');
+        var templateIndexFile = path.join('js', 'index.ios.js');
         var templatePodfile = path.join('ios', 'Podfile');
         var templateProjectDir = path.join('ios', templateAppName + '.xcodeproj');
         var templateProjectFile = path.join(templateProjectDir, 'project.pbxproj');
