@@ -87,4 +87,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
     // Run install.sh
     //
     runProcessThrowError('sh install.sh');
+
+    // Return workspace relative path
+    return config.appname + ".xcworkspace";
 };
