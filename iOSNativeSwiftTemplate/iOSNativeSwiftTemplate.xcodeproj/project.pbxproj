@@ -23,7 +23,7 @@
 		4FD6C4741B754AF1002F9F90 /* iOSNativeSwiftTemplate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSNativeSwiftTemplate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FD6C4781B754AF1002F9F90 /* iOSNativeSwiftTemplate-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = iOSNativeSwiftTemplate-Info.plist; sourceTree = "<group>"; };
 		4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		4FD6C49A1B755242002F9F90 /* iOSNativeSwiftTemplate-BridgingHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "iOSNativeSwiftTemplate-BridgingHeader.h"; sourceTree = "<group>"; };
+		4FD6C49A1B755242002F9F90 /* iOSNativeSwiftTemplate-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "iOSNativeSwiftTemplate-Bridging-Header.h"; sourceTree = "<group>"; };
 		4FD6C49B1B755242002F9F90 /* InitialViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InitialViewController.xib; sourceTree = "<group>"; };
 		4FD6C49C1B755242002F9F90 /* RootViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 		4FD6C49D1B755242002F9F90 /* InitialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitialViewController.swift; sourceTree = "<group>"; };
@@ -82,7 +82,7 @@
 		4FD6C4A11B755265002F9F90 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				4FD6C49A1B755242002F9F90 /* iOSNativeSwiftTemplate-BridgingHeader.h */,
+				4FD6C49A1B755242002F9F90 /* iOSNativeSwiftTemplate-Bridging-Header.h */,
 				4FD6C49B1B755242002F9F90 /* InitialViewController.xib */,
 				4FD6C49C1B755242002F9F90 /* RootViewController.swift */,
 				4FD6C49D1B755242002F9F90 /* InitialViewController.swift */,
@@ -335,7 +335,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "iOSNativeSwiftTemplate/iOSNativeSwiftTemplate-BridgingHeader.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "iOSNativeSwiftTemplate/iOSNativeSwiftTemplate-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -350,7 +350,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "iOSNativeSwiftTemplate/iOSNativeSwiftTemplate-BridgingHeader.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "iOSNativeSwiftTemplate/iOSNativeSwiftTemplate-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
