@@ -35,7 +35,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
     // Values in template
     var templateAppName = 'iOSNativeTemplate';
     var templateCompanyId = 'com.salesforce.iosnativetemplate';
-    var templateOrgName = 'iOSNativeTemplateOrganizationName';
+    var templateOrganization = 'iOSNativeTemplateOrganizationName';
     var templateAppId = '3MVG9Iu66FKeHhINkB1l7xt7kR8czFcCTUhgoA8Ol2Ltf1eYHOU4SqQRSEitYFDUpqRWcoQ2.dBv_a1Dyu5xa';
     var templateCallbackUri = 'testsfdc =///mobilesdk/detect/oauth/done';
 
@@ -61,7 +61,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
     replaceInFiles(templateCompanyId, config.companyid, [templateInfoFile, templateEntitlementsFile]);
 
     // org name
-    replaceInFiles(templateOrgName, config.orgname, [templateProjectFile]);
+    replaceInFiles(templateOrganization, config.organization, [templateProjectFile]);
 
     // app id
     if (config.appid) {
