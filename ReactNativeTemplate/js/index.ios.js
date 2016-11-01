@@ -152,4 +152,4 @@ var styles = StyleSheet.create({
     },
 });
 
-AppRegistry.registerComponent('iOSReactNativeTemplate', () => App);
+AppRegistry.registerComponent('ReactNativeTemplate', () => App);

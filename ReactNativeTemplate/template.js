@@ -42,8 +42,9 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
         var templateCallbackUri = 'testsfdc =///mobilesdk/detect/oauth/done';
 
         // Key files
-        var templatePodfile = path.join('ios', 'Podfile');
         var templatePackageFile = 'package.json';
+        var templateIndexFile = path.join('ios', 'index.ios.js');
+        var templatePodfile = path.join('ios', 'Podfile');
         var templateProjectDir = path.join('ios', templateAppName + '.xcodeproj');
         var templateProjectFile = path.join(templateProjectDir, 'project.pbxproj');
         var templateSchemeFile = path.join('ios', templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', templateAppName + '.xcscheme');
@@ -59,7 +60,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
         //
 
         // app name
-        replaceInFiles(templateAppName, config.appname, [templatePodfile, templatePackageFile, templateProjectFile, templateSchemeFile, templateEntitlementsFile, templateAppDelegateFile, templateTestsFile]);
+        replaceInFiles(templateAppName, config.appname, [templatePackageFile, templateIndexFile, templatePodfile, templateProjectFile, templateSchemeFile, templateEntitlementsFile, templateAppDelegateFile, templateTestsFile]);
 
         // company id
         replaceInFiles(templateCompanyId, config.companyid, [templateInfoFile, templateEntitlementsFile, templateInfoTestsFile]);

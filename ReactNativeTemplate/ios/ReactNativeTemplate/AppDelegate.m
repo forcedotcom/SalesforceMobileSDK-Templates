@@ -172,7 +172,7 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
 - (void)setupReactRootView:(NSURL*)jsCodeLocation
 {
     RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
-                                                        moduleName:@"iOSReactNativeTemplate"
+                                                        moduleName:@"ReactNativeTemplate"
                                                  initialProperties:nil
                                                      launchOptions:self.launchOptions];
     
