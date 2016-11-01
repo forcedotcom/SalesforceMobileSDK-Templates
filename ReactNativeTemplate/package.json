@@ -10,7 +10,7 @@
     "react": "15.3.2",
     "react-native": "0.35.0",
     "salesforcemobilesdk-ios": "https://github.com/wmathurin/SalesforceMobileSDK-iOS.git#templates",
-    "react.force": "https://github.com/wmathurin/react.force.git#unstable"
+    "salesforcemobilesdk-reactnative": "https://github.com/wmathurin/SalesforceMobileSDK-ReactNative.git#unstable"
   },
   "jest": {
     "preset": "jest-react-native"

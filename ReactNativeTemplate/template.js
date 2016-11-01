@@ -51,16 +51,18 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
         var templateInfoFile = path.join('ios', templateAppName, 'Info.plist');
         var templateEntitlementsFile = path.join('ios', templateAppName, 'App.entitlements');
         var templateAppDelegateFile = path.join('ios', templateAppName, 'AppDelegate.m');
+        var templateTestsFile = path.join('ios', templateAppName + 'Tests', templateAppName + 'Tests.m');
+        var templateInfoTestsFile = path.join('ios', templateAppName + 'Tests', 'Info.plist');
 
         //
         // Replace in files
         //
 
         // app name
-        replaceInFiles(templateAppName, config.appname, [templatePodfile, templatePackageFile, templateProjectFile, templateSchemeFile, templateEntitlementsFile, templateAppDelegateFile]);
+        replaceInFiles(templateAppName, config.appname, [templatePodfile, templatePackageFile, templateProjectFile, templateSchemeFile, templateEntitlementsFile, templateAppDelegateFile, templateTestsFile]);
 
         // company id
-        replaceInFiles(templateCompanyId, config.companyid, [templateInfoFile, templateEntitlementsFile]);
+        replaceInFiles(templateCompanyId, config.companyid, [templateInfoFile, templateEntitlementsFile, templateInfoTestsFile]);
 
         // org name
         replaceInFiles(templateOrganization, config.organization, [templateProjectFile]);
@@ -80,7 +82,9 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
         //
         moveFile(templateSchemeFile, path.join('ios', templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', config.appname + '.xcscheme'));
         moveFile(templateEntitlementsFile, path.join('ios', templateAppName, config.appname + '.entitlements'));
+        moveFile(templateTestsFile, path.join('ios', templateAppName + 'Tests', config.appname + 'Tests.m'));
         moveFile(templateProjectDir, path.join('ios', config.appname + '.xcodeproj'));
+        moveFile(path.join('ios', templateAppName + 'Tests'), path.join('ios', config.appname + 'Tests'));
         moveFile(path.join('ios', templateAppName), path.join('ios', config.appname));
 
         //
@@ -89,6 +93,6 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
         runProcessThrowError('sh installios.sh');
 
         // Return workspace relative path
-        return path.join('ios', config.appname + ".xcworkspace");
+        return path.join('ios', config.appname + '.xcworkspace');
     }
 };
