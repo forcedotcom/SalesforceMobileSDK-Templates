@@ -16,11 +16,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		4F277E8C1DC7F5DF00E5A77C /* iOSNativeTemplate-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "iOSNativeTemplate-Prefix.pch"; sourceTree = "<group>"; };
+		4F277E8C1DC7F5DF00E5A77C /* Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Prefix.pch"; sourceTree = "<group>"; };
 		4F36A3411DC1723E00FEACD7 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "node_modules/SalesforceMobileSDK-iOS/shared/resources/Images.xcassets"; sourceTree = SOURCE_ROOT; };
-		4F7404C21DB6F1C400D985D9 /* iOSNativeTemplate.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = iOSNativeTemplate.entitlements; path = iOSNativeTemplate/iOSNativeTemplate.entitlements; sourceTree = "<group>"; };
+		4F7404C21DB6F1C400D985D9 /* App.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = App.entitlements; path = iOSNativeTemplate/App.entitlements; sourceTree = "<group>"; };
 		4F8D5E9D1B6C0568005E64D4 /* iOSNativeTemplate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSNativeTemplate.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		4F8D5EA11B6C0568005E64D4 /* iOSNativeTemplate-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "iOSNativeTemplate-Info.plist"; sourceTree = "<group>"; };
+		4F8D5EA11B6C0568005E64D4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info.plist"; sourceTree = "<group>"; };
 		4F8D5EA21B6C0568005E64D4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4F8D5EA41B6C0568005E64D4 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		4F8D5EA51B6C0568005E64D4 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -56,7 +56,7 @@
 		4F8D5E941B6C0568005E64D4 = {
 			isa = PBXGroup;
 			children = (
-				4F7404C21DB6F1C400D985D9 /* iOSNativeTemplate.entitlements */,
+				4F7404C21DB6F1C400D985D9 /* App.entitlements */,
 				4F8D5E9F1B6C0568005E64D4 /* iOSNativeTemplate */,
 				4F8D5E9E1B6C0568005E64D4 /* Products */,
 				95FC818BCB0A26B1EC67A6D7 /* Pods */,
@@ -84,8 +84,8 @@
 		4F8D5EA01B6C0568005E64D4 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				4F8D5EA11B6C0568005E64D4 /* iOSNativeTemplate-Info.plist */,
-				4F277E8C1DC7F5DF00E5A77C /* iOSNativeTemplate-Prefix.pch */,
+				4F8D5EA11B6C0568005E64D4 /* Info.plist */,
+				4F277E8C1DC7F5DF00E5A77C /* Prefix.pch */,
 				4F36A3411DC1723E00FEACD7 /* Images.xcassets */,
 				4F8D5EA21B6C0568005E64D4 /* main.m */,
 			);
@@ -341,9 +341,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_ENTITLEMENTS = iOSNativeTemplate/iOSNativeTemplate.entitlements;
+				CODE_SIGN_ENTITLEMENTS = iOSNativeTemplate/App.entitlements;
 				"CODE_SIGN_ENTITLEMENTS[sdk=*]" = "";
-				INFOPLIST_FILE = "iOSNativeTemplate/iOSNativeTemplate-Info.plist";
+				INFOPLIST_FILE = "iOSNativeTemplate/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.iosnativetemplate.${PRODUCT_NAME:rfc1034identifier}";
@@ -357,8 +357,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_ENTITLEMENTS = iOSNativeTemplate/iOSNativeTemplate.entitlements;
-				INFOPLIST_FILE = "iOSNativeTemplate/iOSNativeTemplate-Info.plist";
+				CODE_SIGN_ENTITLEMENTS = iOSNativeTemplate/App.entitlements;
+				INFOPLIST_FILE = "iOSNativeTemplate/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.iosnativetemplate.${PRODUCT_NAME:rfc1034identifier}";
