@@ -37,7 +37,7 @@ import {
     NavigatorIOS
 } from 'react-native';
 
-import {oauth, net} from 'react.force';
+import {oauth, net} from 'react-native-force';
 
 var App = React.createClass({
     getInitialState: function() {
