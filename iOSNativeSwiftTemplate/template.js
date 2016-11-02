@@ -58,7 +58,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
     replaceInFiles(templateAppName, config.appname, [templatePodfile, templatePackageFile, templateProjectFile, templateSchemeFile, templateEntitlementsFile, templateAppDelegateFile]);
 
     // company id
-    replaceInFiles(templateCompanyId, config.companyid, [templateInfoFile, templateEntitlementsFile]);
+    replaceInFiles(templateCompanyId, config.companyid, [templateProjectFile, templateEntitlementsFile]);
 
     // org name
     replaceInFiles(templateOrganization, config.organization, [templateProjectFile]);
