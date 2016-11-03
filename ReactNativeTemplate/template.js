@@ -50,7 +50,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
         var templateSchemeFile = path.join('ios', templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', templateAppName + '.xcscheme');
         var templatePrefixFile = path.join('ios', templateAppName, 'Prefix.pch');
         var templateInfoFile = path.join('ios', templateAppName, 'Info.plist');
-        var templateEntitlementsFile = path.join('ios', templateAppName, 'App.entitlements');
+        var templateEntitlementsFile = path.join('ios', templateAppName, templateAppName + '.entitlements');
         var templateAppDelegateFile = path.join('ios', templateAppName, 'AppDelegate.m');
         var templateTestsFile = path.join('ios', templateAppName + 'Tests', templateAppName + 'Tests.m');
         var templateInfoTestsFile = path.join('ios', templateAppName + 'Tests', 'Info.plist');
@@ -84,6 +84,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
         moveFile(templateSchemeFile, path.join('ios', templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', config.appname + '.xcscheme'));
         moveFile(templateEntitlementsFile, path.join('ios', templateAppName, config.appname + '.entitlements'));
         moveFile(templateTestsFile, path.join('ios', templateAppName + 'Tests', config.appname + 'Tests.m'));
+        moveFile(templateEntitlementsFile, path.join('ios', templateAppName, config.appname + '.entitlements'));
         moveFile(templateProjectDir, path.join('ios', config.appname + '.xcodeproj'));
         moveFile(path.join('ios', templateAppName + 'Tests'), path.join('ios', config.appname + 'Tests'));
         moveFile(path.join('ios', templateAppName), path.join('ios', config.appname));
