@@ -38,7 +38,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
     init()
     {
         super.init()
-        SFLogger.setLogLevel(.debug)
+        SFLogger.shared().logLevel = .debug
         
         SalesforceSDKManager.shared().connectedAppId = RemoteAccessConsumerKey
         SalesforceSDKManager.shared().connectedAppCallbackUri = OAuthRedirectURI

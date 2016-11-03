@@ -43,7 +43,7 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
 {
     self = [super init];
     if (self) {
-        [SFLogger setLogLevel:SFLogLevelDebug];
+        [SFLogger sharedLogger].logLevel = SFLogLevelDebug;
 
         // Need to use SalesforceSDKManagerWithSmartStore when using smartstore
         [SalesforceSDKManager setInstanceClass:[SalesforceSDKManagerWithSmartStore class]];
