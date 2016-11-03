@@ -47,7 +47,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
     var templateSchemeFile = path.join(templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', templateAppName + '.xcscheme');
     var templatePrefixFile = path.join(templateAppName, 'Prefix.pch');
     var templateInfoFile = path.join(templateAppName, 'Info.plist');
-    var templateEntitlementsFile = path.join(templateAppName, 'App.entitlements');
+    var templateEntitlementsFile = path.join(templateAppName, templateAppName + '.entitlements');
     var templateAppDelegateFile = path.join(templateAppName, 'AppDelegate.m');
 
     //
@@ -77,6 +77,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
     // Rename files
     //
     moveFile(templateSchemeFile, path.join(templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', config.appname + '.xcscheme'));
+    moveFile(templateEntitlementsFile, path.join(templateAppName, config.appname + '.entitlements'));
     moveFile(templateProjectDir, config.appname + '.xcodeproj');
     moveFile(templateAppName, config.appname);
 
