@@ -3,3 +3,6 @@ Podfile.lock
 Pods/
 xcuserdata
 node_modules/
+build/
+.idea/
+*.iml
