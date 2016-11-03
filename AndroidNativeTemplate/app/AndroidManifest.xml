@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.salesforce.samples.templateapp"
+	package="com.salesforce.androidnativetemplate"
 	android:versionCode="1"
 	android:versionName="1.0"
 	android:installLocation="internalOnly">
 
 	<application android:icon="@drawable/sf__icon"
 	    android:label="@string/app_name"
-		android:name=".TemplateApp"
+		android:name=".MainApplication"
 		android:manageSpaceActivity="com.salesforce.androidsdk.ui.ManageSpaceActivity">
 
 		<!-- Launcher screen -->
@@ -30,8 +30,8 @@
         receive the messages and registration result. This must be of
         the format <app-package-name>.C2D_MESSAGE for it to work.
     -->
-    <permission android:name="com.salesforce.samples.templateapp.C2D_MESSAGE"
+    <permission android:name="com.salesforce.androidnativetemplate.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="com.salesforce.samples.templateapp.C2D_MESSAGE" />
+    <uses-permission android:name="com.salesforce.androidnativetemplate.C2D_MESSAGE" />
 </manifest>

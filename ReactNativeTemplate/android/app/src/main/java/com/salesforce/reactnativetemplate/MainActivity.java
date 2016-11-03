@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-present, salesforce.com, inc.
+ * Copyright (c) 2015-present, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -24,38 +24,29 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.salesforce.samples.templateapp;
+package com.salesforce.reactnativetemplate;
 
-import android.app.Application;
+import com.salesforce.androidsdk.reactnative.ui.SalesforceReactActivity;
 
-import com.salesforce.androidsdk.app.SalesforceSDKManager;
-import com.salesforce.androidsdk.app.SalesforceSDKManager.KeyInterface;
-import com.salesforce.androidsdk.analytics.security.Encryptor;
+public class MainActivity extends SalesforceReactActivity {
 
-/**
- * Application class for our application.
- */
-public class TemplateApp extends Application {
-
+    /**
+     *
+     * @return true if you want login to happen when application launches
+     *         false otherwise
+     */
 	@Override
-	public void onCreate() {
-		super.onCreate();
-		SalesforceSDKManager.initNative(getApplicationContext(), new NativeKeyImpl(), MainActivity.class);
+	public boolean shouldAuthenticate() {
+		return true;
+	}
 
-		/*
-		 * Un-comment the line below to enable push notifications in this app.
-		 * Replace 'pnInterface' with your implementation of 'PushNotificationInterface'.
-		 * Add your Google package ID in 'bootonfig.xml', as the value
-		 * for the key 'androidPushNotificationClientId'.
-		 */
-		// SalesforceSDKManager.getInstance().setPushNotificationReceiver(pnInterface);
+	/**
+	 * Returns the name of the main component registered from JavaScript.
+	 * This is used to schedule rendering of the component.
+	 */
+	@Override
+	protected String getMainComponentName() {
+		return "ReactNativeTemplate";
 	}
 }
 
-class NativeKeyImpl implements KeyInterface {
-
-	@Override
-	public String getKey(String name) {
-		return Encryptor.hash(name + "12s9adpahk;n12-97sdainkasd=012", name + "12kl0dsakj4-cxh1qewkjasdol8");
-	}
-}

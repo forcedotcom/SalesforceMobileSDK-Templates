@@ -1,6 +1,6 @@
-rootProject.name = 'ReactNativeTemplate'
+rootProject.name = 'AndroidNativeTemplate'
 
-def libsRootDir = new File( settingsDir, '../node_modules/SalesforceMobileSDK-Android/libs' )
+def libsRootDir = new File( settingsDir, 'node_modules/SalesforceMobileSDK-Android/libs' )
 include ':app'
 
 include ':libs:SalesforceAnalytics'
@@ -14,6 +14,3 @@ project( ':libs:SmartStore' ).projectDir = new File( libsRootDir, 'SmartStore' )
 
 include ':libs:SmartSync'
 project( ':libs:SmartSync' ).projectDir = new File( libsRootDir, 'SmartSync' )
-
-include ':libs:SalesforceReact'
-project( ':libs:SalesforceReact' ).projectDir = new File( libsRootDir, 'SalesforceReact' )
