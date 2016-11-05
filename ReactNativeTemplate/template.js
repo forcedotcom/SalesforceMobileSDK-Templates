@@ -28,7 +28,7 @@
  * This script is called from forceios to inject app name, company id, org name etc in the template
  */
 
-module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessThrowError) {
+module.exports.prepare = function(config, replaceInFiles, moveFile) {
 
     if (config.platform === 'ios') {
         
@@ -36,7 +36,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
 
         // Values in template
         var templateAppName = 'ReactNativeTemplate';
-        var templateCompanyId = 'com.salesforce.reactnativetemplate';
+        var templatePackageName = 'com.salesforce.reactnativetemplate';
         var templateOrganization = 'ReactNativeTemplateOrganizationName';
         var templateAppId = '3MVG9Iu66FKeHhINkB1l7xt7kR8czFcCTUhgoA8Ol2Ltf1eYHOU4SqQRSEitYFDUpqRWcoQ2.dBv_a1Dyu5xa';
         var templateCallbackUri = 'testsfdc =///mobilesdk/detect/oauth/done';
@@ -60,8 +60,8 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
         // app name
         replaceInFiles(templateAppName, config.appname, [templatePackageFile, templateIndexFile, templatePodfile, templateProjectFile, templateSchemeFile, templateEntitlementsFile, templateAppDelegateFile]);
 
-        // company id
-        replaceInFiles(templateCompanyId, config.companyid, [templateProjectFile, templateEntitlementsFile]);
+        // package name
+        replaceInFiles(templatePackageName, config.companyid, [templateProjectFile, templateEntitlementsFile, templateProjectFile]);
 
         // org name
         replaceInFiles(templateOrganization, config.organization, [templateProjectFile]);
@@ -86,11 +86,14 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
         moveFile(path.join('ios', templateAppName), path.join('ios', config.appname));
 
         //
-        // Run install.sh
+        // Run install.js
         //
-        runProcessThrowError('sh installios.sh');
+        require('./installios');
 
-        // Return workspace relative path
-        return path.join('ios', config.appname + '.xcworkspace');
+        // Return paths of workspace and file with oauth config
+        return {
+            workspacePath: path.join('ios', config.appname + '.xcworkspace'),
+            bootconfigFile: path.join('ios', config.appname, 'AppDelegate.m')
+        };
     }
 };

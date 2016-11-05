@@ -25,16 +25,19 @@
  */
 
 /**
- * This script is called from forceios to inject app name, company id, org name etc in the template
+ * Customize template (inject app name, package name, organization etc)
+ *
+ * @return result map with
+ *   workspace
+ *   bootconfigFile
  */
-
-module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessThrowError) {
+module.exports.prepare = function(config, replaceInFiles, moveFile) {
 
     var path = require('path');
 
     // Values in template
     var templateAppName = 'iOSNativeTemplate';
-    var templateCompanyId = 'com.salesforce.iosnativetemplate';
+    var templatePackageName = 'com.salesforce.iosnativetemplate';
     var templateOrganization = 'iOSNativeTemplateOrganizationName';
     var templateAppId = '3MVG9Iu66FKeHhINkB1l7xt7kR8czFcCTUhgoA8Ol2Ltf1eYHOU4SqQRSEitYFDUpqRWcoQ2.dBv_a1Dyu5xa';
     var templateCallbackUri = 'testsfdc =///mobilesdk/detect/oauth/done';
@@ -57,8 +60,8 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
     // app name
     replaceInFiles(templateAppName, config.appname, [templatePodfile, templatePackageFile, templateProjectFile, templateSchemeFile, templateEntitlementsFile, templateAppDelegateFile]);
 
-    // company id
-    replaceInFiles(templateCompanyId, config.companyid, [templateInfoFile, templateEntitlementsFile]);
+    // package name
+    replaceInFiles(templatePackageName, config.packagename, [templateInfoFile, templateEntitlementsFile, templateProjectFile]);
 
     // org name
     replaceInFiles(templateOrganization, config.organization, [templateProjectFile]);
@@ -82,10 +85,13 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
     moveFile(templateAppName, config.appname);
 
     //
-    // Run install.sh
+    // Run install.js
     //
-    runProcessThrowError('sh install.sh');
+    require('./install');
 
-    // Return workspace relative path
-    return config.appname + ".xcworkspace";
+    // Return paths of workspace and file with oauth config
+    return {
+        workspacePath: config.appname + ".xcworkspace",
+        bootconfigFile: path.join(config.appname, 'AppDelegate.m')
+    };
 };
