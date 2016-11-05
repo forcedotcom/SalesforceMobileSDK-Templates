@@ -61,7 +61,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile) {
         replaceInFiles(templateAppName, config.appname, [templatePackageFile, templateIndexFile, templatePodfile, templateProjectFile, templateSchemeFile, templateEntitlementsFile, templateAppDelegateFile]);
 
         // package name
-        replaceInFiles(templatePackageName, config.companyid, [templateProjectFile, templateEntitlementsFile, templateProjectFile]);
+        replaceInFiles(templatePackageName, config.packagename, [templateProjectFile, templateEntitlementsFile, templateProjectFile]);
 
         // org name
         replaceInFiles(templateOrganization, config.organization, [templateProjectFile]);
@@ -95,5 +95,16 @@ module.exports.prepare = function(config, replaceInFiles, moveFile) {
             workspacePath: path.join('ios', config.appname + '.xcworkspace'),
             bootconfigFile: path.join('ios', config.appname, 'AppDelegate.m')
         };
+    }
+
+
+    else {
+
+        // Return paths of workspace and file with oauth config
+        return {
+            workspacePath: 'tbd',
+            bootconfigFile: 'tbd'
+        };
+
     }
 };

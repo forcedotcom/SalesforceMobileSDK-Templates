@@ -28,11 +28,14 @@
  * This script is called from forcedroid to inject app name, company id, org name etc in the template
  */
 
-module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessThrowError) {
+module.exports.prepare = function(config, replaceInFiles, moveFile) {
 
     var path = require('path');
 
 
-    // Return workspace relative path
-    return "TBD";
+    // Return paths of workspace and file with oauth config
+    return {
+        workspacePath: 'tbd',
+        bootconfigFile: 'tbd'
+    };
 };
