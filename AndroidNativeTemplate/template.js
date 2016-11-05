@@ -33,9 +33,15 @@ module.exports.prepare = function(config, replaceInFiles, moveFile) {
     var path = require('path');
 
 
+    //
+    // Run install.js
+    //
+    require('./install');
+
+
     // Return paths of workspace and file with oauth config
     return {
-        workspacePath: 'tbd',
-        bootconfigFile: 'tbd'
+        workspacePath: '',
+        bootconfigFile: path.join('app', 'res', 'values', 'bootconfig.xml')
     };
 };

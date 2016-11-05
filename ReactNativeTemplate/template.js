@@ -100,10 +100,15 @@ module.exports.prepare = function(config, replaceInFiles, moveFile) {
 
     else {
 
+        //
+        // Run install.js
+        //
+        require('./installandroid');
+
         // Return paths of workspace and file with oauth config
         return {
-            workspacePath: 'tbd',
-            bootconfigFile: 'tbd'
+            workspacePath: path.join('android'),
+            bootconfigFile: path.join('android', 'app', 'src', 'main', 'res', 'values', 'bootconfig.xml')
         };
 
     }
