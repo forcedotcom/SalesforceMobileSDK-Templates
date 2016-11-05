@@ -107,7 +107,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile) {
 
         // Return paths of workspace and file with oauth config
         return {
-            workspacePath: path.join('android'),
+            workspacePath: 'android',
             bootconfigFile: path.join('android', 'app', 'src', 'main', 'res', 'values', 'bootconfig.xml')
         };
 
