@@ -101,6 +101,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         var templateIndexAndroidFile = path.join('js', 'index.android.js');
         var templateSettingsGradle = path.join('android', 'settings.gradle');
         var templateAndroidManifestFile = path.join('android', 'app', 'AndroidManifest.xml');
+        var templateBuckFile = path.join('android', 'app', 'BUCK');
         var templateStringsXmlFile = path.join('android', 'app', 'res', 'values', 'strings.xml');
         var templateBootconfigFile = path.join('android', 'app', 'res', 'values', 'bootconfig.xml');
         var templateMainActivityFile = path.join('android', 'app', 'src', 'com', 'salesforce', 'reactnativetemplate', 'MainActivity.java');
@@ -114,7 +115,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         replaceInFiles(templateAppName, config.appname, [templatePackageJsonFile, templateIndexAndroidFile, templateSettingsGradle, templateStringsXmlFile]);
 
         // package name
-        replaceInFiles(templatePackageName, config.packagename, [templateAndroidManifestFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile]);
+        replaceInFiles(templatePackageName, config.packagename, [templateAndroidManifestFile, templateBuckFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile]);
         
         //
         // Rename/move files
