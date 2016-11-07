@@ -73,6 +73,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         moveFile(templateProjectDir, path.join('ios', config.appname + '.xcodeproj'));
         moveFile(path.join('ios', templateAppName), path.join('ios', config.appname));
         removeFile('android');
+        removeFile(path.join('js', 'index.android.js'));
         
         //
         // Run install.js
@@ -126,6 +127,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         moveFile(tmpPathActivityFile, path.join.apply(null, ['android', 'app', 'src'].concat(config.packagename.split('.')).concat(['MainActivity.java'])));
         moveFile(tmpPathApplicationFile, path.join.apply(null, ['android', 'app', 'src'].concat(config.packagename.split('.')).concat(['MainApplication.java'])));
         removeFile('ios');
+        removeFile(path.join('js', 'index.ios.js'));
 
         //
         // Run install.js
