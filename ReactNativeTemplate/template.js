@@ -102,7 +102,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         var templateStringsXmlFile = path.join('android', 'app', 'res', 'values', 'strings.xml');
         var templateBootconfigFile = path.join('android', 'app', 'res', 'values', 'bootconfig.xml');
         var templateMainActivityFile = path.join('android', 'app', 'src', 'com', 'salesforce', 'androidnativetemplate', 'MainActivity.java');
-        var templateMainApplicationFile = path.join('android' 'app', 'src', 'com', 'salesforce', 'androidnativetemplate', 'MainApplication.java');
+        var templateMainApplicationFile = path.join('android', 'app', 'src', 'com', 'salesforce', 'androidnativetemplate', 'MainApplication.java');
 
         //
         // Replace in files
