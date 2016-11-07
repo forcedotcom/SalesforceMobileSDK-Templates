@@ -72,7 +72,8 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         moveFile(templateEntitlementsFile, path.join('ios', templateAppName, config.appname + '.entitlements'));
         moveFile(templateProjectDir, path.join('ios', config.appname + '.xcodeproj'));
         moveFile(path.join('ios', templateAppName), path.join('ios', config.appname));
-
+        removeFile('android');
+        
         //
         // Run install.js
         //
@@ -86,8 +87,8 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
     }
 
 
-    else {
-
+    if (config.platform === 'android') {
+        
         var path = require('path');
 
         // Values in template
@@ -101,8 +102,8 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         var templateAndroidManifestFile = path.join('android', 'app', 'AndroidManifest.xml');
         var templateStringsXmlFile = path.join('android', 'app', 'res', 'values', 'strings.xml');
         var templateBootconfigFile = path.join('android', 'app', 'res', 'values', 'bootconfig.xml');
-        var templateMainActivityFile = path.join('android', 'app', 'src', 'com', 'salesforce', 'androidnativetemplate', 'MainActivity.java');
-        var templateMainApplicationFile = path.join('android', 'app', 'src', 'com', 'salesforce', 'androidnativetemplate', 'MainApplication.java');
+        var templateMainActivityFile = path.join('android', 'app', 'src', 'com', 'salesforce', 'reactnativetemplate', 'MainActivity.java');
+        var templateMainApplicationFile = path.join('android', 'app', 'src', 'com', 'salesforce', 'reactnativetemplate', 'MainApplication.java');
 
         //
         // Replace in files
@@ -124,6 +125,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         removeFile(path.join('android', 'app', 'src', 'com'));
         moveFile(tmpPathActivityFile, path.join.apply(null, ['android', 'app', 'src'].concat(config.packagename.split('.')).concat(['MainActivity.java'])));
         moveFile(tmpPathApplicationFile, path.join.apply(null, ['android', 'app', 'src'].concat(config.packagename.split('.')).concat(['MainApplication.java'])));
+        removeFile('ios');
 
         //
         // Run install.js
