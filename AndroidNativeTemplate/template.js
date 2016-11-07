@@ -28,10 +28,43 @@
  * This script is called from forcedroid to inject app name, company id, org name etc in the template
  */
 
-module.exports.prepare = function(config, replaceInFiles, moveFile) {
+module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) {
 
     var path = require('path');
 
+    // Values in template
+    var templateAppName = 'AndroidNativeTemplate';
+    var templatePackageName = 'com.salesforce.androidnativetemplate';
+
+    // Key files
+    var templatePackageJsonFile = 'package.json';
+    var templateSettingsGradle = 'settings.gradle';
+    var templateAndroidManifestFile = path.join('app', 'AndroidManifest.xml');
+    var templateStringsXmlFile = path.join('app', 'res', 'values', 'strings.xml');
+    var templateBootconfigFile = path.join('app', 'res', 'values', 'bootconfig.xml');
+    var templateMainActivityFile = path.join('app', 'src', 'com', 'salesforce', 'androidnativetemplate', 'MainActivity.java');
+    var templateMainApplicationFile = path.join('app', 'src', 'com', 'salesforce', 'androidnativetemplate', 'MainApplication.java');
+
+    //
+    // Replace in files
+    //
+
+    // app name
+    replaceInFiles(templateAppName, config.appname, [templatePackageJsonFile, templateSettingsGradle, templateStringsXmlFile]);
+
+    // package name
+    replaceInFiles(templatePackageName, config.packagename, [templateAndroidManifestFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile]);
+    
+    //
+    // Rename/move files
+    //
+    var tmpPathActivityFile = path.join('app', 'src', 'MainActivity.java');
+    var tmpPathApplicationFile = path.join('app', 'src', 'MainApplication.java');
+    moveFile(templateMainActivityFile, tmpPathActivityFile);
+    moveFile(templateMainApplicationFile, tmpPathApplicationFile);
+    removeFile(path.join('app', 'src', 'com'));
+    moveFile(tmpPathActivityFile, path.join.apply(null, ['app', 'src'].concat(config.packagename.split('.')).concat(['MainActivity.java'])));
+    moveFile(tmpPathApplicationFile, path.join.apply(null, ['app', 'src'].concat(config.packagename.split('.')).concat(['MainApplication.java'])));
 
     //
     // Run install.js

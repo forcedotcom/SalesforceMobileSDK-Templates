@@ -31,7 +31,7 @@
  *   workspace
  *   bootconfigFile
  */
-module.exports.prepare = function(config, replaceInFiles, moveFile) {
+module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) {
 
     var path = require('path');
 
@@ -39,12 +39,10 @@ module.exports.prepare = function(config, replaceInFiles, moveFile) {
     var templateAppName = 'iOSNativeTemplate';
     var templatePackageName = 'com.salesforce.iosnativetemplate';
     var templateOrganization = 'iOSNativeTemplateOrganizationName';
-    var templateAppId = '3MVG9Iu66FKeHhINkB1l7xt7kR8czFcCTUhgoA8Ol2Ltf1eYHOU4SqQRSEitYFDUpqRWcoQ2.dBv_a1Dyu5xa';
-    var templateCallbackUri = 'testsfdc =///mobilesdk/detect/oauth/done';
 
     // Key files
     var templatePodfile = 'Podfile';
-    var templatePackageFile = 'package.json';
+    var templatePackageJsonFile = 'package.json';
     var templateProjectDir = templateAppName + '.xcodeproj';
     var templateProjectFile = path.join(templateProjectDir, 'project.pbxproj');
     var templateSchemeFile = path.join(templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', templateAppName + '.xcscheme');
@@ -58,7 +56,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile) {
     //
 
     // app name
-    replaceInFiles(templateAppName, config.appname, [templatePodfile, templatePackageFile, templateProjectFile, templateSchemeFile, templateEntitlementsFile, templateAppDelegateFile]);
+    replaceInFiles(templateAppName, config.appname, [templatePodfile, templatePackageJsonFile, templateProjectFile, templateSchemeFile, templateEntitlementsFile, templateAppDelegateFile]);
 
     // package name
     replaceInFiles(templatePackageName, config.packagename, [templateInfoFile, templateEntitlementsFile, templateProjectFile]);
@@ -66,18 +64,8 @@ module.exports.prepare = function(config, replaceInFiles, moveFile) {
     // org name
     replaceInFiles(templateOrganization, config.organization, [templateProjectFile]);
 
-    // app id
-    if (config.appid) {
-        replaceInFiles(templateAppId, config.appid, [templateAppDelegateFile]);
-    }
-                   
-    // callback uri
-    if (config.callbackuri) {
-        replaceInFiles(templateCallbackUri, config.callbackuri, [templateAppDelegateFile]);
-    }
-
     //
-    // Rename files
+    // Rename/move files
     //
     moveFile(templateSchemeFile, path.join(templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', config.appname + '.xcscheme'));
     moveFile(templateEntitlementsFile, path.join(templateAppName, config.appname + '.entitlements'));
