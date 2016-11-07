@@ -100,12 +100,13 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         var templatePackageJsonFile = 'package.json';
         var templateIndexAndroidFile = path.join('js', 'index.android.js');
         var templateSettingsGradle = path.join('android', 'settings.gradle');
-        var templateAndroidManifestFile = path.join('android', 'app', 'AndroidManifest.xml');
+        var templateAndroidManifestFile = path.join('android', 'app', 'src', 'main', 'AndroidManifest.xml');
         var templateBuckFile = path.join('android', 'app', 'BUCK');
-        var templateStringsXmlFile = path.join('android', 'app', 'res', 'values', 'strings.xml');
-        var templateBootconfigFile = path.join('android', 'app', 'res', 'values', 'bootconfig.xml');
-        var templateMainActivityFile = path.join('android', 'app', 'src', 'com', 'salesforce', 'reactnativetemplate', 'MainActivity.java');
-        var templateMainApplicationFile = path.join('android', 'app', 'src', 'com', 'salesforce', 'reactnativetemplate', 'MainApplication.java');
+        var templateAppBuildGradleFile = path.join('android', 'app', 'build.gradle');
+        var templateStringsXmlFile = path.join('android', 'app', 'src', 'main', 'res', 'values', 'strings.xml');
+        var templateBootconfigFile = path.join('android', 'app', 'src', 'main', 'res', 'values', 'bootconfig.xml');
+        var templateMainActivityFile = path.join('android', 'app', 'src', 'main', 'java', 'com', 'salesforce', 'reactnativetemplate', 'MainActivity.java');
+        var templateMainApplicationFile = path.join('android', 'app', 'src', 'main', 'java', 'com', 'salesforce', 'reactnativetemplate', 'MainApplication.java');
 
         //
         // Replace in files
@@ -115,7 +116,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         replaceInFiles(templateAppName, config.appname, [templatePackageJsonFile, templateIndexAndroidFile, templateSettingsGradle, templateStringsXmlFile]);
 
         // package name
-        replaceInFiles(templatePackageName, config.packagename, [templateAndroidManifestFile, templateBuckFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile]);
+        replaceInFiles(templatePackageName, config.packagename, [templateAndroidManifestFile, templateBuckFile, templateAppBuildGradleFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile]);
         
         //
         // Rename/move files
@@ -124,12 +125,12 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         var tmpPathApplicationFile = path.join('android', 'app', 'src', 'MainApplication.java');
         moveFile(templateMainActivityFile, tmpPathActivityFile);
         moveFile(templateMainApplicationFile, tmpPathApplicationFile);
-        removeFile(path.join('android', 'app', 'src', 'com'));
-        moveFile(tmpPathActivityFile, path.join.apply(null, ['android', 'app', 'src'].concat(config.packagename.split('.')).concat(['MainActivity.java'])));
-        moveFile(tmpPathApplicationFile, path.join.apply(null, ['android', 'app', 'src'].concat(config.packagename.split('.')).concat(['MainApplication.java'])));
+        removeFile(path.join('android', 'app', 'src', 'main', 'java'));
+        var srcDirArr = ['android', 'app', 'src', 'main', 'java'].concat(config.packagename.split('.'));
+        moveFile(tmpPathActivityFile, path.join.apply(null, srcDirArr.concat(['MainActivity.java'])));
+        moveFile(tmpPathApplicationFile, path.join.apply(null, srcDirArr.concat(['MainApplication.java'])));
         removeFile('ios');
         removeFile(path.join('js', 'index.ios.js'));
-
         //
         // Run install.js
         //
@@ -138,7 +139,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         // Return paths of workspace and file with oauth config
         return {
             workspacePath: 'android',
-            bootconfigFile: path.join('android', 'app', 'res', 'values', 'bootconfig.xml')
+            bootconfigFile: templateBootconfigFile
         };
 
     }
