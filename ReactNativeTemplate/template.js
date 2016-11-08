@@ -119,7 +119,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         replaceInFiles(templatePackageName, config.packagename, [templateAndroidManifestFile, templateBuckFile, templateAppBuildGradleFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile]);
         
         //
-        // Rename/move files
+        // Rename/move/remove files
         //
         var tmpPathActivityFile = path.join('android', 'app', 'src', 'MainActivity.java');
         var tmpPathApplicationFile = path.join('android', 'app', 'src', 'MainApplication.java');
@@ -131,6 +131,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         moveFile(tmpPathApplicationFile, path.join.apply(null, srcDirArr.concat(['MainApplication.java'])));
         removeFile('ios');
         removeFile(path.join('js', 'index.ios.js'));
+
         //
         // Run install.js
         //
