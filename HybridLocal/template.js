@@ -36,9 +36,9 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
     var path = require('path');
 
     //
-    // Run install.js
+    // Install dependencies
     //
-    require('./install');
+    execSync('npm install', {stdio:[0,1,2]});
 
     //
     // Move/remove some files
@@ -46,9 +46,8 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
     moveFile(path.join('node_modules', 'SalesforceMobileSDK-Shared', 'libs', 'force.js'), 'force.js');
     moveFile(path.join('node_modules', 'rachet', 'dist', 'css', 'ratchet.css'), 'rachet.css');
     moveFile(path.join('node_modules', 'rachet', 'dist', 'css', 'ratchet-theme-' + config.platform + '.min.css'), 'rachet-theme.css');
-//    removeFile('node_modules');
-//    removeFile('package.json');
-//    removeFile('install.js');
+    removeFile('node_modules');
+    removeFile('package.json');
 
     // Return paths of workspace and file with oauth config
     return {
