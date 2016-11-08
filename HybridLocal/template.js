@@ -25,7 +25,7 @@
  */
 
 /**
- * Customize template (inject app name, package name, organization etc)
+ * Prepare template
  *
  * @return result map with
  *   workspace
@@ -46,9 +46,9 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
     moveFile(path.join('node_modules', 'SalesforceMobileSDK-Shared', 'libs', 'force.js'), 'force.js');
     moveFile(path.join('node_modules', 'rachet', 'dist', 'css', 'ratchet.css'), 'rachet.css');
     moveFile(path.join('node_modules', 'rachet', 'dist', 'css', 'ratchet-theme-' + config.platform + '.min.css'), 'rachet-theme.css');
-    removeFile('node_modules');
-    removeFile('package.json');
-    removeFile('install.js');
+//    removeFile('node_modules');
+//    removeFile('package.json');
+//    removeFile('install.js');
 
     // Return paths of workspace and file with oauth config
     return {
