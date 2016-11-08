@@ -33,7 +33,9 @@
  */
 module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) {
 
-    var path = require('path');
+    // Dependencies
+    var path = require('path'),
+        execSync = require('child_process').execSync;
 
     //
     // Install dependencies
