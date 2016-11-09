@@ -1,9 +1,0 @@
-{
-    "name": "HybridLocal",
-    "version": "0.0.1",
-    "private": true,
-    "dependencies": {
-        "salesforcemobilesdk-shared": "https://github.com/wmathurin/SalesforceMobileSDK-Shared.git#templates",
-        "ratchet2": "https://github.com/twbs/ratchet#v2.0.2"
-    }
-}
