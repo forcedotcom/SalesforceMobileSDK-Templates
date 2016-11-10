@@ -69,7 +69,6 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         //
         moveFile(templateSchemeFile, path.join('ios', templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', config.appname + '.xcscheme'));
         moveFile(templateEntitlementsFile, path.join('ios', templateAppName, config.appname + '.entitlements'));
-        moveFile(templateEntitlementsFile, path.join('ios', templateAppName, config.appname + '.entitlements'));
         moveFile(templateProjectDir, path.join('ios', config.appname + '.xcodeproj'));
         moveFile(path.join('ios', templateAppName), path.join('ios', config.appname));
         removeFile('android');
