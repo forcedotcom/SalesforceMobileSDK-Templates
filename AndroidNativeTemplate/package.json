@@ -1,0 +1,8 @@
+{
+    "name": "AndroidNativeTemplate",
+    "version": "0.0.1",
+    "private": true,
+    "dependencies": {
+        "salesforcemobilesdk-android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#unstable"
+    }
+}

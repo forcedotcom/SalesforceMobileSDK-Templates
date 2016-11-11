@@ -28,7 +28,7 @@
  * This script is called from forceios to inject app name, company id, org name etc in the template
  */
 
-module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessThrowError) {
+module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) {
 
     if (config.platform === 'ios') {
         
@@ -36,14 +36,12 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
 
         // Values in template
         var templateAppName = 'ReactNativeTemplate';
-        var templateCompanyId = 'com.salesforce.reactnativetemplate';
+        var templatePackageName = 'com.salesforce.reactnativetemplate';
         var templateOrganization = 'ReactNativeTemplateOrganizationName';
-        var templateAppId = '3MVG9Iu66FKeHhINkB1l7xt7kR8czFcCTUhgoA8Ol2Ltf1eYHOU4SqQRSEitYFDUpqRWcoQ2.dBv_a1Dyu5xa';
-        var templateCallbackUri = 'testsfdc =///mobilesdk/detect/oauth/done';
 
         // Key files
-        var templatePackageFile = 'package.json';
-        var templateIndexFile = path.join('js', 'index.ios.js');
+        var templatePackageJsonFile = 'package.json';
+        var templateIndexIosFile = path.join('js', 'index.ios.js');
         var templatePodfile = path.join('ios', 'Podfile');
         var templateProjectDir = path.join('ios', templateAppName + '.xcodeproj');
         var templateProjectFile = path.join(templateProjectDir, 'project.pbxproj');
@@ -58,39 +56,91 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, runProcessTh
         //
 
         // app name
-        replaceInFiles(templateAppName, config.appname, [templatePackageFile, templateIndexFile, templatePodfile, templateProjectFile, templateSchemeFile, templateEntitlementsFile, templateAppDelegateFile]);
+        replaceInFiles(templateAppName, config.appname, [templatePackageJsonFile, templateIndexIosFile, templatePodfile, templateProjectFile, templateSchemeFile, templateEntitlementsFile, templateAppDelegateFile]);
 
-        // company id
-        replaceInFiles(templateCompanyId, config.companyid, [templateProjectFile, templateEntitlementsFile]);
+        // package name
+        replaceInFiles(templatePackageName, config.packagename, [templateProjectFile, templateEntitlementsFile, templateProjectFile]);
 
         // org name
         replaceInFiles(templateOrganization, config.organization, [templateProjectFile]);
 
-        // app id
-        if (config.appid) {
-            replaceInFiles(templateAppId, config.appid, [templateAppDelegateFile]);
-        }
-        
-        // callback uri
-        if (config.callbackuri) {
-            replaceInFiles(templateCallbackUri, config.callbackuri, [templateAppDelegateFile]);
-        }
-
         //
-        // Rename files
+        // Rename/move files
         //
         moveFile(templateSchemeFile, path.join('ios', templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', config.appname + '.xcscheme'));
         moveFile(templateEntitlementsFile, path.join('ios', templateAppName, config.appname + '.entitlements'));
-        moveFile(templateEntitlementsFile, path.join('ios', templateAppName, config.appname + '.entitlements'));
         moveFile(templateProjectDir, path.join('ios', config.appname + '.xcodeproj'));
         moveFile(path.join('ios', templateAppName), path.join('ios', config.appname));
+        removeFile('android');
+        removeFile(path.join('js', 'index.android.js'));
+        
+        //
+        // Run install.js
+        //
+        require('./installios');
+
+        // Return paths of workspace and file with oauth config
+        return {
+            workspacePath: path.join('ios', config.appname + '.xcworkspace'),
+            bootconfigFile: path.join('ios', config.appname, 'AppDelegate.m')
+        };
+    }
+
+
+    if (config.platform === 'android') {
+        
+        var path = require('path');
+
+        // Values in template
+        var templateAppName = 'ReactNativeTemplate';
+        var templatePackageName = 'com.salesforce.reactnativetemplate';
+
+        // Key files
+        var templatePackageJsonFile = 'package.json';
+        var templateIndexAndroidFile = path.join('js', 'index.android.js');
+        var templateSettingsGradle = path.join('android', 'settings.gradle');
+        var templateAndroidManifestFile = path.join('android', 'app', 'src', 'main', 'AndroidManifest.xml');
+        var templateBuckFile = path.join('android', 'app', 'BUCK');
+        var templateAppBuildGradleFile = path.join('android', 'app', 'build.gradle');
+        var templateStringsXmlFile = path.join('android', 'app', 'src', 'main', 'res', 'values', 'strings.xml');
+        var templateBootconfigFile = path.join('android', 'app', 'src', 'main', 'res', 'values', 'bootconfig.xml');
+        var templateMainActivityFile = path.join('android', 'app', 'src', 'main', 'java', 'com', 'salesforce', 'reactnativetemplate', 'MainActivity.java');
+        var templateMainApplicationFile = path.join('android', 'app', 'src', 'main', 'java', 'com', 'salesforce', 'reactnativetemplate', 'MainApplication.java');
 
         //
-        // Run install.sh
+        // Replace in files
         //
-        runProcessThrowError('sh installios.sh');
 
-        // Return workspace relative path
-        return path.join('ios', config.appname + '.xcworkspace');
+        // app name
+        replaceInFiles(templateAppName, config.appname, [templatePackageJsonFile, templateIndexAndroidFile, templateSettingsGradle, templateStringsXmlFile]);
+
+        // package name
+        replaceInFiles(templatePackageName, config.packagename, [templateAndroidManifestFile, templateBuckFile, templateAppBuildGradleFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile]);
+        
+        //
+        // Rename/move/remove files
+        //
+        var tmpPathActivityFile = path.join('android', 'app', 'src', 'MainActivity.java');
+        var tmpPathApplicationFile = path.join('android', 'app', 'src', 'MainApplication.java');
+        moveFile(templateMainActivityFile, tmpPathActivityFile);
+        moveFile(templateMainApplicationFile, tmpPathApplicationFile);
+        removeFile(path.join('android', 'app', 'src', 'main', 'java'));
+        var srcDirArr = ['android', 'app', 'src', 'main', 'java'].concat(config.packagename.split('.'));
+        moveFile(tmpPathActivityFile, path.join.apply(null, srcDirArr.concat(['MainActivity.java'])));
+        moveFile(tmpPathApplicationFile, path.join.apply(null, srcDirArr.concat(['MainApplication.java'])));
+        removeFile('ios');
+        removeFile(path.join('js', 'index.ios.js'));
+
+        //
+        // Run install.js
+        //
+        require('./installandroid');
+
+        // Return paths of workspace and file with oauth config
+        return {
+            workspacePath: 'android',
+            bootconfigFile: templateBootconfigFile
+        };
+
     }
 };

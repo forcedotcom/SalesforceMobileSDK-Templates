@@ -25,61 +25,56 @@
  */
 
 /**
- * Customize template (inject app name, package name, organization etc)
- *
- * @return result map with
- *   workspace
- *   bootconfigFile
+ * This script is called from forcedroid to inject app name, company id, org name etc in the template
  */
+
 module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) {
 
     var path = require('path');
 
     // Values in template
-    var templateAppName = 'iOSNativeTemplate';
-    var templatePackageName = 'com.salesforce.iosnativetemplate';
-    var templateOrganization = 'iOSNativeTemplateOrganizationName';
+    var templateAppName = 'AndroidNativeTemplate';
+    var templatePackageName = 'com.salesforce.androidnativetemplate';
 
     // Key files
-    var templatePodfile = 'Podfile';
     var templatePackageJsonFile = 'package.json';
-    var templateProjectDir = templateAppName + '.xcodeproj';
-    var templateProjectFile = path.join(templateProjectDir, 'project.pbxproj');
-    var templateSchemeFile = path.join(templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', templateAppName + '.xcscheme');
-    var templatePrefixFile = path.join(templateAppName, 'Prefix.pch');
-    var templateInfoFile = path.join(templateAppName, 'Info.plist');
-    var templateEntitlementsFile = path.join(templateAppName, templateAppName + '.entitlements');
-    var templateAppDelegateFile = path.join(templateAppName, 'AppDelegate.m');
+    var templateSettingsGradle = 'settings.gradle';
+    var templateAndroidManifestFile = path.join('app', 'AndroidManifest.xml');
+    var templateStringsXmlFile = path.join('app', 'res', 'values', 'strings.xml');
+    var templateBootconfigFile = path.join('app', 'res', 'values', 'bootconfig.xml');
+    var templateMainActivityFile = path.join('app', 'src', 'com', 'salesforce', 'androidnativetemplate', 'MainActivity.java');
+    var templateMainApplicationFile = path.join('app', 'src', 'com', 'salesforce', 'androidnativetemplate', 'MainApplication.java');
 
     //
     // Replace in files
     //
 
     // app name
-    replaceInFiles(templateAppName, config.appname, [templatePodfile, templatePackageJsonFile, templateProjectFile, templateSchemeFile, templateEntitlementsFile, templateAppDelegateFile]);
+    replaceInFiles(templateAppName, config.appname, [templatePackageJsonFile, templateSettingsGradle, templateStringsXmlFile]);
 
     // package name
-    replaceInFiles(templatePackageName, config.packagename, [templateInfoFile, templateEntitlementsFile, templateProjectFile]);
-
-    // org name
-    replaceInFiles(templateOrganization, config.organization, [templateProjectFile]);
-
+    replaceInFiles(templatePackageName, config.packagename, [templateAndroidManifestFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile]);
+    
     //
     // Rename/move files
     //
-    moveFile(templateSchemeFile, path.join(templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', config.appname + '.xcscheme'));
-    moveFile(templateEntitlementsFile, path.join(templateAppName, config.appname + '.entitlements'));
-    moveFile(templateProjectDir, config.appname + '.xcodeproj');
-    moveFile(templateAppName, config.appname);
+    var tmpPathActivityFile = path.join('app', 'src', 'MainActivity.java');
+    var tmpPathApplicationFile = path.join('app', 'src', 'MainApplication.java');
+    moveFile(templateMainActivityFile, tmpPathActivityFile);
+    moveFile(templateMainApplicationFile, tmpPathApplicationFile);
+    removeFile(path.join('app', 'src', 'com'));
+    moveFile(tmpPathActivityFile, path.join.apply(null, ['app', 'src'].concat(config.packagename.split('.')).concat(['MainActivity.java'])));
+    moveFile(tmpPathApplicationFile, path.join.apply(null, ['app', 'src'].concat(config.packagename.split('.')).concat(['MainApplication.java'])));
 
     //
     // Run install.js
     //
     require('./install');
 
+
     // Return paths of workspace and file with oauth config
     return {
-        workspacePath: config.appname + ".xcworkspace",
-        bootconfigFile: path.join(config.appname, 'AppDelegate.m')
+        workspacePath: '',
+        bootconfigFile: path.join('app', 'res', 'values', 'bootconfig.xml')
     };
 };
