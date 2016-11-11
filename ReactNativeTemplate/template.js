@@ -73,6 +73,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         moveFile(path.join('ios', templateAppName), path.join('ios', config.appname));
         removeFile('android');
         removeFile('index.android.js');
+        removeFile('installandroid.js');
         
         //
         // Run install.js
@@ -130,6 +131,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         moveFile(tmpPathApplicationFile, path.join.apply(null, srcDirArr.concat(['MainApplication.java'])));
         removeFile('ios');
         removeFile('index.ios.js');
+        removeFile('installios.js');        
 
         //
         // Run install.js
