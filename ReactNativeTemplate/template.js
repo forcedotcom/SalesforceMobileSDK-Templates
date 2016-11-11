@@ -41,7 +41,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
 
         // Key files
         var templatePackageJsonFile = 'package.json';
-        var templateIndexIosFile = path.join('js', 'index.ios.js');
+        var templateIndexIosFile = 'index.ios.js';
         var templatePodfile = path.join('ios', 'Podfile');
         var templateProjectDir = path.join('ios', templateAppName + '.xcodeproj');
         var templateProjectFile = path.join(templateProjectDir, 'project.pbxproj');
@@ -72,7 +72,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         moveFile(templateProjectDir, path.join('ios', config.appname + '.xcodeproj'));
         moveFile(path.join('ios', templateAppName), path.join('ios', config.appname));
         removeFile('android');
-        removeFile(path.join('js', 'index.android.js'));
+        removeFile('index.android.js');
         
         //
         // Run install.js
@@ -97,7 +97,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
 
         // Key files
         var templatePackageJsonFile = 'package.json';
-        var templateIndexAndroidFile = path.join('js', 'index.android.js');
+        var templateIndexAndroidFile = 'index.android.js';
         var templateSettingsGradle = path.join('android', 'settings.gradle');
         var templateAndroidManifestFile = path.join('android', 'app', 'src', 'main', 'AndroidManifest.xml');
         var templateBuckFile = path.join('android', 'app', 'BUCK');
@@ -112,7 +112,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         //
 
         // app name
-        replaceInFiles(templateAppName, config.appname, [templatePackageJsonFile, templateIndexAndroidFile, templateSettingsGradle, templateStringsXmlFile]);
+        replaceInFiles(templateAppName, config.appname, [templatePackageJsonFile, templateIndexAndroidFile, templateSettingsGradle, templateStringsXmlFile, templateMainActivityFile]);
 
         // package name
         replaceInFiles(templatePackageName, config.packagename, [templateAndroidManifestFile, templateBuckFile, templateAppBuildGradleFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile]);
@@ -129,7 +129,7 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         moveFile(tmpPathActivityFile, path.join.apply(null, srcDirArr.concat(['MainActivity.java'])));
         moveFile(tmpPathApplicationFile, path.join.apply(null, srcDirArr.concat(['MainApplication.java'])));
         removeFile('ios');
-        removeFile(path.join('js', 'index.ios.js'));
+        removeFile('index.ios.js');
 
         //
         // Run install.js
