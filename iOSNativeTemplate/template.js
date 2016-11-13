@@ -31,7 +31,7 @@
  *   workspace
  *   bootconfigFile
  */
-module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) {
+function prepare(config, replaceInFiles, moveFile, removeFile) {
 
     var path = require('path');
 
@@ -82,4 +82,12 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         workspacePath: config.appname + ".xcworkspace",
         bootconfigFile: path.join(config.appname, 'AppDelegate.m')
     };
+}
+
+//
+// Exports
+//
+module.exports = {
+    appType: 'native',
+    prepare: prepare
 };

@@ -31,7 +31,7 @@
  *   workspace
  *   bootconfigFile
  */
-module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) {
+function prepare(config, replaceInFiles, moveFile, removeFile) {
 
     // Dependencies
     var path = require('path'),
@@ -56,4 +56,12 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         workspacePath: path.join('platforms', config.platform),
         bootconfigFile: path.join('www', 'bootconfig.json')
     };
+}
+
+//
+// Exports
+//
+module.exports = {
+    appType: 'hybrid_local',
+    prepare: prepare
 };
