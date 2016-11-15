@@ -25,10 +25,13 @@
  */
 
 /**
- * This script is called from forceios to inject app name, company id, org name etc in the template
+ * Customize template (inject app name, package name, organization etc)
+ *
+ * @return result map with
+ *   workspace
+ *   bootconfigFile
  */
-
-module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) {
+function prepare(config, replaceInFiles, moveFile, removeFile) {
 
     var path = require('path');
 
@@ -80,4 +83,12 @@ module.exports.prepare = function(config, replaceInFiles, moveFile, removeFile) 
         bootconfigFile: path.join(config.appname, 'AppDelegate.swift')
     };
 
+}
+
+//
+// Exports
+//
+module.exports = {
+    appType: 'native_swift',
+    prepare: prepare
 };
