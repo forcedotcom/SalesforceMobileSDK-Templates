@@ -40,15 +40,14 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     //
     // Install dependencies
     //
-    console.log("cwd--->" + __dirname);
     execSync('npm install', {stdio:[0,1,2], cwd:__dirname});
     
     //
     // Move/remove some files
     //
     moveFile(path.join('node_modules', 'SalesforceMobileSDK-Shared', 'libs', 'force.js'), 'force.js');
-    moveFile(path.join('node_modules', 'rachet', 'dist', 'css', 'ratchet.css'), 'rachet.css');
-    moveFile(path.join('node_modules', 'rachet', 'dist', 'css', 'ratchet-theme-' + config.platform + '.min.css'), 'rachet-theme.css');
+    moveFile(path.join('node_modules', 'ratchet', 'dist', 'css', 'ratchet.css'), 'rachet.css');
+    moveFile(path.join('node_modules', 'ratchet', 'dist', 'css', 'ratchet-theme-' + config.platform + '.min.css'), 'rachet-theme.css');
     removeFile('node_modules');
     removeFile('package.json');
 
