@@ -40,6 +40,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     //
     // Install dependencies
     //
+    console.log("cwd--->" + process.cwd());
     execSync('npm install', {stdio:[0,1,2], cwd:process.cwd()});
     
     //
