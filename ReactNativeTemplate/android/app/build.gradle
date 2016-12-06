@@ -89,8 +89,8 @@ android {
     defaultConfig {
         applicationId "com.salesforce.reactnativetemplate"
         minSdkVersion 19
-        targetSdkVersion 22
         versionCode 1
+        targetSdkVersion 25
         versionName "1.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
@@ -108,6 +108,11 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+        debug {
+            defaultConfig {
+                targetSdkVersion 22
+            }
         }
     }
     // applicationVariants are e.g. debug, release
