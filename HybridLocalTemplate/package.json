@@ -3,7 +3,6 @@
     "version": "0.0.1",
     "private": true,
     "dependencies": {
-        //"salesforcemobilesdk-shared": "https://github.com/forcedotcom/SalesforceMobileSDK-Shared.git#unstable",
         "salesforcemobilesdk-shared": "https://github.com/forcedotcom/SalesforceMobileSDK-Shared.git#v5.0.0",
         "ratchet2": "https://github.com/twbs/ratchet#v2.0.2"
     }
