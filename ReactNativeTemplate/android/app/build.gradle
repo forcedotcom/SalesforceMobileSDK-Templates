@@ -125,9 +125,9 @@ android {
     }
 }
 
-// Excludes duplicate inclusions of OkHttp - from SalesforceSDK and React.
-configurations {
-    all*.exclude group: 'com.squareup.okhttp3'
+// Excludes duplicate inclusions of OkHttp - from SalesforceSDK and React. Forces OkHttp 3.4.1 to be used.
+configurations.all {
+    resolutionStrategy.force 'com.squareup.okhttp3:okhttp:3.4.1'
 }
 
 dependencies {
