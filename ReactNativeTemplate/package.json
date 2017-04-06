@@ -7,8 +7,9 @@
         "test": "jest"
     },
     "dependencies": {
-        "react": "15.3.2",
-        "react-native": "0.35.0",
+        "react": "16.0.0-alpha.6",
+        "react-native": "0.43.1",
+        "whatwg-fetch": "1.1.1",
         "salesforcemobilesdk-ios": "https://github.com/forcedotcom/SalesforceMobileSDK-iOS.git#dev",
         "react-native-force": "https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#dev",
         "salesforcemobilesdk-android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#dev"
@@ -18,9 +19,9 @@
     },
     "devDependencies": {
         "babel-jest": "16.0.0",
-        "babel-preset-react-native": "1.9.0",
-        "jest": "16.0.2",
+        "babel-preset-react-native": "1.9.1",
+        "jest": "19.0.2",
         "jest-react-native": "16.0.0",
-        "react-test-renderer": "15.3.2"
+        "react-test-renderer": "16.0.0-alpha.6"
     }
 }
