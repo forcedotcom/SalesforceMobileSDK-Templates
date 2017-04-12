@@ -52,7 +52,7 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
         [SalesforceSDKManager sharedManager].connectedAppCallbackUri = OAuthRedirectURI;
         [SalesforceSDKManager sharedManager].authScopes = @[ @"web", @"api" ];
         // Uncomment the following line if you don't want login to happen when the application launches
-        // [SalesforceSDKManager sharedManager].authenticateAtLaunch = NO;
+        [SalesforceSDKManager sharedManager].authenticateAtLaunch = NO;
 
         __weak AppDelegate *weakSelf = self;
         [SalesforceSDKManager sharedManager].postLaunchAction = ^(SFSDKLaunchAction launchActionList) {
