@@ -53,7 +53,16 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
         [SalesforceSDKManager sharedManager].authScopes = @[ @"web", @"api" ];
         // Uncomment the following line if you don't want login to happen when the application launches
         [SalesforceSDKManager sharedManager].authenticateAtLaunch = NO;
-
+      
+        //Uncomment the following line inorder to enable/force the use of advanced authentication flow.
+        //[SFAuthenticationManager sharedManager].advancedAuthConfiguration = SFOAuthAdvancedAuthConfigurationRequire;
+        // OR
+        // To  retrieve advanced auth configuration from the org, to determine whether to initiate advanced authentication.
+        //[SFAuthenticationManager sharedManager].advancedAuthConfiguration = SFOAuthAdvancedAuthConfigurationAllow;
+        
+        // NOTE: If advanced authentication is configured or forced,  it will launch Safari to handle authentication
+        // instead of a webview. You must implement application:openURL:options: to handle the callback.
+ 
         __weak AppDelegate *weakSelf = self;
         [SalesforceSDKManager sharedManager].postLaunchAction = ^(SFSDKLaunchAction launchActionList) {
             //
@@ -121,6 +130,18 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
 {
     // Respond to any push notification registration errors here.
+}
+
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options{
+  
+  // Uncomment the following line, if Authentication was attempted using handle advanced OAuth flow.
+  // For Advanced Auth functionality to work, edit your apps plist files and add the URL scheme that you have
+  // chosen for your app. The scheme should be the same as used in  the oauthRedirectURI settings of your Connected App.
+  // You should also set the  delegate(SFAuthenticationManagerDelegate) for SFAuthenticationManager to be notified
+  // of success & failures. Inorder to be notfied of user's selected action on displayed alerts implement
+  // authManagerDidProceedWithBrowserFlow: & authManagerDidCancelBrowserFlow:
+  // return [[SFAuthenticationManager sharedManager] handleAdvancedAuthenticationResponse:url];
+  return NO;
 }
 
 #pragma mark - Private methods

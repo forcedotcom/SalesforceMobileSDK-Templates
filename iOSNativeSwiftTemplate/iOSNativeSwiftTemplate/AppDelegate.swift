@@ -43,6 +43,16 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         SalesforceSDKManager.shared().connectedAppId = RemoteAccessConsumerKey
         SalesforceSDKManager.shared().connectedAppCallbackUri = OAuthRedirectURI
         SalesforceSDKManager.shared().authScopes = ["web", "api"];
+        
+        //Uncomment the following line inorder to enable/force the use of advanced authentication flow.
+        // SFAuthenticationManager.shared().advancedAuthConfiguration = SFOAuthAdvancedAuthConfiguration.require;
+        // OR
+        // To  retrieve advanced auth configuration from the org, to determine whether to initiate advanced authentication.
+        // SFAuthenticationManager.shared().advancedAuthConfiguration = SFOAuthAdvancedAuthConfiguration.allow;
+        
+        // NOTE: If advanced authentication is configured or forced,  it will launch Safari to handle authentication
+        // instead of a webview. You must implement application:openURL:options  to handle the callback.
+        
         SalesforceSDKManager.shared().postLaunchAction = {
             [unowned self] (launchActionList: SFSDKLaunchAction) in
             let launchActionString = SalesforceSDKManager.launchActionsStringRepresentation(launchActionList)
@@ -116,6 +126,19 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         // Respond to any push notification registration errors here.
     }
     
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        
+        // Uncomment the following line, if Authentication was attempted using handle advanced OAuth flow.
+        // For Advanced Auth functionality to work, edit your apps plist files and add the URL scheme that you have
+        // chosen for your app. The scheme should be the same as used in  the oauthRedirectURI settings of your Connected App.
+        // You should also set the  delegate(SFAuthenticationManagerDelegate) for SFAuthenticationManager to be notified
+        // of success & failures. Inorder to be notfied of user's selected action on displayed alerts implement
+        // authManagerDidProceedWithBrowserFlow: & authManagerDidCancelBrowserFlow:
+        
+        // return  SFAuthenticationManager.shared().handleAdvancedAuthenticationResponse(url)
+        return false;
+    }
+    
     // MARK: - Private methods
     func initializeAppViewState()
     {
@@ -165,8 +188,8 @@ class AppDelegate : UIResponder, UIApplicationDelegate
             // your app does not support multiple accounts.  The logic below will work either way.
             
             var numberOfAccounts : Int;
-            let allAccounts = SFUserAccountManager.sharedInstance().allUserAccounts
-            numberOfAccounts = allAccounts.count;
+            let allAccounts = SFUserAccountManager.sharedInstance().allUserAccounts()
+            numberOfAccounts = (allAccounts!.count);
             
             if numberOfAccounts > 1 {
                 let userSwitchVc = SFDefaultUserManagementViewController(completionBlock: {
