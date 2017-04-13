@@ -73,10 +73,9 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
         // OR
         // To  retrieve advanced auth configuration from the org, to determine whether to initiate advanced authentication.
         //[SFAuthenticationManager sharedManager].advancedAuthConfiguration = SFOAuthAdvancedAuthConfigurationAllow;
-       
+        
         // NOTE: If advanced authentication is configured or forced,  it will launch Safari to handle authentication
-        // instead of a webview. You must implement application:openURL:sourceApplication:annotation:  to handle
-        // the URL configured as the OAuthRedirectURI.
+        // instead of a webview. You must implement application:openURL:options: to handle the callback.
         
         __weak AppDelegate *weakSelf = self;
         [SalesforceSDKManager sharedManager].postLaunchAction = ^(SFSDKLaunchAction launchActionList) {
@@ -146,7 +145,7 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
     // Respond to any push notification registration errors here.
 }
 
-- (BOOL)application:(UIApplication *)application  openURL:(NSURL *)url  sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options{
     
     // Uncomment the following line, if Authentication was attempted using handle advanced OAuth flow.
     // For Advanced Auth functionality to work, edit your apps plist files and add the URL scheme that you have
@@ -154,11 +153,9 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
     // You should also set the  delegate(SFAuthenticationManagerDelegate) for SFAuthenticationManager to be notified
     // of success & failures. Inorder to be notfied of user's selected action on displayed alerts implement
     // authManagerDidProceedWithBrowserFlow: & authManagerDidCancelBrowserFlow:
-    
-    //return [[SFAuthenticationManager sharedManager] handleAdvancedAuthenticationResponse:url];
+    // return [[SFAuthenticationManager sharedManager] handleAdvancedAuthenticationResponse:url];
     return NO;
 }
-
 
 #pragma mark - Private methods
 
