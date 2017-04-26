@@ -6,10 +6,16 @@ target 'ReactNativeTemplate' do
 
 source 'https://github.com/CocoaPods/Specs.git'
 
+pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
 pod 'React', :path => '../node_modules/react-native', :subspecs => [
+    'DevSupport',
+    'tvOS',
+    'jschelpers',
+    'cxxreact',
     'ART',
     'RCTActionSheet',
     'RCTAdSupport',
+    'RCTAnimation',
     'RCTCameraRoll',
     'RCTGeolocation',
     'RCTImage',

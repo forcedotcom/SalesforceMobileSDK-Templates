@@ -84,7 +84,7 @@ def enableProguardInReleaseBuilds = false
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '23.0.1'
+    buildToolsVersion '25.0.0'
 
     defaultConfig {
         applicationId "com.salesforce.reactnativetemplate"
@@ -125,9 +125,14 @@ android {
     }
 }
 
+// Excludes duplicate inclusions of OkHttp - from SalesforceSDK and React. Forces OkHttp 3.4.1 to be used.
+configurations.all {
+    resolutionStrategy.force 'com.squareup.okhttp3:okhttp:3.4.1'
+}
+
 dependencies {
     compile fileTree(dir: "libs", include: ["*.jar"])
-    compile "com.android.support:appcompat-v7:23.0.1"
+    compile "com.android.support:appcompat-v7:25.0.0"
     compile "com.facebook.react:react-native:+"  // From node_modules
     compile project(':libs:SalesforceReact') // From node_modules
 }

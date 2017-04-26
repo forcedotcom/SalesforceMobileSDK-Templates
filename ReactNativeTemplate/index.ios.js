@@ -48,7 +48,7 @@ var App = React.createClass({
 
     componentDidMount: function() {
         var that = this;
-        oauth.authenticate(
+        oauth.getAuthCredentials(
             function() {
                 that.setState({authenticated:true});
             },
