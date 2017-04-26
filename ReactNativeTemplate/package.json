@@ -10,9 +10,9 @@
         "react": "16.0.0-alpha.6",
         "react-native": "0.43.1",
         "whatwg-fetch": "1.1.1",
-        "salesforcemobilesdk-ios": "https://github.com/forcedotcom/SalesforceMobileSDK-iOS.git#dev",
-        "react-native-force": "https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#dev",
-        "salesforcemobilesdk-android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#dev"
+        "salesforcemobilesdk-ios": "https://github.com/forcedotcom/SalesforceMobileSDK-iOS.git#v5.1.0",
+        "react-native-force": "https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#v5.1.0",
+        "salesforcemobilesdk-android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#v5.1.0"
     },
     "jest": {
         "preset": "jest-react-native"
