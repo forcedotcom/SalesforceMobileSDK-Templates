@@ -201,7 +201,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
                 }
             } else {
                 if (numberOfAccounts == 1) {
-                    SFUserAccountManager.sharedInstance().currentUser = allAccounts[0]
+                    SFUserAccountManager.sharedInstance().currentUser = allAccounts![0]
                 }
                 SalesforceSDKManager.shared().launch()
             }
