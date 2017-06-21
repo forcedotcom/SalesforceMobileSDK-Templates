@@ -28,9 +28,9 @@ package com.salesforce.androidnativetemplate;
 
 import android.app.Application;
 
-import com.salesforce.androidsdk.app.SalesforceSDKManager;
-import com.salesforce.androidsdk.app.SalesforceSDKManager.KeyInterface;
 import com.salesforce.androidsdk.analytics.security.Encryptor;
+import com.salesforce.androidsdk.app.SalesforceSDKManager.KeyInterface;
+import com.salesforce.androidsdk.smartsync.app.SmartSyncSDKManager;
 
 /**
  * Application class for our application.
@@ -40,7 +40,7 @@ public class MainApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		SalesforceSDKManager.initNative(getApplicationContext(), new NativeKeyImpl(), MainActivity.class);
+		SmartSyncSDKManager.initNative(getApplicationContext(), new NativeKeyImpl(), MainActivity.class);
 
 		/*
 		 * Un-comment the line below to enable push notifications in this app.
