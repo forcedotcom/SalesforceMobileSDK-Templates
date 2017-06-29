@@ -32,150 +32,72 @@ import {
     StyleSheet,
     Text,
     View,
-    ListView,
-    PixelRatio,
-    Navigator
+    FlatList,
 } from 'react-native';
 
+import {StackNavigator} from 'react-navigation';
 import {oauth, net} from 'react-native-force';
 
-var App = React.createClass({
-    getInitialState: function() {
-        return {
-            authenticated: false
-        };
-    },
+class UserListScreen extends React.Component {
+    static navigationOptions = {
+        title: 'Mobile SDK Sample App'
+    };
 
-    componentDidMount: function() {
+    constructor(props) {
+        super(props);
+        this.state = {data: []};
+    }
+    
+    componentDidMount() {
         var that = this;
         oauth.authenticate(
             function() {
-                that.setState({authenticated:true});
+                that.fetchData();
             },
             function(error) {
                 console.log('Failed to authenticate:' + error);
             }
         );
-    },
-
-    render: function() {
-        if (!this.state.authenticated)
-            return (<View/>); // Show splash screen if you have one
-
-        return (<Navigator
-                  style={styles.container}
-                  initialRoute={{name: 'Mobile SDK Sample App', index: 0}}
-                  renderScene={(route, navigator) => (<UserList/>)}
-                  navigationBar={<Navigator.NavigationBar routeMapper={NavigationBarRouteMapper} />} />);
     }
-});
 
-
-var NavigationBarRouteMapper = {
-
-  LeftButton: function(route, navigator, index, navState) {
-      return null;
-  },
-
-  RightButton: function(route, navigator, index, navState) {
-      return null;
-  },
-
-  Title: function(route, navigator, index, navState) {
-      return (
-              <View style={styles.navBar}>
-                <Text style={styles.navBarText}>
-                  {route.name}
-                </Text>
-              </View>
-      );
-  },
-};
-
-
-var UserList = React.createClass({
-    getInitialState: function() {
-      var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-      return {
-          dataSource: ds.cloneWithRows([]),
-      };
-    },
-    
-    componentDidMount: function() {
+    fetchData() {
         var that = this;
-        var soql = 'SELECT Id, Name FROM User LIMIT 10';
-        net.query(soql,
+        net.query('SELECT Id, Name FROM User LIMIT 10',
                   function(response) {
-                      var users = response.records;
-                      var data = [];
-                      for (var i in users) {
-                          data.push(users[i]["Name"]);
-                      }
-
-                      that.setState({
-                          dataSource: that.getDataSource(data),
+                      that.setState({                          
+                          data: response.records
                       });
-
                   });
-    },
+    }
 
-    getDataSource: function(users: Array<any>): ListViewDataSource {
-        return this.state.dataSource.cloneWithRows(users);
-    },
-
-    render: function() {
+    render() {
         return (
-            <ListView style={styles.scene}
-              dataSource={this.state.dataSource}
-              renderRow={this.renderRow}
-              enableEmptySections={true}
-            />
-      );
-    },
-
-    renderRow: function(rowData: Object) {
-        return (
-                <View>
-                    <View style={styles.row}>
-                      <Text numberOfLines={1}>
-                       {rowData}
-                      </Text>
-                    </View>
-                    <View style={styles.cellBorder} />
-                </View>
+            <View style={styles.container}>
+              <FlatList
+                data={this.state.data}
+                renderItem={({item}) => <Text style={styles.item}>{item.Name}</Text>}
+                keyExtractor={(item, index) => index}
+              />
+            </View>
         );
     }
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        paddingTop: 22,
+        backgroundColor: 'white',
+    },
+    item: {
+        padding: 10,
+        fontSize: 18,
+        height: 44,
+    }
 });
 
-var styles = StyleSheet.create({
-    container: {
-        backgroundColor: 'white',
-    },
-    navBar: {
-        height: 50,
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    navBarText: {
-        fontSize: 18,
-    },
-    scene: {
-        flex: 1,
-        paddingTop: 50,
-    },
-    row: {
-        flex: 1,
-        alignItems: 'center',
-        backgroundColor: 'white',
-        flexDirection: 'row',
-        padding: 12,
-    },
-    cellBorder: {
-        backgroundColor: 'rgba(0, 0, 0, 0.1)',
-        // Trick to get the thinest line the device can display
-        height: 1 / PixelRatio.get(),
-        marginLeft: 4,
-    },
+const App = StackNavigator({
+    UserList: { screen: UserListScreen }
 });
 
 AppRegistry.registerComponent('ReactNativeTemplate', () => App);
