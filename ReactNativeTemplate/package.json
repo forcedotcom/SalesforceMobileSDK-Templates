@@ -6,13 +6,15 @@
         "start": "node node_modules/react-native/local-cli/cli.js start",
         "test": "jest"
     },
+    "sdkDependencies": {
+        "salesforcemobilesdk-android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#dev",
+        "salesforcemobilesdk-ios": "https://github.com/forcedotcom/SalesforceMobileSDK-iOS.git#dev"
+    },
     "dependencies": {
         "react": "16.0.0-alpha.12",
         "react-native": "0.45.1",
         "react-native-force": "https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#dev",
         "react-navigation": "^1.0.0-beta.11",
-        "salesforcemobilesdk-android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#dev",
-        "salesforcemobilesdk-ios": "https://github.com/forcedotcom/SalesforceMobileSDK-iOS.git#dev",
         "whatwg-fetch": "^1.0.0"
     },
     "jest": {

@@ -2,7 +2,7 @@
     "name": "iOSNativeSwiftTemplate",
     "version": "0.0.1",
     "private": true,
-    "dependencies": {
+    "sdkDependencies": {
         "salesforcemobilesdk-ios": "https://github.com/forcedotcom/SalesforceMobileSDK-iOS.git#dev"
     }
 }
