@@ -1,6 +1,6 @@
 rootProject.name = 'AndroidNativeTemplate'
 
-def libsRootDir = new File( settingsDir, 'node_modules/SalesforceMobileSDK-Android/libs' )
+def libsRootDir = new File( settingsDir, 'mobile_sdk/SalesforceMobileSDK-Android/libs' )
 include ':app'
 
 include ':libs:SalesforceAnalytics'
