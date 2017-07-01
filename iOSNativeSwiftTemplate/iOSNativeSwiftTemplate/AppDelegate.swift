@@ -38,8 +38,6 @@ class AppDelegate : UIResponder, UIApplicationDelegate
     init()
     {
         super.init()
-        SFLogger.shared().logLevel = .debug
-        
         SalesforceSDKManager.shared().connectedAppId = RemoteAccessConsumerKey
         SalesforceSDKManager.shared().connectedAppCallbackUri = OAuthRedirectURI
         SalesforceSDKManager.shared().authScopes = ["web", "api"];
@@ -56,12 +54,12 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         SalesforceSDKManager.shared().postLaunchAction = {
             [unowned self] (launchActionList: SFSDKLaunchAction) in
             let launchActionString = SalesforceSDKManager.launchActionsStringRepresentation(launchActionList)
-            self.log(.info, msg:"Post-launch: launch actions taken: \(launchActionString)");
+            SFSDKLogger.sharedDefaultInstance().log(type(of:self), level:.info, message:"Post-launch: launch actions taken: \(launchActionString)");
             self.setupRootViewController();
         }
         SalesforceSDKManager.shared().launchErrorAction = {
             [unowned self] (error: Error, launchActionList: SFSDKLaunchAction) in
-            self.log(.error, msg:"Error during SDK launch: \(error.localizedDescription)")
+            SFSDKLogger.sharedDefaultInstance().log(type(of:self), level:.error, message:"Error during SDK launch: \(error.localizedDescription)")
             self.initializeAppViewState()
             SalesforceSDKManager.shared().launch()
         }
@@ -174,7 +172,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
     
     func handleSdkManagerLogout()
     {
-        self.log(.debug, msg: "SFAuthenticationManager logged out.  Resetting app.")
+        SFSDKLogger.sharedDefaultInstance().log(type(of:self), level:.debug, message: "SFAuthenticationManager logged out.  Resetting app.")
         self.resetViewState { () -> () in
             self.initializeAppViewState()
             
@@ -212,7 +210,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
     {
         let fromUserName = (fromUser != nil) ? fromUser?.userName : "<none>"
         let toUserName = (toUser != nil) ? toUser?.userName : "<none>"
-        self.log(.debug, msg:"SFUserAccountManager changed from user \(fromUserName) to \(toUserName).  Resetting app.")
+        SFSDKLogger.sharedDefaultInstance().log(type(of:self), level:.debug, message:"SFUserAccountManager changed from user \(fromUserName) to \(toUserName).  Resetting app.")
         self.resetViewState { () -> () in
             self.initializeAppViewState()
             SalesforceSDKManager.shared().launch()
