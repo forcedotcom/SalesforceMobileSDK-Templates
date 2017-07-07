@@ -13,8 +13,8 @@
     "dependencies": {
         "react": "16.0.0-alpha.6",
         "react-native": "0.43.1",
-        "whatwg-fetch": "1.1.1",
-        "react-native-force": "https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#dev"
+        "react-native-force": "https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#dev",
+        "react-navigation": "^1.0.0-beta.11"
     },
     "jest": {
         "preset": "jest-react-native"
