@@ -47,24 +47,21 @@ class UserListScreen extends React.Component {
     
     componentDidMount() {
         var that = this;
-        oauth.authenticate(
-            function() {
-                that.fetchData();
-            },
-            function(error) {
-                console.log('Failed to authenticate:' + error);
-            }
-        );
+        oauth.getAuthCredentials(
+            () => that.fetchData(), // already logged in
+            () => {
+                oauth.authenticate(
+                    () => that.fetchData(),
+                    (error) => console.log('Failed to authenticate:' + error)
+                );
+            });
     }
 
     fetchData() {
         var that = this;
         net.query('SELECT Id, Name FROM User LIMIT 10',
-                  function(response) {
-                      that.setState({                          
-                          data: response.records
-                      });
-                  });
+                  (response) => that.setState({data: response.records})
+                 );
     }
 
     render() {
