@@ -27,6 +27,9 @@ pod 'React', :path => '../node_modules/react-native', :subspecs => [
     'RCTLinkingIOS'
 ]
 
+# NB: get rid of next line once FMDB works with xcode 9
+pod 'FMDB', :git => 'https://github.com/forcedotcom/fmdb', :branch => '2.7.2_xcode9' 
+
 pod 'SalesforceAnalytics', :path => '../mobile_sdk/SalesforceMobileSDK-iOS'
 pod 'SalesforceSDKCore', :path => '../mobile_sdk/SalesforceMobileSDK-iOS'
 pod 'SmartStore', :path => '../mobile_sdk/SalesforceMobileSDK-iOS'
