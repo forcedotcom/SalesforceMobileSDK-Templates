@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-present, salesforce.com, inc.
+ * Copyright (c) 2017-present, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -45,8 +45,8 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var templateAndroidManifestFile = path.join('app', 'AndroidManifest.xml');
     var templateStringsXmlFile = path.join('app', 'res', 'values', 'strings.xml');
     var templateBootconfigFile = path.join('app', 'res', 'values', 'bootconfig.xml');
-    var templateMainActivityFile = path.join('app', 'src', 'com', 'salesforce', 'androidnativekotlintemplate', 'MainActivity.java');
-    var templateMainApplicationFile = path.join('app', 'src', 'com', 'salesforce', 'androidnativekotlintemplate', 'MainApplication.java');
+    var templateMainActivityFile = path.join('app', 'src', 'com', 'salesforce', 'androidnativekotlintemplate', 'MainActivity.kt');
+    var templateMainApplicationFile = path.join('app', 'src', 'com', 'salesforce', 'androidnativekotlintemplate', 'MainApplication.kt');
 
     //
     // Replace in files
@@ -61,13 +61,13 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     //
     // Rename/move files
     //
-    var tmpPathActivityFile = path.join('app', 'src', 'MainActivity.java');
-    var tmpPathApplicationFile = path.join('app', 'src', 'MainApplication.java');
+    var tmpPathActivityFile = path.join('app', 'src', 'MainActivity.kt');
+    var tmpPathApplicationFile = path.join('app', 'src', 'MainApplication.kt');
     moveFile(templateMainActivityFile, tmpPathActivityFile);
     moveFile(templateMainApplicationFile, tmpPathApplicationFile);
     removeFile(path.join('app', 'src', 'com'));
-    moveFile(tmpPathActivityFile, path.join.apply(null, ['app', 'src'].concat(config.packagename.split('.')).concat(['MainActivity.java'])));
-    moveFile(tmpPathApplicationFile, path.join.apply(null, ['app', 'src'].concat(config.packagename.split('.')).concat(['MainApplication.java'])));
+    moveFile(tmpPathActivityFile, path.join.apply(null, ['app', 'src'].concat(config.packagename.split('.')).concat(['MainActivity.kt'])));
+    moveFile(tmpPathApplicationFile, path.join.apply(null, ['app', 'src'].concat(config.packagename.split('.')).concat(['MainApplication.kt'])));
 
     //
     // Run install.js
