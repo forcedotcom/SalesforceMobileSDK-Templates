@@ -35,6 +35,3 @@ android {
     exclude 'META-INF/NOTICE'
   }
 }
-repositories {
-    mavenCentral()
-}
