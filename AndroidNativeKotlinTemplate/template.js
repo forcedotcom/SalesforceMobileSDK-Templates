@@ -86,7 +86,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
 // Exports
 //
 module.exports = {
-    appType: 'native',
+    appType: 'native_kotlin',
     prepare: prepare
 };
 
