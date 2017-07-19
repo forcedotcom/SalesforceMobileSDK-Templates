@@ -1,5 +1,5 @@
 {
-    "name": "AndroidNativeTemplate",
+    "name": "AndroidNativeKotlinTemplate",
     "version": "0.0.1",
     "private": true,
     "sdkDependencies": {

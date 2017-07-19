@@ -1,4 +1,4 @@
-rootProject.name = 'AndroidNativeTemplate'
+rootProject.name = 'AndroidNativeKotlinTemplate'
 
 def libsRootDir = new File( settingsDir, 'mobile_sdk/SalesforceMobileSDK-Android/libs' )
 include ':app'
