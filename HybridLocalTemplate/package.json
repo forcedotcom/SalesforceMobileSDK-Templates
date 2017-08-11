@@ -6,6 +6,6 @@
         "salesforcemobilesdk-shared": "https://github.com/forcedotcom/SalesforceMobileSDK-Shared.git#dev"
     },
     "dependencies": {
-        "ratchet": "2.0.2"
+        "ratchet-npm": "2.0.4"
     }
 }

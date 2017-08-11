@@ -45,9 +45,9 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     //
     // Move/remove some files
     //
-    moveFile(path.join('mobile_sdk', 'SalesforceMobileSDK-Shared', 'libs', 'force.js'), 'force.js');
-    moveFile(path.join('node_modules', 'ratchet', 'dist', 'css', 'ratchet.min.css'), 'ratchet.css');
-    moveFile(path.join('node_modules', 'ratchet', 'dist', 'css', 'ratchet-theme-' + config.platform + '.min.css'), 'ratchet-theme.css');
+    moveFile(path.join('mobile_sdk', 'salesforcemobilesdk-shared', 'libs', 'force.js'), 'force.js');
+    moveFile(path.join('node_modules', 'ratchet-npm', 'dist', 'css', 'ratchet.min.css'), 'ratchet.css');
+    moveFile(path.join('node_modules', 'ratchet-npm', 'dist', 'css', 'ratchet-theme-' + config.platform + '.min.css'), 'ratchet-theme.css');
 //    removeFile('node_modules');
 //    removeFile('package.json');
 
