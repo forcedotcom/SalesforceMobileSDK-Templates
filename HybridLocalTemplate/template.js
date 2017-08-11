@@ -48,8 +48,11 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     moveFile(path.join('mobile_sdk', 'salesforcemobilesdk-shared', 'libs', 'force.js'), 'force.js');
     moveFile(path.join('node_modules', 'ratchet-npm', 'dist', 'css', 'ratchet.min.css'), 'ratchet.css');
     moveFile(path.join('node_modules', 'ratchet-npm', 'dist', 'css', 'ratchet-theme-' + config.platform + '.min.css'), 'ratchet-theme.css');
-//    removeFile('node_modules');
-//    removeFile('package.json');
+    removeFile('node_modules');
+    removeFile('mobile_sdk');
+    removeFile('package.json');
+    removeFile('template.js');
+    removeFile('install.js');
 
     // Return paths of workspace and file with oauth config
     return {
