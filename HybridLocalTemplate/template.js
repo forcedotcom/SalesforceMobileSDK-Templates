@@ -34,8 +34,7 @@
 function prepare(config, replaceInFiles, moveFile, removeFile) {
 
     // Dependencies
-    var path = require('path'),
-        execSync = require('child_process').execSync;
+    var path = require('path');
 
     //
     // Install dependencies

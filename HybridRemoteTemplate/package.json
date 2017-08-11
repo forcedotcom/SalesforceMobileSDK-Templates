@@ -2,7 +2,7 @@
     "name": "HybridRemoteTemplate",
     "version": "0.0.1",
     "private": true,
-    "dependencies": {
+    "sdkDependencies": {
         "salesforcemobilesdk-shared": "https://github.com/forcedotcom/SalesforceMobileSDK-Shared.git#dev"
     }
 }
