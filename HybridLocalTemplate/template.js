@@ -40,6 +40,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     //
     // Install dependencies
     //
+    console.log("Running npm install in " + __dirname);
     execSync('npm install', {stdio:[0,1,2], cwd:__dirname});
     
     //
@@ -48,8 +49,8 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     moveFile(path.join('node_modules', 'SalesforceMobileSDK-Shared', 'libs', 'force.js'), 'force.js');
     moveFile(path.join('node_modules', 'ratchet', 'dist', 'css', 'ratchet.min.css'), 'ratchet.css');
     moveFile(path.join('node_modules', 'ratchet', 'dist', 'css', 'ratchet-theme-' + config.platform + '.min.css'), 'ratchet-theme.css');
-    removeFile('node_modules');
-    removeFile('package.json');
+//    removeFile('node_modules');
+//    removeFile('package.json');
 
     // Return paths of workspace and file with oauth config
     return {
