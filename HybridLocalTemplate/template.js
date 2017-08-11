@@ -40,13 +40,12 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     //
     // Install dependencies
     //
-    console.log("Running npm install in " + __dirname);
-    execSync('npm install', {stdio:[0,1,2], cwd:__dirname});
-    
+    require('./install');
+
     //
     // Move/remove some files
     //
-    moveFile(path.join('node_modules', 'SalesforceMobileSDK-Shared', 'libs', 'force.js'), 'force.js');
+    moveFile(path.join('mobile_sdk', 'SalesforceMobileSDK-Shared', 'libs', 'force.js'), 'force.js');
     moveFile(path.join('node_modules', 'ratchet', 'dist', 'css', 'ratchet.min.css'), 'ratchet.css');
     moveFile(path.join('node_modules', 'ratchet', 'dist', 'css', 'ratchet-theme-' + config.platform + '.min.css'), 'ratchet-theme.css');
 //    removeFile('node_modules');
