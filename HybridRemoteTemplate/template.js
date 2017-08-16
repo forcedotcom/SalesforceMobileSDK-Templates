@@ -27,9 +27,10 @@
 /**
  * Prepare template
  *
- * @return result map with
+ * @return list of maps with
  *   workspace
  *   bootconfigFile
+ *   platform
  */
 function prepare(config, replaceInFiles, moveFile, removeFile) {
 
@@ -63,10 +64,13 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     removeFile('install.js');
 
     // Return paths of workspace and file with oauth config
-    return {
-        workspacePath: path.join('platforms', config.platform),
-        bootconfigFile: path.join('www', 'bootconfig.json')
-    };
+    return config.platform.split(',').map(platform => {
+        return {
+            workspacePath: path.join('platforms', platform),
+            bootconfigFile: path.join('www', 'bootconfig.json'),
+            platform: platform
+        };
+    });
 }
 
 //
