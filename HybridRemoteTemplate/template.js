@@ -64,7 +64,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     removeFile('install.js');
 
     // Return paths of workspace and file with oauth config
-    return config,platform.split(',').map(platform => {
+    return config.platform.split(',').map(platform => {
         return {
             workspacePath: path.join('platforms', platform),
             bootconfigFile: path.join('www', 'bootconfig.json'),
