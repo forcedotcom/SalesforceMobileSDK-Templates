@@ -27,13 +27,15 @@
 /**
  * Customize template (inject app name, package name, organization etc)
  *
- * @return result map with
+ * @return list of maps with
  *   workspace
  *   bootconfigFile
+ *   platform
  */
 function prepare(config, replaceInFiles, moveFile, removeFile) {
 
     var platforms = config.platform.split(',');
+    var result = [];
 
     if (platforms.indexOf('ios') >= 0) {
         
@@ -83,10 +85,11 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         require('./installios');
 
         // Return paths of workspace and file with oauth config
-        return {
+        result.push({
             workspacePath: path.join('ios', config.appname + '.xcworkspace'),
-            bootconfigFile: path.join('ios', config.appname, 'AppDelegate.m')
-        };
+            bootconfigFile: path.join('ios', config.appname, 'AppDelegate.m'),
+            platform: 'ios'
+        });
     }
     // Removing ios related files if ios is not targeted
     else {
@@ -144,10 +147,11 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         require('./installandroid');
 
         // Return paths of workspace and file with oauth config
-        return {
+        result.push({
             workspacePath: 'android',
-            bootconfigFile: templateBootconfigFile
-        };
+            bootconfigFile: templateBootconfigFile,
+            platform: 'android'            
+        });
 
     }
     // Removing android related files if ios is not targeted
@@ -157,6 +161,9 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         removeFile('installandroid.js');
     }
 
+
+    // Done
+    return result;
 }
 
 //
