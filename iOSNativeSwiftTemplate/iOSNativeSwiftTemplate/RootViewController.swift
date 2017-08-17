@@ -45,7 +45,7 @@ class RootViewController : UITableViewController, SFRestDelegate
     func request(_ request: SFRestRequest, didLoadResponse jsonResponse: Any)
     {
         self.dataRows = (jsonResponse as! NSDictionary)["records"] as! [NSDictionary]
-        SFSDKLogger.sharedDefaultInstance().log(type(of:self), level:.debug, message:"request:didLoadResponse: #records: \(self.dataRows.count)")
+        SFSDKLogger.log(type(of:self), level:.debug, message:"request:didLoadResponse: #records: \(self.dataRows.count)")
         DispatchQueue.main.async(execute: {
             self.tableView.reloadData()
         })
@@ -53,19 +53,19 @@ class RootViewController : UITableViewController, SFRestDelegate
     
     func request(_ request: SFRestRequest, didFailLoadWithError error: Error)
     {
-        SFSDKLogger.sharedDefaultInstance().log(type(of:self), level:.debug, message:"didFailLoadWithError: \(error)")
+        SFSDKLogger.log(type(of:self), level:.debug, message:"didFailLoadWithError: \(error)")
         // Add your failed error handling here
     }
     
     func requestDidCancelLoad(_ request: SFRestRequest)
     {
-        SFSDKLogger.sharedDefaultInstance().log(type(of:self), level:.debug, message:"requestDidCancelLoad: \(request)")
+        SFSDKLogger.log(type(of:self), level:.debug, message:"requestDidCancelLoad: \(request)")
         // Add your failed error handling here
     }
     
     func requestDidTimeout(_ request: SFRestRequest)
     {
-        SFSDKLogger.sharedDefaultInstance().log(type(of:self), level:.debug, message:"requestDidTimeout: \(request)")
+        SFSDKLogger.log(type(of:self), level:.debug, message:"requestDidTimeout: \(request)")
         // Add your failed error handling here
     }
     
