@@ -7,13 +7,13 @@
         "test": "jest"
     },
     "sdkDependencies": {
-        "salesforcemobilesdk-android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#dev",
-        "salesforcemobilesdk-ios": "https://github.com/forcedotcom/SalesforceMobileSDK-iOS.git#dev"
+        "salesforcemobilesdk-android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#dev53",
+        "salesforcemobilesdk-ios": "https://github.com/forcedotcom/SalesforceMobileSDK-iOS.git#dev53"
     },
     "dependencies": {
         "react": "16.0.0-alpha.6",
         "react-native": "0.43.1",
-        "react-native-force": "https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#dev",
+        "react-native-force": "https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#dev53",
         "react-navigation": "^1.0.0-beta.11"
     },
     "jest": {
