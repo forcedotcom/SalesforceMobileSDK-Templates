@@ -21,4 +21,3 @@ node_modules/
 mobile_sdk/
 proguard-project.txt
 xcuserdata
-package-lock.json
