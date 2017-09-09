@@ -28,6 +28,7 @@ package com.salesforce.androidnativekotlintemplate
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
@@ -58,11 +59,11 @@ class MainActivity : SalesforceActivity() {
 
     override fun onResume() {
         // Hide everything until we are logged in
-        findViewById(R.id.root).visibility = View.INVISIBLE
+        findViewById<ViewGroup>(R.id.root).visibility = View.INVISIBLE
 
         // Create list adapter
         listAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, ArrayList<String>())
-        (findViewById(R.id.contacts_list) as ListView).adapter = listAdapter
+        findViewById<ListView>(R.id.contacts_list).adapter = listAdapter
 
         super.onResume()
     }
@@ -72,7 +73,7 @@ class MainActivity : SalesforceActivity() {
         this.client = client
 
         // Show everything
-        findViewById(R.id.root).visibility = View.VISIBLE
+        findViewById<ViewGroup>(R.id.root).visibility = View.VISIBLE
     }
 
     /**
@@ -80,6 +81,7 @@ class MainActivity : SalesforceActivity() {
 
      * @param v
      */
+    @Suppress("UNUSED_PARAMETER")
     fun onLogoutClick(v: View) {
         SalesforceSDKManager.getInstance().logout(this)
     }
@@ -89,6 +91,7 @@ class MainActivity : SalesforceActivity() {
 
      * @param v
      */
+    @Suppress("UNUSED_PARAMETER")
     fun onClearClick(v: View) {
         listAdapter!!.clear()
     }
@@ -101,6 +104,7 @@ class MainActivity : SalesforceActivity() {
      * @throws UnsupportedEncodingException
      */
     @Throws(UnsupportedEncodingException::class)
+    @Suppress("UNUSED_PARAMETER")
     fun onFetchContactsClick(v: View) {
         sendRequest("SELECT Name FROM Contact")
     }
@@ -113,6 +117,7 @@ class MainActivity : SalesforceActivity() {
      * @throws UnsupportedEncodingException
      */
     @Throws(UnsupportedEncodingException::class)
+    @Suppress("UNUSED_PARAMETER")
     fun onFetchAccountsClick(v: View) {
         sendRequest("SELECT Name FROM Account")
     }
