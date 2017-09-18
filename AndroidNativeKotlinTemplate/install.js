@@ -15,6 +15,3 @@ for (var sdkDependency in packageJson.sdkDependencies) {
     else
         execSync('git clone --branch ' + branch + ' --single-branch --depth 1 ' + repoUrl + ' ' + targetDir, {stdio:[0,1,2]});
 }
-
-console.log('Installing pod dependencies');
-execSync('pod update', {stdio:[0,1,2]});

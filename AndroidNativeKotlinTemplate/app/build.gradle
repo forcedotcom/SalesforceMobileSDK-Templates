@@ -1,7 +1,9 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 dependencies {
-  compile project(':libs:SmartSync') // From node_modules
+  compile project(':libs:SmartSync')
+  compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
 android {

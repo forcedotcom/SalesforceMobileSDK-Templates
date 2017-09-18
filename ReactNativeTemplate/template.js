@@ -27,13 +27,17 @@
 /**
  * Customize template (inject app name, package name, organization etc)
  *
- * @return result map with
+ * @return list of maps with
  *   workspace
  *   bootconfigFile
+ *   platform
  */
 function prepare(config, replaceInFiles, moveFile, removeFile) {
 
-    if (config.platform === 'ios') {
+    var platforms = config.platform.split(',');
+    var result = [];
+
+    if (platforms.indexOf('ios') >= 0) {
         
         var path = require('path');
 
@@ -74,9 +78,6 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         moveFile(templateEntitlementsFile, path.join('ios', templateAppName, config.appname + '.entitlements'));
         moveFile(templateProjectDir, path.join('ios', config.appname + '.xcodeproj'));
         moveFile(path.join('ios', templateAppName), path.join('ios', config.appname));
-        removeFile('android');
-        removeFile('index.android.js');
-        removeFile('installandroid.js');
         
         //
         // Run install.js
@@ -84,14 +85,21 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         require('./installios');
 
         // Return paths of workspace and file with oauth config
-        return {
+        result.push({
             workspacePath: path.join('ios', config.appname + '.xcworkspace'),
-            bootconfigFile: path.join('ios', config.appname, 'AppDelegate.m')
-        };
+            bootconfigFile: path.join('ios', config.appname, 'AppDelegate.m'),
+            platform: 'ios'
+        });
+    }
+    // Removing ios related files if ios is not targeted
+    else {
+        removeFile('ios');
+        removeFile('index.ios.js');
+        removeFile('installios.js');        
     }
 
 
-    if (config.platform === 'android') {
+    if (platforms.indexOf('android') >= 0) {
         
         var path = require('path');
 
@@ -132,9 +140,6 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         var srcDirArr = ['android', 'app', 'src', 'main', 'java'].concat(config.packagename.split('.'));
         moveFile(tmpPathActivityFile, path.join.apply(null, srcDirArr.concat(['MainActivity.java'])));
         moveFile(tmpPathApplicationFile, path.join.apply(null, srcDirArr.concat(['MainApplication.java'])));
-        removeFile('ios');
-        removeFile('index.ios.js');
-        removeFile('installios.js');        
 
         //
         // Run install.js
@@ -142,12 +147,23 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         require('./installandroid');
 
         // Return paths of workspace and file with oauth config
-        return {
+        result.push({
             workspacePath: 'android',
-            bootconfigFile: templateBootconfigFile
-        };
+            bootconfigFile: templateBootconfigFile,
+            platform: 'android'            
+        });
 
     }
+    // Removing android related files if ios is not targeted
+    else {
+        removeFile('android');
+        removeFile('index.android.js');
+        removeFile('installandroid.js');
+    }
+
+
+    // Done
+    return result;
 }
 
 //

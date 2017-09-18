@@ -27,35 +27,46 @@
 /**
  * Prepare template
  *
- * @return result map with
+ * @return list of maps with
  *   workspace
  *   bootconfigFile
+ *   platform
  */
 function prepare(config, replaceInFiles, moveFile, removeFile) {
 
     // Dependencies
-    var path = require('path'),
-        execSync = require('child_process').execSync;
+    var path = require('path');
 
     //
     // Install dependencies
     //
-    execSync('npm install', {stdio:[0,1,2], cwd:__dirname});
-    
+    require('./install');
+
+    //
+    // Picking theme: if you are generating for ios and android, you end up with the ios look
+    //
+    var theme = (config.platform.indexOf('ios') >= 0 ? 'ios' : 'android'); 
+
     //
     // Move/remove some files
     //
-    moveFile(path.join('node_modules', 'SalesforceMobileSDK-Shared', 'libs', 'force.js'), 'force.js');
-    moveFile(path.join('node_modules', 'ratchet', 'dist', 'css', 'ratchet.min.css'), 'ratchet.css');
-    moveFile(path.join('node_modules', 'ratchet', 'dist', 'css', 'ratchet-theme-' + config.platform + '.min.css'), 'ratchet-theme.css');
+    moveFile(path.join('mobile_sdk', 'salesforcemobilesdk-shared', 'libs', 'force.js'), 'force.js');
+    moveFile(path.join('node_modules', 'ratchet-npm', 'dist', 'css', 'ratchet.min.css'), 'ratchet.css');
+    moveFile(path.join('node_modules', 'ratchet-npm', 'dist', 'css', 'ratchet-theme-' + theme + '.min.css'), 'ratchet-theme.css');
     removeFile('node_modules');
+    removeFile('mobile_sdk');
     removeFile('package.json');
+    removeFile('template.js');
+    removeFile('install.js');
 
     // Return paths of workspace and file with oauth config
-    return {
-        workspacePath: path.join('platforms', config.platform),
-        bootconfigFile: path.join('www', 'bootconfig.json')
-    };
+    return config.platform.split(',').map(platform => {
+        return {
+            workspacePath: path.join('platforms', platform),
+            bootconfigFile: path.join('www', 'bootconfig.json'),
+            platform: platform
+        };
+    });
 }
 
 //

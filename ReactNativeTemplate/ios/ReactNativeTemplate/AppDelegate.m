@@ -134,13 +134,12 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options{
   
-  // Uncomment the following line, if Authentication was attempted using handle advanced OAuth flow.
-  // For Advanced Auth functionality to work, edit your apps plist files and add the URL scheme that you have
-  // chosen for your app. The scheme should be the same as used in  the oauthRedirectURI settings of your Connected App.
-  // You should also set the  delegate(SFAuthenticationManagerDelegate) for SFAuthenticationManager to be notified
-  // of success & failures. Inorder to be notfied of user's selected action on displayed alerts implement
-  // authManagerDidProceedWithBrowserFlow: & authManagerDidCancelBrowserFlow:
-  // return [[SFAuthenticationManager sharedManager] handleAdvancedAuthenticationResponse:url];
+    // If you're using advanced authentication:
+    // --Configure your app to handle incoming requests to your
+    //   OAuth Redirect URI custom URL scheme.
+    // --Uncomment the following line and delete the original return statement:
+    
+    // return [[SFAuthenticationManager sharedManager] handleAdvancedAuthenticationResponse:url];
   return NO;
 }
 
@@ -167,12 +166,10 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
      * OPTION 1
      * Load from development server. Start the server from the repository root:
      *
-     * $ ./rundevserver.sh
+     * $ npm start
      *
      * To run on device, change `localhost` to the IP address of your computer
-     * (you can get this by typing `ifconfig` into the terminal and selecting the
-     * `inet` value under `en0:`) and make sure your computer and iOS device are
-     * on the same Wi-Fi network.
+     * and make sure your computer and iOS device are on the same Wi-Fi network.
      */
     [self setupReactRootView:[NSURL URLWithString:@"http://localhost:8081/index.ios.bundle?platform=ios"]];
     
@@ -181,7 +178,7 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
      * Load from pre-bundled file on disk. To re-generate the static bundle,
      * start the server from the repository root:
      *
-     * $ ./rundevserver.sh
+     * $ npm start
      *
      * Run the curl command and add the output to your main Xcode build target:
      *

@@ -13,7 +13,7 @@ for (var sdkDependency in packageJson.sdkDependencies) {
     if (fs.existsSync(targetDir))
         console.log(targetDir + ' already exists - if you want to refresh it, please remove it and re-run install.js');
     else
-        execSync('git clone --branch ' + branch + ' --single-branch --depth 1 --recurse-submodules=external/fmdb ' + repoUrl + ' ' + targetDir, {stdio:[0,1,2]}); // we should move the submodule pathspec to package.json
+        execSync('git clone --branch ' + branch + ' --single-branch --depth 1 ' + repoUrl + ' ' + targetDir, {stdio:[0,1,2]});
 }
 
 console.log('Installing pod dependencies');
