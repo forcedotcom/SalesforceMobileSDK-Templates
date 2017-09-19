@@ -3,6 +3,6 @@
     "version": "0.0.1",
     "private": true,
     "sdkDependencies": {
-        "salesforcemobilesdk-android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#v5.3.0"
+        "salesforcemobilesdk-android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#dev"
     }
 }
