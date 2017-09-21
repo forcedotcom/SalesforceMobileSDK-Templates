@@ -42,7 +42,7 @@ class RootViewController : UITableViewController, SFRestDelegate
     }
     
     // MARK: - SFRestDelegate
-    func request(_ request: SFRestRequest, didLoadResponse jsonResponse: Any)
+    func request(_ request: SFRestRequest, didLoadResponse jsonResponse: Any, rawResponse: URLResponse)
     {
         self.dataRows = (jsonResponse as! NSDictionary)["records"] as! [NSDictionary]
         SFSDKLogger.log(type(of:self), level:.debug, message:"request:didLoadResponse: #records: \(self.dataRows.count)")
@@ -51,7 +51,7 @@ class RootViewController : UITableViewController, SFRestDelegate
         })
     }
     
-    func request(_ request: SFRestRequest, didFailLoadWithError error: Error)
+    func request(_ request: SFRestRequest, didFailLoadWithError error: Error, rawResponse: URLResponse)
     {
         SFSDKLogger.log(type(of:self), level:.debug, message:"didFailLoadWithError: \(error)")
         // Add your failed error handling here

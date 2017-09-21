@@ -61,7 +61,7 @@
 
 #pragma mark - SFRestDelegate
 
-- (void)request:(SFRestRequest *)request didLoadResponse:(id)jsonResponse {
+- (void)request:(SFRestRequest *)request didLoadResponse:(id)jsonResponse rawResponse:(NSURLResponse *)rawResponse {
     NSArray *records = jsonResponse[@"records"];
     NSLog(@"request:didLoadResponse: #records: %lu", (unsigned long)records.count);
     self.dataRows = records;
@@ -71,7 +71,7 @@
 }
 
 
-- (void)request:(SFRestRequest*)request didFailLoadWithError:(NSError*)error {
+- (void)request:(SFRestRequest*)request didFailLoadWithError:(NSError*)error rawResponse:(NSURLResponse *)rawResponse {
     NSLog(@"request:didFailLoadWithError: %@", error);
     // Add your failed error handling here
 }
