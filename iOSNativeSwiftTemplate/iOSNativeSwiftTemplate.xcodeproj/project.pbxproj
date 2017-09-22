@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 47;
+	objectVersion = 48;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -143,7 +143,7 @@
 				TargetAttributes = {
 					4FD6C4731B754AF1002F9F90 = {
 						CreatedOnToolsVersion = 6.4;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0900;
 						SystemCapabilities = {
 							com.apple.Keychain = {
 								enabled = 1;
@@ -153,7 +153,7 @@
 				};
 			};
 			buildConfigurationList = 4FD6C46F1B754AF1002F9F90 /* Build configuration list for PBXProject "iOSNativeSwiftTemplate" */;
-			compatibilityVersion = "Xcode 6.3";
+			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -304,6 +304,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -344,6 +345,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -362,7 +364,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.iosnativeswifttemplate.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "iOSNativeSwiftTemplate/Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -379,7 +382,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.iosnativeswifttemplate.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "iOSNativeSwiftTemplate/Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
