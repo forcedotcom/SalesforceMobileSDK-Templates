@@ -41,16 +41,16 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         SalesforceSDKManager.shared().connectedAppId = RemoteAccessConsumerKey
         SalesforceSDKManager.shared().connectedAppCallbackUri = OAuthRedirectURI
         SalesforceSDKManager.shared().authScopes = ["web", "api"];
-        
+
         //Uncomment the following line inorder to enable/force the use of advanced authentication flow.
-        // SFAuthenticationManager.shared().advancedAuthConfiguration = SFOAuthAdvancedAuthConfiguration.require;
+        // SFUserAccountManager.sharedInstance().advancedAuthConfiguration = SFOAuthAdvancedAuthConfiguration.require;
         // OR
         // To  retrieve advanced auth configuration from the org, to determine whether to initiate advanced authentication.
-        // SFAuthenticationManager.shared().advancedAuthConfiguration = SFOAuthAdvancedAuthConfiguration.allow;
-        
+        // SFUserAccountManager.sharedInstance().advancedAuthConfiguration = SFOAuthAdvancedAuthConfiguration.allow;
+
         // NOTE: If advanced authentication is configured or forced,  it will launch Safari to handle authentication
         // instead of a webview. You must implement application:openURL:options  to handle the callback.
-        
+
         SalesforceSDKManager.shared().postLaunchAction = {
             [unowned self] (launchActionList: SFSDKLaunchAction) in
             let launchActionString = SalesforceSDKManager.launchActionsStringRepresentation(launchActionList)
@@ -117,24 +117,24 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         //    SFPushNotificationManager.sharedInstance().registerForSalesforceNotifications()
         // }
     }
-    
-    
+
+
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error )
     {
         // Respond to any push notification registration errors here.
     }
-    
+
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-        
+
         // If you're using advanced authentication:
         // --Configure your app to handle incoming requests to your
         //   OAuth Redirect URI custom URL scheme.
         // --Uncomment the following line and delete the original return statement:
-        
-        // return  SFAuthenticationManager.shared().handleAdvancedAuthenticationResponse(url)
+
+        // return  SFUserAccountManager.sharedInstance().handleAdvancedAuthenticationResponse(url, options: options)
         return false;
     }
-    
+
     // MARK: - Private methods
     func initializeAppViewState()
     {
@@ -164,16 +164,16 @@ class AppDelegate : UIResponder, UIApplicationDelegate
                 return
             }
         }
-        
+
         postResetBlock()
     }
-    
+
     func handleSdkManagerLogout()
     {
-        SFSDKLogger.log(type(of:self), level:.debug, message: "SFAuthenticationManager logged out.  Resetting app.")
+        SFSDKLogger.log(type(of:self), level:.debug, message: "SFUserAccountManager logged out.  Resetting app.")
         self.resetViewState { () -> () in
             self.initializeAppViewState()
-            
+
             // Multi-user pattern:
             // - If there are two or more existing accounts after logout, let the user choose the account
             //   to switch to.
