@@ -38,9 +38,9 @@ class AppDelegate : UIResponder, UIApplicationDelegate
     init()
     {
         super.init()
-        SalesforceSDKManager.shared().connectedAppId = RemoteAccessConsumerKey
-        SalesforceSDKManager.shared().connectedAppCallbackUri = OAuthRedirectURI
-        SalesforceSDKManager.shared().authScopes = ["web", "api"];
+        SalesforceSDKManager.shared().appConfig?.remoteAccessConsumerKey = RemoteAccessConsumerKey
+        SalesforceSDKManager.shared().appConfig?.oauthRedirectURI = OAuthRedirectURI
+        SalesforceSDKManager.shared().appConfig?.oauthScopes = ["web", "api"];
 
         //Uncomment the following line inorder to enable/force the use of advanced authentication flow.
         // SFUserAccountManager.sharedInstance().advancedAuthConfiguration = SFOAuthAdvancedAuthConfiguration.require;

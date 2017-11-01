@@ -30,6 +30,8 @@
 	<true/>
 	<key>SFDCOAuthLoginHost</key>
 	<string>login.salesforce.com</string>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
