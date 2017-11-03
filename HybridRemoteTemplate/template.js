@@ -56,7 +56,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     //
     // Move/remove some files
     //
-    moveFile(path.join('mobile_sdk', 'salesforcemobilesdk-shared', 'libs', 'force.js'), 'force.js');
+    moveFile(path.join('mobile_sdk', 'SalesforceMobileSDK-Shared', 'libs', 'force.js'), 'force.js');
     removeFile('node_modules');
     removeFile('mobile_sdk');
     removeFile('package.json');

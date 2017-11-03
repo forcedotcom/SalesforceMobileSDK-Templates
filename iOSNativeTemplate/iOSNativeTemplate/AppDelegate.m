@@ -26,6 +26,7 @@
 #import "InitialViewController.h"
 #import "RootViewController.h"
 #import <SalesforceAnalytics/SFSDKLogger.h>
+#import <SalesforceSDKCore/SFSDKAppConfig.h>
 #import <SalesforceSDKCore/SFPushNotificationManager.h>
 #import <SalesforceSDKCore/SFDefaultUserManagementViewController.h>
 #import <SalesforceSDKCore/SalesforceSDKManager.h>
@@ -63,9 +64,9 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
 
         // Need to use SalesforceSDKManagerWithSmartStore when using smartstore
         [SalesforceSDKManager setInstanceClass:[SalesforceSDKManagerWithSmartStore class]];
-        [SalesforceSDKManager sharedManager].connectedAppId = RemoteAccessConsumerKey;
-        [SalesforceSDKManager sharedManager].connectedAppCallbackUri = OAuthRedirectURI;
-        [SalesforceSDKManager sharedManager].authScopes = @[ @"web", @"api" ];
+        [SalesforceSDKManager sharedManager].appConfig.remoteAccessConsumerKey = RemoteAccessConsumerKey;
+        [SalesforceSDKManager sharedManager].appConfig.oauthRedirectURI = OAuthRedirectURI;
+        [SalesforceSDKManager sharedManager].appConfig.oauthScopes = [NSSet setWithArray:@[ @"web", @"api" ]];
 
         //Uncomment the following line inorder to enable/force the use of advanced authentication flow.
         //[SFUserAccountManager sharedInstance].advancedAuthConfiguration = SFOAuthAdvancedAuthConfigurationRequire;
