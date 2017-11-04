@@ -31,7 +31,7 @@
 #import <SalesforceSDKCore/SFDefaultUserManagementViewController.h>
 #import <SalesforceSDKCore/SalesforceSDKManager.h>
 #import <SalesforceSDKCore/SFUserAccountManager.h>
-#import <SmartStore/SalesforceSDKManagerWithSmartStore.h>
+#import <SalesforceReact/SalesforceReactSDKManager.h>
 #import <SalesforceSDKCore/SFLoginViewController.h>
 
 // Fill these in when creating a new Connected Application on Force.com
@@ -45,8 +45,8 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
     self = [super init];
     if (self) {
 
-        // Need to use SalesforceSDKManagerWithSmartStore when using smartstore
-        [SalesforceSDKManager setInstanceClass:[SalesforceSDKManagerWithSmartStore class]];
+        // Need to use SalesforceReactSDKManager in Salesforce Mobile SDK apps using React Native
+        [SalesforceSDKManager setInstanceClass:[SalesforceReactSDKManager class]];
 
         [SalesforceSDKManager sharedManager].appConfig.remoteAccessConsumerKey = RemoteAccessConsumerKey;
         [SalesforceSDKManager sharedManager].appConfig.oauthRedirectURI = OAuthRedirectURI;
