@@ -160,7 +160,7 @@
 				};
 			};
 			buildConfigurationList = 4F8D5E981B6C0568005E64D4 /* Build configuration list for PBXProject "iOSNativeTemplate" */;
-			compatibilityVersion = "Xcode 8.0";
+			compatibilityVersion = "Xcode 9.0";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
