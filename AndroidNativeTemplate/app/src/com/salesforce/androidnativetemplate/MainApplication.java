@@ -43,11 +43,10 @@ public class MainApplication extends Application {
 		SmartSyncSDKManager.initNative(getApplicationContext(), new NativeKeyImpl(), MainActivity.class);
 
         /*
-         * Uncomment the following lines to enable IDP login flow. This will allow the user to
+         * Uncomment the following line to enable IDP login flow. This will allow the user to
          * either authenticate using the current app or use a designated IDP app for login.
          * Replace 'idpAppURIScheme' with the URI scheme of the IDP app meant to be used.
          */
-		// SmartSyncSDKManager.getInstance().setIDPLoginFlowEnabled(true);
 		// SmartSyncSDKManager.getInstance().setIDPAppURIScheme(idpAppURIScheme);
 
         /*
