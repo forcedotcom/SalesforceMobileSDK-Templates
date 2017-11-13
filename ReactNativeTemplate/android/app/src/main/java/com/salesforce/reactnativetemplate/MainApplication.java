@@ -71,11 +71,10 @@ public class MainApplication extends Application implements ReactApplication {
                 MainActivity.class);
 
 		/*
-         * Uncomment the following lines to enable IDP login flow. This will allow the user to
+         * Uncomment the following line to enable IDP login flow. This will allow the user to
          * either authenticate using the current app or use a designated IDP app for login.
          * Replace 'idpAppURIScheme' with the URI scheme of the IDP app meant to be used.
          */
-		// SalesforceReactSDKManager.getInstance().setIDPLoginFlowEnabled(true);
 		// SalesforceReactSDKManager.getInstance().setIDPAppURIScheme(idpAppURIScheme);
 
         /*
