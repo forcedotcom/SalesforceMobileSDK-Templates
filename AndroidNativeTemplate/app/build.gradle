@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 dependencies {
-  compile project(':libs:SmartSync') // From node_modules
+  api project(':libs:SmartSync') // From node_modules
 }
 
 android {
