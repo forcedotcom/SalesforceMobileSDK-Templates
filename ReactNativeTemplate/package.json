@@ -11,8 +11,8 @@
         "SalesforceMobileSDK-iOS": "https://github.com/forcedotcom/SalesforceMobileSDK-iOS.git#dev"
     },
     "dependencies": {
-        "react": "16.0.0-alpha.6",
-        "react-native": "0.43.1",
+        "react": "16.0.0",
+        "react-native": "0.50.4",
         "react-native-force": "https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#dev",
         "react-navigation": "^1.0.0-beta.11"
     },
@@ -24,6 +24,6 @@
         "babel-preset-react-native": "1.9.1",
         "jest": "19.0.2",
         "jest-react-native": "16.0.0",
-        "react-test-renderer": "16.0.0-alpha.6"
+        "react-test-renderer": "16.0.0"
     }
 }
