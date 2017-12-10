@@ -57,6 +57,11 @@ public class MainApplication extends Application implements ReactApplication {
 					SalesforceReactSDKManager.getInstance().getReactPackage()
 			);
 		}
+
+		@Override
+		protected String getJSMainModuleName() {
+			return "index";
+		}
 	};
 
 	@Override

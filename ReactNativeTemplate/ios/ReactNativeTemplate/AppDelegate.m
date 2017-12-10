@@ -172,7 +172,7 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
      * To run on device, change `localhost` to the IP address of your computer
      * and make sure your computer and iOS device are on the same Wi-Fi network.
      */
-    [self setupReactRootView:[NSURL URLWithString:@"http://localhost:8081/index.ios.bundle?platform=ios"]];
+    [self setupReactRootView:[NSURL URLWithString:@"http://localhost:8081/index.bundle?platform=ios"]];
     
     /**
      * OPTION 2
@@ -183,7 +183,7 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
      *
      * Run the curl command and add the output to your main Xcode build target:
      *
-     * $ curl http://localhost:8081/index.ios.bundle -o main.jsbundle
+     * $ curl http://localhost:8081/index.bundle -o main.jsbundle
      */
     // [self setupReactRootView:[[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"]];
 }

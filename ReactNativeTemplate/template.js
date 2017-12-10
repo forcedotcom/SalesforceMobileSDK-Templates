@@ -48,7 +48,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
 
         // Key files
         var templatePackageJsonFile = 'package.json';
-        var templateIndexIosFile = 'index.ios.js';
+        var templateIndexIosFile = 'index.js';
         var templatePodfile = path.join('ios', 'Podfile');
         var templateProjectDir = path.join('ios', templateAppName + '.xcodeproj');
         var templateProjectFile = path.join(templateProjectDir, 'project.pbxproj');
@@ -94,7 +94,6 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Removing ios related files if ios is not targeted
     else {
         removeFile('ios');
-        removeFile('index.ios.js');
         removeFile('installios.js');        
     }
 
@@ -109,7 +108,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
 
         // Key files
         var templatePackageJsonFile = 'package.json';
-        var templateIndexAndroidFile = 'index.android.js';
+        var templateIndexAndroidFile = 'index.js';
         var templateSettingsGradle = path.join('android', 'settings.gradle');
         var templateAndroidManifestFile = path.join('android', 'app', 'src', 'main', 'AndroidManifest.xml');
         var templateBuckFile = path.join('android', 'app', 'BUCK');
@@ -157,7 +156,6 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Removing android related files if ios is not targeted
     else {
         removeFile('android');
-        removeFile('index.android.js');
         removeFile('installandroid.js');
     }
 
