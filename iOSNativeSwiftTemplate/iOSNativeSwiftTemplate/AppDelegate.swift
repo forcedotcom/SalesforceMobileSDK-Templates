@@ -25,6 +25,7 @@
 import Foundation
 import UIKit
 import SalesforceSDKCore
+import SalesforceSwiftSDK
 
 // Fill these in when creating a new Connected Application on Force.com
 let RemoteAccessConsumerKey = "3MVG9Iu66FKeHhINkB1l7xt7kR8czFcCTUhgoA8Ol2Ltf1eYHOU4SqQRSEitYFDUpqRWcoQ2.dBv_a1Dyu5xa";
@@ -38,6 +39,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
     init()
     {
         super.init()
+        SalesforceSDKManager.setInstanceClass(SalesforceSwiftSDKManager.self)
         SalesforceSDKManager.shared().appConfig?.remoteAccessConsumerKey = RemoteAccessConsumerKey
         SalesforceSDKManager.shared().appConfig?.oauthRedirectURI = OAuthRedirectURI
         SalesforceSDKManager.shared().appConfig?.oauthScopes = ["web", "api"];
