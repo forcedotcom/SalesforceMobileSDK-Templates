@@ -38,7 +38,6 @@ import com.salesforce.androidsdk.rest.RestClient
 import com.salesforce.androidsdk.rest.RestClient.AsyncRequestCallback
 import com.salesforce.androidsdk.rest.RestRequest
 import com.salesforce.androidsdk.rest.RestResponse
-import com.salesforce.androidsdk.smartsync.app.SmartSyncSDKManager
 import com.salesforce.androidsdk.ui.SalesforceActivity
 import java.io.UnsupportedEncodingException
 import java.util.*
@@ -48,10 +47,6 @@ import java.util.*
  */
 class MainActivity : SalesforceActivity() {
 
-    companion object {
-        private const val FEATURE_APP_USES_KOTLIN = "KT"
-    }
-
     private var client: RestClient? = null
     private var listAdapter: ArrayAdapter<String>? = null
 
@@ -60,7 +55,6 @@ class MainActivity : SalesforceActivity() {
 
         // Setup view
         setContentView(R.layout.main)
-        SmartSyncSDKManager.getInstance().registerUsedAppFeature(FEATURE_APP_USES_KOTLIN)
     }
 
     override fun onResume() {
