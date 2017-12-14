@@ -41,7 +41,11 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         super.init()
         
         SalesforceSwiftSDKManager.initSDK()
-        .postInit {
+        .Builder.configure { (appconfig: SFSDKAppConfig) -> Void in
+            appconfig.oauthScopes = ["web", "api"]
+            appconfig.remoteAccessConsumerKey = RemoteAccessConsumerKey
+            appconfig.oauthRedirectURI = OAuthRedirectURI
+        }.postInit {
             //Uncomment the following line inorder to enable/force the use of advanced authentication flow.
             // SFUserAccountManager.sharedInstance().advancedAuthConfiguration = SFOAuthAdvancedAuthConfiguration.require;
             // OR
@@ -51,11 +55,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
             // NOTE: If advanced authentication is configured or forced,  it will launch Safari to handle authentication
             // instead of a webview. You must implement application:openURL:options  to handle the callback.
         }
-        .Builder.configure { (appconfig: SFSDKAppConfig) -> Void in
-            appconfig.oauthScopes = ["web", "api"]
-            appconfig.remoteAccessConsumerKey = RemoteAccessConsumerKey
-            appconfig.oauthRedirectURI = OAuthRedirectURI
-        }.postLaunch {  [unowned self] (launchActionList: SFSDKLaunchAction) in
+        .postLaunch {  [unowned self] (launchActionList: SFSDKLaunchAction) in
             let launchActionString = SalesforceSDKManager.launchActionsStringRepresentation(launchActionList)
             SalesforceSwiftLogger.log(type(of:self), level:.info, message:"Post-launch: launch actions taken: \(launchActionString)")
                 self.setupRootViewController()
