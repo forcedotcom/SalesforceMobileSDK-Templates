@@ -39,40 +39,38 @@ class AppDelegate : UIResponder, UIApplicationDelegate
     init()
     {
         super.init()
-        SalesforceSDKManager.setInstanceClass(SalesforceSwiftSDKManager.self)
-        SalesforceSDKManager.shared().appConfig?.remoteAccessConsumerKey = RemoteAccessConsumerKey
-        SalesforceSDKManager.shared().appConfig?.oauthRedirectURI = OAuthRedirectURI
-        SalesforceSDKManager.shared().appConfig?.oauthScopes = ["web", "api"];
-
-        //Uncomment the following line inorder to enable/force the use of advanced authentication flow.
-        // SFUserAccountManager.sharedInstance().advancedAuthConfiguration = SFOAuthAdvancedAuthConfiguration.require;
-        // OR
-        // To  retrieve advanced auth configuration from the org, to determine whether to initiate advanced authentication.
-        // SFUserAccountManager.sharedInstance().advancedAuthConfiguration = SFOAuthAdvancedAuthConfiguration.allow;
-
-        // NOTE: If advanced authentication is configured or forced,  it will launch Safari to handle authentication
-        // instead of a webview. You must implement application:openURL:options  to handle the callback.
-
-        SalesforceSDKManager.shared().postLaunchAction = {
-            [unowned self] (launchActionList: SFSDKLaunchAction) in
-            let launchActionString = SalesforceSDKManager.launchActionsStringRepresentation(launchActionList)
-            SFSDKLogger.log(type(of:self), level:.info, message:"Post-launch: launch actions taken: \(launchActionString)");
-            self.setupRootViewController();
+        
+        SalesforceSwiftSDKManager.initSDK()
+        .Builder.configure { (appconfig: SFSDKAppConfig) -> Void in
+            appconfig.oauthScopes = ["web", "api"]
+            appconfig.remoteAccessConsumerKey = RemoteAccessConsumerKey
+            appconfig.oauthRedirectURI = OAuthRedirectURI
+        }.postInit {
+            //Uncomment the following line inorder to enable/force the use of advanced authentication flow.
+            // SFUserAccountManager.sharedInstance().advancedAuthConfiguration = SFOAuthAdvancedAuthConfiguration.require;
+            // OR
+            // To  retrieve advanced auth configuration from the org, to determine whether to initiate advanced authentication.
+            // SFUserAccountManager.sharedInstance().advancedAuthConfiguration = SFOAuthAdvancedAuthConfiguration.allow;
+            
+            // NOTE: If advanced authentication is configured or forced,  it will launch Safari to handle authentication
+            // instead of a webview. You must implement application:openURL:options  to handle the callback.
         }
-        SalesforceSDKManager.shared().launchErrorAction = {
-            [unowned self] (error: Error, launchActionList: SFSDKLaunchAction) in
+        .postLaunch {  [unowned self] (launchActionList: SFSDKLaunchAction) in
+            let launchActionString = SalesforceSDKManager.launchActionsStringRepresentation(launchActionList)
+            SalesforceSwiftLogger.log(type(of:self), level:.info, message:"Post-launch: launch actions taken: \(launchActionString)")
+                self.setupRootViewController()
+            
+        }.postLogout {  [unowned self] in
+            self.handleSdkManagerLogout()
+        }.switchUser{ [unowned self] (fromUser: SFUserAccount?, toUser: SFUserAccount?) -> () in
+            self.handleUserSwitch(fromUser, toUser: toUser)
+        }.launchError {  [unowned self] (error: Error, launchActionList: SFSDKLaunchAction) in
             SFSDKLogger.log(type(of:self), level:.error, message:"Error during SDK launch: \(error.localizedDescription)")
             self.initializeAppViewState()
             SalesforceSDKManager.shared().launch()
         }
-        SalesforceSDKManager.shared().postLogoutAction = {
-            [unowned self] in
-            self.handleSdkManagerLogout()
-        }
-        SalesforceSDKManager.shared().switchUserAction = {
-            [unowned self] (fromUser: SFUserAccount?, toUser: SFUserAccount?) -> () in
-            self.handleUserSwitch(fromUser, toUser: toUser)
-        }
+        .done()
+   
     }
     
     // MARK: - App delegate lifecycle
@@ -102,7 +100,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         // loginViewController.navBarFont = UIFont (name: "Helvetica Neue", size: 16);
         // loginViewController.navBarTextColor = UIColor.black;
         //
-        SalesforceSDKManager.shared().launch()
+        SalesforceSwiftSDKManager.shared().launch()
         
         return true
     }
