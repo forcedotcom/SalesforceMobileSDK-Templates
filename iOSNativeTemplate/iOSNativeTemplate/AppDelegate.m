@@ -61,12 +61,10 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
 {
     self = [super init];
     if (self) {
-
-        //Uncomment the following line in order to use SmartSync
-        // [SalesforceSDKManager setInstanceClass:[SmartSyncSDKManager class]];
-        [SalesforceSDKManager sharedManager].appConfig.remoteAccessConsumerKey = RemoteAccessConsumerKey;
-        [SalesforceSDKManager sharedManager].appConfig.oauthRedirectURI = OAuthRedirectURI;
-        [SalesforceSDKManager sharedManager].appConfig.oauthScopes = [NSSet setWithArray:@[ @"web", @"api" ]];
+        [SalesforceSDKManager setInstanceClass:[SmartSyncSDKManager class]];
+        [SmartSyncSDKManager sharedManager].appConfig.remoteAccessConsumerKey = RemoteAccessConsumerKey;
+        [SmartSyncSDKManager sharedManager].appConfig.oauthRedirectURI = OAuthRedirectURI;
+        [SmartSyncSDKManager sharedManager].appConfig.oauthScopes = [NSSet setWithArray:@[ @"web", @"api" ]];
 
         //Uncomment the following line in order to enable/force the use of advanced authentication flow.
         //[SFUserAccountManager sharedInstance].advancedAuthConfiguration = SFOAuthAdvancedAuthConfigurationRequire;
@@ -78,7 +76,7 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
         // instead of a webview. You must implement application:openURL:options: to handle the callback.
 
         __weak AppDelegate *weakSelf = self;
-        [SalesforceSDKManager sharedManager].postLaunchAction = ^(SFSDKLaunchAction launchActionList) {
+        [SmartSyncSDKManager sharedManager].postLaunchAction = ^(SFSDKLaunchAction launchActionList) {
             //
             // If you wish to register for push notifications, uncomment the line below.  Note that,
             // if you want to receive push notifications from Salesforce, you will also need to
@@ -86,22 +84,21 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
             //
             //[[SFPushNotificationManager sharedInstance] registerForRemoteNotifications];
             //
-            [SFSDKLogger log:[weakSelf class] level:DDLogLevelInfo format:@"Post-launch: launch actions taken: %@", [SalesforceSDKManager launchActionsStringRepresentation:launchActionList]];
+            [SFSDKLogger log:[weakSelf class] level:DDLogLevelInfo format:@"Post-launch: launch actions taken: %@", [SmartSyncSDKManager launchActionsStringRepresentation:launchActionList]];
             [weakSelf setupRootViewController];
         };
-        [SalesforceSDKManager sharedManager].launchErrorAction = ^(NSError *error, SFSDKLaunchAction launchActionList) {
+        [SmartSyncSDKManager sharedManager].launchErrorAction = ^(NSError *error, SFSDKLaunchAction launchActionList) {
             [SFSDKLogger log:[weakSelf class] level:DDLogLevelError format:@"Error during SDK launch: %@", error.localizedDescription];
             [weakSelf initializeAppViewState];
-            [[SalesforceSDKManager sharedManager] launch];
+            [[SmartSyncSDKManager sharedManager] launch];
         };
-        [SalesforceSDKManager sharedManager].postLogoutAction = ^{
+        [SmartSyncSDKManager sharedManager].postLogoutAction = ^{
             [weakSelf handleSdkManagerLogout];
         };
-        [SalesforceSDKManager sharedManager].switchUserAction = ^(SFUserAccount *fromUser, SFUserAccount *toUser) {
+        [SmartSyncSDKManager sharedManager].switchUserAction = ^(SFUserAccount *fromUser, SFUserAccount *toUser) {
             [weakSelf handleUserSwitch:fromUser toUser:toUser];
         };
     }
-    
     return self;
 }
 
@@ -124,7 +121,7 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
     //loginViewController.navBarTextColor = [UIColor blackColor];
     //
 
-    [[SalesforceSDKManager sharedManager] launch];
+    [[SmartSyncSDKManager sharedManager] launch];
     return YES;
 }
 
@@ -213,8 +210,7 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
             if (allAccounts.count == 1) {
                 [SFUserAccountManager sharedInstance].currentUser = ([SFUserAccountManager sharedInstance].allUserAccounts)[0];
             }
-            
-            [[SalesforceSDKManager sharedManager] launch];
+            [[SmartSyncSDKManager sharedManager] launch];
         }
     }];
 }
@@ -226,7 +222,7 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
      fromUser.userName, toUser.userName];
     [self resetViewState:^{
         [self initializeAppViewState];
-        [[SalesforceSDKManager sharedManager] launch];
+        [[SmartSyncSDKManager sharedManager] launch];
     }];
 }
 

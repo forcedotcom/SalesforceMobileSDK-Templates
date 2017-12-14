@@ -37,9 +37,14 @@ import com.salesforce.androidsdk.smartsync.app.SmartSyncSDKManager
  */
 class MainApplication : Application() {
 
+    companion object {
+        private const val FEATURE_APP_USES_KOTLIN = "KT"
+    }
+
     override fun onCreate() {
         super.onCreate()
         SmartSyncSDKManager.initNative(applicationContext, NativeKeyImpl(), MainActivity::class.java)
+        SmartSyncSDKManager.getInstance().registerUsedAppFeature(FEATURE_APP_USES_KOTLIN)
 
         /*
          * Uncomment the following line to enable IDP login flow. This will allow the user to
