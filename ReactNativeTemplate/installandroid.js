@@ -5,6 +5,8 @@ var execSync = require('child_process').execSync;
 var path = require('path');
 var fs = require('fs');
 var rimraf = require('rimraf');
+console.log('Installing npm dependencies');
+execSync('npm install', {stdio:[0,1,2]});
 console.log('Installing sdk dependencies');
 var sdkDependency = 'SalesforceMobileSDK-Android';
 var repoUrlWithBranch = packageJson.sdkDependencies[sdkDependency];
@@ -17,5 +19,3 @@ if (fs.existsSync(targetDir)) {
     rimraf.sync(path.join('mobile_sdk', 'salesforcemobilesdk-android', 'hybrid'));
     rimraf.sync(path.join('mobile_sdk', 'salesforcemobilesdk-android', 'libs', 'test'));
 }
-console.log('Installing npm dependencies');
-execSync('npm install', {stdio:[0,1,2]});
