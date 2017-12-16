@@ -4,9 +4,9 @@ var packageJson = require('./package.json')
 var execSync = require('child_process').execSync;
 var path = require('path');
 var fs = require('fs');
-var rimraf = require('rimraf');
 console.log('Installing npm dependencies');
 execSync('npm install', {stdio:[0,1,2]});
+var rimraf = require('rimraf');
 console.log('Installing sdk dependencies');
 var sdkDependency = 'SalesforceMobileSDK-Android';
 var repoUrlWithBranch = packageJson.sdkDependencies[sdkDependency];
