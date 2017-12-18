@@ -1,19 +1,22 @@
-platform :ios, '9.0'
+platform :ios, '10.0'
 
 project 'ReactNativeTemplate.xcodeproj'
 target 'ReactNativeTemplate' do
 
 source 'https://github.com/CocoaPods/Specs.git'
 
-pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
+pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
+pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
+pod 'GLog', :podspec => '../node_modules/react-native/third-party-podspecs/GLog.podspec'
+pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 pod 'React', :path => '../node_modules/react-native', :subspecs => [
     'DevSupport',
     'tvOS',
     'jschelpers',
     'cxxreact',
+    'CxxBridge',
     'ART',
     'RCTActionSheet',
-    'RCTAdSupport',
     'RCTAnimation',
     'RCTCameraRoll',
     'RCTGeolocation',

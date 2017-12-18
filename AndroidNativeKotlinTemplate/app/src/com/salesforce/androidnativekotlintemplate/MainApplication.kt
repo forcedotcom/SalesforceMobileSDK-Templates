@@ -37,9 +37,29 @@ import com.salesforce.androidsdk.smartsync.app.SmartSyncSDKManager
  */
 class MainApplication : Application() {
 
+    companion object {
+        private const val FEATURE_APP_USES_KOTLIN = "KT"
+    }
+
     override fun onCreate() {
         super.onCreate()
         SmartSyncSDKManager.initNative(applicationContext, NativeKeyImpl(), MainActivity::class.java)
+        SmartSyncSDKManager.getInstance().registerUsedAppFeature(FEATURE_APP_USES_KOTLIN)
+
+        /*
+         * Uncomment the following line to enable IDP login flow. This will allow the user to
+         * either authenticate using the current app or use a designated IDP app for login.
+         * Replace 'idpAppURIScheme' with the URI scheme of the IDP app meant to be used.
+         */
+        // SmartSyncSDKManager.getInstance().idpAppURIScheme = idpAppURIScheme
+
+
+        /*
+         * Uncomment the following line to enable browser based login. This will use a
+         * Chrome custom tab to login instead of the default WebView. You will also need
+         * to uncomment a few lines of code in SalesforceSDK library project's AndroidManifest.xml.
+         */
+        // SmartSyncSDKManager.getInstance().isBrowserLoginEnabled = true
 
         /*
 		 * Un-comment the line below to enable push notifications in this app.
@@ -47,7 +67,7 @@ class MainApplication : Application() {
 		 * Add your Google package ID in 'bootonfig.xml', as the value
 		 * for the key 'androidPushNotificationClientId'.
 		 */
-        // SalesforceSDKManager.getInstance().setPushNotificationReceiver(pnInterface);
+        // SmartSyncSDKManager.getInstance().pushNotificationReceiver = pnInterface
     }
 }
 

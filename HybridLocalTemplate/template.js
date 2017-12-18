@@ -45,12 +45,12 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     //
     // Picking theme: if you are generating for ios and android, you end up with the ios look
     //
-    var theme = (config.platform.indexOf('ios') >= 0 ? 'ios' : 'android'); 
+    var theme = (config.platform.indexOf('ios') >= 0 ? 'ios' : 'android');
 
     //
     // Move/remove some files
     //
-    moveFile(path.join('mobile_sdk', 'salesforcemobilesdk-shared', 'libs', 'force.js'), 'force.js');
+    moveFile(path.join('mobile_sdk', 'SalesforceMobileSDK-Shared', 'libs', 'force.js'), 'force.js');
     moveFile(path.join('node_modules', 'ratchet-npm', 'dist', 'css', 'ratchet.min.css'), 'ratchet.css');
     moveFile(path.join('node_modules', 'ratchet-npm', 'dist', 'css', 'ratchet-theme-' + theme + '.min.css'), 'ratchet-theme.css');
     removeFile('node_modules');

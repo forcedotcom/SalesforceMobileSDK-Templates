@@ -25,8 +25,9 @@
 import Foundation
 import UIKit
 import SalesforceSDKCore
-
-class RootViewController : UITableViewController, SFRestDelegate
+import SalesforceSwiftSDK
+import PromiseKit
+class RootViewController : UITableViewController
 {
     var dataRows = [NSDictionary]()
     
@@ -35,38 +36,20 @@ class RootViewController : UITableViewController, SFRestDelegate
     {
         super.loadView()
         self.title = "Mobile SDK Sample App"
-        
-        //Here we use a query that should work on either Force.com or Database.com
-        let request = SFRestAPI.sharedInstance().request(forQuery:"SELECT Name FROM User LIMIT 10");
-        SFRestAPI.sharedInstance().send(request, delegate: self);
-    }
-    
-    // MARK: - SFRestDelegate
-    func request(_ request: SFRestRequest, didLoadResponse jsonResponse: Any)
-    {
-        self.dataRows = (jsonResponse as! NSDictionary)["records"] as! [NSDictionary]
-        SFSDKLogger.sharedDefaultInstance().log(type(of:self), level:.debug, message:"request:didLoadResponse: #records: \(self.dataRows.count)")
-        DispatchQueue.main.async(execute: {
-            self.tableView.reloadData()
-        })
-    }
-    
-    func request(_ request: SFRestRequest, didFailLoadWithError error: Error)
-    {
-        SFSDKLogger.sharedDefaultInstance().log(type(of:self), level:.debug, message:"didFailLoadWithError: \(error)")
-        // Add your failed error handling here
-    }
-    
-    func requestDidCancelLoad(_ request: SFRestRequest)
-    {
-        SFSDKLogger.sharedDefaultInstance().log(type(of:self), level:.debug, message:"requestDidCancelLoad: \(request)")
-        // Add your failed error handling here
-    }
-    
-    func requestDidTimeout(_ request: SFRestRequest)
-    {
-        SFSDKLogger.sharedDefaultInstance().log(type(of:self), level:.debug, message:"requestDidTimeout: \(request)")
-        // Add your failed error handling here
+        let restApi = SFRestAPI.sharedInstance()
+        restApi.Promises
+        .query(soql: "SELECT Name FROM User LIMIT 10")
+        .then {  request  in
+            restApi.Promises.send(request: request)
+        }.done { [unowned self] response in
+            self.dataRows = response.asJsonDictionary()["records"] as! [NSDictionary]
+            SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"request:didLoadResponse: #records: \(self.dataRows.count)")
+            DispatchQueue.main.async(execute: {
+                self.tableView.reloadData()
+            })
+        }.catch { error in
+             SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"Error: \(error)")
+        }
     }
     
     // MARK: - Table view data source

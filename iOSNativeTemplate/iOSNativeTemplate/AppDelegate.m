@@ -26,12 +26,14 @@
 #import "InitialViewController.h"
 #import "RootViewController.h"
 #import <SalesforceAnalytics/SFSDKLogger.h>
+#import <SalesforceSDKCore/SFSDKAppConfig.h>
 #import <SalesforceSDKCore/SFPushNotificationManager.h>
 #import <SalesforceSDKCore/SFDefaultUserManagementViewController.h>
 #import <SalesforceSDKCore/SalesforceSDKManager.h>
 #import <SalesforceSDKCore/SFUserAccountManager.h>
-#import <SmartStore/SalesforceSDKManagerWithSmartStore.h>
+#import <SmartSync/SmartSyncSDKManager.h>
 #import <SalesforceSDKCore/SFLoginViewController.h>
+#import <SalesforceSDKCore/SFSDKLoginViewControllerConfig.h>
 
 // Fill these in when creating a new Connected Application on Force.com
 static NSString * const RemoteAccessConsumerKey = @"3MVG9Iu66FKeHhINkB1l7xt7kR8czFcCTUhgoA8Ol2Ltf1eYHOU4SqQRSEitYFDUpqRWcoQ2.dBv_a1Dyu5xa";
@@ -60,24 +62,22 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
 {
     self = [super init];
     if (self) {
+        [SalesforceSDKManager setInstanceClass:[SmartSyncSDKManager class]];
+        [SmartSyncSDKManager sharedManager].appConfig.remoteAccessConsumerKey = RemoteAccessConsumerKey;
+        [SmartSyncSDKManager sharedManager].appConfig.oauthRedirectURI = OAuthRedirectURI;
+        [SmartSyncSDKManager sharedManager].appConfig.oauthScopes = [NSSet setWithArray:@[ @"web", @"api" ]];
 
-        // Need to use SalesforceSDKManagerWithSmartStore when using smartstore
-        [SalesforceSDKManager setInstanceClass:[SalesforceSDKManagerWithSmartStore class]];
-        [SalesforceSDKManager sharedManager].connectedAppId = RemoteAccessConsumerKey;
-        [SalesforceSDKManager sharedManager].connectedAppCallbackUri = OAuthRedirectURI;
-        [SalesforceSDKManager sharedManager].authScopes = @[ @"web", @"api" ];
-        
-        //Uncomment the following line inorder to enable/force the use of advanced authentication flow.
-        //[SFAuthenticationManager sharedManager].advancedAuthConfiguration = SFOAuthAdvancedAuthConfigurationRequire;
+        //Uncomment the following line in order to enable/force the use of advanced authentication flow.
+        //[SFUserAccountManager sharedInstance].advancedAuthConfiguration = SFOAuthAdvancedAuthConfigurationRequire;
         // OR
         // To  retrieve advanced auth configuration from the org, to determine whether to initiate advanced authentication.
-        //[SFAuthenticationManager sharedManager].advancedAuthConfiguration = SFOAuthAdvancedAuthConfigurationAllow;
-        
+        //[SFUserAccountManager sharedInstance].advancedAuthConfiguration = SFOAuthAdvancedAuthConfigurationAllow;
+
         // NOTE: If advanced authentication is configured or forced,  it will launch Safari to handle authentication
         // instead of a webview. You must implement application:openURL:options: to handle the callback.
-        
+
         __weak AppDelegate *weakSelf = self;
-        [SalesforceSDKManager sharedManager].postLaunchAction = ^(SFSDKLaunchAction launchActionList) {
+        [SmartSyncSDKManager sharedManager].postLaunchAction = ^(SFSDKLaunchAction launchActionList) {
             //
             // If you wish to register for push notifications, uncomment the line below.  Note that,
             // if you want to receive push notifications from Salesforce, you will also need to
@@ -85,22 +85,21 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
             //
             //[[SFPushNotificationManager sharedInstance] registerForRemoteNotifications];
             //
-            [[SFSDKLogger sharedDefaultInstance] log:[weakSelf class] level:DDLogLevelInfo format:@"Post-launch: launch actions taken: %@", [SalesforceSDKManager launchActionsStringRepresentation:launchActionList]];
+            [SFSDKLogger log:[weakSelf class] level:DDLogLevelInfo format:@"Post-launch: launch actions taken: %@", [SmartSyncSDKManager launchActionsStringRepresentation:launchActionList]];
             [weakSelf setupRootViewController];
         };
-        [SalesforceSDKManager sharedManager].launchErrorAction = ^(NSError *error, SFSDKLaunchAction launchActionList) {
-            [[SFSDKLogger sharedDefaultInstance] log:[weakSelf class] level:DDLogLevelError format:@"Error during SDK launch: %@", error.localizedDescription];
+        [SmartSyncSDKManager sharedManager].launchErrorAction = ^(NSError *error, SFSDKLaunchAction launchActionList) {
+            [SFSDKLogger log:[weakSelf class] level:DDLogLevelError format:@"Error during SDK launch: %@", error.localizedDescription];
             [weakSelf initializeAppViewState];
-            [[SalesforceSDKManager sharedManager] launch];
+            [[SmartSyncSDKManager sharedManager] launch];
         };
-        [SalesforceSDKManager sharedManager].postLogoutAction = ^{
+        [SmartSyncSDKManager sharedManager].postLogoutAction = ^{
             [weakSelf handleSdkManagerLogout];
         };
-        [SalesforceSDKManager sharedManager].switchUserAction = ^(SFUserAccount *fromUser, SFUserAccount *toUser) {
+        [SmartSyncSDKManager sharedManager].switchUserAction = ^(SFUserAccount *fromUser, SFUserAccount *toUser) {
             [weakSelf handleUserSwitch:fromUser toUser:toUser];
         };
     }
-    
     return self;
 }
 
@@ -109,21 +108,18 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     [self initializeAppViewState];
     
-    //
-    //Uncomment the code below to see how you can customize the color, textcolor, font and fontsize of the navigation bar
-    //
-    //SFLoginViewController *loginViewController = [SFLoginViewController sharedInstance];
-    //Set showNavBar to NO if you want to hide the top bar
-    //loginViewController.showNavbar = YES;
+    //Uncomment the code below to see how you can customize the color, textcolor, font and   fontsize of the navigation bar
+    //SFSDKLoginViewControllerConfig *loginViewConfig = [[SFSDKLoginViewControllerConfig  alloc] init];
     //Set showSettingsIcon to NO if you want to hide the settings icon on the nav bar
-    //loginViewController.showSettingsIcon = YES;
-    // Set primary color to different color to style the navigation header
-    //loginViewController.navBarColor = [UIColor colorWithRed:0.051 green:0.765 blue:0.733 alpha:1.0];
-    //loginViewController.navBarFont = [UIFont fontWithName:@"Helvetica" size:16.0];
-    //loginViewController.navBarTextColor = [UIColor blackColor];
-    //
-
-    [[SalesforceSDKManager sharedManager] launch];
+    //loginViewConfig.showSettingsIcon = YES;
+    //Set showNavBar to NO if you want to hide the top bar
+    //loginViewConfig.showNavbar = YES;
+    //loginViewConfig.navBarColor = [UIColor colorWithRed:0.051 green:0.765 blue:0.733 alpha:1.0];
+    //loginViewConfig.navBarTextColor = [UIColor whiteColor];
+    //loginViewConfig.navBarFont = [UIFont fontWithName:@"Helvetica" size:16.0];
+    //[SFUserAccountManager sharedInstance].loginViewControllerConfig = loginViewConfig;
+    
+    [[SmartSyncSDKManager sharedManager] launch];
     return YES;
 }
 
@@ -145,13 +141,13 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
 }
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options{
-    
+
     // If you're using advanced authentication:
     // --Configure your app to handle incoming requests to your
     //   OAuth Redirect URI custom URL scheme.
     // --Uncomment the following line and delete the original return statement:
-    
-    // return [[SFAuthenticationManager sharedManager] handleAdvancedAuthenticationResponse:url];
+
+    // return [[SFUserAccountManager sharedInstance] handleAdvancedAuthenticationResponse:url options:options];
     return NO;
 }
 
@@ -190,10 +186,10 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
 
 - (void)handleSdkManagerLogout
 {
-    [[SFSDKLogger sharedDefaultInstance] log:[self class] level:DDLogLevelDebug format:@"SFAuthenticationManager logged out.  Resetting app."];
+    [SFSDKLogger log:[self class] level:DDLogLevelDebug format:@"SFUserAccountManager logged out.  Resetting app."];
     [self resetViewState:^{
         [self initializeAppViewState];
-        
+
         // Multi-user pattern:
         // - If there are two or more existing accounts after logout, let the user choose the account
         //   to switch to.
@@ -212,8 +208,7 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
             if (allAccounts.count == 1) {
                 [SFUserAccountManager sharedInstance].currentUser = ([SFUserAccountManager sharedInstance].allUserAccounts)[0];
             }
-            
-            [[SalesforceSDKManager sharedManager] launch];
+            [[SmartSyncSDKManager sharedManager] launch];
         }
     }];
 }
@@ -221,11 +216,11 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
 - (void)handleUserSwitch:(SFUserAccount *)fromUser
                   toUser:(SFUserAccount *)toUser
 {
-    [[SFSDKLogger sharedDefaultInstance] log:[self class] level:DDLogLevelDebug format:@"SFUserAccountManager changed from user %@ to %@.  Resetting app.",
+    [SFSDKLogger log:[self class] level:DDLogLevelDebug format:@"SFUserAccountManager changed from user %@ to %@.  Resetting app.",
      fromUser.userName, toUser.userName];
     [self resetViewState:^{
         [self initializeAppViewState];
-        [[SalesforceSDKManager sharedManager] launch];
+        [[SmartSyncSDKManager sharedManager] launch];
     }];
 }
 

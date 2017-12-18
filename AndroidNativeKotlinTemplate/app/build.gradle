@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 dependencies {
-  compile project(':libs:SmartSync')
-  compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  api project(':libs:SmartSync')
+  api "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
 
 android {
-  compileSdkVersion 26
-  buildToolsVersion '25.0.0'
+  compileSdkVersion 27
+  buildToolsVersion '26.0.2'
   
   buildTypes {
       debug {
@@ -34,4 +34,8 @@ android {
     exclude 'META-INF/DEPENDENCIES'
     exclude 'META-INF/NOTICE'
   }
+}
+
+repositories {
+  mavenCentral()
 }
