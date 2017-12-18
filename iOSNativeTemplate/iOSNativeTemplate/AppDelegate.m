@@ -108,20 +108,17 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     [self initializeAppViewState];
     
-    //
-    //Uncomment the code below to see how you can customize the color, textcolor, font and fontsize of the navigation bar
-    //
-    //SFLoginViewController *loginViewController = [SFLoginViewController sharedInstance];
-    //Set showNavBar to NO if you want to hide the top bar
-    //loginViewController.showNavbar = YES;
+    //Uncomment the code below to see how you can customize the color, textcolor, font and   fontsize of the navigation bar
+    //SFSDKLoginViewControllerConfig *loginViewConfig = [[SFSDKLoginViewControllerConfig  alloc] init];
     //Set showSettingsIcon to NO if you want to hide the settings icon on the nav bar
-    //loginViewController.showSettingsIcon = YES;
-    // Set primary color to different color to style the navigation header
-    //loginViewController.navBarColor = [UIColor colorWithRed:0.051 green:0.765 blue:0.733 alpha:1.0];
-    //loginViewController.navBarFont = [UIFont fontWithName:@"Helvetica" size:16.0];
-    //loginViewController.navBarTextColor = [UIColor blackColor];
-    //
-
+    //loginViewConfig.showSettingsIcon = YES;
+    //Set showNavBar to NO if you want to hide the top bar
+    //loginViewConfig.showNavbar = YES;
+    //loginViewConfig.navBarColor = [UIColor colorWithRed:0.051 green:0.765 blue:0.733 alpha:1.0];
+    //loginViewConfig.navBarTextColor = [UIColor whiteColor];
+    //loginViewConfig.navBarFont = [UIFont fontWithName:@"Helvetica" size:16.0];
+    //[SFUserAccountManager sharedInstance].loginViewControllerConfig = loginViewConfig;
+    
     [[SmartSyncSDKManager sharedManager] launch];
     return YES;
 }
