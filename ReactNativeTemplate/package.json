@@ -11,10 +11,11 @@
         "SalesforceMobileSDK-iOS": "https://github.com/forcedotcom/SalesforceMobileSDK-iOS.git#dev"
     },
     "dependencies": {
-        "react": "16.0.0",
-        "react-native": "0.50.4",
+        "react": "16.2.0",
+        "react-native": "0.53.3",
         "react-native-force": "https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#dev",
-        "react-navigation": "^1.0.0-beta.11"
+        "react-navigation": "^1.0.0-beta.11",
+        "whatwg-fetch": "1.1.1"
     },
     "jest": {
         "preset": "jest-react-native"
