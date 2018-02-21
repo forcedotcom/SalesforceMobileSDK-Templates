@@ -14,17 +14,18 @@
         "react": "16.2.0",
         "react-native": "0.53.3",
         "react-native-force": "https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#dev",
-        "react-navigation": "^1.0.0-beta.11"
+        "react-navigation": "^1.0.0-beta.11",
+        "whatwg-fetch": "1.1.1"
     },
     "jest": {
         "preset": "jest-react-native"
     },
     "devDependencies": {
         "rimraf": "2.6.2",
-        "babel-jest": "16.2.0",
+        "babel-jest": "16.0.0",
         "babel-preset-react-native": "1.9.1",
         "jest": "19.0.2",
-        "jest-react-native": "16.2.0",
-        "react-test-renderer": "16.2.0"
+        "jest-react-native": "16.0.0",
+        "react-test-renderer": "16.0.0"
     }
 }
