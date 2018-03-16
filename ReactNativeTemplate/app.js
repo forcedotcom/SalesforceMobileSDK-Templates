@@ -70,7 +70,7 @@ class UserListScreen extends React.Component {
               <FlatList
                 data={this.state.data}
                 renderItem={({item}) => <Text style={styles.item}>{item.Name}</Text>}
-                keyExtractor={(item, index) => index}
+                keyExtractor={(item, index) => 'key_' + index}
               />
             </View>
         );

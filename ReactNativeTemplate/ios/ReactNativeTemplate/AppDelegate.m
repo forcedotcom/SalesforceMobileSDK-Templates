@@ -25,6 +25,7 @@
 #import "AppDelegate.h"
 #import "InitialViewController.h"
 #import <React/RCTRootView.h>
+#import <React/RCTBundleURLProvider.h>
 #import <SalesforceAnalytics/SFSDKLogger.h>
 #import <SalesforceSDKCore/SFSDKAppConfig.h>
 #import <SalesforceSDKCore/SFPushNotificationManager.h>
@@ -158,41 +159,17 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
 
 - (void)setupRootViewController
 {
-    /**
-     * Loading JavaScript code - uncomment the one you want.
-     *
-     * OPTION 1
-     * Load from development server. Start the server from the repository root:
-     *
-     * $ npm start
-     *
-     * To run on device, change `localhost` to the IP address of your computer
-     * and make sure your computer and iOS device are on the same Wi-Fi network.
-     */
-    [self setupReactRootView:[NSURL URLWithString:@"http://localhost:8081/index.bundle?platform=ios"]];
-    
-    /**
-     * OPTION 2
-     * Load from pre-bundled file on disk. To re-generate the static bundle,
-     * start the server from the repository root:
-     *
-     * $ npm start
-     *
-     * Run the curl command and add the output to your main Xcode build target:
-     *
-     * $ curl http://localhost:8081/index.bundle -o main.jsbundle
-     */
-    // [self setupReactRootView:[[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"]];
-}
+    NSURL *jsCodeLocation;
 
-- (void)setupReactRootView:(NSURL*)jsCodeLocation
-{
+    jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+
     RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                         moduleName:@"ReactNativeTemplate"
                                                  initialProperties:nil
                                                      launchOptions:self.launchOptions];
+    rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
     
-    UIViewController *rootViewController = [[UIViewController alloc] init];
+    UIViewController *rootViewController = [UIViewController new];
     rootViewController.view = rootView;
     self.window.rootViewController = rootViewController;
 }
