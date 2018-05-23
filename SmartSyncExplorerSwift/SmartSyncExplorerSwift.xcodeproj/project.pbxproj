@@ -245,7 +245,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 0710;
 				LastUpgradeCheck = 0920;
-				ORGANIZATIONNAME = Salesforce;
+				ORGANIZATIONNAME = SmartSyncExplorerSwiftOrganizationName;
 				TargetAttributes = {
 					4FD6C4731B754AF1002F9F90 = {
 						CreatedOnToolsVersion = 6.4;
