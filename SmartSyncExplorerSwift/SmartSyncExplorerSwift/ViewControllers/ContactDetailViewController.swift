@@ -28,19 +28,12 @@
  */
 
 import UIKit
-//import SalesforceSDKCore.SFDefaultUserManagementViewController
-//import SalesforceSDKCore.SFUserAccountManager
-//import SalesforceSDKCore.SFSecurityLockout
-//import SalesforceSDKCore.SalesforceSDKManager
 import SmartStore.SFSmartStoreInspectorViewController
+
 protocol ContactDetailViewDelegate {
-    
     func userDidDelete(object: SObjectData)
-    
     func userDidUndelete(object: SObjectData)
-    
     func userDidUpdate(object: SObjectData)
-    
     func userDidAdd(object: SObjectData)
 }
 

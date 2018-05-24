@@ -37,7 +37,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
 
     // Values in template
     var templateAppName = 'SmartSyncExplorerSwift';
-    var templatePackageName = 'com.salesforce.mobilesdk.SmartSyncExplorerSwift';
+    var templatePackageName = 'com.salesforce.mobilesdk';
     var templateOrganization = 'SmartSyncExplorerSwiftOrganizationName';
 
     // Key files
