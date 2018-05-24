@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-present, salesforce.com, inc.
+ * Copyright (c) 2018-present, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -46,10 +46,9 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var templateProjectDir = templateAppName + '.xcodeproj';
     var templateProjectFile = path.join(templateProjectDir, 'project.pbxproj');
     var templateSchemeFile = path.join(templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', templateAppName + '.xcscheme');
-    var templatePrefixFile = path.join(templateAppName, 'Prefix.pch');
     var templateInfoFile = path.join(templateAppName, 'Info.plist');
     var templateEntitlementsFile = path.join(templateAppName, templateAppName + '.entitlements');
-    var templateAppDelegateFile = path.join(templateAppName, 'AppDelegate.m');
+    var templateAppDelegateFile = path.join(templateAppName, 'AppDelegate.swift');
 
     //
     // Replace in files
@@ -80,7 +79,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Return paths of workspace and file with oauth config
     return {
         workspacePath: config.appname + ".xcworkspace",
-        bootconfigFile: path.join(config.appname, 'AppDelegate.m')
+        bootconfigFile: path.join(config.appname, 'AppDelegate.swift')
     };
 }
 
@@ -88,6 +87,6 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
 // Exports
 //
 module.exports = {
-    appType: 'native',
+    appType: 'native_swift',
     prepare: prepare
 };

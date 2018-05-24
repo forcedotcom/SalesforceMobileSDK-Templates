@@ -4,7 +4,7 @@
 
  Created by Nicholas McDonald on 1/16/18.
 
- Copyright (c) 2017-present, salesforce.com, inc. All rights reserved.
+ Copyright (c) 2018-present, salesforce.com, inc. All rights reserved.
  
  Redistribution and use of this software in source and binary forms, with or without modification,
  are permitted provided that the following conditions are met:
@@ -87,11 +87,22 @@ class RootViewController: UniversalViewController {
         self.tableView.delegate = self
         self.tableView.dataSource = self
         self.view.addSubview(self.tableView)
-        let safe = self.view.safeAreaLayoutGuide
-        self.commonConstraints.append(contentsOf: [self.tableView.leftAnchor.constraint(equalTo: safe.leftAnchor),
-                                                   self.tableView.rightAnchor.constraint(equalTo: safe.rightAnchor),
-                                                   self.tableView.topAnchor.constraint(equalTo: safe.topAnchor),
-                                                   self.tableView.bottomAnchor.constraint(equalTo: safe.bottomAnchor)])
+        
+        if #available(iOS 11.0, *) {
+            let safe = self.view.safeAreaLayoutGuide
+            self.commonConstraints.append(contentsOf: [self.tableView.leftAnchor.constraint(equalTo: safe.leftAnchor),
+                                                       self.tableView.rightAnchor.constraint(equalTo: safe.rightAnchor),
+                                                       self.tableView.topAnchor.constraint(equalTo: safe.topAnchor),
+                                                       self.tableView.bottomAnchor.constraint(equalTo: safe.bottomAnchor)])
+        }else {
+            self.commonConstraints.append(contentsOf: [self.tableView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
+                                                       self.tableView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
+                                                       self.tableView.topAnchor.constraint(equalTo: self.view.topAnchor),
+                                                       self.tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)])
+        }
+       
+        
+       
         
         syncUpDown()
     }

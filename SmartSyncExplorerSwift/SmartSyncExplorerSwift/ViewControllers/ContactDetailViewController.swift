@@ -4,7 +4,7 @@
  
  Created by Nicholas McDonald on 1/22/18.
 
- Copyright (c) 2017-present, salesforce.com, inc. All rights reserved.
+ Copyright (c) 2018-present, salesforce.com, inc. All rights reserved.
  
  Redistribution and use of this software in source and binary forms, with or without modification,
  are permitted provided that the following conditions are met:
@@ -135,7 +135,19 @@ class ContactDetailViewController: UniversalViewController {
         scrollView.addSubview(self.departmentField)
         scrollView.addSubview(deleteButton)
         
-        let safe = self.view.safeAreaLayoutGuide
+        var topAnchor = self.view.topAnchor
+        var bottomAnchor = self.view.bottomAnchor
+        var centerXAnchor = self.view.centerXAnchor
+        var rightAnchor = self.view.rightAnchor
+        var leftAnchor = self.view.leftAnchor
+        if #available(iOS 11.0, *) {
+            topAnchor = self.view.safeAreaLayoutGuide.topAnchor
+            bottomAnchor = self.view.safeAreaLayoutGuide.bottomAnchor
+            centerXAnchor = self.view.safeAreaLayoutGuide.centerXAnchor
+            rightAnchor = self.view.safeAreaLayoutGuide.rightAnchor
+            leftAnchor = self.view.safeAreaLayoutGuide.leftAnchor
+        }
+        
         let regInset:CGFloat = 60.0
         let regCenterInset:CGFloat = 12.0
         let regVertSpace:CGFloat = 30.0
@@ -144,10 +156,10 @@ class ContactDetailViewController: UniversalViewController {
         let interitemSpace:CGFloat = 0.0
         let textFieldHeight:CGFloat = 44.0
         
-        self.commonConstraints.append(contentsOf: [scrollView.leftAnchor.constraint(equalTo: safe.leftAnchor),
-                                                   scrollView.rightAnchor.constraint(equalTo: safe.rightAnchor),
-                                                   scrollView.topAnchor.constraint(equalTo: safe.topAnchor),
-                                                   scrollView.bottomAnchor.constraint(equalTo: safe.bottomAnchor),
+        self.commonConstraints.append(contentsOf: [scrollView.leftAnchor.constraint(equalTo: leftAnchor),
+                                                   scrollView.rightAnchor.constraint(equalTo: rightAnchor),
+                                                   scrollView.topAnchor.constraint(equalTo: topAnchor),
+                                                   scrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
                                                    self.firstNameField.heightAnchor.constraint(equalToConstant: textFieldHeight),
                                                    self.lastNameField.heightAnchor.constraint(equalToConstant: textFieldHeight),
                                                    self.mobilePhoneField.heightAnchor.constraint(equalToConstant: textFieldHeight),
@@ -159,37 +171,37 @@ class ContactDetailViewController: UniversalViewController {
         self.regularConstraints.append(contentsOf: [firstNameLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: regInset),
                                                     firstNameLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: regInset),
                                                     self.firstNameField.leftAnchor.constraint(equalTo: firstNameLabel.leftAnchor),
-                                                    self.firstNameField.rightAnchor.constraint(equalTo: safe.centerXAnchor, constant: -regCenterInset),
+                                                    self.firstNameField.rightAnchor.constraint(equalTo: centerXAnchor, constant: -regCenterInset),
                                                     self.firstNameField.topAnchor.constraint(equalTo: firstNameLabel.bottomAnchor, constant:interitemSpace),
                                                     lastNameLabel.leftAnchor.constraint(equalTo: scrollView.centerXAnchor, constant:regCenterInset),
                                                     lastNameLabel.topAnchor.constraint(equalTo: firstNameLabel.topAnchor),
                                                     self.lastNameField.leftAnchor.constraint(equalTo: lastNameLabel.leftAnchor),
-                                                    self.lastNameField.rightAnchor.constraint(equalTo: safe.rightAnchor, constant: -regInset),
+                                                    self.lastNameField.rightAnchor.constraint(equalTo: rightAnchor, constant: -regInset),
                                                     self.lastNameField.topAnchor.constraint(equalTo: self.firstNameField.topAnchor),
                                                     mobilePhoneLabel.leftAnchor.constraint(equalTo: firstNameLabel.leftAnchor),
                                                     mobilePhoneLabel.topAnchor.constraint(equalTo: self.firstNameField.bottomAnchor, constant:regVertSpace),
                                                     self.mobilePhoneField.leftAnchor.constraint(equalTo: mobilePhoneLabel.leftAnchor),
-                                                    self.mobilePhoneField.rightAnchor.constraint(equalTo: safe.centerXAnchor, constant: -regCenterInset),
+                                                    self.mobilePhoneField.rightAnchor.constraint(equalTo: centerXAnchor, constant: -regCenterInset),
                                                     self.mobilePhoneField.topAnchor.constraint(equalTo: mobilePhoneLabel.bottomAnchor, constant:interitemSpace),
                                                     homePhoneLabel.leftAnchor.constraint(equalTo: lastNameLabel.leftAnchor),
                                                     homePhoneLabel.topAnchor.constraint(equalTo: mobilePhoneLabel.topAnchor),
                                                     self.homePhoneField.leftAnchor.constraint(equalTo: homePhoneLabel.leftAnchor),
-                                                    self.homePhoneField.rightAnchor.constraint(equalTo: safe.rightAnchor, constant: -regInset),
+                                                    self.homePhoneField.rightAnchor.constraint(equalTo: rightAnchor, constant: -regInset),
                                                     self.homePhoneField.topAnchor.constraint(equalTo: homePhoneLabel.bottomAnchor, constant:interitemSpace),
                                                     jobTitleLabel.leftAnchor.constraint(equalTo: firstNameLabel.leftAnchor),
                                                     jobTitleLabel.topAnchor.constraint(equalTo: self.mobilePhoneField.bottomAnchor, constant:regVertSpace),
                                                     self.jobTitleField.leftAnchor.constraint(equalTo: jobTitleLabel.leftAnchor),
-                                                    self.jobTitleField.rightAnchor.constraint(equalTo: safe.rightAnchor, constant: -regInset),
+                                                    self.jobTitleField.rightAnchor.constraint(equalTo: rightAnchor, constant: -regInset),
                                                     self.jobTitleField.topAnchor.constraint(equalTo: jobTitleLabel.bottomAnchor, constant:interitemSpace),
                                                     emailLabel.leftAnchor.constraint(equalTo: firstNameLabel.leftAnchor),
                                                     emailLabel.topAnchor.constraint(equalTo: self.jobTitleField.bottomAnchor, constant:regVertSpace),
                                                     self.emailField.leftAnchor.constraint(equalTo: emailLabel.leftAnchor),
-                                                    self.emailField.rightAnchor.constraint(equalTo: safe.rightAnchor, constant: -regInset),
+                                                    self.emailField.rightAnchor.constraint(equalTo: rightAnchor, constant: -regInset),
                                                     self.emailField.topAnchor.constraint(equalTo: emailLabel.bottomAnchor, constant:interitemSpace),
                                                     departmentLabel.leftAnchor.constraint(equalTo: firstNameLabel.leftAnchor),
                                                     departmentLabel.topAnchor.constraint(equalTo: self.emailField.bottomAnchor, constant:regVertSpace),
                                                     self.departmentField.leftAnchor.constraint(equalTo: departmentLabel.leftAnchor),
-                                                    self.departmentField.rightAnchor.constraint(equalTo: safe.rightAnchor, constant: -regInset),
+                                                    self.departmentField.rightAnchor.constraint(equalTo: rightAnchor, constant: -regInset),
                                                     self.departmentField.topAnchor.constraint(equalTo: departmentLabel.bottomAnchor, constant:interitemSpace),
                                                     deleteButton.leftAnchor.constraint(equalTo: firstNameLabel.leftAnchor),
                                                     deleteButton.topAnchor.constraint(equalTo: self.departmentField.bottomAnchor, constant:regVertSpace),
@@ -199,40 +211,40 @@ class ContactDetailViewController: UniversalViewController {
         self.compactConstraints.append(contentsOf: [firstNameLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: compInset),
                                                     firstNameLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: compInset),
                                                     self.firstNameField.leftAnchor.constraint(equalTo: firstNameLabel.leftAnchor),
-                                                    self.firstNameField.rightAnchor.constraint(equalTo: safe.rightAnchor, constant:-compInset),
+                                                    self.firstNameField.rightAnchor.constraint(equalTo: rightAnchor, constant:-compInset),
                                                     self.firstNameField.topAnchor.constraint(equalTo: firstNameLabel.bottomAnchor, constant:interitemSpace),
                                                     lastNameLabel.leftAnchor.constraint(equalTo: firstNameLabel.leftAnchor),
                                                     lastNameLabel.topAnchor.constraint(equalTo: self.firstNameField.bottomAnchor, constant:compVertSpace),
                                                     self.lastNameField.leftAnchor.constraint(equalTo: lastNameLabel.leftAnchor),
-                                                    self.lastNameField.rightAnchor.constraint(equalTo: safe.rightAnchor, constant:-compInset),
+                                                    self.lastNameField.rightAnchor.constraint(equalTo: rightAnchor, constant:-compInset),
                                                     self.lastNameField.topAnchor.constraint(equalTo: lastNameLabel.bottomAnchor, constant:interitemSpace),
                                                     mobilePhoneLabel.leftAnchor.constraint(equalTo: firstNameLabel.leftAnchor),
                                                     mobilePhoneLabel.topAnchor.constraint(equalTo: self.lastNameField.bottomAnchor, constant:compVertSpace),
                                                     self.mobilePhoneField.leftAnchor.constraint(equalTo: mobilePhoneLabel.leftAnchor),
-                                                    self.mobilePhoneField.rightAnchor.constraint(equalTo: safe.rightAnchor, constant:-compInset),
+                                                    self.mobilePhoneField.rightAnchor.constraint(equalTo: rightAnchor, constant:-compInset),
                                                     self.mobilePhoneField.topAnchor.constraint(equalTo: mobilePhoneLabel.bottomAnchor, constant:interitemSpace),
                                                     homePhoneLabel.leftAnchor.constraint(equalTo: firstNameLabel.leftAnchor),
                                                     homePhoneLabel.topAnchor.constraint(equalTo: self.mobilePhoneField.bottomAnchor, constant:compVertSpace),
                                                     self.homePhoneField.leftAnchor.constraint(equalTo: homePhoneLabel.leftAnchor),
-                                                    self.homePhoneField.rightAnchor.constraint(equalTo: safe.rightAnchor, constant:-compInset),
+                                                    self.homePhoneField.rightAnchor.constraint(equalTo: rightAnchor, constant:-compInset),
                                                     self.homePhoneField.topAnchor.constraint(equalTo: homePhoneLabel.bottomAnchor, constant:interitemSpace),
                                                     jobTitleLabel.leftAnchor.constraint(equalTo: firstNameLabel.leftAnchor),
                                                     jobTitleLabel.topAnchor.constraint(equalTo: self.homePhoneField.bottomAnchor, constant:compVertSpace),
                                                     self.jobTitleField.leftAnchor.constraint(equalTo: jobTitleLabel.leftAnchor),
-                                                    self.jobTitleField.rightAnchor.constraint(equalTo: safe.rightAnchor, constant:-compInset),
+                                                    self.jobTitleField.rightAnchor.constraint(equalTo: rightAnchor, constant:-compInset),
                                                     self.jobTitleField.topAnchor.constraint(equalTo: jobTitleLabel.bottomAnchor, constant:interitemSpace),
                                                     emailLabel.leftAnchor.constraint(equalTo: firstNameLabel.leftAnchor),
                                                     emailLabel.topAnchor.constraint(equalTo: self.jobTitleField.bottomAnchor, constant:compVertSpace),
                                                     self.emailField.leftAnchor.constraint(equalTo: emailLabel.leftAnchor),
-                                                    self.emailField.rightAnchor.constraint(equalTo: safe.rightAnchor, constant:-compInset),
+                                                    self.emailField.rightAnchor.constraint(equalTo: rightAnchor, constant:-compInset),
                                                     self.emailField.topAnchor.constraint(equalTo: emailLabel.bottomAnchor, constant:interitemSpace),
                                                     departmentLabel.leftAnchor.constraint(equalTo: firstNameLabel.leftAnchor),
                                                     departmentLabel.topAnchor.constraint(equalTo: self.emailField.bottomAnchor, constant:compVertSpace),
                                                     self.departmentField.leftAnchor.constraint(equalTo: departmentLabel.leftAnchor),
-                                                    self.departmentField.rightAnchor.constraint(equalTo: safe.rightAnchor, constant:-compInset),
+                                                    self.departmentField.rightAnchor.constraint(equalTo: rightAnchor, constant:-compInset),
                                                     self.departmentField.topAnchor.constraint(equalTo: departmentLabel.bottomAnchor, constant:interitemSpace),
-                                                    deleteButton.leftAnchor.constraint(equalTo: safe.leftAnchor, constant: compInset),
-                                                    deleteButton.rightAnchor.constraint(equalTo: safe.rightAnchor, constant: -compInset),
+                                                    deleteButton.leftAnchor.constraint(equalTo: leftAnchor, constant: compInset),
+                                                    deleteButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -compInset),
                                                     deleteButton.topAnchor.constraint(equalTo: self.departmentField.bottomAnchor, constant:compVertSpace),
                                                     deleteButton.heightAnchor.constraint(equalToConstant: 44.0),
                                                     deleteButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant:-compInset)

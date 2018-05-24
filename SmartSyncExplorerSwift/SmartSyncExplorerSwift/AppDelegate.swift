@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2015-present, salesforce.com, inc. All rights reserved.
+ Copyright (c) 2018-present, salesforce.com, inc. All rights reserved.
  
  Redistribution and use of this software in source and binary forms, with or without modification,
  are permitted provided that the following conditions are met:
@@ -56,7 +56,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
             // instead of a webview. You must implement application:openURL:options  to handle the callback.
         }
         .postLaunch {  [unowned self] (launchActionList: SFSDKLaunchAction) in
-            let launchActionString = SalesforceSDKManager.launchActionsStringRepresentation(launchActionList)
+            let launchActionString = SalesforceSwiftSDKManager.launchActionsStringRepresentation(launchActionList)
             SalesforceSwiftLogger.log(type(of:self), level:.info, message:"Post-launch: launch actions taken: \(launchActionString)")
                 self.setupRootViewController()
             
@@ -67,7 +67,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         }.launchError {  [unowned self] (error: Error, launchActionList: SFSDKLaunchAction) in
             SFSDKLogger.log(type(of:self), level:.error, message:"Error during SDK launch: \(error.localizedDescription)")
             self.initializeAppViewState()
-            SalesforceSDKManager.shared().launch()
+            SalesforceSwiftSDKManager.shared().launch()
         }
         .done()
    
