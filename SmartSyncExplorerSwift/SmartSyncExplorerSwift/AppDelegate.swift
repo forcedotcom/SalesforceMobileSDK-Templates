@@ -195,7 +195,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
                 if (numberOfAccounts == 1) {
                     SFUserAccountManager.sharedInstance().currentUser = allAccounts![0]
                 }
-                SalesforceSDKManager.shared().launch()
+                SalesforceSwiftSDKManager.shared().launch()
             }
         }
     }
@@ -207,7 +207,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         SFSDKLogger.log(type(of:self), level:.debug, message:"SFUserAccountManager changed from user \(String(describing: fromUserName)) to \(String(describing: toUserName)).  Resetting app.")
         self.resetViewState { () -> () in
             self.initializeAppViewState()
-            SalesforceSDKManager.shared().launch()
+            SalesforceSwiftSDKManager.shared().launch()
         }
     }
 }
