@@ -25,14 +25,6 @@
 		B76D656F20B3323A00B55764 /* UIColors+helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76D656B20B3323A00B55764 /* UIColors+helper.swift */; };
 		B76D657020B3323A00B55764 /* ContactHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76D656C20B3323A00B55764 /* ContactHelpers.swift */; };
 		B76D657320B332D400B55764 /* ContactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76D657220B332D400B55764 /* ContactTableViewCell.swift */; };
-		B76D65D420B384B100B55764 /* SalesforceSans-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B76D65CC20B384B000B55764 /* SalesforceSans-Italic.ttf */; };
-		B76D65D520B384B100B55764 /* SalesforceSans-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B76D65CD20B384B000B55764 /* SalesforceSans-Light.ttf */; };
-		B76D65D620B384B100B55764 /* SalesforceSans-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B76D65CE20B384B000B55764 /* SalesforceSans-LightItalic.ttf */; };
-		B76D65D720B384B100B55764 /* SalesforceSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B76D65CF20B384B000B55764 /* SalesforceSans-BoldItalic.ttf */; };
-		B76D65D820B384B100B55764 /* SalesforceSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B76D65D020B384B000B55764 /* SalesforceSans-Regular.ttf */; };
-		B76D65D920B384B100B55764 /* SalesforceSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B76D65D120B384B000B55764 /* SalesforceSans-Bold.ttf */; };
-		B76D65DA20B384B100B55764 /* SalesforceSans-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B76D65D220B384B100B55764 /* SalesforceSans-Thin.ttf */; };
-		B76D65DB20B384B100B55764 /* SalesforceSans-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B76D65D320B384B100B55764 /* SalesforceSans-ThinItalic.ttf */; };
 		B76D65DD20B4A0C900B55764 /* Contacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76D65DC20B4A0C900B55764 /* Contacts.swift */; };
 		CEA8CA041F071B2300448B51 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEA8CA031F071B2300448B51 /* Images.xcassets */; };
 /* End PBXBuildFile section */
@@ -62,14 +54,6 @@
 		B76D656B20B3323A00B55764 /* UIColors+helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColors+helper.swift"; sourceTree = "<group>"; };
 		B76D656C20B3323A00B55764 /* ContactHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactHelpers.swift; sourceTree = "<group>"; };
 		B76D657220B332D400B55764 /* ContactTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactTableViewCell.swift; sourceTree = "<group>"; };
-		B76D65CC20B384B000B55764 /* SalesforceSans-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SalesforceSans-Italic.ttf"; sourceTree = "<group>"; };
-		B76D65CD20B384B000B55764 /* SalesforceSans-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SalesforceSans-Light.ttf"; sourceTree = "<group>"; };
-		B76D65CE20B384B000B55764 /* SalesforceSans-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SalesforceSans-LightItalic.ttf"; sourceTree = "<group>"; };
-		B76D65CF20B384B000B55764 /* SalesforceSans-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SalesforceSans-BoldItalic.ttf"; sourceTree = "<group>"; };
-		B76D65D020B384B000B55764 /* SalesforceSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SalesforceSans-Regular.ttf"; sourceTree = "<group>"; };
-		B76D65D120B384B000B55764 /* SalesforceSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SalesforceSans-Bold.ttf"; sourceTree = "<group>"; };
-		B76D65D220B384B100B55764 /* SalesforceSans-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SalesforceSans-Thin.ttf"; sourceTree = "<group>"; };
-		B76D65D320B384B100B55764 /* SalesforceSans-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SalesforceSans-ThinItalic.ttf"; sourceTree = "<group>"; };
 		B76D65DC20B4A0C900B55764 /* Contacts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contacts.swift; sourceTree = "<group>"; };
 		CEA8CA031F071B2300448B51 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/Images.xcassets"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -193,14 +177,6 @@
 				B767370020AB57C600F04103 /* userstore.json */,
 				B767370120AB57C600F04103 /* usersyncs.json */,
 				B76D655B20B3314A00B55764 /* Assets.xcassets */,
-				B76D65D120B384B000B55764 /* SalesforceSans-Bold.ttf */,
-				B76D65CF20B384B000B55764 /* SalesforceSans-BoldItalic.ttf */,
-				B76D65CC20B384B000B55764 /* SalesforceSans-Italic.ttf */,
-				B76D65CD20B384B000B55764 /* SalesforceSans-Light.ttf */,
-				B76D65CE20B384B000B55764 /* SalesforceSans-LightItalic.ttf */,
-				B76D65D020B384B000B55764 /* SalesforceSans-Regular.ttf */,
-				B76D65D220B384B100B55764 /* SalesforceSans-Thin.ttf */,
-				B76D65D320B384B100B55764 /* SalesforceSans-ThinItalic.ttf */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -282,18 +258,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				CEA8CA041F071B2300448B51 /* Images.xcassets in Resources */,
-				B76D65D920B384B100B55764 /* SalesforceSans-Bold.ttf in Resources */,
 				B7168FBC1FACC6F900A48DB5 /* LaunchScreen.storyboard in Resources */,
 				B767370220AB57C600F04103 /* userstore.json in Resources */,
-				B76D65D620B384B100B55764 /* SalesforceSans-LightItalic.ttf in Resources */,
 				B767370320AB57C600F04103 /* usersyncs.json in Resources */,
-				B76D65D420B384B100B55764 /* SalesforceSans-Italic.ttf in Resources */,
-				B76D65D520B384B100B55764 /* SalesforceSans-Light.ttf in Resources */,
-				B76D65D720B384B100B55764 /* SalesforceSans-BoldItalic.ttf in Resources */,
 				B76D655C20B3314A00B55764 /* Assets.xcassets in Resources */,
-				B76D65DA20B384B100B55764 /* SalesforceSans-Thin.ttf in Resources */,
-				B76D65D820B384B100B55764 /* SalesforceSans-Regular.ttf in Resources */,
-				B76D65DB20B384B100B55764 /* SalesforceSans-ThinItalic.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
