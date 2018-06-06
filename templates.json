@@ -1,76 +1,76 @@
 [ 
     {
-        path: 'AndroidIDPTemplate',
-        description: 'Sample Kotlin Identity Provider application',
-        apptype: 'native_kotlin',
-        platforms: ['android']
+        'path': 'AndroidIDPTemplate',
+        'description': 'Sample Kotlin Identity Provider application',
+        'apptype': 'native_kotlin',
+        'platforms': ['android']
     },
     {
-        path: 'AndroidNativeKotlinTemplate',
-        description: 'Basic Kotlin application',
-        apptype: 'native_kotlin',
-        platforms: ['android']
+        'path': 'AndroidNativeKotlinTemplate',
+        'description': 'Basic Kotlin application',
+        'apptype': 'native_kotlin',
+        'platforms': ['android']
     },
     {
-        path: 'AndroidNativeTemplate',
-        description: 'Basic Java application',
-        apptype: 'native',
-        platforms: ['android']
-    },
-    {
-
-        path: 'HybridLocalTemplate',
-        description: 'Basic hybrid local application',
-        apptype: 'hybrid_local',
-        platforms: ['android', 'ios']
+        'path': 'AndroidNativeTemplate',
+        'description': 'Basic Java application',
+        'apptype': 'native',
+        'platforms': ['android']
     },
     {
 
-        path: 'HybridRemoteTemplate',
-        description: 'Basic hybrid remote application',
-        apptype: 'hybrid_remote',
-        platforms: ['android', 'ios']
+        'path': 'HybridLocalTemplate',
+        'description': 'Basic hybrid local application',
+        'apptype': 'hybrid_local',
+        'platforms': ['android', 'ios']
     },
     {
 
-        path: 'ReactNativeTemplate',
-        description: 'Basic React Native application',
-        apptype: 'react_native',
-        platforms: ['android', 'ios']
+        'path': 'HybridRemoteTemplate',
+        'description': 'Basic hybrid remote application',
+        'apptype': 'hybrid_remote',
+        'platforms': ['android', 'ios']
     },
     {
 
-        path: 'SmartSyncExplorerReactNative',
-        description: 'Sample application using SmartSync data framework',
-        apptype: 'react_native',
-        platforms: ['android', 'ios']
+        'path': 'ReactNativeTemplate',
+        'description': 'Basic React Native application',
+        'apptype': 'react_native',
+        'platforms': ['android', 'ios']
     },
     {
 
-        path: 'SmartSyncExplorerSwift',
-        description: 'Sample Swift application using SmartSync data framework',
-        apptype: 'native_swift',
-        platforms: ['ios']
+        'path': 'SmartSyncExplorerReactNative',
+        'description': 'Sample application using SmartSync data framework',
+        'apptype': 'react_native',
+        'platforms': ['android', 'ios']
     },
     {
 
-        path: 'iOSIDPTemplate',
-        description: 'Sample Swift Identity Provider application',
-        apptype: 'native_swift',
-        platforms: ['ios']
+        'path': 'SmartSyncExplorerSwift',
+        'description': 'Sample Swift application using SmartSync data framework',
+        'apptype': 'native_swift',
+        'platforms': ['ios']
     },
     {
 
-        path: 'iOSNativeSwiftTemplate',
-        description: 'Basic Swift application',
-        apptype: 'native_swift',
-        platforms: ['ios']
+        'path': 'iOSIDPTemplate',
+        'description': 'Sample Swift Identity Provider application',
+        'apptype': 'native_swift',
+        'platforms': ['ios']
     },
     {
 
-        path: 'iOSNativeTemplate',
-        description: 'Basic Objective-C application',
-        apptype: 'native',
-        platforms: ['ios']
+        'path': 'iOSNativeSwiftTemplate',
+        'description': 'Basic Swift application',
+        'apptype': 'native_swift',
+        'platforms': ['ios']
+    },
+    {
+
+        'path': 'iOSNativeTemplate',
+        'description': 'Basic Objective-C application',
+        'apptype': 'native',
+        'platforms': ['ios']
     }
 ]
