@@ -1,9 +1,17 @@
 [ 
     {
-        "path": "AndroidIDPTemplate",
-        "description": "Sample Kotlin Identity Provider application",
-        "appType": "native_kotlin",
-        "platforms": ["android"]
+
+        "path": "iOSNativeSwiftTemplate",
+        "description": "Basic Swift application",
+        "appType": "native_swift",
+        "platforms": ["ios"]
+    },
+    {
+
+        "path": "iOSNativeTemplate",
+        "description": "Basic Objective-C application",
+        "appType": "native",
+        "platforms": ["ios"]
     },
     {
         "path": "AndroidNativeKotlinTemplate",
@@ -38,19 +46,12 @@
         "appType": "react_native",
         "platforms": ["android", "ios"]
     },
-    {
 
-        "path": "SmartSyncExplorerReactNative",
-        "description": "Sample application using SmartSync data framework",
-        "appType": "react_native",
-        "platforms": ["android", "ios"]
-    },
     {
-
-        "path": "SmartSyncExplorerSwift",
-        "description": "Sample Swift application using SmartSync data framework",
-        "appType": "native_swift",
-        "platforms": ["ios"]
+        "path": "AndroidIDPTemplate",
+        "description": "Sample Kotlin Identity Provider application",
+        "appType": "native_kotlin",
+        "platforms": ["android"]
     },
     {
 
@@ -61,16 +62,16 @@
     },
     {
 
-        "path": "iOSNativeSwiftTemplate",
-        "description": "Basic Swift application",
+        "path": "SmartSyncExplorerSwift",
+        "description": "Sample Swift application using SmartSync data framework",
         "appType": "native_swift",
         "platforms": ["ios"]
     },
     {
 
-        "path": "iOSNativeTemplate",
-        "description": "Basic Objective-C application",
-        "appType": "native",
-        "platforms": ["ios"]
+        "path": "SmartSyncExplorerReactNative",
+        "description": "Sample application using SmartSync data framework",
+        "appType": "react_native",
+        "platforms": ["android", "ios"]
     }
 ]
