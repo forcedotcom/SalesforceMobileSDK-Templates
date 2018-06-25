@@ -26,6 +26,7 @@
 
 import React from 'react';
 import {
+    Alert,
     Platform,
     StyleSheet,
     Text,
@@ -112,7 +113,15 @@ var onBack = () => {
 }
 
 var onLogout = () => {
-    oauth.logout();
+    Alert.alert(
+        'Logout',
+        'Are you sure you want to logout',
+        [
+            {text: 'Cancel' },
+            {text: 'OK', onPress: () => oauth.logout()},
+        ],
+        { cancelable: true }
+    )
 }
 
 // App component
