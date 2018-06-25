@@ -35,15 +35,13 @@ import {
 
 import Field from './Field';
 import storeMgr from './StoreMgr';
-import NavigationExperimental from 'react-native-deprecated-custom-components';
-let navigator;
+import { Button } from 'react-native-elements';
 
 // State: contact
 // Props: contact
 var createReactClass = require('create-react-class');
 const ContactScreen = createReactClass({
     getInitialState() {
-        navigator = NavigationExperimental.navigator;
         return {
             contact: this.props.contact
         };
@@ -55,17 +53,33 @@ const ContactScreen = createReactClass({
         this.setState({contact});
     },
 
-    onSaveContact() {
-        const contact = this.state.contact;
-        contact.__locally_updated__ = contact.__local__ = true;
-        storeMgr.saveContact(contact, () => {navigator.pop();});
-    },
-    
     onDeleteUndeleteContact() {
         const contact = this.state.contact;
+        const navigator = this.navigator;
         contact.__locally_deleted__ = !contact.__locally_deleted__;
         contact.__local__ = contact.__locally_deleted__ || contact.__locally_updated__ || contact.__locally_created__;
-        storeMgr.saveContact(contact, () => {navigator.pop();});
+        storeMgr.saveContact(contact, () => {this.props.navigator.pop()});
+    },
+
+    renderDeleteUndeleteButton() {
+        var iconName = 'delete';
+        var title = 'Delete';
+        var bgColor = 'red';
+        if (this.state.contact.__locally_deleted__) {
+            iconName = 'delete-restore';
+            title = 'Undelete';
+            bgColor = 'blue';
+        } 
+
+        return (
+                <Button
+                  backgroundColor={bgColor}
+                  containerStyle={{alignItems:'stretch'}}
+                  icon={{name: iconName, type: 'material-community'}}
+                  title={title}
+                  onPress={this.onDeleteUndeleteContact}
+                />
+        );
     },
 
     render() {
@@ -78,6 +92,7 @@ const ContactScreen = createReactClass({
                   <Field fieldLabel="Email address" fieldValue={this.state.contact.Email} onChange={(text) => this.onChange("Email", text)}/>
                   <Field fieldLabel="Department" fieldValue={this.state.contact.Department} onChange={(text) => this.onChange("Department", text)}/>
                   <Field fieldLabel="Home phone" fieldValue={this.state.contact.HomePhone} onChange={(text) => this.onChange("HomePhone", text)}/>
+                  {this.renderDeleteUndeleteButton()}
                 </ScrollView>
                );
     }
