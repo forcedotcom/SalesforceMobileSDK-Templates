@@ -69,9 +69,7 @@ const NavigationBarRouteMapper = {
                     </View>);
         }
         else if (route.name === 'Contact') {
-            const deleteUndeleteIcon = (route.contact.__locally_deleted__ ? 'delete-restore' : 'delete');
             return (<View style={styles.navButtonsGroup}>
-                      <NavImgButton icon={deleteUndeleteIcon} iconType='material-community' onPress={onDeleteUndelete} />
                       <NavImgButton icon='save' onPress={onSave} />
                     </View>);
         }
@@ -98,14 +96,6 @@ var onSave = () => {
     const contact = contactScreenInstance.state.contact;
     const navigator = contactScreenInstance.props.navigator;
     contact.__locally_updated__ = contact.__local__ = true;
-    storeMgr.saveContact(contact, () => navigator.pop());
-}
-
-var onDeleteUndelete = () => {
-    const contact = contactScreenInstance.state.contact;
-    const navigator = contactScreenInstance.props.navigator;
-    contact.__locally_deleted__ = !contact.__locally_deleted__;
-    contact.__local__ = contact.__locally_deleted__ || contact.__locally_updated__ || contact.__locally_created__;
     storeMgr.saveContact(contact, () => navigator.pop());
 }
 
