@@ -72,6 +72,7 @@ const ContactScreen = createReactClass({
         } 
 
         return (
+                <View style={{marginTop:10}}>
                 <Button
                   backgroundColor={bgColor}
                   containerStyle={{alignItems:'stretch'}}
@@ -79,30 +80,25 @@ const ContactScreen = createReactClass({
                   title={title}
                   onPress={this.onDeleteUndeleteContact}
                 />
+                </View>
         );
     },
 
     render() {
         return (
-                <ScrollView style={this.props.style}>
-                  <Field fieldLabel="First name" fieldValue={this.state.contact.FirstName} onChange={(text) => this.onChange("FirstName", text)}/>
-                  <Field fieldLabel="Last name" fieldValue={this.state.contact.LastName} onChange={(text) => this.onChange("LastName", text)}/>
-                  <Field fieldLabel="Title" fieldValue={this.state.contact.Title} onChange={(text) => this.onChange("Title", text)}/>
-                  <Field fieldLabel="Mobile phone" fieldValue={this.state.contact.MobilePhone} onChange={(text) => this.onChange("MobilePhone", text)}/>
-                  <Field fieldLabel="Email address" fieldValue={this.state.contact.Email} onChange={(text) => this.onChange("Email", text)}/>
-                  <Field fieldLabel="Department" fieldValue={this.state.contact.Department} onChange={(text) => this.onChange("Department", text)}/>
-                  <Field fieldLabel="Home phone" fieldValue={this.state.contact.HomePhone} onChange={(text) => this.onChange("HomePhone", text)}/>
-                  {this.renderDeleteUndeleteButton()}
+                <ScrollView>
+                  <View style={this.props.style}>
+                    <Field fieldLabel="First name" fieldValue={this.state.contact.FirstName} onChange={(text) => this.onChange("FirstName", text)}/>
+                    <Field fieldLabel="Last name" fieldValue={this.state.contact.LastName} onChange={(text) => this.onChange("LastName", text)}/>
+                    <Field fieldLabel="Title" fieldValue={this.state.contact.Title} onChange={(text) => this.onChange("Title", text)}/>
+                    <Field fieldLabel="Mobile phone" fieldValue={this.state.contact.MobilePhone} onChange={(text) => this.onChange("MobilePhone", text)}/>
+                    <Field fieldLabel="Email address" fieldValue={this.state.contact.Email} onChange={(text) => this.onChange("Email", text)}/>
+                    <Field fieldLabel="Department" fieldValue={this.state.contact.Department} onChange={(text) => this.onChange("Department", text)}/>
+                    <Field fieldLabel="Home phone" fieldValue={this.state.contact.HomePhone} onChange={(text) => this.onChange("HomePhone", text)}/>
+                    {this.renderDeleteUndeleteButton()}
+                  </View>
                 </ScrollView>
                );
-    }
-});
-
-const styles = StyleSheet.create({
-    button: {
-        fontSize: 16,
-        color: 'red',
-        padding: 5
     }
 });
 

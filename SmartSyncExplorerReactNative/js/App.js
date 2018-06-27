@@ -176,6 +176,7 @@ var styles = StyleSheet.create({
     scene: {
         paddingTop: Platform.OS === 'ios' ? 56 : 38,
         backgroundColor: 'white',
+        flex: 1,
     },
 });
 

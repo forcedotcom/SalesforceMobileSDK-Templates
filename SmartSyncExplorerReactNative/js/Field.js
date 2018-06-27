@@ -36,7 +36,7 @@ import {
 // Props: fieldLabel, fieldValue
 class Field extends React.Component {
     render() {
-        return (<View>
+        return (<View key={this.props.fieldLabel} >
                   <FormLabel>{this.props.fieldLabel}</FormLabel>
                   <FormInput onChangeText={this.props.onChange} value={this.props.fieldValue}/>                
                 </View>
