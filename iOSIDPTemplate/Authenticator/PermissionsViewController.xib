@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina5_9" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment version="4096" identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <capability name="Alignment constraints to the first baseline" minToolsVersion="6.0"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="PermissionsViewController" customModule="Authenticator" customModuleProvider="target">
+            <connections>
+                <outlet property="infoTextView" destination="VjH-RU-sDh" id="m3v-OT-s4x"/>
+                <outlet property="tableView" destination="PXc-Fz-z6Q" id="SYG-Hs-cAN"/>
+                <outlet property="view" destination="iN0-l3-epB" id="iVM-em-txO"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" style="plain" separatorStyle="none" rowHeight="-1" sectionHeaderHeight="1" sectionFooterHeight="1" contentViewInsetsToSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PXc-Fz-z6Q">
+                    <rect key="frame" x="29" y="243" width="316" height="295"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="295" id="JKs-Wx-Exq"/>
+                    </constraints>
+                    <color key="sectionIndexBackgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                </tableView>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bx8-0Z-fk4">
+                    <rect key="frame" x="43" y="653" width="150" height="30"/>
+                    <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="150" id="7vD-xz-4Hl"/>
+                        <constraint firstAttribute="height" constant="30" id="Hp9-2h-A9y"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                    <state key="normal" title="Add User">
+                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    </state>
+                    <connections>
+                        <action selector="addUserAction:" destination="-1" eventType="touchUpInside" id="Sdj-7c-pi8"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BRE-hz-bos">
+                    <rect key="frame" x="201" y="653" width="150" height="30"/>
+                    <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                    <state key="normal" title="Cancel">
+                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    </state>
+                    <connections>
+                        <action selector="cancelAction:" destination="-1" eventType="touchUpInside" id="TLt-Hd-v7Y"/>
+                    </connections>
+                </button>
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Select User for" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="VjH-RU-sDh">
+                    <rect key="frame" x="16" y="110" width="331" height="88"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="88" id="TbG-C5-JOu"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                </textView>
+            </subviews>
+            <color key="backgroundColor" red="0.87712439718154533" green="0.85585399766478121" blue="0.8807263970375061" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <accessibility key="accessibilityConfiguration" label="Pick User"/>
+            <constraints>
+                <constraint firstItem="PXc-Fz-z6Q" firstAttribute="top" secondItem="VjH-RU-sDh" secondAttribute="bottom" constant="45" id="0vU-QO-hFy"/>
+                <constraint firstItem="VjH-RU-sDh" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="110" id="94X-VM-Yj9"/>
+                <constraint firstItem="VjH-RU-sDh" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leadingMargin" id="DAY-JS-bhP"/>
+                <constraint firstItem="PXc-Fz-z6Q" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="29" id="EtZ-Zg-eNQ"/>
+                <constraint firstAttribute="trailing" secondItem="VjH-RU-sDh" secondAttribute="trailing" constant="28" id="IID-VX-r0U"/>
+                <constraint firstItem="BRE-hz-bos" firstAttribute="leading" secondItem="bx8-0Z-fk4" secondAttribute="trailing" constant="8" symbolic="YES" id="KWR-nA-Rmu"/>
+                <constraint firstItem="bx8-0Z-fk4" firstAttribute="baseline" secondItem="BRE-hz-bos" secondAttribute="firstBaseline" id="QxD-Xu-puh"/>
+                <constraint firstItem="PXc-Fz-z6Q" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="Scp-FF-OPf"/>
+                <constraint firstItem="BRE-hz-bos" firstAttribute="baseline" secondItem="bx8-0Z-fk4" secondAttribute="firstBaseline" id="Wa2-Wf-Ag4"/>
+                <constraint firstAttribute="bottom" secondItem="bx8-0Z-fk4" secondAttribute="bottom" constant="129" id="eoR-KE-2iF"/>
+                <constraint firstItem="bx8-0Z-fk4" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="43" id="q5c-a5-R3B"/>
+                <constraint firstItem="bx8-0Z-fk4" firstAttribute="top" secondItem="BRE-hz-bos" secondAttribute="top" id="sHU-Cy-BXO"/>
+                <constraint firstAttribute="trailing" secondItem="BRE-hz-bos" secondAttribute="trailing" constant="24" id="tRx-Ri-hah"/>
+            </constraints>
+            <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" prompted="NO"/>
+            <point key="canvasLocation" x="34" y="87"/>
+        </view>
+    </objects>
+</document>

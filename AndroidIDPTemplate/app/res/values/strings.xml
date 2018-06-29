@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="account_type">com.salesforce.samples.salesforceandroididptemplateapp.login</string>
+	<string name="app_name"><b>SalesforceAndroidIDPTemplateApp</b></string>
+	<string name="app_package">com.salesforce.samples.salesforceandroididptemplateapp</string>
+    <string name="welcome">Welcome %s</string>
+    <string name="apps">Apps</string>
+    <string name="users">Users</string>
+</resources>
