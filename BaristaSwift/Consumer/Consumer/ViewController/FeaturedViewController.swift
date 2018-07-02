@@ -29,6 +29,7 @@
 
 import UIKit
 import Common
+import SalesforceSwiftSDK
 
 class FeaturedViewController: UIViewController {
 
@@ -75,9 +76,9 @@ class FeaturedViewController: UIViewController {
 
     @objc func updateFeaturedProducts() {
         ProductStore.instance.syncDown { (syncState) in
-            NSLog("syncing down")
+            SalesforceSwiftLogger.log(type(of:self), level:.info, message:"syncing down")
             if let complete = syncState?.isDone(), complete == true {
-                NSLog("syncing completed")
+                SalesforceSwiftLogger.log(type(of:self), level:.info, message:"syncing completed")
                 DispatchQueue.main.async {
                     self.refreshControl.endRefreshing()
                     self.featuredProducts = ProductStore.instance.featuredProducts()

@@ -82,19 +82,19 @@ public class LocalOrderStore {
         QuoteStore.instance.updateEntry(entry: quote) { (quoteSync) in
             guard let quoteState = quoteSync else { return }
             if quoteState.isDone() {
-                NSLog("update quote completed")
+                SalesforceSwiftLogger.log(type(of:self), level:.info, message:"update quote completed")
                 OpportunityStore.instance.updateEntry(entry: opty, completion: { (optSync) in
                     guard let optyState = optSync else { return }
                     if optyState.isDone() {
-                        NSLog("update opty completed")
+                        SalesforceSwiftLogger.log(type(of:self), level:.info, message:"update opty completed")
                         completion(true)
                     } else if optyState.hasFailed() {
-                        NSLog("Failed syncing opportunity update")
+                        SalesforceSwiftLogger.log(type(of:self), level:.info, message:"Failed syncing opportunity update")
                         completion(false)
                     }
                 })
             } else if quoteState.hasFailed() {
-                NSLog("Failed syncing quote update")
+                SalesforceSwiftLogger.log(type(of:self), level:.info, message:"Failed syncing quote update")
                 completion(false)
             }
         }
@@ -114,7 +114,7 @@ public class LocalOrderStore {
         let storeCount = 6
         var syncedCount = 0
         let syncCompletion:((SFSyncState?) -> Void) = { (syncState) in
-            NSLog("sync completed \(syncedCount)")
+            SalesforceSwiftLogger.log(type(of:self), level:.info, message:"sync completed \(syncedCount)")
             if let complete = syncState?.isDone(), complete == true {
                 syncedCount = syncedCount + 1
             }
@@ -141,9 +141,9 @@ public class LocalOrderStore {
             if let complete = syncState?.isDone(), complete == true {
                 syncedCount = syncedCount + 1
             }
-            NSLog("sync completed \(syncedCount)")
+            SalesforceSwiftLogger.log(type(of:self), level:.info, message:"sync completed \(syncedCount)")
             if syncedCount == storeCount {
-                NSLog("sync up completed")
+                SalesforceSwiftLogger.log(type(of:self), level:.info, message:"sync up completed")
                 self.syncDownOrders(completion: completion)
             }
         }
@@ -155,7 +155,7 @@ public class LocalOrderStore {
         let storeCount = 8
         var syncedCount = 0
         let syncCompletion:((SFSyncState?) -> Void) = { (syncState) in
-            NSLog("sync completed \(syncedCount)")
+            SalesforceSwiftLogger.log(type(of:self), level:.info, message:"sync completed \(syncedCount)")
             if let complete = syncState?.isDone(), complete == true {
                 syncedCount = syncedCount + 1
             }
