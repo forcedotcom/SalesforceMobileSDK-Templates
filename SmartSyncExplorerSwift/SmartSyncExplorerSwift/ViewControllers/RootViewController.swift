@@ -126,6 +126,9 @@ class RootViewController: UniversalViewController {
                 self.showDBInspector()
             })
         }
+        table.onCancelSelected = {
+            table.dismiss(animated: true, completion: nil)
+        }
         
         self.present(table, animated: true, completion: nil)
         self.presentedActions = table
