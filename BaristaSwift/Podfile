@@ -1,17 +1,16 @@
 platform :ios, '10.0'
 use_frameworks!
 
-source 'ssh://git@github.com/forcedotcom/SalesforceMobileSDK-iOS-Specs.git'
 source 'https://github.com/CocoaPods/Specs.git'
 
 workspace 'Barista.xcworkspace'
 
 def barista_pods
-  pod 'SalesforceSDKCore'
-  pod 'SmartStore'
-  pod 'SmartSync'
-  pod 'SalesforceSwiftSDK'
-  pod 'SalesforceAnalytics'
+  pod 'SalesforceAnalytics', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
+  pod 'SalesforceSDKCore', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
+  pod 'SmartStore', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
+  pod 'SmartSync', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
+  pod 'SalesforceSwiftSDK', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
   pod 'PromiseKit', :git => 'https://github.com/mxcl/PromiseKit', :tag => '5.0.3'
   pod 'RxSwift', '~> 4.1'
   pod 'RxCocoa', '~> 4.1'

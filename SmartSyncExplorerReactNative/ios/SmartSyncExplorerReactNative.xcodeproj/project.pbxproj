@@ -126,8 +126,8 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				F91EAB9E5BEED0D528204139 /* [CP] Embed Pods Frameworks */,
 				212520A1C8337472A792B88C /* [CP] Copy Pods Resources */,
+				D34897343E0BD2CC602AB1EC /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -261,7 +261,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SmartSyncExplorerReactNative/Pods-SmartSyncExplorerReactNative-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F91EAB9E5BEED0D528204139 /* [CP] Embed Pods Frameworks */ = {
+		D34897343E0BD2CC602AB1EC /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (

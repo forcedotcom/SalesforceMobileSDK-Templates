@@ -1,5 +1,11 @@
 # barista-ios
 
-Swift iOS code for the barista application
+Barista consumer and provider apps for iOS written in Swift
 
-post pod install - you'll need to add SalesforceAnalytics and SalesforceSDKCore frameworks to the SalesforceSwiftSDK pod target
+## To get started do the following from this directory
+``` shell
+node ./install.js
+```
+
+## To run the applications
+* Open Barista.xcworkspace in XCode

@@ -201,8 +201,8 @@
 				4FD6C4701B754AF1002F9F90 /* Sources */,
 				4FD6C4711B754AF1002F9F90 /* Frameworks */,
 				4FD6C4721B754AF1002F9F90 /* Resources */,
-				68C67C5E03B67EF3A0901D3D /* [CP] Copy Pods Resources */,
 				7056FC8D1D194E5113988767 /* [CP] Embed Pods Frameworks */,
+				B72404020BA2163F57BB1EDC /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -268,21 +268,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		68C67C5E03B67EF3A0901D3D /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SmartSyncExplorerSwift/Pods-SmartSyncExplorerSwift-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		7056FC8D1D194E5113988767 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -315,6 +300,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SmartSyncExplorerSwift/Pods-SmartSyncExplorerSwift-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B72404020BA2163F57BB1EDC /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SmartSyncExplorerSwift/Pods-SmartSyncExplorerSwift-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FF74F0F7AF3E58C14EBE5178 /* [CP] Check Pods Manifest.lock */ = {
