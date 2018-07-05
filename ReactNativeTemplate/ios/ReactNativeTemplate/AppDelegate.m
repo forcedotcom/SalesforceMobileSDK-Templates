@@ -53,7 +53,7 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
         [SalesforceSDKManager sharedManager].appConfig.oauthRedirectURI = OAuthRedirectURI;
         [SalesforceSDKManager sharedManager].appConfig.oauthScopes = [NSSet setWithArray:@[ @"web", @"api" ]];
         // Uncomment the following line if you don't want login to happen when the application launches
-        [SalesforceSDKManager sharedManager].appConfig.shouldAuthenticate = NO;
+        // [SalesforceSDKManager sharedManager].appConfig.shouldAuthenticate = NO;
 
         //Uncomment the following line inorder to enable/force the use of advanced authentication flow.
         //[SFUserAccountManager sharedInstance].advancedAuthConfiguration = SFOAuthAdvancedAuthConfigurationRequire;
