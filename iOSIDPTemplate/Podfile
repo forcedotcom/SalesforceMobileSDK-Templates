@@ -12,7 +12,6 @@ pod 'SalesforceSDKCore', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
 pod 'SmartStore', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
 pod 'SmartSync', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
 pod 'SalesforceSwiftSDK', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
-pod 'PromiseKit', :git => 'https://github.com/mxcl/PromiseKit', :tag => '5.0.3'
 pod 'WYPopoverController', :git => 'https://github.com/sammcewan/WYPopoverController', :tag => '0.3.8'
 pod 'SwipeCellKit', :git => 'https://github.com/SwipeCellKit/SwipeCellKit.git', :tag => '2.0.0'
 
