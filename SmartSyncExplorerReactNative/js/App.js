@@ -26,6 +26,7 @@
 
 import React from 'react';
 import {
+    Alert,
     Platform,
     StyleSheet,
     Text,
@@ -69,9 +70,7 @@ const NavigationBarRouteMapper = {
                     </View>);
         }
         else if (route.name === 'Contact') {
-            const deleteUndeleteIcon = (route.contact.__locally_deleted__ ? 'delete-restore' : 'delete');
             return (<View style={styles.navButtonsGroup}>
-                      <NavImgButton icon={deleteUndeleteIcon} iconType='material-community' onPress={onDeleteUndelete} />
                       <NavImgButton icon='save' onPress={onSave} />
                     </View>);
         }
@@ -101,14 +100,6 @@ var onSave = () => {
     storeMgr.saveContact(contact, () => navigator.pop());
 }
 
-var onDeleteUndelete = () => {
-    const contact = contactScreenInstance.state.contact;
-    const navigator = contactScreenInstance.props.navigator;
-    contact.__locally_deleted__ = !contact.__locally_deleted__;
-    contact.__local__ = contact.__locally_deleted__ || contact.__locally_updated__ || contact.__locally_created__;
-    storeMgr.saveContact(contact, () => navigator.pop());
-}
-
 var onBack = () => {
     const contact = contactScreenInstance.state.contact;
     const navigator = contactScreenInstance.props.navigator;
@@ -122,7 +113,15 @@ var onBack = () => {
 }
 
 var onLogout = () => {
-    oauth.logout();
+    Alert.alert(
+        'Logout',
+        'Are you sure you want to logout',
+        [
+            {text: 'Cancel' },
+            {text: 'OK', onPress: () => oauth.logout()},
+        ],
+        { cancelable: true }
+    )
 }
 
 // App component
@@ -177,6 +176,7 @@ var styles = StyleSheet.create({
     scene: {
         paddingTop: Platform.OS === 'ios' ? 56 : 38,
         backgroundColor: 'white',
+        flex: 1,
     },
 });
 
