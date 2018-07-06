@@ -25,7 +25,14 @@
  */
 
 import EventEmitter from './events';
-import {smartstore, smartsync} from 'react-native-force';
+import {smartstore, smartsync, forceUtil} from 'react-native-force';
+
+const registerSoup = forceUtil.promiser(smartstore.registerSoup);
+const getSyncStatus = forceUtil.promiser(smartsync.getSyncStatus);
+const syncDown = forceUtil.promiserNoRejection(smartsync.syncDown);
+const syncUp = forceUtil.promiserNoRejection(smartsync.syncUp);
+const reSync = forceUtil.promiserNoRejection(smartsync.reSync);
+
 const syncName = "smartSyncExplorerSyncDown";
 let syncInFlight = false;
 let lastStoreQuerySent = 0;
@@ -38,77 +45,81 @@ function emitSmartStoreChanged() {
     eventEmitter.emit(SMARTSTORE_CHANGED, {});
 }
 
-function syncDown(callback) {
+function syncDownContacts() {
     if (syncInFlight) {
         console.log("Not starting syncDown - sync already in fligtht");
-        return;
+        return Promise.resolve();
     }
     
     console.log("Starting syncDown");
     syncInFlight = true;
     const fieldlist = ["Id", "FirstName", "LastName", "Title", "Email", "MobilePhone","Department","HomePhone", "LastModifiedDate"];
     const target = {type:"soql", query:`SELECT ${fieldlist.join(",")} FROM Contact LIMIT 10000`};
-    smartsync.syncDown(false,
-                       target,
-                       "contacts",
-                       {mergeMode:smartsync.MERGE_MODE.OVERWRITE},
-                       syncName,
-                       (sync) => {syncInFlight = false; console.log(`sync==>${sync}`); emitSmartStoreChanged(); if (callback) callback(sync);},
-                       (error) => {syncInFlight = false;}
-                      );
-
+    return syncDown(false, target, "contacts", {mergeMode:smartsync.MERGE_MODE.OVERWRITE}, syncName)
+        .then(() => {
+            console.log("syncDown completed or failed");
+            syncInFlight = false;
+            emitSmartStoreChanged();
+        });
 }
 
-function reSync(callback) {
+function reSyncContacts() {
     if (syncInFlight) {
         console.log("Not starting reSync - sync already in fligtht");
-        return;
+        return Promise.resolve();
     }
 
     console.log("Starting reSync");
     syncInFlight = true;
-    smartsync.reSync(false,
-                     syncName,
-                     (sync) => {syncInFlight = false; emitSmartStoreChanged(); if (callback) callback(sync);},
-                     (error) => {syncInFlight = false;}
-                    );
+    return reSync(false, syncName)
+        .then(() => {
+            console.log("reSync completed or failed");
+            syncInFlight = false;
+            emitSmartStoreChanged();
+        });
 }
 
-function syncUp(callback) {
+function syncUpContacts() {
     if (syncInFlight) {
         console.log("Not starting syncUp - sync already in fligtht");
-        return;
+        return Promise.resolve();
     }
 
     console.log("Starting syncUp");
     syncInFlight = true;
     const fieldlist = ["FirstName", "LastName", "Title", "Email", "MobilePhone","Department","HomePhone"];
-    smartsync.syncUp(false,
-                     {},
-                     "contacts",
-                     {mergeMode:smartsync.MERGE_MODE.OVERWRITE, fieldlist},
-                     (sync) => {syncInFlight = false; if (callback) callback(sync);},
-                     (error) => {syncInFlight = false;}
-                    );
+    return syncUp(false, {}, "contacts", {mergeMode:smartsync.MERGE_MODE.OVERWRITE, fieldlist})
+        .then(() => {
+            console.log("syncUp completed or failed");
+            syncInFlight = false;
+            emitSmartStoreChanged();
+        });
 }
 
 function firstTimeSyncData() {
-    smartstore.registerSoup(false,
-                            "contacts", 
-                            [ {path:"Id", type:"string"}, 
-                              {path:"FirstName", type:"full_text"}, 
-                              {path:"LastName", type:"full_text"}, 
-                              {path:"__local__", type:"string"} ],
-                            () => syncDown()
-                           );
+    return registerSoup(false,
+                        "contacts", 
+                        [ {path:"Id", type:"string"}, 
+                          {path:"FirstName", type:"full_text"}, 
+                          {path:"LastName", type:"full_text"}, 
+                          {path:"__local__", type:"string"} ])
+        .then(syncDownContacts);
 }
 
 function syncData() {
-    smartsync.getSyncStatus(false, syncName, (sync) => {if (sync == null) { firstTimeSyncData();} else { reSyncData(); }});    
+    return getSyncStatus(false, syncName)
+        .then((sync) => {
+            if (sync == null) {
+                return firstTimeSyncData();
+            } else {
+                return reSyncData();
+            }
+        });
 }
 
 function reSyncData() {
-    syncUp(() => reSync());
+    return syncUpContacts()
+        .then(reSyncContacts);
 }
 
 function addStoreChangeListener(listener) {
