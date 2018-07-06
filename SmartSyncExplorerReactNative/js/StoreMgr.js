@@ -142,6 +142,21 @@ function deleteContact(contact, successCallback, errorCallback) {
                               errorCallback);
 }
 
+function traverseCursor(accumulatedResults, cursor, pageIndex, successCallback, errorCallback) {
+    accumulatedResults = accumulatedResults.concat(cursor.currentPageOrderedEntries);
+    console.log("accumulatedResults=>" + accumulatedResults.length);
+    if (pageIndex < cursor.totalPages - 1) {
+        smartstore.moveCursorToPageIndex(false, cursor, pageIndex + 1,
+                                         (cursor) => {
+                                             traverseCursor(accumulatedResults, cursor, pageIndex + 1, successCallback, errorCallback);
+                                         },
+                                         errorCallback);
+    }
+    else {
+        successCallback(accumulatedResults);
+    }
+}
+
 function searchContacts(query, successCallback, errorCallback) {
     let querySpec;
     
@@ -161,6 +176,15 @@ function searchContacts(query, successCallback, errorCallback) {
     lastStoreQuerySent++;
     const currentStoreQuery = lastStoreQuerySent;
 
+    const querySuccessCB = (contacts) => {
+        successCallback(contacts, currentStoreQuery);
+    };
+
+    const queryErrorCB = (error) => {
+        console.log(`Error->${JSON.stringify(error)}`);
+        errorCallback(error);
+    };
+
     smartstore.querySoup(false,
                          "contacts",
                          querySpec,
@@ -168,17 +192,14 @@ function searchContacts(query, successCallback, errorCallback) {
                              console.log(`Response for #${currentStoreQuery}`);
                              if (currentStoreQuery > lastStoreResponseReceived) {
                                  lastStoreResponseReceived = currentStoreQuery;
-                                 const contacts = cursor.currentPageOrderedEntries;
-                                 successCallback(contacts, currentStoreQuery);
+                                 traverseCursor([], cursor, 0, querySuccessCB, queryErrorCB);
                              }
                              else {
                                  console.log(`IGNORING Response for #${currentStoreQuery}`);
                              }
                          },
-                         (error) => {
-                             console.log(`Error->${JSON.stringify(error)}`);
-                             errorCallback(error);
-                         });
+                         queryErrorCB);
+
 }
 
 
