@@ -16,6 +16,6 @@ if (fs.existsSync(targetDir)) {
     console.log(targetDir + ' already exists - if you want to refresh it, please remove it and re-run install.js');
 } else {
     execSync('git clone --branch ' + branch + ' --single-branch --depth 1 ' + repoUrl + ' ' + targetDir, {stdio:[0,1,2]});
-    rimraf.sync(path.join('mobile_sdk', 'salesforcemobilesdk-android', 'hybrid'));
-    rimraf.sync(path.join('mobile_sdk', 'salesforcemobilesdk-android', 'libs', 'test'));
+    rimraf.sync(path.join('mobile_sdk', 'SalesforceMobileSDK-Android', 'hybrid'));
+    rimraf.sync(path.join('mobile_sdk', 'SalesforceMobileSDK-Android', 'libs', 'test'));
 }
