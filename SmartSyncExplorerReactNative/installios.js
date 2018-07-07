@@ -6,7 +6,7 @@ var path = require('path');
 var fs = require('fs');
 
 console.log('Installing sdk dependencies');
-var sdkDependency = 'salesforcemobilesdk-ios';
+var sdkDependency = 'SalesforceMobileSDK-iOS';
 var repoUrlWithBranch = packageJson.sdkDependencies[sdkDependency];
 var parts = repoUrlWithBranch.split('#'), repoUrl = parts[0], branch = parts.length > 1 ? parts[1] : 'master';
 var targetDir = path.join('mobile_sdk', sdkDependency);

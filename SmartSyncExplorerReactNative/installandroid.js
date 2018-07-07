@@ -8,7 +8,7 @@ console.log('Installing npm dependencies');
 execSync('npm install', {stdio:[0,1,2]});
 var rimraf = require('rimraf');
 console.log('Installing sdk dependencies');
-var sdkDependency = 'salesforcemobilesdk-android';
+var sdkDependency = 'SalesforceMobileSDK-Android';
 var repoUrlWithBranch = packageJson.sdkDependencies[sdkDependency];
 var parts = repoUrlWithBranch.split('#'), repoUrl = parts[0], branch = parts.length > 1 ? parts[1] : 'master';
 var targetDir = path.join('mobile_sdk', sdkDependency);

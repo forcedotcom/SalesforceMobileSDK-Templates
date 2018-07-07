@@ -20,4 +20,3 @@ execSync('npm install', {stdio:[0,1,2]});
 
 console.log('Installing pod dependencies');
 execSync('pod update', {stdio:[0,1,2], cwd:'ios'});
-
