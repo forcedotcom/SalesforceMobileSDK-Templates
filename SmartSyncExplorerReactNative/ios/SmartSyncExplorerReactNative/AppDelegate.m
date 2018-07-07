@@ -26,7 +26,6 @@
 #import "InitialViewController.h"
 #import <React/RCTRootView.h>
 #import <React/RCTBundleURLProvider.h>
-#import <SalesforceAnalytics/SFSDKLogger.h>
 #import <SalesforceSDKCore/SFSDKAppConfig.h>
 #import <SalesforceSDKCore/SFPushNotificationManager.h>
 #import <SalesforceSDKCore/SFDefaultUserManagementViewController.h>
@@ -34,6 +33,7 @@
 #import <SalesforceSDKCore/SFUserAccountManager.h>
 #import <SalesforceReact/SalesforceReactSDKManager.h>
 #import <SalesforceSDKCore/SFLoginViewController.h>
+#import <SalesforceReact/SFSDKReactLogger.h>
 
 // Fill these in when creating a new Connected Application on Force.com
 static NSString * const RemoteAccessConsumerKey = @"3MVG9Iu66FKeHhINkB1l7xt7kR8czFcCTUhgoA8Ol2Ltf1eYHOU4SqQRSEitYFDUpqRWcoQ2.dBv_a1Dyu5xa";
@@ -48,12 +48,11 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
 
         // Need to use SalesforceReactSDKManager in Salesforce Mobile SDK apps using React Native
         [SalesforceSDKManager setInstanceClass:[SalesforceReactSDKManager class]];
-
-        [SalesforceSDKManager sharedManager].appConfig.remoteAccessConsumerKey = RemoteAccessConsumerKey;
-        [SalesforceSDKManager sharedManager].appConfig.oauthRedirectURI = OAuthRedirectURI;
-        [SalesforceSDKManager sharedManager].appConfig.oauthScopes = [NSSet setWithArray:@[ @"web", @"api" ]];
+        [SalesforceReactSDKManager sharedManager].appConfig.remoteAccessConsumerKey = RemoteAccessConsumerKey;
+        [SalesforceReactSDKManager sharedManager].appConfig.oauthRedirectURI = OAuthRedirectURI;
+        [SalesforceReactSDKManager sharedManager].appConfig.oauthScopes = [NSSet setWithArray:@[ @"web", @"api" ]];
         // Uncomment the following line if you don't want login to happen when the application launches
-        // [SalesforceSDKManager sharedManager].appConfig.shouldAuthenticate = NO;
+        // [SalesforceReactSDKManager sharedManager].appConfig.shouldAuthenticate = NO;
 
         //Uncomment the following line inorder to enable/force the use of advanced authentication flow.
         //[SFUserAccountManager sharedInstance].advancedAuthConfiguration = SFOAuthAdvancedAuthConfigurationRequire;
@@ -63,9 +62,8 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
 
         // NOTE: If advanced authentication is configured or forced,  it will launch Safari to handle authentication
         // instead of a webview. You must implement application:openURL:options: to handle the callback.
-
         __weak AppDelegate *weakSelf = self;
-        [SalesforceSDKManager sharedManager].postLaunchAction = ^(SFSDKLaunchAction launchActionList) {
+        [SalesforceReactSDKManager sharedManager].postLaunchAction = ^(SFSDKLaunchAction launchActionList) {
             //
             // If you wish to register for push notifications, uncomment the line below.  Note that,
             // if you want to receive push notifications from Salesforce, you will also need to
@@ -73,19 +71,18 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
             //
             //[[SFPushNotificationManager sharedInstance] registerForRemoteNotifications];
             //
-
-            [SFSDKLogger log:[weakSelf class] level:DDLogLevelInfo format:@"Post-launch: launch actions taken: %@", [SalesforceSDKManager launchActionsStringRepresentation:launchActionList]];
+            [SFSDKReactLogger log:[weakSelf class] level:DDLogLevelInfo format:@"Post-launch: launch actions taken: %@", [SalesforceReactSDKManager launchActionsStringRepresentation:launchActionList]];
             [weakSelf setupRootViewController];
         };
-        [SalesforceSDKManager sharedManager].launchErrorAction = ^(NSError *error, SFSDKLaunchAction launchActionList) {
-            [SFSDKLogger log:[weakSelf class] level:DDLogLevelError format:@"Error during SDK launch: %@", [error localizedDescription]];
+        [SalesforceReactSDKManager sharedManager].launchErrorAction = ^(NSError *error, SFSDKLaunchAction launchActionList) {
+            [SFSDKReactLogger log:[weakSelf class] level:DDLogLevelError format:@"Error during SDK launch: %@", [error localizedDescription]];
             [weakSelf initializeAppViewState];
-            [[SalesforceSDKManager sharedManager] launch];
+            [[SalesforceReactSDKManager sharedManager] launch];
         };
-        [SalesforceSDKManager sharedManager].postLogoutAction = ^{
+        [SalesforceReactSDKManager sharedManager].postLogoutAction = ^{
             [weakSelf handleSdkManagerLogout];
         };
-        [SalesforceSDKManager sharedManager].switchUserAction = ^(SFUserAccount *fromUser, SFUserAccount *toUser) {
+        [SalesforceReactSDKManager sharedManager].switchUserAction = ^(SFUserAccount *fromUser, SFUserAccount *toUser) {
             [weakSelf handleUserSwitch:fromUser toUser:toUser];
         };
     }
@@ -110,7 +107,7 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
     //loginViewConfig.navBarFont = [UIFont fontWithName:@"Helvetica" size:16.0];
     //[SFUserAccountManager sharedInstance].loginViewControllerConfig = loginViewConfig;
 
-    [[SalesforceSDKManager sharedManager] launch];
+    [[SalesforceReactSDKManager sharedManager] launch];
     return YES;
 }
 
@@ -187,7 +184,7 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
 
 - (void)handleSdkManagerLogout
 {
-    [SFSDKLogger log:[self class] level:DDLogLevelDebug format:@"SFUserAccountManager logged out.  Resetting app."];
+    [SFSDKReactLogger log:[self class] level:DDLogLevelDebug format:@"SFUserAccountManager logged out.  Resetting app."];
     [self resetViewState:^{
         [self initializeAppViewState];
 
@@ -210,7 +207,7 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
                 [SFUserAccountManager sharedInstance].currentUser = ([SFUserAccountManager sharedInstance].allUserAccounts)[0];
             }
             
-            [[SalesforceSDKManager sharedManager] launch];
+            [[SalesforceReactSDKManager sharedManager] launch];
         }
     }];
 }
@@ -218,11 +215,11 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
 - (void)handleUserSwitch:(SFUserAccount *)fromUser
                   toUser:(SFUserAccount *)toUser
 {
-    [SFSDKLogger log:[self class] level:DDLogLevelDebug format:@"SFUserAccountManager changed from user %@ to %@.  Resetting app.",
+    [SFSDKReactLogger log:[self class] level:DDLogLevelDebug format:@"SFUserAccountManager changed from user %@ to %@.  Resetting app.",
      fromUser.userName, toUser.userName];
     [self resetViewState:^{
         [self initializeAppViewState];
-        [[SalesforceSDKManager sharedManager] launch];
+        [[SalesforceReactSDKManager sharedManager] launch];
     }];
 }
 
