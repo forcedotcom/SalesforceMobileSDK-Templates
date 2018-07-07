@@ -43,7 +43,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         appconfig.remoteAccessConsumerKey = RemoteAccessConsumerKey
         appconfig.oauthRedirectURI = OAuthRedirectURI
         }.postLaunch {  [unowned self] (launchActionList: SFSDKLaunchAction) in
-            let launchActionString = SalesforceSDKManager.launchActionsStringRepresentation(launchActionList)
+            let launchActionString = SalesforceSwiftSDKManager.launchActionsStringRepresentation(launchActionList)
             SalesforceSwiftLogger.log(type(of:self), level:.info, message:"Post-launch: launch actions taken: \(launchActionString)")
             self.setupRootViewController()
         }.postLogout {  [unowned self] in
@@ -84,9 +84,8 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         //loginViewConfig.navBarTextColor = UIColor.white
         //loginViewConfig.navBarFont = UIFont(name: "Helvetica", size: 16.0)
         //SFUserAccountManager.sharedInstance().loginViewControllerConfig = loginViewConfig
-        
-        SalesforceSDKManager.shared().launch()
-       // SFAuthenticationManager.shared()
+
+        SalesforceSwiftSDKManager.shared().launch()
         return true
     }
     
@@ -170,7 +169,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
             if numberOfAccounts >= 1 {
                     SFUserAccountManager.sharedInstance().currentUser = allAccounts![0]
             }
-            SalesforceSDKManager.shared().launch()
+            SalesforceSwiftSDKManager.shared().launch()
         }
     }
     
@@ -181,7 +180,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"SFUserAccountManager changed from user \(String(describing: fromUserName)) to \(String(describing: toUserName)).  Resetting app.")
         self.resetViewState { () -> () in
             self.initializeAppViewState()
-            SalesforceSDKManager.shared().launch()
+            SalesforceSwiftSDKManager.shared().launch()
         }
     }
 }
