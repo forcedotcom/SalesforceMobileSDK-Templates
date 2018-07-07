@@ -87,5 +87,4 @@ class AdditionalActionsViewController: UITableViewController {
             self.onCancelSelected?()
         }
     }
-
 }

@@ -39,7 +39,6 @@ class AppDelegate : UIResponder, UIApplicationDelegate
     init()
     {
         super.init()
-        
         SalesforceSwiftSDKManager.initSDK()
         .Builder.configure { (appconfig: SFSDKAppConfig) -> Void in
             appconfig.oauthScopes = ["web", "api"]
@@ -65,7 +64,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         }.switchUser{ [unowned self] (fromUser: SFUserAccount?, toUser: SFUserAccount?) -> () in
             self.handleUserSwitch(fromUser, toUser: toUser)
         }.launchError {  [unowned self] (error: Error, launchActionList: SFSDKLaunchAction) in
-            SFSDKLogger.log(type(of:self), level:.error, message:"Error during SDK launch: \(error.localizedDescription)")
+            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"Error during SDK launch: \(error.localizedDescription)")
             self.initializeAppViewState()
             SalesforceSwiftSDKManager.shared().launch()
         }
@@ -166,7 +165,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
 
     func handleSdkManagerLogout()
     {
-        SFSDKLogger.log(type(of:self), level:.debug, message: "SFUserAccountManager logged out.  Resetting app.")
+        SalesforceSwiftLogger.log(type(of:self), level:.debug, message: "SFUserAccountManager logged out.  Resetting app.")
         self.resetViewState { () -> () in
             self.initializeAppViewState()
 
@@ -204,7 +203,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
     {
         let fromUserName = (fromUser != nil) ? fromUser?.userName : "<none>"
         let toUserName = (toUser != nil) ? toUser?.userName : "<none>"
-        SFSDKLogger.log(type(of:self), level:.debug, message:"SFUserAccountManager changed from user \(String(describing: fromUserName)) to \(String(describing: toUserName)).  Resetting app.")
+        SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"SFUserAccountManager changed from user \(String(describing: fromUserName)) to \(String(describing: toUserName)).  Resetting app.")
         self.resetViewState { () -> () in
             self.initializeAppViewState()
             SalesforceSwiftSDKManager.shared().launch()

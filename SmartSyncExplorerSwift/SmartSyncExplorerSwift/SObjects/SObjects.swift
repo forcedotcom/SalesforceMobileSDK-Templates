@@ -245,7 +245,7 @@ class SObjectDataManager {
 
     func createLocalData(_ newData: SObjectData?) -> Promise<[SObjectData]> {
         guard let newData = newData else {
-            return Promise(value: [SObjectData]())
+            return .value([SObjectData]())
         }
         newData.updateSoup(forFieldName: kSyncTargetLocal, fieldValue: true)
         newData.updateSoup(forFieldName: kSyncTargetLocallyCreated, fieldValue: true)
@@ -255,13 +255,13 @@ class SObjectDataManager {
             self.queryLocalData()
          }.then { sObjects -> Promise<[SObjectData]>  in
             self.fullDataRowList = self.populateDataRows(sObjects)
-            return Promise(value: self.fullDataRowList)
+            return .value(self.fullDataRowList)
         }
     }
 
     func updateLocalData(_ updatedData: SObjectData?) -> Promise<[SObjectData]> {
         guard let updatedData = updatedData else {
-            return Promise(value: [SObjectData]())
+            return .value([SObjectData]())
         }
         updatedData.updateSoup(forFieldName: kSyncTargetLocal, fieldValue: true)
         updatedData.updateSoup(forFieldName: kSyncTargetLocallyUpdated, fieldValue: true)
@@ -271,13 +271,13 @@ class SObjectDataManager {
                 self.queryLocalData()
             }.then { sObjects -> Promise<[SObjectData]>  in
                 self.fullDataRowList = self.populateDataRows(sObjects)
-                return Promise(value: self.fullDataRowList)
+                return .value(self.fullDataRowList)
             }
     }
 
     func deleteLocalData(_ dataToDelete: SObjectData?) -> Promise<[SObjectData]> {
         guard let dataToDelete = dataToDelete else {
-            return Promise(value: [SObjectData]())
+            return .value([SObjectData]())
         }
         dataToDelete.updateSoup(forFieldName: kSyncTargetLocal, fieldValue: true)
         dataToDelete.updateSoup(forFieldName: kSyncTargetLocallyDeleted, fieldValue: true)
@@ -287,13 +287,13 @@ class SObjectDataManager {
                 self.queryLocalData()
             }.then { sObjects -> Promise<[SObjectData]>  in
                 self.fullDataRowList = self.populateDataRows(sObjects)
-                return Promise(value: self.fullDataRowList)
+                return .value(self.fullDataRowList)
             }
     }
 
     func undeleteLocalData(_ dataToUnDelete: SObjectData?) -> Promise<[SObjectData]> {
         guard let dataToUnDelete = dataToUnDelete else {
-            return Promise(value: [SObjectData]())
+            return .value([SObjectData]())
         }
         dataToUnDelete.updateSoup(forFieldName: kSyncTargetLocallyDeleted, fieldValue: false)
         let locallyCreatedOrUpdated = dataLocallyCreated(dataToUnDelete) || dataLocallyUpdated(dataToUnDelete) ? 1 : 0
@@ -304,7 +304,7 @@ class SObjectDataManager {
                 self.queryLocalData()
             }.then { sObjects -> Promise<[SObjectData]>  in
                 self.fullDataRowList = self.populateDataRows(sObjects)
-                return Promise(value: self.fullDataRowList)
+                return .value(self.fullDataRowList)
             }
     }
 
@@ -346,7 +346,7 @@ class SObjectDataManager {
               self.queryLocalData()
            }
            .then { result -> Promise<[SObjectData]> in
-               return Promise(value:self.populateDataRows(result))
+               return .value(self.populateDataRows(result))
            }
     }
 
@@ -364,7 +364,7 @@ class SObjectDataManager {
                 }
                 .then { result -> Promise<[SObjectData]>  in
                     self.fullDataRowList = result
-                    return Promise(value : self.fullDataRowList)
+                    return .value(self.fullDataRowList)
                 }
         
     }
