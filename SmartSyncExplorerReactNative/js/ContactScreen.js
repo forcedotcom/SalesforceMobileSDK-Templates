@@ -26,6 +26,7 @@
 
 import React from 'react';
 import {
+    Platform,
     ScrollView,
     StyleSheet,
     View,
@@ -66,7 +67,11 @@ const ContactScreen = createReactClass({
         const lastError = this.state.contact.__last_error__;
         if (lastError) {
             try {
-                errorMessage = new RegExp('.*message = "([^"]*)".*', 'm').exec(lastError)[1];
+                if (Platform.OS == 'ios') {
+                    errorMessage = new RegExp('.*message = "([^"]*)".*', 'm').exec(lastError)[1];
+                } else {
+                    errorMessage = JSON.parse(lastError)[0].message;
+                }
             }
             catch (e) {
                 console.log("Failed to extract message from error: " + lastError);
