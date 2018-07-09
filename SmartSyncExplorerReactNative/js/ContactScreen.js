@@ -26,6 +26,7 @@
 
 import React from 'react';
 import {
+    Platform,
     ScrollView,
     StyleSheet,
     View,
@@ -35,7 +36,7 @@ import {
 
 import Field from './Field';
 import storeMgr from './StoreMgr';
-import { Button } from 'react-native-elements';
+import { Card, Button } from 'react-native-elements';
 
 // State: contact
 // Props: contact
@@ -59,6 +60,38 @@ const ContactScreen = createReactClass({
         contact.__locally_deleted__ = !contact.__locally_deleted__;
         contact.__local__ = contact.__locally_deleted__ || contact.__locally_updated__ || contact.__locally_created__;
         storeMgr.saveContact(contact, () => {this.props.navigator.pop()});
+    },
+
+    renderErrorIfAny() {
+        var errorMessage = null;
+        const lastError = this.state.contact.__last_error__;
+        if (lastError) {
+            try {
+                if (Platform.OS == 'ios') {
+                    errorMessage = new RegExp('.*message = "([^"]*)".*', 'm').exec(lastError)[1];
+                } else {
+                    errorMessage = JSON.parse(lastError)[0].message;
+                }
+            }
+            catch (e) {
+                console.log("Failed to extract message from error: " + lastError);
+            }
+        }
+
+        if (errorMessage == null) {
+            return null;
+        } else {
+
+            return (
+                    <View style={{marginTop:10}}>
+                    <Button
+                      icon={{name: 'error', size: 15, color: 'white'}}
+                      title={errorMessage}
+                      buttonStyle={{backgroundColor:'red'}}
+                    />
+                    </View>
+            );
+        }
     },
 
     renderDeleteUndeleteButton() {
@@ -88,6 +121,7 @@ const ContactScreen = createReactClass({
         return (
                 <ScrollView>
                   <View style={this.props.style}>
+                    {this.renderErrorIfAny()}
                     <Field fieldLabel="First name" fieldValue={this.state.contact.FirstName} onChange={(text) => this.onChange("FirstName", text)}/>
                     <Field fieldLabel="Last name" fieldValue={this.state.contact.LastName} onChange={(text) => this.onChange("LastName", text)}/>
                     <Field fieldLabel="Title" fieldValue={this.state.contact.Title} onChange={(text) => this.onChange("Title", text)}/>

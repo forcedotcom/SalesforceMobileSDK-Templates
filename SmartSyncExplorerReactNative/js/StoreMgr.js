@@ -155,7 +155,6 @@ function deleteContact(contact, successCallback, errorCallback) {
 
 function traverseCursor(accumulatedResults, cursor, pageIndex, successCallback, errorCallback) {
     accumulatedResults = accumulatedResults.concat(cursor.currentPageOrderedEntries);
-    console.log("accumulatedResults=>" + accumulatedResults.length);
     if (pageIndex < cursor.totalPages - 1) {
         smartstore.moveCursorToPageIndex(false, cursor, pageIndex + 1,
                                          (cursor) => {
