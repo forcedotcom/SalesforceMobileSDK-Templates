@@ -96,6 +96,7 @@ var onSync = () => {
 var onSave = () => {
     const contact = contactScreenInstance.state.contact;
     const navigator = contactScreenInstance.props.navigator;
+    contact.__last_error__ = null;
     contact.__locally_updated__ = contact.__local__ = true;
     storeMgr.saveContact(contact, () => navigator.pop());
 }

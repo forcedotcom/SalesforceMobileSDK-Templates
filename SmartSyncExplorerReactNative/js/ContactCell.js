@@ -35,6 +35,7 @@ class ContactCell extends React.Component {
             if (this.props.contact.__locally_updated__) statusIcon = {name: 'sync', color:'blue'};
             if (this.props.contact.__locally_created__) statusIcon = {name: 'add', color:'green'};
             if (this.props.contact.__locally_deleted__) statusIcon = {name: 'delete', color:'red'};
+            if (this.props.contact.__last_error__) statusIcon = {name: 'sync-problem', color: 'red'};
         }
 
         const fullName = [this.props.contact.FirstName, this.props.contact.LastName].filter(x=>x).join(' ')
