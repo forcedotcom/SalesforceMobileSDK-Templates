@@ -36,34 +36,46 @@ public typealias SyncCompletion = ((SFSyncState?) -> Void)?
 public class Store<objectType: StoreProtocol> {
 
     private final let pageSize: UInt = 100
-    
-    public init() {
-//        self.store.removeAllSoups()
-//        store.clearSoup(objectType.objectName)
-//        store.removeSoup(objectType.objectName)
-    }
 
+    private final let syncDownName: String = "syncDown_\(objectType.objectName)";
+    
+    private final let syncUpName: String = "syncUp_\(objectType.objectName)";
+    
     public let sqlQueryString: String = SFRestAPI.soqlQuery(withFields: objectType.createFields, sObject: objectType.objectName, whereClause: nil, groupBy: nil, having: nil, orderBy: [objectType.orderPath], limit: 100)!
     
     public let queryString: String = "SELECT \(objectType.selectFieldsString()) FROM {\(objectType.objectName)} WHERE {\(objectType.objectName):\(Record.Field.locallyDeleted.rawValue)} != 1 ORDER BY {\(objectType.objectName):\(objectType.orderPath)} ASC"
     
+    public init() {
+        let soupName = objectType.objectName
+        
+        // Create soup if needed
+        if (!store.soupExists(soupName)) {
+            let indexSpecs: [AnyObject] = SFSoupIndex.asArraySoupIndexes(objectType.indexes) as [AnyObject]
+            do {
+                try store.registerSoup(soupName, withIndexSpecs: indexSpecs, error: ())
+            } catch let error as NSError {
+                SalesforceSwiftLogger.log(type(of:self), level:.error, message: "\(soupName) failed to register soup: \(error.localizedDescription)")
+            }
+        }
+        
+        // Create sync down if needed
+        if (!smartSync.hasSync(withName: syncDownName)) {
+            let target: SFSoqlSyncDownTarget = SFSoqlSyncDownTarget.newSyncTarget(sqlQueryString)
+            let options: SFSyncOptions = SFSyncOptions.newSyncOptions(forSyncDown: .leaveIfChanged)
+            smartSync.createSyncDown(target, options: options, soupName: soupName, syncName: syncDownName)
+        }
+        
+        // Create sync up if needed
+        if (!smartSync.hasSync(withName: syncUpName)) {
+            let target = SFSyncUpTarget.init(createFieldlist: objectType.createFields, updateFieldlist: objectType.updateFields)
+            let options: SFSyncOptions = SFSyncOptions.newSyncOptions(forSyncUp: objectType.readFields, mergeMode: .overwrite)
+            smartSync.createSyncUp(target, options: options, soupName: soupName, syncName: syncUpName)
+        }
+    }
     
     public lazy final var smartSync: SFSmartSyncSyncManager = SFSmartSyncSyncManager.sharedInstance(for: store)!
     
-    public final var store: SFSmartStore {
-        
-        let store = SFSmartStore.sharedStore(withName: kDefaultSmartStoreName) as! SFSmartStore
-        SFSyncState.setupSyncsSoupIfNeeded(store)
-        if (!store.soupExists(objectType.objectName)) {
-            let indexSpecs: [AnyObject] = SFSoupIndex.asArraySoupIndexes(objectType.indexes) as [AnyObject]
-            do {
-                try store.registerSoup(objectType.objectName, withIndexSpecs: indexSpecs, error: ())
-            } catch let error as NSError {
-                SalesforceSwiftLogger.log(type(of:self), level:.error, message: "\(objectType.objectName) failed to register soup: \(error.localizedDescription)")
-            }
-        }
-        return store
-    }
+    public lazy final var store: SFSmartStore = SFSmartStore.sharedStore(withName: kDefaultSmartStoreName) as! SFSmartStore
     
     public var count: UInt {
         guard let query: SFQuerySpec = SFQuerySpec.newSmartQuerySpec(queryString, withPageSize: 1) else {
@@ -137,26 +149,8 @@ public class Store<objectType: StoreProtocol> {
         }
     }
 
-    public func syncDown<T:StoreProtocol>(child: T, completion: SyncCompletion = nil ) {
-        let parentInfo = SFParentInfo.new(withSObjectType: objectType.objectName, soupName: objectType.objectName)
-        let childInfo = SFChildrenInfo.new(withSObjectType: type(of: child).objectName, soupName: type(of: child).objectName)
-        let target: SFParentChildrenSyncDownTarget = SFParentChildrenSyncDownTarget.newSyncTarget(with: parentInfo, parentFieldlist: objectType.createFields, parentSoqlFilter: "", childrenInfo: childInfo, childrenFieldlist: type(of: child).createFields, relationshipType: .relationpshipMasterDetail)
-        let options: SFSyncOptions = SFSyncOptions.newSyncOptions(forSyncDown: .leaveIfChanged)
-        smartSync.syncDown(with: target, options: options, soupName: objectType.objectName, update: completion ?? { _ in return })
-    }
-    
-    public func syncUp<T:StoreProtocol>(child: T,completion: SyncCompletion = nil) {
-        let parentInfo = SFParentInfo.new(withSObjectType: objectType.objectName, soupName: objectType.objectName)
-        let childInfo = SFChildrenInfo.new(withSObjectType: type(of: child).objectName, soupName: type(of: child).objectName)
-        let options: SFSyncOptions = SFSyncOptions.newSyncOptions(forSyncUp: objectType.readFields, mergeMode: .leaveIfChanged)
-        let target = SFParentChildrenSyncUpTarget.newSyncTarget(with: parentInfo, parentCreateFieldlist: [], parentUpdateFieldlist: objectType.updateFields, childrenInfo: childInfo, childrenCreateFieldlist: type(of: child).createFields, childrenUpdateFieldlist: type(of: child).updateFields, relationshipType: .relationpshipMasterDetail)
-        self.smartSync.syncUp(with: target, options: options, soupName: objectType.objectName, update: completion ?? { _ in return })
-    }
-    
     public func syncDown(completion: SyncCompletion = nil) {
-        let target: SFSoqlSyncDownTarget = SFSoqlSyncDownTarget.newSyncTarget(sqlQueryString)
-        let options: SFSyncOptions = SFSyncOptions.newSyncOptions(forSyncDown: .leaveIfChanged)
-        smartSync.syncDown(with: target, options: options, soupName: objectType.objectName, update: completion ?? { _ in return })
+        smartSync.reSync(byName: syncDownName, update: completion ?? { _ in return })
     }
     
     public func syncUp(completion: SyncCompletion = nil) {
@@ -167,9 +161,6 @@ public class Store<objectType: StoreProtocol> {
                         if syncState.hasFailed() {
                             SalesforceSwiftLogger.log(type(of:self), level:.error, message:"syncUp \(objectType.objectName) failed")
                         }
-                        else {
-//                            SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"syncUp \(objectType.objectName) done")
-                        }
                     }
                     completion?(syncState)
                 }
@@ -177,25 +168,8 @@ public class Store<objectType: StoreProtocol> {
         }
         
         DispatchQueue.main.async(execute: {
-            let options: SFSyncOptions = SFSyncOptions.newSyncOptions(forSyncUp: objectType.readFields, mergeMode: .overwrite)
-            let target = SFSyncUpTarget.init(createFieldlist: objectType.createFields, updateFieldlist: objectType.updateFields)
-            self.smartSync.syncUp(with: target, options: options, soupName: objectType.objectName, update: updateBlock)
+            self.smartSync.reSync(byName: self.syncUpName, update: updateBlock)
         })
-    }
-    
-    public func syncUpDownResolvingChildren<P:StoreProtocol, C:StoreProtocol>(parent:P, child: C, completion: SyncCompletion = nil) {
-        let parentExternalId = parent.externalId
-        self.syncUp { (upState) in
-            if let upComplete = upState?.isDone(), upComplete == true {
-                self.syncDown(completion: { (downState) in
-                    if let downComplete = downState?.isDone(), downComplete == true {
-                        if let synced = self.record(forExternalId: parentExternalId) {
-                            
-                        }
-                    }
-                })
-            }
-        }
     }
     
     public func syncUpDown(completion: SyncCompletion) {
