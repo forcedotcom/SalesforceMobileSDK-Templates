@@ -64,13 +64,6 @@ public class OrderItemStore: Store<OrderItem> {
         return OrderItem.from(results)
     }
     
-    public func syncDownItems(for order:Order) -> Promise<SFSyncState> {
-        let queryString = self.orderItemsQueryString(for: order)
-        let target = SFSoqlSyncDownTarget.newSyncTarget(queryString)
-        let options = SFSyncOptions.newSyncOptions(forSyncDown: .leaveIfChanged)
-        return smartSync.Promises.syncDown(target: target, options: options, soupName: OrderItem.objectName)
-    }
-    
     public override func records() -> [OrderItem] {
         let query: SFQuerySpec = SFQuerySpec.newAllQuerySpec(OrderItem.objectName, withOrderPath: OrderItem.orderPath, with: .descending, withPageSize: 100)
         var error: NSError? = nil
