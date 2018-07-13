@@ -29,6 +29,7 @@
 
 import UIKit
 import Common
+import PromiseKit
 
 class FavoritesViewController: UIViewController {
     
@@ -70,14 +71,13 @@ class FavoritesViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        FavoritesStore.instance.syncDown { (syncState) in
-            if let complete = syncState?.isDone(), complete == true {
+        _ = FavoritesStore.instance.syncDown()
+            .done { _ in
                 DispatchQueue.main.async {
                     self.favorites = FavoritesStore.instance.myFavorites()
                     self.tableView.reloadData()
                 }
             }
-        }
     }
 
     override func didReceiveMemoryWarning() {

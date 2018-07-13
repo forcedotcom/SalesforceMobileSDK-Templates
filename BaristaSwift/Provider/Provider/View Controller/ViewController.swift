@@ -29,6 +29,7 @@
 
 import UIKit
 import Common
+import PromiseKit
 
 class ViewController: UIViewController {
     
@@ -113,18 +114,19 @@ class ViewController: UIViewController {
             activity.startAnimating()
             self.completeButton.isUserInteractionEnabled = false
             self.completeButton.setTitle("", for: .normal)
-            LocalOrderStore.instance.completeOrder(order, completion: { (completed) in
-                LocalOrderStore.instance.syncDownOrders(completion: {
+            _ = LocalOrderStore.instance.completeOrder(order)
+                .then { LocalOrderStore.instance.syncDownOrders() }
+                .done { _ in
                     self.updateData()
-                })
-                DispatchQueue.main.async {
-                    activity.stopAnimating()
-                    activity.removeFromSuperview()
-                    self.completeButton.isUserInteractionEnabled = true
-                    self.completeButton.setTitle("COMPLETE TOP ORDER", for: .normal)
-                    
+
+                    DispatchQueue.main.async {
+                        activity.stopAnimating()
+                        activity.removeFromSuperview()
+                        self.completeButton.isUserInteractionEnabled = true
+                        self.completeButton.setTitle("COMPLETE TOP ORDER", for: .normal)
+                        
+                    }
                 }
-            })
         }
     }
     
@@ -140,16 +142,15 @@ class ViewController: UIViewController {
     }
     
     @objc func runRefresh() {
-        self.runSync { () in
-            self.refreshControl.endRefreshing()
-        }
+        _ = self.runSync()
+                .done {
+                    self.updateData()
+                    self.refreshControl.endRefreshing()
+                }
     }
     
-    func runSync(completion:@escaping () -> Void) {
-        LocalOrderStore.instance.syncUpDownOrders {
-            self.updateData()
-            completion()
-        }
+    func runSync() -> Promise<Void> {
+        return LocalOrderStore.instance.syncUpDownOrders()
     }
 }
 
@@ -218,9 +219,8 @@ extension ViewController: UITableViewDataSource {
             //
             handler(true)
             self.updateData()
-            self.runSync(completion: {
-                //
-            })
+            _ = self.runSync()
+                .done { self.updateData() }
         }
         completeAction.backgroundColor = Theme.appAccentColor01
         let config = UISwipeActionsConfiguration(actions: [completeAction])

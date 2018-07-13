@@ -30,6 +30,7 @@
 import UIKit
 import Common
 import SalesforceSwiftSDK
+import PromiseKit
 
 class FeaturedViewController: UIViewController {
 
@@ -75,19 +76,15 @@ class FeaturedViewController: UIViewController {
     }
 
     @objc func updateFeaturedProducts() {
-        ProductStore.instance.syncDown { (syncState) in
-            SalesforceSwiftLogger.log(type(of:self), level:.info, message:"syncing down")
-            if let complete = syncState?.isDone(), complete == true {
-                SalesforceSwiftLogger.log(type(of:self), level:.info, message:"syncing completed")
+        _ = ProductStore.instance.syncDown()
+            .done { _ in
                 DispatchQueue.main.async {
                     self.refreshControl.endRefreshing()
                     self.featuredProducts = ProductStore.instance.featuredProducts()
                     self.featuredProductTableView.reloadData()
                 }
             }
-        }
     }
-
 }
 
 extension FeaturedViewController: UITableViewDataSource, UITableViewDelegate {

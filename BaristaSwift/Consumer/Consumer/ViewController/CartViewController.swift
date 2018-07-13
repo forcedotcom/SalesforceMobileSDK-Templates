@@ -29,6 +29,7 @@
 
 import UIKit
 import Common
+import PromiseKit
 
 class CartViewController: BaseViewController {
     
@@ -85,10 +86,11 @@ class CartViewController: BaseViewController {
         let activity = ActivityIndicatorView(frame: .zero)
         activity.showIn(self.view)
         activity.startAnimating()
-        self.cartStore.submitOrder { (completed) in
+        
+        let showAlert = { (successful : Bool) -> Void in
             DispatchQueue.main.async {
                 var alert:UIAlertController!
-                if completed == true {
+                if successful {
                     alert = UIAlertController(title: "Submitted", message: "Your order has been succesfully placed. Thank You.", preferredStyle: .alert)
                 } else {
                     alert = UIAlertController(title: "Error", message: "There was a problem submitting your order, please try again. Thank You.", preferredStyle: .alert)
@@ -100,6 +102,14 @@ class CartViewController: BaseViewController {
                 self.present(alert, animated: true, completion: nil)
             }
         }
+        
+        self.cartStore.submitOrder()
+            .done { _ in
+                showAlert(true)
+            }
+            .catch { _ in
+                showAlert(false)
+            }
     }
 
     override func didReceiveMemoryWarning() {

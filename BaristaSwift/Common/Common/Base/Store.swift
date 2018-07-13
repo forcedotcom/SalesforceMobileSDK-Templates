@@ -30,8 +30,7 @@ import SalesforceSDKCore
 import SalesforceSwiftSDK
 import SmartStore
 import SmartSync
-
-public typealias SyncCompletion = ((SFSyncState?) -> Void)?
+import PromiseKit
 
 public class Store<objectType: StoreProtocol> {
 
@@ -54,7 +53,7 @@ public class Store<objectType: StoreProtocol> {
             do {
                 try store.registerSoup(soupName, withIndexSpecs: indexSpecs, error: ())
             } catch let error as NSError {
-                SalesforceSwiftLogger.log(type(of:self), level:.error, message: "\(soupName) failed to register soup: \(error.localizedDescription)")
+                SalesforceSwiftLogger.log(type(of:self), level:.error, message: "\(objectType.objectName) failed to register soup: \(error.localizedDescription)")
             }
         }
         
@@ -89,95 +88,87 @@ public class Store<objectType: StoreProtocol> {
         }
         return results
     }
-
-    public func upsertEntries(jsonResponse: Any, completion: SyncCompletion = nil) {
-        let dataRows = (jsonResponse as! NSDictionary)["records"] as! [NSDictionary]
-        SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"request:didLoadResponse: #records: \(dataRows.count)")
-        store.upsertEntries(dataRows, toSoup: objectType.objectName)
-        completion?(nil)
-    }
     
-    public func upsertEntries<T:StoreProtocol>(record: T, completion: SyncCompletion = nil) {
-        store.upsertEntries([record.data], toSoup: T.objectName)
-        completion?(nil)
-    }
-    
-    public func upsertNewEntries<T:StoreProtocol>(entry: T, completion: SyncCompletion = nil) {
-        var record: T = entry
+    public func locallyCreateEntry(entry: objectType) -> objectType {
+        var record: objectType = entry
         record.local = true
         record.locallyCreated = true
-        record.objectType = T.objectName
-        store.upsertEntries([record.data], toSoup: T.objectName)
-        completion?(nil)
+        record.objectType = objectType.objectName
+        return objectType.from(store.upsertEntries([record.data], toSoup: objectType.objectName))
     }
     
-    public func deleteEntry<T:StoreProtocol>(entry: T, completion: SyncCompletion = nil) {
-        var record: T = entry
+    public func locallyUpdateEntry(entry: objectType) -> objectType {
+        var record: objectType = entry
+        record.local = true
+        record.locallyUpdated = true
+        return objectType.from(store.upsertEntries([record.data], toSoup: objectType.objectName))
+    }
+
+    public func locallyDeleteEntry(entry: objectType) {
+        var record: objectType = entry
+        record.local = true
         record.locallyDeleted = true
-        syncEntry(entry: record, completion: completion)
+        _ = store.upsertEntries([record.data], toSoup: objectType.objectName)
     }
 
-    public func createEntry<T:StoreProtocol>(entry: T, completion: SyncCompletion = nil) {
-        var record: T = entry
-        record.local = true
-        record.locallyCreated = true
-        syncEntry(entry: record, completion: completion)
-    }
-    
-    public func locallyUpdateEntry<T:StoreProtocol>(entry: T) {
-        var record: T = entry
-        record.local = true
-        record.locallyUpdated = true
-        self.upsertEntries(record: record)
-    }
-    
-    public func updateEntry<T:StoreProtocol>(entry: T, completion: SyncCompletion = nil) {
-        var record: T = entry
-        record.local = true
-        record.locallyUpdated = true
-        syncEntry(entry: record, completion: completion)
-    }
-
-    public func syncEntry<T:StoreProtocol>(entry: T, completion: SyncCompletion = nil) {
-        var record: T = entry
-        record.objectType = T.objectName
-        store.upsertEntries([record.data], toSoup: T.objectName)
-        syncUp() { syncState in
-            if let _ = syncState?.isDone() {
-                self.syncDown(completion: completion)
-            }
-        }
-    }
-
-    public func syncDown(completion: SyncCompletion = nil) {
-        smartSync.reSync(byName: syncDownName, update: completion ?? { _ in return })
-    }
-    
-    public func syncUp(completion: SyncCompletion = nil) {
-        let updateBlock: SFSyncSyncManagerUpdateBlock = { [unowned self] (syncState: SFSyncState?) in
-            if let syncState = syncState {
-                if syncState.isDone() || syncState.hasFailed() {
-                    DispatchQueue.main.async {
-                        if syncState.hasFailed() {
-                            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"syncUp \(objectType.objectName) failed")
-                        }
-                    }
-                    completion?(syncState)
+    public func createEntry(entry: objectType) -> Promise<objectType> {
+        _ = locallyCreateEntry(entry: entry)
+        return syncUpDown()
+            .then { _ -> Promise<objectType> in
+                if let record = self.record(forExternalId: entry.externalId) {
+                    return Promise.value(record)
+                } else {
+                    return Promise(error:StoreErrors.recordNotFound)
                 }
-            }
         }
-        
-        DispatchQueue.main.async(execute: {
-            self.smartSync.reSync(byName: self.syncUpName, update: updateBlock)
-        })
     }
     
-    public func syncUpDown(completion: SyncCompletion) {
-        self.syncUp { (upState) in
-            if let upComplete = upState?.isDone(), upComplete == true {
-                self.syncDown(completion: completion)
-            }
+    public func updateEntry(entry: objectType) -> Promise<objectType> {
+        _ = locallyUpdateEntry(entry: entry)
+        return syncUpDown()
+            .then { _ -> Promise<objectType> in
+                if let record = self.record(forExternalId: entry.externalId) {
+                    return Promise.value(record)
+                } else {
+                    return Promise(error:StoreErrors.recordNotFound)
+                }
         }
+    }
+    
+    public func deleteEntry(entry: objectType) -> Promise<Void> {
+        locallyDeleteEntry(entry: entry)
+        return syncUpDown()
+    }
+
+    public func syncEntry(entry: objectType) -> Promise<Void> {
+        var record: objectType = entry
+        record.objectType = objectType.objectName
+        store.upsertEntries([record.data], toSoup: objectType.objectName)
+        return syncUpDown()
+    }
+
+    private func reSync(syncName: String) -> Promise<Void> {
+        return smartSync.Promises.reSync(syncName: syncName)
+            .then { syncState -> Promise<Void> in
+                if syncState.hasFailed() {
+                    SalesforceSwiftLogger.log(type(of:self), level:.error, message:"sync \(syncName) failed")
+                    return Promise(error:StoreErrors.syncFailed)
+                }
+                SalesforceSwiftLogger.log(type(of:self), level:.error, message:"sync \(syncName) completed")
+                return Promise.value(())
+        }
+    }
+    
+    public func syncDown() -> Promise<Void> {
+        return reSync(syncName: syncDownName)
+    }
+    
+    public func syncUp() -> Promise<Void> {
+        return reSync(syncName: syncUpName)
+    }
+    
+    public func syncUpDown() -> Promise<Void> {
+        return self.syncUp().then { self.syncDown() }
     }
  
     public func record(index: Int) -> objectType {
@@ -212,5 +203,11 @@ public class Store<objectType: StoreProtocol> {
             return []
         }
         return objectType.from(results)
+    }
+    
+    enum StoreErrors : Error {
+        case syncFailed
+        case noExternalId
+        case recordNotFound
     }
 }
