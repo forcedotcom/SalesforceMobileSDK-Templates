@@ -53,8 +53,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     override init() {
         super.init()
         
-        SalesforceSwiftLogger.setLogLevel(.debug)
-        
         SalesforceSwiftSDKManager.initSDK()
             .Builder.configure { (appconfig: SFSDKAppConfig) -> Void in
                 appconfig.oauthScopes = ["web", "api"]
