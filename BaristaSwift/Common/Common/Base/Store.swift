@@ -148,8 +148,12 @@ public class Store<objectType: StoreProtocol> {
     }
 
     private func reSync(syncName: String) -> Promise<Void> {
+        let startDate = Date()
         return smartSync.Promises.reSync(syncName: syncName)
             .then { syncState -> Promise<Void> in
+                let diff = String(format:"%.3f", Date().timeIntervalSince(startDate) * 1000)
+                SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"Took \(diff) ms running \(syncName)")
+                
                 if syncState.hasFailed() {
                     SalesforceSwiftLogger.log(type(of:self), level:.error, message:"sync \(syncName) failed")
                     return Promise(error:StoreErrors.syncFailed)
@@ -170,39 +174,46 @@ public class Store<objectType: StoreProtocol> {
     public func syncUpDown() -> Promise<Void> {
         return self.syncUp().then { self.syncDown() }
     }
+    
+    internal func runQuery(query:SFQuerySpec, pageIndex:UInt = 0) -> [Any]? {
+        var error: NSError? = nil
+        let startDate = Date()
+        let results: [Any] = store.query(with: query, pageIndex: pageIndex, error: &error)
+        let diff = String(format:"%.3f", Date().timeIntervalSince(startDate) * 1000)
+        SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"Took \(diff) ms running query on \(objectType.objectName)")
+        guard error == nil else {
+            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"query \(query.smartSql) failed: \(error!.localizedDescription)")
+            return nil
+        }
+        return results
+    }
  
     public func record(index: Int) -> objectType {
         let query:SFQuerySpec = SFQuerySpec.newSmartQuerySpec(queryString, withPageSize: 1)!
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: UInt(index), error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(objectType.objectName) failed: \(error!.localizedDescription)")
+        if let results = runQuery(query: query, pageIndex: UInt(index)) {
+            return objectType.from(results)
+        } else {
             return objectType()
         }
-        return objectType.from(results)
     }
     
     public func record(forExternalId externalId: String?) -> objectType? {
         guard let id = externalId else {return nil}
         let query = SFQuerySpec.newExactQuerySpec(objectType.objectName, withPath: Record.Field.externalId.rawValue, withMatchKey: id, withOrderPath: objectType.orderPath, with: .descending, withPageSize: 1)
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(objectType.objectName) failed: \(error!.localizedDescription)")
+        if let results = runQuery(query: query) {
+            return objectType.from(results)
+        } else {
             return objectType()
         }
-        return objectType.from(results)
     }
     
     public func records() -> [objectType] {
         let query:SFQuerySpec = SFQuerySpec.newSmartQuerySpec(queryString, withPageSize: pageSize)!
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(objectType.objectName) failed: \(error!.localizedDescription)")
+        if let results = runQuery(query: query) {
+            return objectType.from(results)
+        } else {
             return []
         }
-        return objectType.from(results)
     }
     
     enum StoreErrors : Error {

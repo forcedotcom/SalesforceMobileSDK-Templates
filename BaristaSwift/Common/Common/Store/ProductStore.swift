@@ -40,13 +40,9 @@ public class ProductStore: Store<Product> {
             let queryString = "SELECT \(Product.selectFieldsString()) FROM {\(ProductCategoryAssociation.objectName)}, {\(Product.objectName)} WHERE {\(ProductCategoryAssociation.objectName):\(ProductCategoryAssociation.Field.categoryId.rawValue)} = '\(categoryId)' AND {\(Product.objectName):\(Product.Field.id.rawValue)} = {\(ProductCategoryAssociation.objectName):\(ProductCategoryAssociation.Field.productId.rawValue)} ORDER BY {\(Product.objectName):\(Product.Field.name.rawValue)} ASC"
             
             let query:SFQuerySpec = SFQuerySpec.newSmartQuerySpec(queryString, withPageSize: 100)!
-            var error: NSError? = nil
-            let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-            guard error == nil else {
-                SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch Products for Category failed: \(error!.localizedDescription)")
-                return []
+            if let results = runQuery(query: query) {
+                return Product.from(results)
             }
-            return Product.from(results)
         }
         return []
     }
@@ -63,13 +59,10 @@ public class ProductStore: Store<Product> {
         let queryString = "SELECT \(Product.selectFieldsString()) FROM {\(Product.objectName)} WHERE {\(Product.objectName):\(Product.Field.isFeaturedItem.rawValue)} = 1 ORDER BY {\(Product.objectName):\(Product.Field.featuredItemPriority.rawValue)} ASC"
         
         let query:SFQuerySpec = SFQuerySpec.newSmartQuerySpec(queryString, withPageSize: pageSize)!
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch Featured Product list failed: \(error!.localizedDescription)")
-            return []
+        if let results = runQuery(query: query) {
+            return T.from(results)
         }
-        return T.from(results)
+        return []
     }
     
     public func product<T:Product>(from productId:String) -> T? {
@@ -79,13 +72,10 @@ public class ProductStore: Store<Product> {
                                                   withOrderPath: Product.Field.productId.rawValue,
                                                   with: .ascending,
                                                   withPageSize: 1)
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch Product by product id failed: \(error!.localizedDescription)")
-            return nil
+        if let results = runQuery(query: query) {
+            return T.from(results)
         }
-        return T.from(results)
+        return nil
     }
 
 }

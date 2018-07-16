@@ -63,30 +63,23 @@ public class AccountStore: Store<Account> {
     public func account(_ forUserId:String) -> Account? {
         // todo only sync down users record
         let query = SFQuerySpec.newAllQuerySpec(Account.objectName, withOrderPath: Account.orderPath, with: .descending, withPageSize: 100)
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(Account.objectName) failed: \(error!.localizedDescription)")
-            return nil
+        if let results = runQuery(query: query) {
+            let accounts: [Account] = Account.from(results)
+            let filteredAccounts = accounts.filter { (account) -> Bool in
+                guard let id = account.accountNumber else {return false}
+                return id == forUserId
+            }
+            return filteredAccounts.first
         }
-        let accounts: [Account] = Account.from(results)
-        let filteredAccounts = accounts.filter { (account) -> Bool in
-            guard let id = account.accountNumber else {return false}
-            return id == forUserId
-        }
-        return filteredAccounts.first
-        
+        return nil
     }
     
     public func account(forAccountId:String) -> Account? {
         let query = SFQuerySpec.newExactQuerySpec(Account.objectName, withPath: Account.Field.accountId.rawValue, withMatchKey: forAccountId, withOrderPath: Account.orderPath, with: .ascending, withPageSize: 1)
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(Account.objectName) failed: \(error!.localizedDescription)")
-            return nil
+        if let results = runQuery(query: query) {
+            return Account.from(results)
         }
-        return Account.from(results)
+        return nil
     }
     
     public func create(_ account:Account) -> Promise<Account> {

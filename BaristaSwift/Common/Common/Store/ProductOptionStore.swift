@@ -37,25 +37,19 @@ public class ProductOptionStore: Store<ProductOption> {
     
     public override func records() -> [ProductOption] {
         let query: SFQuerySpec = SFQuerySpec.newAllQuerySpec(ProductOption.objectName, withOrderPath: ProductOption.orderPath, with: .descending, withPageSize: 100)
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(ProductOption.objectName) failed: \(error!.localizedDescription)")
-            return []
+        if let results = runQuery(query: query) {
+            return ProductOption.from(results)
         }
-        return ProductOption.from(results)
+        return []
     }
     
     public func options(_ forProduct:Product) -> [ProductOption]? {
         guard let productID = forProduct.productId else {return nil}
         let query = SFQuerySpec.newExactQuerySpec(ProductOption.objectName, withPath: ProductOption.Field.configuredProduct.rawValue, withMatchKey: productID, withOrderPath: ProductOption.orderPath, with: .ascending, withPageSize: 100)
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(ProductOption.objectName) failed: \(error!.localizedDescription)")
-            return []
+        if let results = runQuery(query: query) {
+            return ProductOption.from(results)
         }
-        return ProductOption.from(results)
+        return []
     }
     
     public func families(_ forProduct:Product) -> [ProductFamily]? {
@@ -82,13 +76,10 @@ public class ProductOptionStore: Store<ProductOption> {
     
     public func optionFromOptionalSKU(_ sku:String) -> ProductOption? {
         let query = SFQuerySpec.newExactQuerySpec(ProductOption.objectName, withPath: ProductOption.Field.optionSKU.rawValue, withMatchKey: sku, withOrderPath: ProductOption.orderPath, with: .descending, withPageSize: 1)
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(ProductOption.objectName) failed: \(error!.localizedDescription)")
-            return nil
+        if let results = runQuery(query: query) {
+            return ProductOption.from(results)
         }
-        return ProductOption.from(results)
+        return nil
     }
     
     fileprivate func sortByOrderNumber(_ options:[ProductOption]) -> [ProductOption] {

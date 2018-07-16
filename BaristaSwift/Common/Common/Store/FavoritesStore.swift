@@ -39,13 +39,11 @@ public class FavoritesStore: Store<UserFavorite> {
     public func myFavorites() -> [UserFavorite] {
         guard let account = AccountStore.instance.myAccount(), let accountId = account.accountId else { return [] }
         let query = SFQuerySpec.newExactQuerySpec(UserFavorite.objectName, withPath: UserFavorite.Field.accountId.rawValue, withMatchKey: accountId, withOrderPath: UserFavorite.orderPath, with: .descending, withPageSize: 50)
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(UserFavorite.objectName) failed: \(error!.localizedDescription)")
-            return []
+
+        if let results = runQuery(query: query) {
+            return UserFavorite.from(results)
         }
-        return UserFavorite.from(results)
+        return []
     }
     
     public func addNewFavorite(_ forProduct:Product) -> Promise<UserFavorite> {

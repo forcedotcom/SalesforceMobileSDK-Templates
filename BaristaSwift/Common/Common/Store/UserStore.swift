@@ -37,12 +37,9 @@ public class UserStore: Store<User> {
     
     public func user(_ forUserId:String) -> User? {
         let query = SFQuerySpec.newExactQuerySpec(User.objectName, withPath: User.Field.id.rawValue, withMatchKey: forUserId, withOrderPath: User.orderPath, with: .ascending, withPageSize: 1)
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(Account.objectName) failed: \(error!.localizedDescription)")
-            return nil
+        if let results = runQuery(query: query) {
+            return User.from(results)
         }
-        return User.from(results)
+        return nil
     }
 }
