@@ -151,9 +151,7 @@ public class Store<objectType: StoreProtocol> {
         let startDate = Date()
         return smartSync.Promises.reSync(syncName: syncName)
             .then { syncState -> Promise<Void> in
-                let diff = String(format:"%.3f", Date().timeIntervalSince(startDate) * 1000)
-                SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"Took \(diff) ms SYNCHING \(syncName)")
-                
+                self.printTiming(startDate, operation:"SYNCHING  \(syncName)")
                 if syncState.hasFailed() {
                     SalesforceSwiftLogger.log(type(of:self), level:.error, message:"sync \(syncName) failed")
                     return Promise(error:StoreErrors.syncFailed)
@@ -175,11 +173,15 @@ public class Store<objectType: StoreProtocol> {
         return self.syncUp().then { self.syncDown() }
     }
     
+    internal func printTiming(_ startDate:Date, operation:String) {
+        let diff = String(format:"%10.3f", Date().timeIntervalSince(startDate) * 1000)
+        SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"Took \(diff) ms \(operation)")
+    }
+    
     internal func upsertEntries(_ entries:[Any]) -> [Any] {
         let startDate = Date()
         let results = store.upsertEntries(entries, toSoup: objectType.objectName)
-        let diff = String(format:"%.3f", Date().timeIntervalSince(startDate) * 1000)
-        SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"Took \(diff) ms UPSERTING on \(objectType.objectName)")
+        printTiming(startDate, operation:"UPSERTING \(objectType.objectName)")
         return results
     }
 
@@ -188,8 +190,7 @@ public class Store<objectType: StoreProtocol> {
         var error: NSError? = nil
         let startDate = Date()
         let results: [Any] = store.query(with: query, pageIndex: pageIndex, error: &error)
-        let diff = String(format:"%.3f", Date().timeIntervalSince(startDate) * 1000)
-        SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"Took \(diff) ms QUERYING on \(objectType.objectName)")
+        printTiming(startDate, operation:"QUERYING  \(objectType.objectName)")
         guard error == nil else {
             SalesforceSwiftLogger.log(type(of:self), level:.error, message:"query \(query.smartSql) failed: \(error!.localizedDescription)")
             return nil
