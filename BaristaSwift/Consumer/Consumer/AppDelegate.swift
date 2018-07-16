@@ -35,6 +35,7 @@ import SmartSync
 import Fabric
 import Crashlytics
 import Common
+import PromiseKit
 
 // Fill these in when creating a new Connected Application on Force.com
 // Primary
@@ -54,7 +55,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
     
     override init() {
         super.init()
-        
+
         SalesforceSwiftSDKManager.initSDK()
             .Builder.configure { (appconfig: SFSDKAppConfig) -> Void in
                 appconfig.oauthScopes = ["web", "api"]
@@ -73,39 +74,22 @@ class AppDelegate : UIResponder, UIApplicationDelegate
             .postLaunch {  [unowned self] (launchActionList: SFSDKLaunchAction) in
                 let launchActionString = SalesforceSwiftSDKManager.launchActionsStringRepresentation(launchActionList)
                 SalesforceSwiftLogger.log(type(of:self), level:.info, message:"Post-launch: launch actions taken: \(launchActionString)")
-                if let currentUserId = SFUserAccountManager.sharedInstance().currentUserIdentity?.userId {
-                    AccountStore.instance.syncDown(completion: { (syncState) in
-                        if let complete = syncState?.isDone(), complete == true {
-                            if let _ = AccountStore.instance.account(currentUserId) {
-                                DispatchQueue.main.async {
-                                    self.beginSyncDown {
-                                        self.setupRootViewController()
-                                    }
-                                }
-                            } else {
-                                guard let user = SFUserAccountManager.sharedInstance().currentUser else {return}
-                                let newAccount = Account()
-                                newAccount.accountNumber = user.accountIdentity.userId
-                                newAccount.name = user.userName
-                                newAccount.ownerId = user.accountIdentity.userId
-                                AccountStore.instance.create(newAccount, completion: { (syncState) in
-                                    if let complete = syncState?.isDone(), complete == true {
-                                        DispatchQueue.main.async {
-                                            self.beginSyncDown {
-                                                self.setupRootViewController()
-                                            }
-                                        }
-                                    }
-                                })
+                if let _ = SFUserAccountManager.sharedInstance().currentUserIdentity?.userId {
+                    _ = AccountStore.instance.syncDown()
+                        .then { _ -> Promise<Account> in
+                            return AccountStore.instance.getOrCreateMyAccount()
+                        }
+                        .then { _ -> Promise<Void> in
+                            return self.beginSyncDown()
+                        }
+                        .done { _ in
+                            DispatchQueue.main.async {
+                                self.setupRootViewController()
                             }
                         }
-                    })
-                    
                 } else {
                     SFUserAccountManager.sharedInstance().logout()
                 }
-                
-                SalesforceSwiftLogger.setLogLevel(.error)
             }.postLogout {  [unowned self] in
                 self.handleSdkManagerLogout()
             }.switchUser{ [unowned self] (fromUser: SFUserAccount?, toUser: SFUserAccount?) -> () in
@@ -204,38 +188,41 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         self.window?.rootViewController = initialViewController
     }
     
-    func beginSyncDown(completion:@escaping () -> Void) {
+    func beginSyncDown() -> Promise<Void> {
         let progressView = SyncProgressViewController()
         self.window?.rootViewController = progressView
         
-        let storeCount = 12
+        let syncFuncs : [() -> Promise<Void>] = [
+            CategoryStore.instance.syncDown,
+            ProductStore.instance.syncDown,
+            ProductOptionStore.instance.syncDown,
+            ProductCategoryAssociationStore.instance.syncDown,
+            OrderStore.instance.syncDown,
+            OrderItemStore.instance.syncDown,
+            QuoteStore.instance.syncDown,
+            QuoteLineItemStore.instance.syncDown,
+            QuoteLineGroupStore.instance.syncDown,
+            OpportunityStore.instance.syncDown,
+            PricebookStore.instance.syncDown,
+            FavoritesStore.instance.syncDown
+        ]
+
         var syncedCount = 0
-        let syncCompletion:((SFSyncState?) -> Void) = { (syncState) in
-            if let complete = syncState?.isDone(), complete == true {
-                syncedCount = syncedCount + 1
-            }
+        let updateProgressView = { () -> Promise<Void> in
+            syncedCount = syncedCount + 1
             
-            let completed = Float(syncedCount)/Float(storeCount)
+            let completed = Float(syncedCount)/Float(syncFuncs.count)
             DispatchQueue.main.async {
                 progressView.updateProgress(completed * 100.0)
-                if syncedCount == storeCount {
-                    completion()
-                }
             }
+            return Promise.value(())
+        }
+                
+        let syncs : [Promise<Void>] = syncFuncs.map { syncFunc in
+            return syncFunc().then { updateProgressView() }
         }
         
-        CategoryStore.instance.syncDown(completion: syncCompletion)
-        ProductStore.instance.syncDown(completion: syncCompletion)
-        ProductOptionStore.instance.syncDown(completion: syncCompletion)
-        ProductCategoryAssociationStore.instance.syncDown(completion: syncCompletion)
-        OrderStore.instance.syncDown(completion: syncCompletion)
-        OrderItemStore.instance.syncDown(completion: syncCompletion)
-        QuoteStore.instance.syncDown(completion: syncCompletion)
-        QuoteLineItemStore.instance.syncDown(completion: syncCompletion)
-        QuoteLineGroupStore.instance.syncDown(completion: syncCompletion)
-        OpportunityStore.instance.syncDown(completion: syncCompletion)
-        PricebookStore.instance.syncDown(completion: syncCompletion)
-        FavoritesStore.instance.syncDown(completion: syncCompletion)
+        return when(fulfilled: syncs)
     }
     
     func resetViewState(_ postResetBlock: @escaping () -> ())

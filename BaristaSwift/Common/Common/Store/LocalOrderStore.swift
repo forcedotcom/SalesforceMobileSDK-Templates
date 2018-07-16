@@ -31,6 +31,7 @@ import Foundation
 import SalesforceSDKCore
 import SalesforceSwiftSDK
 import SmartSync
+import PromiseKit
 
 public class LocalOrderStore {
     public static let instance = LocalOrderStore()
@@ -73,31 +74,19 @@ public class LocalOrderStore {
         return orders
     }
     
-    public func completeOrder(_ order:LocalOrder, completion:@escaping (Bool) -> Void) {
+    public func completeOrder(_ order:LocalOrder) -> Promise<Void> {
         let opty = order.opportunity
         opty.stage = .closedWon
         let quote = order.quote
         quote.status = .accepted
         
-        QuoteStore.instance.updateEntry(entry: quote) { (quoteSync) in
-            guard let quoteState = quoteSync else { return }
-            if quoteState.isDone() {
-                SalesforceSwiftLogger.log(type(of:self), level:.info, message:"update quote completed")
-                OpportunityStore.instance.updateEntry(entry: opty, completion: { (optSync) in
-                    guard let optyState = optSync else { return }
-                    if optyState.isDone() {
-                        SalesforceSwiftLogger.log(type(of:self), level:.info, message:"update opty completed")
-                        completion(true)
-                    } else if optyState.hasFailed() {
-                        SalesforceSwiftLogger.log(type(of:self), level:.info, message:"Failed syncing opportunity update")
-                        completion(false)
-                    }
-                })
-            } else if quoteState.hasFailed() {
-                SalesforceSwiftLogger.log(type(of:self), level:.info, message:"Failed syncing quote update")
-                completion(false)
+        return QuoteStore.instance.updateEntry(entry: quote)
+            .then { quote -> Promise<Opportunity> in
+                return OpportunityStore.instance.updateEntry(entry: opty)
             }
-        }
+            .then { opportunity in
+                return Promise.value(())
+            }
     }
     
     public func locallyCompleteOrder(_ order:LocalOrder) {
@@ -106,75 +95,26 @@ public class LocalOrderStore {
         let quote = order.quote
         quote.status = .accepted
         
-        QuoteStore.instance.locallyUpdateEntry(entry: quote)
-        OpportunityStore.instance.locallyUpdateEntry(entry: opty)
+        _ = QuoteStore.instance.locallyUpdateEntry(entry: quote)
+        _ = OpportunityStore.instance.locallyUpdateEntry(entry: opty)
     }
     
-    public func syncDownOrders(completion:@escaping () -> Void) {
-        let storeCount = 6
-        var syncedCount = 0
-        let syncCompletion:((SFSyncState?) -> Void) = { (syncState) in
-            SalesforceSwiftLogger.log(type(of:self), level:.info, message:"sync completed \(syncedCount)")
-            if let complete = syncState?.isDone(), complete == true {
-                syncedCount = syncedCount + 1
-            }
-            
-            DispatchQueue.main.async {
-                if syncedCount == storeCount {
-                    completion()
-                }
-            }
-        }
+    public func syncDownOrders() -> Promise<Void> {
+        let syncs : [Promise<Void>] = [
+            UserStore.instance.syncDown(),
+            ProductOptionStore.instance.syncDown(),
+            QuoteStore.instance.syncDown(),
+            QuoteLineItemStore.instance.syncDown(),
+            QuoteLineGroupStore.instance.syncDown(),
+            OpportunityStore.instance.syncDown()];
         
-        UserStore.instance.syncDown(completion: syncCompletion)
-        ProductOptionStore.instance.syncDown(completion: syncCompletion)
-        QuoteStore.instance.syncDown(completion: syncCompletion)
-        QuoteLineItemStore.instance.syncDown(completion: syncCompletion)
-        QuoteLineGroupStore.instance.syncDown(completion: syncCompletion)
-        OpportunityStore.instance.syncDown(completion: syncCompletion)
+        return when(fulfilled:syncs)
     }
     
-    public func syncUpDownOrders(completion:@escaping () -> Void) {
-        let storeCount = 2
-        var syncedCount = 0
-        let syncUpCompletion:((SFSyncState?) -> Void) = { (syncState) in
-            if let complete = syncState?.isDone(), complete == true {
-                syncedCount = syncedCount + 1
-            }
-            SalesforceSwiftLogger.log(type(of:self), level:.info, message:"sync completed \(syncedCount)")
-            if syncedCount == storeCount {
-                SalesforceSwiftLogger.log(type(of:self), level:.info, message:"sync up completed")
-                self.syncDownOrders(completion: completion)
-            }
-        }
-        OpportunityStore.instance.syncUp(completion: syncUpCompletion)
-        QuoteStore.instance.syncUp(completion: syncUpCompletion)
+    public func syncUpDownOrders() -> Promise<Void> {
+        return OpportunityStore.instance.syncUp()
+            .then { QuoteStore.instance.syncUp() }
+            .then { self.syncDownOrders() }
     }
     
-    public func fullSyncDown(completion:@escaping () -> Void) {
-        let storeCount = 8
-        var syncedCount = 0
-        let syncCompletion:((SFSyncState?) -> Void) = { (syncState) in
-            SalesforceSwiftLogger.log(type(of:self), level:.info, message:"sync completed \(syncedCount)")
-            if let complete = syncState?.isDone(), complete == true {
-                syncedCount = syncedCount + 1
-            }
-            
-            DispatchQueue.main.async {
-                if syncedCount == storeCount {
-                    completion()
-                }
-            }
-        }
-        
-        UserStore.instance.syncDown(completion: syncCompletion)
-        AccountStore.instance.syncDown(completion: syncCompletion)
-        ProductStore.instance.syncDown(completion: syncCompletion)
-        ProductOptionStore.instance.syncDown(completion: syncCompletion)
-        QuoteStore.instance.syncDown(completion: syncCompletion)
-        QuoteLineItemStore.instance.syncDown(completion: syncCompletion)
-        QuoteLineGroupStore.instance.syncDown(completion: syncCompletion)
-        OpportunityStore.instance.syncDown(completion: syncCompletion)
-        PricebookStore.instance.syncDown(completion: syncCompletion)
-    }
 }

@@ -31,6 +31,7 @@ import Foundation
 import SalesforceSwiftSDK
 import SmartStore
 import SmartSync
+import PromiseKit
 
 public class FavoritesStore: Store<UserFavorite> {
     public static let instance = FavoritesStore()
@@ -47,11 +48,17 @@ public class FavoritesStore: Store<UserFavorite> {
         return UserFavorite.from(results)
     }
     
-    public func addNewFavorite(_ forProduct:Product, completion:SyncCompletion) {
-        guard let account = AccountStore.instance.myAccount(), let accountId = account.accountId else { return }
+    public func addNewFavorite(_ forProduct:Product) -> Promise<UserFavorite> {
+        guard let account = AccountStore.instance.myAccount(), let accountId = account.accountId else {
+            return Promise(error: FavoritesErrors.noAccount)
+        }
         let fav = UserFavorite()
         fav.productId = forProduct.id
         fav.accountId = accountId
-        self.createEntry(entry: fav, completion: completion)
+        return self.createEntry(entry: fav)
+    }
+    
+    enum FavoritesErrors : Error {
+        case noAccount
     }
 }

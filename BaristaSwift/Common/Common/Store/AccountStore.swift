@@ -31,6 +31,7 @@ import Foundation
 import SalesforceSwiftSDK
 import SmartStore
 import SmartSync
+import PromiseKit
 
 public class AccountStore: Store<Account> {
     public static let instance = AccountStore()
@@ -39,6 +40,24 @@ public class AccountStore: Store<Account> {
         let identity = SFUserAccountManager.sharedInstance().currentUserIdentity
         guard let userId = identity?.userId else {return nil}
         return self.account(userId)
+    }
+    
+    public func getOrCreateMyAccount() -> Promise<Account> {
+        SalesforceSwiftLogger.log(type(of:self), level:.info, message:"getOrCreateMyAccount")
+        if let myAccount = self.myAccount() {
+            SalesforceSwiftLogger.log(type(of:self), level:.info, message:"returning existing account")
+            return Promise.value(myAccount)
+        } else {
+            SalesforceSwiftLogger.log(type(of:self), level:.info, message:"creating new account")
+            guard let user = SFUserAccountManager.sharedInstance().currentUser else {
+                return Promise(error: AccountErrors.noUser)
+            }
+            let newAccount = Account()
+            newAccount.accountNumber = user.accountIdentity.userId
+            newAccount.name = user.userName
+            newAccount.ownerId = user.accountIdentity.userId
+            return AccountStore.instance.create(newAccount)
+        }
     }
     
     public func account(_ forUserId:String) -> Account? {
@@ -70,7 +89,11 @@ public class AccountStore: Store<Account> {
         return Account.from(results)
     }
     
-    public func create(_ account:Account, completion:SyncCompletion) {
-        self.createEntry(entry: account, completion: completion)
+    public func create(_ account:Account) -> Promise<Account> {
+        return self.createEntry(entry: account)
+    }
+    
+    enum AccountErrors : Error {
+        case noUser
     }
 }

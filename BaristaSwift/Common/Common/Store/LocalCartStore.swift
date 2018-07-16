@@ -31,6 +31,7 @@ import Foundation
 import SalesforceSDKCore
 import SalesforceSwiftSDK
 import SmartSync
+import PromiseKit
 
 public class LocalCartStore {
     public static let instance = LocalCartStore()
@@ -105,32 +106,34 @@ public class LocalCartStore {
             switch optionType {
             case .integer:
                 if withOption.quantity > 0 {
-                    print("updating quantity for: \(self.inProgressItem!.options[index].product.productName) to: \(withOption.quantity)")
+                    print("updating quantity for: \(String(describing: self.inProgressItem!.options[index].product.productName)) to: \(withOption.quantity)")
                     self.inProgressItem!.options[index].quantity = withOption.quantity
                 } else {
-                    print("removing quantity for: \(self.inProgressItem!.options[index].product.productName)")
+                    print("removing quantity for: \(String(describing: self.inProgressItem!.options[index].product.productName))")
                     self.inProgressItem!.options.remove(at: index)
                 }
             case .slider:
-                print("removing added item: \(self.inProgressItem!.options[index].product.productName)")
+                print("removing added item: \(String(describing: self.inProgressItem!.options[index].product.productName))")
                 self.inProgressItem!.options.remove(at: index)
                 
-                print("adding new line item: \(withOption.product.productName) with quantity: \(withOption.quantity)")
+                print("adding new line item: \(String(describing: withOption.product.productName)) with quantity: \(withOption.quantity)")
                 self.inProgressItem!.options.append(withOption)
             case .picklist, .multiselect:
-                print("removing added item: \(self.inProgressItem!.options[index].product.productName)")
+                print("removing added item: \(String(describing: self.inProgressItem!.options[index].product.productName))")
                 self.inProgressItem!.options.remove(at: index)
             }
         } else {
             // doesn't exist, add line item and set quantity
-            print("adding new line item: \(withOption.product.productName) with quantity: \(withOption.quantity)")
+            print("adding new line item: \(String(describing: withOption.product.productName)) with quantity: \(withOption.quantity)")
             self.inProgressItem!.options.append(withOption)
         }
     }
     
-    public func commitToCart(completion:@escaping (Bool) -> Void) {
+    public func commitToCart() -> Promise<Void> {
         // todo - update with validation from platform
-        guard let account = AccountStore.instance.myAccount(), let item = self.inProgressItem else {return}
+        guard let account = AccountStore.instance.myAccount(), let item = self.inProgressItem else {
+            return Promise(error:CartErrors.noInProgressItem)
+        }
         // rules
         // if no current opportunity, create new opportunity from logged in user
         // if no current quote, create new quote
@@ -140,63 +143,39 @@ public class LocalCartStore {
         // assign quote line group to each quote line
         guard let pricebook = PricebookStore.instance.freePricebook() else {
             self.showError("Could not find pricebook")
-            completion(false)
-            return
+            return Promise(error:CartErrors.noPriceBook)
         }
-        self.getOrCreateNewOpportunity(forAccount: account, pricebook: pricebook) { (opportunity) in
-            guard let opty = opportunity else {
-                self.showError("Unable to create or retrieve Opportunity record")
-                completion(false)
-                return
-            }
-            self.getOrCreateNewQuote(forOpportunity: opty, withAccount: account, completion: { (quote) in
-                guard let newQuote = quote else {
-                    self.showError("Unable to create or retrieve Quote record")
-                    completion(false)
-                    return
+        return self.getOrCreateNewOpportunity(forAccount: account, pricebook: pricebook)
+            .then{ opportunity in self.getOrCreateNewQuote(forOpportunity: opportunity, withAccount: account) }
+            .then { quote -> Promise<Void>  in
+                let group = self.createNewLineGroup(forQuote: quote)
+                guard let productId = item.product.productId else {
+                    self.showError("Product missing product ID")
+                    return Promise(error:CartErrors.noProductID)
                 }
-                self.createNewLineGroup(forQuote: newQuote, completion: { (quoteLineGroup) in
-                    guard let group = quoteLineGroup else {
-                        self.showError("Unable to create QuoteLineGroup record")
-                        completion(false)
-                        return
+                let mainItem = QuoteLineItem(withLineGroup: group, forProduct: productId, quantity: item.quantity, lineNumber: 1)
+                _ = QuoteLineItemStore.instance.locallyCreateEntry(entry: mainItem)
+                for (index, option) in item.options.enumerated() {
+                    guard let optionID = option.product.optionSKU else {
+                        self.showError("Option missing product ID")
+                        continue
                     }
-                    guard let productId = item.product.productId else {
-                        self.showError("Product missing product ID")
-                        completion(false)
-                        return
-                    }
-                    let mainItem = QuoteLineItem(withLineGroup: group, forProduct: productId, quantity: item.quantity, lineNumber: 1)
-                    QuoteLineItemStore.instance.upsertNewEntries(entry: mainItem)
-                    for (index, option) in item.options.enumerated() {
-                        guard let optionID = option.product.optionSKU else {
-                            self.showError("Option missing product ID")
-                            continue
-                        }
-                        let lineItem = QuoteLineItem(withLineGroup: group, forProduct: optionID, quantity: option.quantity, lineNumber: index + 2)
-                        QuoteLineItemStore.instance.upsertNewEntries(entry: lineItem)
-                    }
-                    SalesforceSwiftLogger.log(type(of:self), level:.info, message:"syncing up quote lines")
-                    completion(true)
-                    self.beginCartSyncUp(quote: newQuote, completion: { (completed) in
-                        SalesforceSwiftLogger.log(type(of:self), level:.info, message:"cart sync up completed")
-                    })
-                })
-                
-            })
-        }
+                    let lineItem = QuoteLineItem(withLineGroup: group, forProduct: optionID, quantity: option.quantity, lineNumber: index + 2)
+                    _ = QuoteLineItemStore.instance.locallyCreateEntry(entry: lineItem)
+                }
+                SalesforceSwiftLogger.log(type(of:self), level:.info, message:"syncing up quote lines")
+                return self.beginCartSyncUp(quote: quote)
+            }
     }
     
-    func beginCartSyncUp(quote:Quote, completion:@escaping (Bool) -> Void) {
+    func beginCartSyncUp(quote:Quote) -> Promise<Void> {
         guard let quoteId = quote.id else {
-            completion(false)
-            return
+            return Promise(error:CartErrors.noQuote)
         }
         let lineGroups = QuoteLineGroupStore.instance.lineGroupsForQuote(quoteId)
         
-        QuoteLineGroupStore.instance.syncUpDown(completion: { (lineGroupState) in
-            if let complete = lineGroupState?.isDone(), complete == true {
-                SalesforceSwiftLogger.log(type(of:self), level:.info, message:"line group sync up down complete")
+        return QuoteLineGroupStore.instance.syncUpDown()
+            .then { _ -> Promise<Void> in
                 for lineGroup in lineGroups {
                     guard let lineGroupExternalId = lineGroup.externalId,
                         let syncedLineGroup = QuoteLineGroupStore.instance.record(forExternalId: lineGroupExternalId),
@@ -205,20 +184,14 @@ public class LocalCartStore {
                     for line in lineItems {
                         line.group = lineGroupId
                         SalesforceSwiftLogger.log(type(of:self), level:.info, message:"updating line with line group id \(lineGroupId)")
-                        QuoteLineItemStore.instance.locallyUpdateEntry(entry: line)
+                        _ = QuoteLineItemStore.instance.locallyUpdateEntry(entry: line)
                     }
                 }
-                QuoteLineItemStore.instance.syncUpDown(completion: { (lineItemState) in
-                    if let lineComplete = lineItemState?.isDone(), lineComplete == true {
-                        SalesforceSwiftLogger.log(type(of:self), level:.info, message:"Line item store sync up down completed")
-                        completion(true)
-                    }
-                })
+                return QuoteLineItemStore.instance.syncUpDown()
             }
-        })
     }
     
-    public func submitOrder(completion:@escaping (Bool) -> Void) {
+    public func submitOrder() -> Promise<Void> {
         SalesforceSwiftLogger.log(type(of:self), level:.info, message:"submitOrder")
         if let account = AccountStore.instance.myAccount(),
             let opportunity = OpportunityStore.instance.opportunitiesInProgressForAccount(account).first,
@@ -226,28 +199,20 @@ public class LocalCartStore {
             let quote = QuoteStore.instance.quoteFromId(primary) {
             quote.status = .presented
             opportunity.stage = .negotiationReview
-            self.beginCartSyncUp(quote: quote, completion: { (completed) in
-                SalesforceSwiftLogger.log(type(of:self), level:.info, message:"submitOrder - update quote entry")
-                QuoteStore.instance.updateEntry(entry: quote, completion: { (quoteSync) in
-                    guard let quoteState = quoteSync else { return }
-                    if quoteState.isDone() {
-                        SalesforceSwiftLogger.log(type(of:self), level:.info, message:"submitOrder - quote sync completed")
-                        OpportunityStore.instance.updateEntry(entry: opportunity, completion: { (optSync) in
-                            guard let optyState = optSync else { return }
-                            if optyState.isDone() {
-                                SalesforceSwiftLogger.log(type(of:self), level:.info, message:"submitOrder - opportunity sync completed")
-                                completion(true)
-                            } else if optyState.hasFailed() {
-                                self.showError("Failed syncing opportunity update")
-                                completion(false)
-                            }
-                        })
-                    } else if quoteState.hasFailed() {
-                        self.showError("Failed syncing quote update")
-                        completion(false)
-                    }
-                })
-            })
+            return self.beginCartSyncUp(quote: quote)
+                .then { _ -> Promise<Quote> in
+                    SalesforceSwiftLogger.log(type(of:self), level:.info, message:"submitOrder - update quote entry")
+                    return QuoteStore.instance.updateEntry(entry: quote)
+                }
+                .then { syncedQuote -> Promise<Opportunity> in
+                    SalesforceSwiftLogger.log(type(of:self), level:.info, message:"submitOrder - quote sync completed")
+                    return OpportunityStore.instance.updateEntry(entry: opportunity)
+                }
+                .then { _ -> Promise<Void> in
+                    return Promise.value(())
+                }
+        } else {
+            return Promise(error:CartErrors.submitOrderFailed)
         }
     }
     
@@ -255,81 +220,69 @@ public class LocalCartStore {
         // todo log to screen/file
         print("LocalCartStore error: \(reason)")
     }
+
+    enum CartErrors : Error {
+        case noInProgressItem
+        case noOpportunity
+        case noPriceBook
+        case noProductID
+        case noQuote
+        case noQuoteLineGroup
+        case submitOrderFailed
+    }
 }
 
 extension LocalCartStore {
-    fileprivate func getOrCreateNewOpportunity(forAccount account:Account, pricebook:Pricebook, completion:@escaping (Opportunity?) -> Void) {
+    fileprivate func getOrCreateNewOpportunity(forAccount account:Account, pricebook:Pricebook) -> Promise<Opportunity> {
         SalesforceSwiftLogger.log(type(of:self), level:.info, message:"getOrCreateNewOpportunity")
-        let inProgress = OpportunityStore.instance.opportunitiesInProgressForAccount(account)
-        if inProgress.count == 0 {
+        let opptyInProgress = OpportunityStore.instance.opportunitiesInProgressForAccount(account)
+        if opptyInProgress.count == 0 {
             let newOpty = Opportunity()
             newOpty.accountName = account.accountId
             newOpty.name = account.name
             newOpty.stage = .prospecting
             newOpty.closeDate = Date(timeIntervalSinceNow: 90001)
             newOpty.pricebookId = pricebook.pricebookId
-            let optyId = newOpty.externalId
-//            SalesforceSwiftLogger.log(type(of:self), level:.info, message:"creating new opportunity \(account.name)")
-//            OpportunityStore.instance.upsertNewEntries(entry: newOpty)
-//            completion(newOpty)
-            OpportunityStore.instance.createEntry(entry: newOpty, completion: { (syncState) in
-                if let complete = syncState?.isDone(), complete == true {
-                    SalesforceSwiftLogger.log(type(of:self), level:.info, message:"create new opportunity - sync completed")
-                    guard let synced = OpportunityStore.instance.record(forExternalId: optyId) else {
-                        completion(nil)
-                        return
-                    }
-                    completion(synced)
-                }
-            })
+            SalesforceSwiftLogger.log(type(of:self), level:.info, message:"create new opportunity")
+            return OpportunityStore.instance.createEntry(entry: newOpty)
         } else {
             SalesforceSwiftLogger.log(type(of:self), level:.info, message:"returning existing opportunity")
-            completion(inProgress.first!)
+            return Promise.value(opptyInProgress.first!)
         }
     }
     
-    fileprivate func getOrCreateNewQuote(forOpportunity opportunity:Opportunity, withAccount account:Account, completion:@escaping (Quote?) -> Void) {
+    fileprivate func getOrCreateNewQuote(forOpportunity opportunity:Opportunity, withAccount account:Account) -> Promise<Quote> {
         SalesforceSwiftLogger.log(type(of:self), level:.info, message:"getOrCreateNewQuote")
         // assign opportunity primary quote and sync up
         if let primary = opportunity.primaryQuote, let quote = QuoteStore.instance.quoteFromId(primary) {
             SalesforceSwiftLogger.log(type(of:self), level:.info, message:"returning exisitng quote")
-            completion(quote)
+            return Promise.value(quote)
         } else {
-            let newQuote = Quote()
+            var newQuote = Quote()
             newQuote.primaryQuote = true
             newQuote.opportunity = opportunity.id
             newQuote.account = account.accountId
             newQuote.pricebookId = opportunity.pricebookId
             newQuote.lineItemsGrouped = true
             newQuote.primaryQuote = true
-            let newQuoteId = newQuote.externalId
             SalesforceSwiftLogger.log(type(of:self), level:.info, message:"creating new quote")
-            QuoteStore.instance.create(newQuote, completion: { (syncState) in
-                // Todo - need to handle sync failure properly
-                if let complete = syncState?.isDone(), complete == true {
-                    SalesforceSwiftLogger.log(type(of:self), level:.info, message:"create new quote - sync completed")
-                    guard let synced = QuoteStore.instance.record(forExternalId: newQuoteId) else {
-                        completion(nil)
-                        return
-                    }
-                    opportunity.primaryQuote = synced.quoteId
-                    OpportunityStore.instance.upsertEntries(record: opportunity)
-                    OpportunityStore.instance.syncUp()
-                    completion(synced)
+            return QuoteStore.instance.create(newQuote)
+                .then { quote -> Promise<Opportunity> in
+                    newQuote = quote
+                    opportunity.primaryQuote = newQuote.quoteId
+                    return OpportunityStore.instance.updateEntry(entry: opportunity)
                 }
-            })
+                .then { _ in return Promise.value(newQuote) }
         }
     }
     
-    fileprivate func createNewLineGroup(forQuote quote:Quote, completion:@escaping (QuoteLineGroup?) -> Void) {
+    fileprivate func createNewLineGroup(forQuote quote:Quote) -> QuoteLineGroup {
         SalesforceSwiftLogger.log(type(of:self), level:.info, message:"createNewLineGroup")
         let newLineGroup = QuoteLineGroup()
         newLineGroup.account = quote.account
         newLineGroup.groupName = self.inProgressItem?.product.name
         newLineGroup.quote = quote.id
-        let lineGroupId = newLineGroup.externalId
         SalesforceSwiftLogger.log(type(of:self), level:.info, message:"creating new line group")
-        QuoteLineGroupStore.instance.upsertNewEntries(entry: newLineGroup)
-        completion(newLineGroup)
+        return QuoteLineGroupStore.instance.locallyCreateEntry(entry: newLineGroup)
     }
 }

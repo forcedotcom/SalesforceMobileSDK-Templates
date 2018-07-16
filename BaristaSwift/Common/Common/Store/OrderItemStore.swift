@@ -31,6 +31,7 @@ import Foundation
 import SalesforceSwiftSDK
 import SmartStore
 import SmartSync
+import PromiseKit
 
 public class OrderItemStore: Store<OrderItem> {
     public static let instance = OrderItemStore()
@@ -61,13 +62,6 @@ public class OrderItemStore: Store<OrderItem> {
             return []
         }
         return OrderItem.from(results)
-    }
-    
-    public func syncDownItems(for order:Order, completion: SyncCompletion = nil) {
-        let queryString = self.orderItemsQueryString(for: order)
-        let target = SFSoqlSyncDownTarget.newSyncTarget(queryString)
-        let options = SFSyncOptions.newSyncOptions(forSyncDown: .leaveIfChanged)
-        smartSync.syncDown(with: target, options: options, soupName: OrderItem.objectName, update: completion ?? { _ in return })
     }
     
     public override func records() -> [OrderItem] {

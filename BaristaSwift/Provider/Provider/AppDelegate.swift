@@ -34,6 +34,7 @@ import SmartSync
 import Fabric
 import Crashlytics
 import Common
+import PromiseKit
 
 // Primary
 // SFDCOAuthLoginHost - app-data-4945-dev-ed.cs62.my.salesforce.com
@@ -70,39 +71,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             .postLaunch {  [unowned self] (launchActionList: SFSDKLaunchAction) in
                 let launchActionString = SalesforceSwiftSDKManager.launchActionsStringRepresentation(launchActionList)
                 SalesforceSwiftLogger.log(type(of:self), level:.info, message:"Post-launch: launch actions taken: \(launchActionString)")
-                if let currentUserId = SFUserAccountManager.sharedInstance().currentUserIdentity?.userId {
-                    AccountStore.instance.syncDown(completion: { (syncState) in
-                        if let complete = syncState?.isDone(), complete == true {
-                            if let _ = AccountStore.instance.account(currentUserId) {
-                                DispatchQueue.main.async {
-                                    self.beginSyncDown {
-                                        self.setupRootViewController()
-                                    }
-                                }
-                            } else {
-                                guard let user = SFUserAccountManager.sharedInstance().currentUser else {return}
-                                let newAccount = Account()
-                                newAccount.accountNumber = user.accountIdentity.userId
-                                newAccount.name = user.userName
-                                newAccount.ownerId = user.accountIdentity.userId
-                                AccountStore.instance.create(newAccount, completion: { (syncState) in
-                                    if let complete = syncState?.isDone(), complete == true {
-                                        DispatchQueue.main.async {
-                                            self.beginSyncDown {
-                                                self.setupRootViewController()
-                                            }
-                                        }
-                                    }
-                                })
+                if let _ = SFUserAccountManager.sharedInstance().currentUserIdentity?.userId {
+                    _ = AccountStore.instance.syncDown()
+                        .then { _ -> Promise<Account> in
+                            return AccountStore.instance.getOrCreateMyAccount()
+                        }
+                        .then { _ -> Promise<Void> in
+                            return self.beginSyncDown()
+                        }
+                        .done { _ in
+                            DispatchQueue.main.async {
+                                self.setupRootViewController()
                             }
                         }
-                    })
-                    
                 } else {
                     SFUserAccountManager.sharedInstance().logout()
                 }
-                
-                SalesforceSwiftLogger.setLogLevel(.error)
             }.postLogout {  [unowned self] in
                 self.handleSdkManagerLogout()
             }.switchUser{ [unowned self] (fromUser: SFUserAccount?, toUser: SFUserAccount?) -> () in
@@ -185,8 +169,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window?.rootViewController = ViewController(nibName: nil, bundle: nil)
     }
     
-    func beginSyncDown(completion:@escaping () -> Void) {
-        LocalOrderStore.instance.fullSyncDown(completion: completion)
+    func beginSyncDown() -> Promise<Void> {
+        let syncs : [Promise<Void>] = [
+            UserStore.instance.syncDown(),
+            AccountStore.instance.syncDown(),
+            ProductStore.instance.syncDown(),
+            ProductOptionStore.instance.syncDown(),
+            QuoteStore.instance.syncDown(),
+            QuoteLineItemStore.instance.syncDown(),
+            QuoteLineGroupStore.instance.syncDown(),
+            OpportunityStore.instance.syncDown(),
+            PricebookStore.instance.syncDown()
+        ]
+        
+        return when(fulfilled: syncs)
     }
     
     func resetViewState(_ postResetBlock: @escaping () -> ()) {

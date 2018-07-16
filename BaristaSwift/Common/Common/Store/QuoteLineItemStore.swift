@@ -31,6 +31,7 @@ import Foundation
 import SalesforceSwiftSDK
 import SmartStore
 import SmartSync
+import PromiseKit
 
 public class QuoteLineItemStore: Store<QuoteLineItem> {
     public static let instance = QuoteLineItemStore()
@@ -57,7 +58,7 @@ public class QuoteLineItemStore: Store<QuoteLineItem> {
         return QuoteLineItem.from(results)
     }
     
-    public func create(_ lineItem:QuoteLineItem, completion:SyncCompletion) {
-        self.createEntry(entry: lineItem, completion: completion)
+    public func create(_ lineItem:QuoteLineItem) -> Promise<QuoteLineItem> {
+        return self.createEntry(entry: lineItem)
     }
 }

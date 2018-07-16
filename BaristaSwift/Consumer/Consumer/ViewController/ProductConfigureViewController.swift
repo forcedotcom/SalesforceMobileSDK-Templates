@@ -29,6 +29,7 @@
 
 import UIKit
 import Common
+import PromiseKit
 
 class ProductConfigureViewController: UIViewController {
 
@@ -153,31 +154,30 @@ class ProductConfigureViewController: UIViewController {
         activity.centerXAnchor.constraint(equalTo: self.favoriteButton.centerXAnchor).isActive = true
         activity.centerYAnchor.constraint(equalTo: self.favoriteButton.centerYAnchor).isActive = true
         activity.startAnimating()
-        FavoritesStore.instance.addNewFavorite(product) { (syncState) in
-            if let complete = syncState?.isDone(), complete == true {
+        _ = FavoritesStore.instance.addNewFavorite(product)
+            .done { _ in
                 DispatchQueue.main.async {
                     activity.stopAnimating()
                     activity.removeFromSuperview()
                     self.favoriteButton.alpha = 1.0
                 }
             }
-        }
     }
     
     @IBAction func didPressAddToCartButton(_ sender: UIButton) {
         let activity = ActivityIndicatorView(frame: .zero)
         activity.showIn(self.view)
         activity.startAnimating()
-        LocalCartStore.instance.commitToCart { (completedSuccessfully) in
-            DispatchQueue.main.async {
-                if completedSuccessfully {
-                    self.close()
-                } else {
+        LocalCartStore.instance.commitToCart()
+            .done { _ in
+                self.close()
+            }
+            .catch { _ in
+                DispatchQueue.main.async {
                     let alert = UIAlertController(title: "Error", message: "Could not add items to cart, please verify your selections and try again.", preferredStyle: .alert)
                     self.present(alert, animated: true, completion: nil)
                 }
             }
-        }
     }
     
     @IBAction func didPressCancelButton(_ sender: UIButton) {

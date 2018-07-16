@@ -31,6 +31,7 @@ import Foundation
 import SalesforceSwiftSDK
 import SmartStore
 import SmartSync
+import PromiseKit
 
 public class QuoteStore: Store<Quote> {
     public static let instance = QuoteStore()
@@ -46,8 +47,8 @@ public class QuoteStore: Store<Quote> {
         return Quote.from(results)
     }
     
-    public func create(_ quote:Quote, completion:SyncCompletion) {
-        self.createEntry(entry: quote, completion: completion)
+    public func create(_ quote:Quote) -> Promise<Quote> {
+        return self.createEntry(entry: quote)
     }
     
     public func quoteFromId(_ quoteId:String) -> Quote? {
