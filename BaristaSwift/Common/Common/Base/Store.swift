@@ -94,21 +94,21 @@ public class Store<objectType: StoreProtocol> {
         record.local = true
         record.locallyCreated = true
         record.objectType = objectType.objectName
-        return objectType.from(store.upsertEntries([record.data], toSoup: objectType.objectName))
+        return objectType.from(upsertEntries([record.data]))
     }
     
     public func locallyUpdateEntry(entry: objectType) -> objectType {
         var record: objectType = entry
         record.local = true
         record.locallyUpdated = true
-        return objectType.from(store.upsertEntries([record.data], toSoup: objectType.objectName))
+        return objectType.from(upsertEntries([record.data]))
     }
 
     public func locallyDeleteEntry(entry: objectType) {
         var record: objectType = entry
         record.local = true
         record.locallyDeleted = true
-        _ = store.upsertEntries([record.data], toSoup: objectType.objectName)
+        _ =  upsertEntries([record.data])
     }
 
     public func createEntry(entry: objectType) -> Promise<objectType> {
@@ -143,7 +143,7 @@ public class Store<objectType: StoreProtocol> {
     public func syncEntry(entry: objectType) -> Promise<Void> {
         var record: objectType = entry
         record.objectType = objectType.objectName
-        store.upsertEntries([record.data], toSoup: objectType.objectName)
+        _ = upsertEntries([record.data])
         return syncUpDown()
     }
 
@@ -152,7 +152,7 @@ public class Store<objectType: StoreProtocol> {
         return smartSync.Promises.reSync(syncName: syncName)
             .then { syncState -> Promise<Void> in
                 let diff = String(format:"%.3f", Date().timeIntervalSince(startDate) * 1000)
-                SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"Took \(diff) ms running \(syncName)")
+                SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"Took \(diff) ms SYNCHING \(syncName)")
                 
                 if syncState.hasFailed() {
                     SalesforceSwiftLogger.log(type(of:self), level:.error, message:"sync \(syncName) failed")
@@ -175,12 +175,21 @@ public class Store<objectType: StoreProtocol> {
         return self.syncUp().then { self.syncDown() }
     }
     
+    internal func upsertEntries(_ entries:[Any]) -> [Any] {
+        let startDate = Date()
+        let results = store.upsertEntries(entries, toSoup: objectType.objectName)
+        let diff = String(format:"%.3f", Date().timeIntervalSince(startDate) * 1000)
+        SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"Took \(diff) ms UPSERTING on \(objectType.objectName)")
+        return results
+    }
+
+
     internal func runQuery(query:SFQuerySpec, pageIndex:UInt = 0) -> [Any]? {
         var error: NSError? = nil
         let startDate = Date()
         let results: [Any] = store.query(with: query, pageIndex: pageIndex, error: &error)
         let diff = String(format:"%.3f", Date().timeIntervalSince(startDate) * 1000)
-        SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"Took \(diff) ms running query on \(objectType.objectName)")
+        SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"Took \(diff) ms QUERYING on \(objectType.objectName)")
         guard error == nil else {
             SalesforceSwiftLogger.log(type(of:self), level:.error, message:"query \(query.smartSql) failed: \(error!.localizedDescription)")
             return nil
