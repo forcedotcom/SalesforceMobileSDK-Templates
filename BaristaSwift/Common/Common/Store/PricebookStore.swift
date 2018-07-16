@@ -37,12 +37,9 @@ public class PricebookStore: Store<Pricebook> {
     
     public func freePricebook() -> Pricebook? {
         let query = SFQuerySpec.newExactQuerySpec(Pricebook.objectName, withPath: Pricebook.Field.name.rawValue, withMatchKey: "Free", withOrderPath: Pricebook.orderPath, with: .descending, withPageSize: 1)
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(Pricebook.objectName) failed: \(error!.localizedDescription)")
-            return nil
+        if let results = runQuery(query: query) {
+            return Pricebook.from(results)
         }
-        return Pricebook.from(results)
+        return nil
     }
 }

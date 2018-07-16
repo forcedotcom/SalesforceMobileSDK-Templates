@@ -40,49 +40,37 @@ public class OrderStore: Store<Order> {
     
     public func records<T:Order>(for user:String) -> [T] {
         let query = SFQuerySpec.newExactQuerySpec(Order.objectName, withPath: Order.Field.createdById.rawValue, withMatchKey: user, withOrderPath: Order.Field.orderId.rawValue, with: .descending, withPageSize: 100)
-        var error: NSError? = nil
-        let results: [Any] = self.store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch Order list failed: \(error!.localizedDescription)")
-            return []
+        if let results = runQuery(query: query) {
+            return T.from(results)
         }
-        return T.from(results)
+        return []
     }
     
     public override func records() -> [Order] {
         let query: SFQuerySpec = SFQuerySpec.newAllQuerySpec(Order.objectName, withOrderPath: Order.orderPath, with: .descending, withPageSize: 100)
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(Order.objectName) failed: \(error!.localizedDescription)")
-            return []
+        if let results = runQuery(query: query) {
+            return Order.from(results)
         }
-        return Order.from(results)
+        return []
     }
     
     public func pendingOrder() -> Order? {
         let query: SFQuerySpec = SFQuerySpec.newAllQuerySpec(Order.objectName, withOrderPath: Order.orderPath, with: .descending, withPageSize: 100)
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(Order.objectName) failed: \(error!.localizedDescription)")
-            return nil
+        if let results = runQuery(query: query) {
+            let records:[Order] = Order.from(results)
+            let pending = records.filter({$0.orderStatus() == .pending})
+            return pending.last
         }
-        let records:[Order] = Order.from(results)
-        let pending = records.filter({$0.orderStatus() == .pending})
-        return pending.last
+        return nil
     }
     
     public func incompleteOrders() -> [Order] {
         let query: SFQuerySpec = SFQuerySpec.newAllQuerySpec(Order.objectName, withOrderPath: Order.orderPath, with: .descending, withPageSize: 100)
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(Order.objectName) failed: \(error!.localizedDescription)")
-            return []
+        if let results = runQuery(query: query) {
+            let records:[Order] = Order.from(results)
+            let incomplete = records.filter({$0.orderStatus() == .submitted})
+            return incomplete
         }
-        let records:[Order] = Order.from(results)
-        let incomplete = records.filter({$0.orderStatus() == .submitted})
-        return incomplete
+        return []
     }
 }

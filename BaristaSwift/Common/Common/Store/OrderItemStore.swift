@@ -36,17 +36,6 @@ import PromiseKit
 public class OrderItemStore: Store<OrderItem> {
     public static let instance = OrderItemStore()
     
-    fileprivate func orderItemsQueryString() -> String {
-        let queryString = "SELECT \(OrderItem.Field.itemId.rawValue),\(OrderItem.Field.orderId.rawValue),\(OrderItem.Field.orderItemNumber.rawValue),\(OrderItem.Field.pricebookEntry.rawValue),\(OrderItem.Field.quantity.rawValue),\(OrderItem.Field.unitPrice.rawValue) FROM {\(OrderItem.objectName)}"
-        return queryString
-    }
-    
-    fileprivate func orderItemsQueryString(for order:Order) -> String {
-        guard let orderId = order.orderId else { return "" }
-        let queryString = "SELECT \(OrderItem.selectFieldsString()) FROM {\(OrderItem.objectName)}"
-        return queryString
-    }
-    
     public func items(from order:Order) -> [OrderItem] {
         guard let orderId = order.orderId else { return [] }
         let query = SFQuerySpec.newExactQuerySpec(OrderItem.objectName,
@@ -55,23 +44,17 @@ public class OrderItemStore: Store<OrderItem> {
                                                   withOrderPath: OrderItem.Field.itemId.rawValue,
                                                   with: .ascending,
                                                   withPageSize: 100)
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(OrderItem.objectName) failed: \(error!.localizedDescription)")
-            return []
+        if let results = runQuery(query: query) {
+            return OrderItem.from(results)
         }
-        return OrderItem.from(results)
+        return []
     }
     
     public override func records() -> [OrderItem] {
         let query: SFQuerySpec = SFQuerySpec.newAllQuerySpec(OrderItem.objectName, withOrderPath: OrderItem.orderPath, with: .descending, withPageSize: 100)
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(OrderItem.objectName) failed: \(error!.localizedDescription)")
-            return []
+        if let results = runQuery(query: query) {
+            return OrderItem.from(results)
         }
-        return OrderItem.from(results)
+        return []
     }
 }

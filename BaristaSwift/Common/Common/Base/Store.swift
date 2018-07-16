@@ -94,21 +94,21 @@ public class Store<objectType: StoreProtocol> {
         record.local = true
         record.locallyCreated = true
         record.objectType = objectType.objectName
-        return objectType.from(store.upsertEntries([record.data], toSoup: objectType.objectName))
+        return objectType.from(upsertEntries([record.data]))
     }
     
     public func locallyUpdateEntry(entry: objectType) -> objectType {
         var record: objectType = entry
         record.local = true
         record.locallyUpdated = true
-        return objectType.from(store.upsertEntries([record.data], toSoup: objectType.objectName))
+        return objectType.from(upsertEntries([record.data]))
     }
 
     public func locallyDeleteEntry(entry: objectType) {
         var record: objectType = entry
         record.local = true
         record.locallyDeleted = true
-        _ = store.upsertEntries([record.data], toSoup: objectType.objectName)
+        _ =  upsertEntries([record.data])
     }
 
     public func createEntry(entry: objectType) -> Promise<objectType> {
@@ -143,13 +143,16 @@ public class Store<objectType: StoreProtocol> {
     public func syncEntry(entry: objectType) -> Promise<Void> {
         var record: objectType = entry
         record.objectType = objectType.objectName
-        store.upsertEntries([record.data], toSoup: objectType.objectName)
+        _ = upsertEntries([record.data])
         return syncUpDown()
     }
 
     private func reSync(syncName: String) -> Promise<Void> {
+        let startDate = Date()
         return smartSync.Promises.reSync(syncName: syncName)
             .then { syncState -> Promise<Void> in
+                self.printTiming(startDate, action:"SYNCHING ", numRecords: syncState.totalSize, target:syncName)
+
                 if syncState.hasFailed() {
                     SalesforceSwiftLogger.log(type(of:self), level:.error, message:"sync \(syncName) failed")
                     return Promise(error:StoreErrors.syncFailed)
@@ -170,39 +173,59 @@ public class Store<objectType: StoreProtocol> {
     public func syncUpDown() -> Promise<Void> {
         return self.syncUp().then { self.syncDown() }
     }
+    
+    internal func upsertEntries(_ entries:[Any]) -> [Any] {
+        let startDate = Date()
+        let results = store.upsertEntries(entries, toSoup: objectType.objectName)
+        printTiming(startDate, action:"UPSERTING", numRecords: results.count)
+        return results
+    }
+
+    internal func runQuery(query:SFQuerySpec, pageIndex:UInt = 0) -> [Any]? {
+        var error: NSError? = nil
+        let startDate = Date()
+        let results: [Any] = store.query(with: query, pageIndex: pageIndex, error: &error)
+        printTiming(startDate, action:"QUERYING ", numRecords: results.count)
+        guard error == nil else {
+            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"query \(query.smartSql) failed: \(error!.localizedDescription)")
+            return nil
+        }
+        return results
+    }
  
     public func record(index: Int) -> objectType {
         let query:SFQuerySpec = SFQuerySpec.newSmartQuerySpec(queryString, withPageSize: 1)!
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: UInt(index), error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(objectType.objectName) failed: \(error!.localizedDescription)")
+        if let results = runQuery(query: query, pageIndex: UInt(index)) {
+            return objectType.from(results)
+        } else {
             return objectType()
         }
-        return objectType.from(results)
     }
     
     public func record(forExternalId externalId: String?) -> objectType? {
         guard let id = externalId else {return nil}
         let query = SFQuerySpec.newExactQuerySpec(objectType.objectName, withPath: Record.Field.externalId.rawValue, withMatchKey: id, withOrderPath: objectType.orderPath, with: .descending, withPageSize: 1)
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(objectType.objectName) failed: \(error!.localizedDescription)")
+        if let results = runQuery(query: query) {
+            return objectType.from(results)
+        } else {
             return objectType()
         }
-        return objectType.from(results)
     }
     
     public func records() -> [objectType] {
         let query:SFQuerySpec = SFQuerySpec.newSmartQuerySpec(queryString, withPageSize: pageSize)!
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(objectType.objectName) failed: \(error!.localizedDescription)")
+        if let results = runQuery(query: query) {
+            return objectType.from(results)
+        } else {
             return []
         }
-        return objectType.from(results)
+    }
+    
+    // Timing logging helper
+    internal func printTiming(_ startDate:Date, action:String, numRecords:Int, target:String = objectType.objectName) {
+        let elapsedTime = String(format:"%10.3f", Date().timeIntervalSince(startDate) * 1000)
+        let numRecordsStr = String(format:"%3d", numRecords)
+        SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"Took \(elapsedTime) ms \(action) \(numRecordsStr) records \(target)")
     }
     
     enum StoreErrors : Error {

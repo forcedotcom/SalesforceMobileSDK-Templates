@@ -38,24 +38,18 @@ public class QuoteLineItemStore: Store<QuoteLineItem> {
     
     public override func records() -> [QuoteLineItem] {
         let query: SFQuerySpec = SFQuerySpec.newAllQuerySpec(QuoteLineItem.objectName, withOrderPath: QuoteLineItem.orderPath, with: .descending, withPageSize: 100)
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(QuoteLineItem.objectName) failed: \(error!.localizedDescription)")
-            return []
+        if let results = runQuery(query: query) {
+            return QuoteLineItem.from(results)
         }
-        return QuoteLineItem.from(results)
+        return []
     }
     
     public func lineItemsForGroup(_ lineGroupId:String) -> [QuoteLineItem] {
         let query = SFQuerySpec.newExactQuerySpec(QuoteLineItem.objectName, withPath: QuoteLineItem.Field.group.rawValue, withMatchKey: lineGroupId, withOrderPath: QuoteLineItem.Field.lineNumber.rawValue, with: .ascending, withPageSize: 100)
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(QuoteLineItem.objectName) failed: \(error!.localizedDescription)")
-            return []
+        if let results = runQuery(query: query) {
+            return QuoteLineItem.from(results)
         }
-        return QuoteLineItem.from(results)
+        return []
     }
     
     public func create(_ lineItem:QuoteLineItem) -> Promise<QuoteLineItem> {

@@ -37,25 +37,19 @@ public class OpportunityStore: Store<Opportunity> {
     
     public override func records() -> [Opportunity] {
         let query: SFQuerySpec = SFQuerySpec.newAllQuerySpec(Opportunity.objectName, withOrderPath: Opportunity.orderPath, with: .descending, withPageSize: 100)
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(Opportunity.objectName) failed: \(error!.localizedDescription)")
-            return []
+        if let results = runQuery(query: query) {
+            return Opportunity.from(results)
         }
-        return Opportunity.from(results)
+        return []
     }
     
     public func opportunitiesForAccount(_ account:Account) -> [Opportunity] {
         guard let accountId = account.accountId else {return []}
         let query = SFQuerySpec.newExactQuerySpec(Opportunity.objectName, withPath: Opportunity.Field.accountName.rawValue, withMatchKey: accountId, withOrderPath: Opportunity.orderPath, with: .descending, withPageSize: 100)
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(Opportunity.objectName) failed: \(error!.localizedDescription)")
-            return []
+        if let results = runQuery(query: query) {
+            return Opportunity.from(results)
         }
-        return Opportunity.from(results)
+        return []
     }
     
     public func opportunitiesInProgressForAccount(_ account:Account) -> [Opportunity] {
@@ -68,15 +62,11 @@ public class OpportunityStore: Store<Opportunity> {
     
     public func opportunitiesInReview() -> [Opportunity] {
         let query: SFQuerySpec = SFQuerySpec.newAllQuerySpec(Opportunity.objectName, withOrderPath: Opportunity.orderPath, with: .ascending, withPageSize: 100)
-        var error: NSError? = nil
-        let results: [Any] = store.query(with: query, pageIndex: 0, error: &error)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"fetch \(Opportunity.objectName) failed: \(error!.localizedDescription)")
-            return []
+        if let results = runQuery(query: query) {
+            let allRecords:[Opportunity] = Opportunity.from(results)
+            let inReview = allRecords.filter({$0.stage == .negotiationReview})
+            return inReview
         }
-        
-        let allRecords:[Opportunity] = Opportunity.from(results)
-        let inReview = allRecords.filter({$0.stage == .negotiationReview})
-        return inReview
+        return []
     }
 }
