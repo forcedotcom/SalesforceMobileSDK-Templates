@@ -131,7 +131,7 @@ android {
 
 dependencies {
     api fileTree(dir: "libs", include: ["*.jar"])
-    api "com.android.support:appcompat-v7:25.2.0"
+    api "com.android.support:appcompat-v7:27.1.1"
     api "com.facebook.react:react-native:+"  // From node_modules
     api project(':libs:SalesforceReact') // From node_modules
 }
