@@ -151,7 +151,8 @@ public class Store<objectType: StoreProtocol> {
         let startDate = Date()
         return smartSync.Promises.reSync(syncName: syncName)
             .then { syncState -> Promise<Void> in
-                self.printTiming(startDate, operation:"SYNCHING  \(syncName)")
+                self.printTiming(startDate, action:"SYNCHING ", numRecords: syncState.totalSize, target:syncName)
+
                 if syncState.hasFailed() {
                     SalesforceSwiftLogger.log(type(of:self), level:.error, message:"sync \(syncName) failed")
                     return Promise(error:StoreErrors.syncFailed)
@@ -173,24 +174,18 @@ public class Store<objectType: StoreProtocol> {
         return self.syncUp().then { self.syncDown() }
     }
     
-    internal func printTiming(_ startDate:Date, operation:String) {
-        let diff = String(format:"%10.3f", Date().timeIntervalSince(startDate) * 1000)
-        SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"Took \(diff) ms \(operation)")
-    }
-    
     internal func upsertEntries(_ entries:[Any]) -> [Any] {
         let startDate = Date()
         let results = store.upsertEntries(entries, toSoup: objectType.objectName)
-        printTiming(startDate, operation:"UPSERTING \(objectType.objectName)")
+        printTiming(startDate, action:"UPSERTING", numRecords: results.count)
         return results
     }
-
 
     internal func runQuery(query:SFQuerySpec, pageIndex:UInt = 0) -> [Any]? {
         var error: NSError? = nil
         let startDate = Date()
         let results: [Any] = store.query(with: query, pageIndex: pageIndex, error: &error)
-        printTiming(startDate, operation:"QUERYING  \(objectType.objectName)")
+        printTiming(startDate, action:"QUERYING ", numRecords: results.count)
         guard error == nil else {
             SalesforceSwiftLogger.log(type(of:self), level:.error, message:"query \(query.smartSql) failed: \(error!.localizedDescription)")
             return nil
@@ -224,6 +219,13 @@ public class Store<objectType: StoreProtocol> {
         } else {
             return []
         }
+    }
+    
+    // Timing logging helper
+    internal func printTiming(_ startDate:Date, action:String, numRecords:Int, target:String = objectType.objectName) {
+        let elapsedTime = String(format:"%10.3f", Date().timeIntervalSince(startDate) * 1000)
+        let numRecordsStr = String(format:"%3d", numRecords)
+        SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"Took \(elapsedTime) ms \(action) \(numRecordsStr) records \(target)")
     }
     
     enum StoreErrors : Error {
