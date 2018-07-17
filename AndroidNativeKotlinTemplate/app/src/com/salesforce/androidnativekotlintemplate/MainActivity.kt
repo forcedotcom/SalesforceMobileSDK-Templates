@@ -110,10 +110,9 @@ class MainActivity : SalesforceActivity() {
     }
 
     /**
-     * Called when "Fetch Accounts" button is clicked
-
+     * Called when "Fetch Accounts" button is clicked.
+     *
      * @param v
-     * *
      * @throws UnsupportedEncodingException
      */
     @Throws(UnsupportedEncodingException::class)
@@ -145,7 +144,7 @@ class MainActivity : SalesforceActivity() {
             override fun onError(exception: Exception) {
                 runOnUiThread {
                     Toast.makeText(this@MainActivity,
-                            this@MainActivity.getString(SalesforceSDKManager.getInstance().salesforceR.stringGenericError(), exception.toString()),
+                            this@MainActivity.getString(R.string.sf__generic_error, exception.toString()),
                             Toast.LENGTH_LONG).show()
                 }
             }

@@ -101,8 +101,8 @@ public class MainActivity extends SalesforceActivity {
 	}	
 
 	/**
-	 * Called when "Fetch Contacts" button is clicked
-	 * 
+	 * Called when "Fetch Contacts" button is clicked.
+	 *
 	 * @param v
 	 * @throws UnsupportedEncodingException 
 	 */
@@ -149,7 +149,7 @@ public class MainActivity extends SalesforceActivity {
 					@Override
 					public void run() {
 						Toast.makeText(MainActivity.this,
-								MainActivity.this.getString(SalesforceSDKManager.getInstance().getSalesforceR().stringGenericError(), exception.toString()),
+								MainActivity.this.getString(R.string.sf__generic_error, exception.toString()),
 								Toast.LENGTH_LONG).show();
 					}
 				});
