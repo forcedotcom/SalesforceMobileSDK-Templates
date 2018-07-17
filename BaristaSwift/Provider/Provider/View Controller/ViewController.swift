@@ -226,5 +226,10 @@ extension ViewController: UITableViewDataSource {
         let config = UISwipeActionsConfiguration(actions: [completeAction])
         return config
     }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let config = UISwipeActionsConfiguration(actions: [])
+        return config
+    }
 }
 
