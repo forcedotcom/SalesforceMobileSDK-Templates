@@ -113,7 +113,7 @@ public class Store<objectType: StoreProtocol> {
 
     public func createEntry(entry: objectType) -> Promise<objectType> {
         _ = locallyCreateEntry(entry: entry)
-        return syncUpDown()
+        return syncUp()
             .then { _ -> Promise<objectType> in
                 if let record = self.record(forExternalId: entry.externalId) {
                     return Promise.value(record)
@@ -125,7 +125,7 @@ public class Store<objectType: StoreProtocol> {
     
     public func updateEntry(entry: objectType) -> Promise<objectType> {
         _ = locallyUpdateEntry(entry: entry)
-        return syncUpDown()
+        return syncUp()
             .then { _ -> Promise<objectType> in
                 if let record = self.record(forExternalId: entry.externalId) {
                     return Promise.value(record)
@@ -137,14 +137,14 @@ public class Store<objectType: StoreProtocol> {
     
     public func deleteEntry(entry: objectType) -> Promise<Void> {
         locallyDeleteEntry(entry: entry)
-        return syncUpDown()
+        return syncUp()
     }
 
     public func syncEntry(entry: objectType) -> Promise<Void> {
         var record: objectType = entry
         record.objectType = objectType.objectName
         _ = upsertEntries([record.data])
-        return syncUpDown()
+        return syncUp()
     }
 
     private func reSync(syncName: String) -> Promise<Void> {
@@ -168,10 +168,6 @@ public class Store<objectType: StoreProtocol> {
     
     public func syncUp() -> Promise<Void> {
         return reSync(syncName: syncUpName)
-    }
-    
-    public func syncUpDown() -> Promise<Void> {
-        return self.syncUp().then { self.syncDown() }
     }
     
     internal func upsertEntries(_ entries:[Any]) -> [Any] {

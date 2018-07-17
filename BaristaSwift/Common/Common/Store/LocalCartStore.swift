@@ -174,7 +174,7 @@ public class LocalCartStore {
         }
         let lineGroups = QuoteLineGroupStore.instance.lineGroupsForQuote(quoteId)
         
-        return QuoteLineGroupStore.instance.syncUpDown()
+        return QuoteLineGroupStore.instance.syncUp()
             .then { _ -> Promise<Void> in
                 for lineGroup in lineGroups {
                     guard let lineGroupExternalId = lineGroup.externalId,
@@ -187,7 +187,7 @@ public class LocalCartStore {
                         _ = QuoteLineItemStore.instance.locallyUpdateEntry(entry: line)
                     }
                 }
-                return QuoteLineItemStore.instance.syncUpDown()
+                return QuoteLineItemStore.instance.syncUp()
             }
     }
     
