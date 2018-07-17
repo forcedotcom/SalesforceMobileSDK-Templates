@@ -33,6 +33,9 @@ import SmartSync
 import PromiseKit
 
 public class Store<objectType: StoreProtocol> {
+    
+    private var soupInitialized : Bool = false
+    private var syncsInitialized : Bool = false
 
     private final let pageSize: UInt = 100
 
@@ -40,13 +43,17 @@ public class Store<objectType: StoreProtocol> {
     
     private final let syncUpName: String = "syncUp_\(objectType.objectName)";
     
+    private final let soupName: String = objectType.objectName;
+    
     public let sqlQueryString: String = SFRestAPI.soqlQuery(withFields: objectType.createFields, sObject: objectType.objectName, whereClause: nil, groupBy: nil, having: nil, orderBy: [objectType.orderPath], limit: 100)!
     
     public let queryString: String = "SELECT \(objectType.selectFieldsString()) FROM {\(objectType.objectName)} WHERE {\(objectType.objectName):\(Record.Field.locallyDeleted.rawValue)} != 1 ORDER BY {\(objectType.objectName):\(objectType.orderPath)} ASC"
     
     public init() {
-        let soupName = objectType.objectName
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUserWillLogout), name: NSNotification.Name(rawValue: "SFNotificationUserWillLogout") /* kSFNotificationUserWillLogout */, object: nil)
+    }
+    
+    private func setupSoup(store: SFSmartStore) {
         // Create soup if needed
         if (!store.soupExists(soupName)) {
             let indexSpecs: [AnyObject] = SFSoupIndex.asArraySoupIndexes(objectType.indexes) as [AnyObject]
@@ -56,7 +63,9 @@ public class Store<objectType: StoreProtocol> {
                 SalesforceSwiftLogger.log(type(of:self), level:.error, message: "\(objectType.objectName) failed to register soup: \(error.localizedDescription)")
             }
         }
-        
+    }
+    
+    private func setupSyncs(smartSync:  SFSmartSyncSyncManager) {
         // Create sync down if needed
         if (!smartSync.hasSync(withName: syncDownName)) {
             let target: SFSoqlSyncDownTarget = SFSoqlSyncDownTarget.newSyncTarget(sqlQueryString)
@@ -72,9 +81,34 @@ public class Store<objectType: StoreProtocol> {
         }
     }
     
-    public lazy final var smartSync: SFSmartSyncSyncManager = SFSmartSyncSyncManager.sharedInstance(for: store)!
+    @objc
+    private func handleUserWillLogout(notification: Notification) {
+        self.soupInitialized = false
+        self.syncsInitialized = false
+    }
+
+    public var smartSync : SFSmartSyncSyncManager {
+        get {
+            let smartSync = SFSmartSyncSyncManager.sharedInstance(for: store)!
+            if (!syncsInitialized) {
+                setupSyncs(smartSync: smartSync)
+                syncsInitialized = true
+            }
+            return smartSync
+        }
+    }
     
-    public lazy final var store: SFSmartStore = SFSmartStore.sharedStore(withName: kDefaultSmartStoreName) as! SFSmartStore
+    public  var store: SFSmartStore {
+        get {
+            let store = SFSmartStore.sharedStore(withName: kDefaultSmartStoreName) as! SFSmartStore
+            if (!soupInitialized) {
+                setupSoup(store: store)
+                soupInitialized = true
+            }
+            return store
+
+        }
+    }
     
     public var count: UInt {
         guard let query: SFQuerySpec = SFQuerySpec.newSmartQuerySpec(queryString, withPageSize: 1) else {
@@ -172,7 +206,7 @@ public class Store<objectType: StoreProtocol> {
     
     internal func upsertEntries(_ entries:[Any]) -> [Any] {
         let startDate = Date()
-        let results = store.upsertEntries(entries, toSoup: objectType.objectName)
+        let results = store.upsertEntries(entries, toSoup: soupName)
         printTiming(startDate, action:"UPSERTING", numRecords: results.count)
         return results
     }
@@ -200,7 +234,7 @@ public class Store<objectType: StoreProtocol> {
     
     public func record(forExternalId externalId: String?) -> objectType? {
         guard let id = externalId else {return nil}
-        let query = SFQuerySpec.newExactQuerySpec(objectType.objectName, withPath: Record.Field.externalId.rawValue, withMatchKey: id, withOrderPath: objectType.orderPath, with: .descending, withPageSize: 1)
+        let query = SFQuerySpec.newExactQuerySpec(soupName, withPath: Record.Field.externalId.rawValue, withMatchKey: id, withOrderPath: objectType.orderPath, with: .descending, withPageSize: 1)
         if let results = runQuery(query: query) {
             return objectType.from(results)
         } else {
