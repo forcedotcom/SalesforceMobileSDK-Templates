@@ -50,7 +50,7 @@ public class Store<objectType: StoreProtocol> {
     public let queryString: String = "SELECT \(objectType.selectFieldsString()) FROM {\(objectType.objectName)} WHERE {\(objectType.objectName):\(Record.Field.locallyDeleted.rawValue)} != 1 ORDER BY {\(objectType.objectName):\(objectType.orderPath)} ASC"
     
     public init() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleUserWillLogout), name: NSNotification.Name(rawValue: "SFNotificationUserWillLogout") /* kSFNotificationUserWillLogout */, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUserWillLogout), name: NSNotification.Name(kSFNotificationUserWillLogout), object: nil)
     }
     
     private func setupSoup(store: SFSmartStore) {
