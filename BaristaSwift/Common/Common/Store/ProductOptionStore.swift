@@ -65,7 +65,7 @@ public class ProductOptionStore: Store<ProductOption> {
                 familiesDict[optionFamily] = [option]
             }
         }
-        var families: [ProductFamily] = familiesDict.flatMap { (optionFamily, optionsArray) in
+        var families: [ProductFamily] = familiesDict.compactMap { (optionFamily, optionsArray) in
             guard let first = optionsArray.first, let type = first.optionType else { return nil }
             let sortedOptions = self.sortByOrderNumber(optionsArray)
             return ProductFamily(familyName: optionFamily, type: type, options: sortedOptions)
