@@ -93,7 +93,7 @@ class ProductViewController: UIViewController {
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let destination: ProductConfigureViewController = segue.destination as?
-            ProductConfigureViewController, let product: Product = sender as? Product, let cat = self.category {
+            ProductConfigureViewController, let product: Product = sender as? Product {
             destination.product = product
             if let families = ProductOptionStore.instance.families(product) {
                 destination.productFamilies = families
