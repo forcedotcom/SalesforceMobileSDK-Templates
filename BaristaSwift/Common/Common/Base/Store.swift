@@ -114,13 +114,7 @@ public class Store<objectType: StoreProtocol> {
         guard let query: SFQuerySpec = SFQuerySpec.newSmartQuerySpec(queryString, withPageSize: 1) else {
             return 0
         }
-        var error: NSError? = nil
-        let results: UInt = store.count(with: query, error: &error)
-        if let error = error {
-            SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"fetch \(objectType.objectName) failed: \(error.localizedDescription)")
-            return 0
-        }
-        return results
+        return countQuery(query: query)
     }
     
     public func locallyCreateEntry(entry: objectType) -> objectType {
@@ -185,7 +179,7 @@ public class Store<objectType: StoreProtocol> {
         let startDate = Date()
         return smartSync.Promises.reSync(syncName: syncName)
             .then { syncState -> Promise<Void> in
-                self.printTiming(startDate, action:"SYNCHING ", numRecords: syncState.totalSize, target:syncName)
+                self.printTiming(startDate, action:"SYNCHING ", numRecords: UInt(syncState.totalSize), target:syncName)
 
                 if syncState.hasFailed() {
                     SalesforceSwiftLogger.log(type(of:self), level:.error, message:"sync \(syncName) failed")
@@ -207,15 +201,28 @@ public class Store<objectType: StoreProtocol> {
     internal func upsertEntries(_ entries:[Any]) -> [Any] {
         let startDate = Date()
         let results = store.upsertEntries(entries, toSoup: soupName)
-        printTiming(startDate, action:"UPSERTING", numRecords: results.count)
+        printTiming(startDate, action:"UPSERTING", numRecords: UInt(results.count))
         return results
+    }
+    
+    internal func countQuery(query: SFQuerySpec) -> UInt {
+        var error: NSError? = nil
+        let startDate = Date()
+        let count = store.count(with: query, error: &error)
+        printTiming(startDate, action:"QUERYING ", numRecords: count)
+        guard error == nil else {
+            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"query \(query.smartSql) failed: \(error!.localizedDescription)")
+            return 0
+        }
+        return count
+
     }
 
     internal func runQuery(query:SFQuerySpec, pageIndex:UInt = 0) -> [Any]? {
         var error: NSError? = nil
         let startDate = Date()
         let results: [Any] = store.query(with: query, pageIndex: pageIndex, error: &error)
-        printTiming(startDate, action:"QUERYING ", numRecords: results.count)
+        printTiming(startDate, action:"QUERYING ", numRecords: UInt(results.count))
         guard error == nil else {
             SalesforceSwiftLogger.log(type(of:self), level:.error, message:"query \(query.smartSql) failed: \(error!.localizedDescription)")
             return nil
@@ -252,7 +259,7 @@ public class Store<objectType: StoreProtocol> {
     }
     
     // Timing logging helper
-    internal func printTiming(_ startDate:Date, action:String, numRecords:Int, target:String = objectType.objectName) {
+    internal func printTiming(_ startDate:Date, action:String, numRecords:UInt, target:String = objectType.objectName) {
         let elapsedTime = String(format:"%10.3f", Date().timeIntervalSince(startDate) * 1000)
         let numRecordsStr = String(format:"%3d", numRecords)
         SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"Took \(elapsedTime) ms \(action) \(numRecordsStr) records \(target)")
