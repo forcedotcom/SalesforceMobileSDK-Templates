@@ -83,7 +83,7 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
             // if you want to receive push notifications from Salesforce, you will also need to
             // implement the application:didRegisterForRemoteNotificationsWithDeviceToken: method (below).
             //
-            //[[SFPushNotificationManager sharedInstance] registerForRemoteNotifications];
+            // [[SFPushNotificationManager sharedInstance] registerForRemoteNotifications];
             //
             [SFSDKSmartSyncLogger log:[weakSelf class] level:DDLogLevelInfo format:@"Post-launch: launch actions taken: %@", [SmartSyncSDKManager launchActionsStringRepresentation:launchActionList]];
             [weakSelf setupRootViewController];
@@ -128,10 +128,10 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
     //
     // Uncomment the code below to register your device token with the push notification manager
     //
-    //[[SFPushNotificationManager sharedInstance] didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
-    //if ([SFUserAccountManager sharedInstance].currentUser.credentials.accessToken != nil) {
-    //    [[SFPushNotificationManager sharedInstance] registerForSalesforceNotifications];
-    //}
+    // [[SFPushNotificationManager sharedInstance] didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+    // if ([SFUserAccountManager sharedInstance].currentUser.credentials.accessToken != nil) {
+    //     [[SFPushNotificationManager sharedInstance] registerSalesforceNotificationsWithCompletionBlock:nil failBlock:nil];
+    // }
     //
 }
 
