@@ -27,10 +27,6 @@ import UIKit
 import SalesforceSDKCore
 import SalesforceSwiftSDK
 
-// Fill these in when creating a new Connected Application on Force.com
-let RemoteAccessConsumerKey = "3MVG9Iu66FKeHhINkB1l7xt7kR8czFcCTUhgoA8Ol2Ltf1eYHOU4SqQRSEitYFDUpqRWcoQ2.dBv_a1Dyu5xa";
-let OAuthRedirectURI        = "testsfdc:///mobilesdk/detect/oauth/done";
-
 class AppDelegate : UIResponder, UIApplicationDelegate
 {
     var window: UIWindow?
@@ -39,37 +35,13 @@ class AppDelegate : UIResponder, UIApplicationDelegate
     init()
     {
         super.init()
-        SalesforceSwiftSDKManager.initSDK()
-        .Builder.configure { (appconfig: SFSDKAppConfig) -> Void in
-            appconfig.oauthScopes = ["web", "api"]
-            appconfig.remoteAccessConsumerKey = RemoteAccessConsumerKey
-            appconfig.oauthRedirectURI = OAuthRedirectURI
-        }.postInit {
-            //Uncomment the following line inorder to enable/force the use of advanced authentication flow.
-            // SFUserAccountManager.sharedInstance().advancedAuthConfiguration = SFOAuthAdvancedAuthConfiguration.require;
-            // OR
-            // To  retrieve advanced auth configuration from the org, to determine whether to initiate advanced authentication.
-            // SFUserAccountManager.sharedInstance().advancedAuthConfiguration = SFOAuthAdvancedAuthConfiguration.allow;
-            
-            // NOTE: If advanced authentication is configured or forced,  it will launch Safari to handle authentication
-            // instead of a webview. You must implement application:openURL:options  to handle the callback.
-        }
-        .postLaunch {  [unowned self] (launchActionList: SFSDKLaunchAction) in
-            let launchActionString = SalesforceSwiftSDKManager.launchActionsStringRepresentation(launchActionList)
-            SalesforceSwiftLogger.log(type(of:self), level:.info, message:"Post-launch: launch actions taken: \(launchActionString)")
-                self.setupRootViewController()
-            
-        }.postLogout {  [unowned self] in
-            self.handleSdkManagerLogout()
-        }.switchUser{ [unowned self] (fromUser: SFUserAccount?, toUser: SFUserAccount?) -> () in
-            self.handleUserSwitch(fromUser, toUser: toUser)
-        }.launchError {  [unowned self] (error: Error, launchActionList: SFSDKLaunchAction) in
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"Error during SDK launch: \(error.localizedDescription)")
-            self.initializeAppViewState()
-            SalesforceSwiftSDKManager.shared().launch()
-        }
-        .done()
-   
+        _  = SalesforceSwiftSDKManager.initSDK()
+        SFSDKAuthHelper.registerBlock(forCurrentUserChangeNotifications: { [weak self] in
+            self?.resetViewState {
+                self?.setupRootViewController()
+            }
+        })
+    
     }
     
     // MARK: - App delegate lifecycle
@@ -95,8 +67,9 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         //loginViewConfig.navBarTextColor = UIColor.white
         //loginViewConfig.navBarFont = UIFont(name: "Helvetica", size: 16.0)
         //SFUserAccountManager.sharedInstance().loginViewControllerConfig = loginViewConfig
-        
-        SalesforceSwiftSDKManager.shared().launch()
+        SFSDKAuthHelper.loginIfRequired { [weak self] in
+            self?.setupRootViewController()
+        }
         return true
     }
     
@@ -162,51 +135,5 @@ class AppDelegate : UIResponder, UIApplicationDelegate
 
         postResetBlock()
     }
-
-    func handleSdkManagerLogout()
-    {
-        SalesforceSwiftLogger.log(type(of:self), level:.debug, message: "SFUserAccountManager logged out.  Resetting app.")
-        self.resetViewState { () -> () in
-            self.initializeAppViewState()
-
-            // Multi-user pattern:
-            // - If there are two or more existing accounts after logout, let the user choose the account
-            //   to switch to.
-            // - If there is one existing account, automatically switch to that account.
-            // - If there are no further authenticated accounts, present the login screen.
-            //
-            // Alternatively, you could just go straight to re-initializing your app state, if you know
-            // your app does not support multiple accounts.  The logic below will work either way.
-            
-            var numberOfAccounts : Int;
-            let allAccounts = SFUserAccountManager.sharedInstance().allUserAccounts()
-            numberOfAccounts = (allAccounts!.count);
-            
-            if numberOfAccounts > 1 {
-                let userSwitchVc = SFDefaultUserManagementViewController(completionBlock: {
-                    action in
-                    self.window!.rootViewController!.dismiss(animated:true, completion: nil)
-                })
-                if let actualRootViewController = self.window!.rootViewController {
-                    actualRootViewController.present(userSwitchVc, animated: true, completion: nil)
-                }
-            } else {
-                if (numberOfAccounts == 1) {
-                    SFUserAccountManager.sharedInstance().currentUser = allAccounts![0]
-                }
-                SalesforceSwiftSDKManager.shared().launch()
-            }
-        }
-    }
     
-    func handleUserSwitch(_ fromUser: SFUserAccount?, toUser: SFUserAccount?)
-    {
-        let fromUserName = (fromUser != nil) ? fromUser?.userName : "<none>"
-        let toUserName = (toUser != nil) ? toUser?.userName : "<none>"
-        SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"SFUserAccountManager changed from user \(String(describing: fromUserName)) to \(String(describing: toUserName)).  Resetting app.")
-        self.resetViewState { () -> () in
-            self.initializeAppViewState()
-            SalesforceSwiftSDKManager.shared().launch()
-        }
-    }
 }

@@ -36,6 +36,7 @@
 		A4FA2DC320324A1700DCCC72 /* CartItemTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4FA2DC220324A1700DCCC72 /* CartItemTableViewCell.swift */; };
 		A4FA2DC520324A4300DCCC72 /* CartHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4FA2DC420324A4300DCCC72 /* CartHeaderView.swift */; };
 		A4FA2DF12033736500DCCC72 /* CartFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4FA2DF02033736500DCCC72 /* CartFooterView.swift */; };
+		B77BD8AB211359620036B284 /* bootconfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = B77BD8AA211359610036B284 /* bootconfig.plist */; };
 		EEA6EC8E202112DC00E04FFD /* RootStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EEA6EC8D202112DC00E04FFD /* RootStoryboard.storyboard */; };
 		EEA6EC902021166C00E04FFD /* OrderMainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EEA6EC8F2021166C00E04FFD /* OrderMainStoryboard.storyboard */; };
 		EEA6EC9320221D7B00E04FFD /* OrderMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA6EC9220221D7B00E04FFD /* OrderMainViewController.swift */; };
@@ -114,6 +115,7 @@
 		A4FA2DC220324A1700DCCC72 /* CartItemTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartItemTableViewCell.swift; sourceTree = "<group>"; };
 		A4FA2DC420324A4300DCCC72 /* CartHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartHeaderView.swift; sourceTree = "<group>"; };
 		A4FA2DF02033736500DCCC72 /* CartFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartFooterView.swift; sourceTree = "<group>"; };
+		B77BD8AA211359610036B284 /* bootconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = bootconfig.plist; sourceTree = "<group>"; };
 		EEA6EC8D202112DC00E04FFD /* RootStoryboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = RootStoryboard.storyboard; path = Consumer/View/RootStoryboard.storyboard; sourceTree = SOURCE_ROOT; };
 		EEA6EC8F2021166C00E04FFD /* OrderMainStoryboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = OrderMainStoryboard.storyboard; path = Consumer/View/OrderMainStoryboard.storyboard; sourceTree = SOURCE_ROOT; };
 		EEA6EC9220221D7B00E04FFD /* OrderMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderMainViewController.swift; sourceTree = "<group>"; };
@@ -234,6 +236,7 @@
 		A4687131201A549400096408 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				B77BD8AA211359610036B284 /* bootconfig.plist */,
 				A4687113201A514C00096408 /* Assets.xcassets */,
 				A4687115201A514C00096408 /* LaunchScreen.storyboard */,
 			);
@@ -389,6 +392,7 @@
 				EEA6ECA12024FBFC00E04FFD /* FeaturedStoryboard.storyboard in Resources */,
 				EEA6ECA32024FC0600E04FFD /* AccountStoryboard.storyboard in Resources */,
 				EEA6EC902021166C00E04FFD /* OrderMainStoryboard.storyboard in Resources */,
+				B77BD8AB211359620036B284 /* bootconfig.plist in Resources */,
 				EEA6EC972022236500E04FFD /* ProductStoryboard.storyboard in Resources */,
 				EEA6EC8E202112DC00E04FFD /* RootStoryboard.storyboard in Resources */,
 				EEA6EC9F2024FB9D00E04FFD /* FavoritesStoryboard.storyboard in Resources */,

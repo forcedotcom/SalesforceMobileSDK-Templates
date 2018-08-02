@@ -18,6 +18,7 @@
 		A45F048B204EF39300074F13 /* Common.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A45F048A204EF39300074F13 /* Common.framework */; };
 		A45F048C204EF39300074F13 /* Common.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A45F048A204EF39300074F13 /* Common.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A4914F762060E67700B8A022 /* UIViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4914F752060E67700B8A022 /* UIViewExtension.swift */; };
+		B77BD8AD211359710036B284 /* bootconfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = B77BD8AC211359710036B284 /* bootconfig.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,7 @@
 		A45F044C204EF25E00074F13 /* Common.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = Common.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A45F048A204EF39300074F13 /* Common.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Common.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4914F752060E67700B8A022 /* UIViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtension.swift; sourceTree = "<group>"; };
+		B77BD8AC211359710036B284 /* bootconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = bootconfig.plist; sourceTree = "<group>"; };
 		BD71F32A174087F54F6F7947 /* Pods-Provider.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Provider.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-Provider/Pods-Provider.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -112,6 +114,7 @@
 		A406EAF220602E0900E0A850 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				B77BD8AC211359710036B284 /* bootconfig.plist */,
 				A45F03D2204EEFB500074F13 /* LaunchScreen.storyboard */,
 				A45F03D0204EEFB500074F13 /* Assets.xcassets */,
 			);
@@ -266,6 +269,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B77BD8AD211359710036B284 /* bootconfig.plist in Resources */,
 				A45F03D4204EEFB500074F13 /* LaunchScreen.storyboard in Resources */,
 				A45F03D1204EEFB500074F13 /* Assets.xcassets in Resources */,
 			);
