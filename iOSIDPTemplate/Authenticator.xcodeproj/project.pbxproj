@@ -14,6 +14,7 @@
 		78A235BD93AB7D080D67CD51 /* Pods_Authenticator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82A29C75280BDF73123F14B4 /* Pods_Authenticator.framework */; };
 		B7090D901FA97F98003086EA /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7090D8F1FA97F98003086EA /* Launch Screen.storyboard */; };
 		B73ECEB51F908AD60065F006 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B73ECEB41F908AD60065F006 /* Images.xcassets */; };
+		B77BD8A9211355180036B284 /* bootconfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = B77BD8A8211355180036B284 /* bootconfig.plist */; };
 		B79B0CB41F6658CC005F56CC /* ActionsPopoverTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79B0CB01F6658CC005F56CC /* ActionsPopoverTableViewController.swift */; };
 		B79B0CB61F6658CC005F56CC /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79B0CB21F6658CC005F56CC /* MainViewController.swift */; };
 		B79B0CB71F6658CC005F56CC /* UIView+constraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79B0CB31F6658CC005F56CC /* UIView+constraints.swift */; };
@@ -44,6 +45,7 @@
 		82A29C75280BDF73123F14B4 /* Pods_Authenticator.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Authenticator.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7090D8F1FA97F98003086EA /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "Launch Screen.storyboard"; path = "Authenticator/Launch Screen.storyboard"; sourceTree = "<group>"; };
 		B73ECEB41F908AD60065F006 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ../Images.xcassets; sourceTree = "<group>"; };
+		B77BD8A8211355180036B284 /* bootconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = bootconfig.plist; sourceTree = "<group>"; };
 		B79B0CB01F6658CC005F56CC /* ActionsPopoverTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionsPopoverTableViewController.swift; sourceTree = "<group>"; };
 		B79B0CB21F6658CC005F56CC /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		B79B0CB31F6658CC005F56CC /* UIView+constraints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+constraints.swift"; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 		4FD6C4771B754AF1002F9F90 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				B77BD8A8211355180036B284 /* bootconfig.plist */,
 				B73ECEB41F908AD60065F006 /* Images.xcassets */,
 				B79B0CBF1F670EE9005F56CC /* SalesforceAppLogo2.png */,
 				B79B0CBD1F670DCB005F56CC /* SalesforceAppLogo.jpg */,
@@ -225,6 +228,7 @@
 				B79B0D431F6B5CEF005F56CC /* PermissionsViewController.xib in Resources */,
 				B7090D901FA97F98003086EA /* Launch Screen.storyboard in Resources */,
 				B79B0CBE1F670DCB005F56CC /* SalesforceAppLogo.jpg in Resources */,
+				B77BD8A9211355180036B284 /* bootconfig.plist in Resources */,
 				B73ECEB51F908AD60065F006 /* Images.xcassets in Resources */,
 				B7DCCA1D1FA1A591003C7812 /* AppsMain.storyboard in Resources */,
 				B79B0CC61F671151005F56CC /* UserTableViewCell.xib in Resources */,

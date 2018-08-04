@@ -26,6 +26,7 @@
 		B76D657020B3323A00B55764 /* ContactHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76D656C20B3323A00B55764 /* ContactHelpers.swift */; };
 		B76D657320B332D400B55764 /* ContactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76D657220B332D400B55764 /* ContactTableViewCell.swift */; };
 		B76D65DD20B4A0C900B55764 /* Contacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76D65DC20B4A0C900B55764 /* Contacts.swift */; };
+		B77BD8A7211354D00036B284 /* bootconfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = B77BD8A6211354D00036B284 /* bootconfig.plist */; };
 		CEA8CA041F071B2300448B51 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEA8CA031F071B2300448B51 /* Images.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -55,6 +56,7 @@
 		B76D656C20B3323A00B55764 /* ContactHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactHelpers.swift; sourceTree = "<group>"; };
 		B76D657220B332D400B55764 /* ContactTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactTableViewCell.swift; sourceTree = "<group>"; };
 		B76D65DC20B4A0C900B55764 /* Contacts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contacts.swift; sourceTree = "<group>"; };
+		B77BD8A6211354D00036B284 /* bootconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = bootconfig.plist; sourceTree = "<group>"; };
 		CEA8CA031F071B2300448B51 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/Images.xcassets"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -174,6 +176,7 @@
 		B76D65DF20B4AECF00B55764 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B77BD8A6211354D00036B284 /* bootconfig.plist */,
 				B767370020AB57C600F04103 /* userstore.json */,
 				B767370120AB57C600F04103 /* usersyncs.json */,
 				B76D655B20B3314A00B55764 /* Assets.xcassets */,
@@ -257,6 +260,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B77BD8A7211354D00036B284 /* bootconfig.plist in Resources */,
 				CEA8CA041F071B2300448B51 /* Images.xcassets in Resources */,
 				B7168FBC1FACC6F900A48DB5 /* LaunchScreen.storyboard in Resources */,
 				B767370220AB57C600F04103 /* userstore.json in Resources */,
