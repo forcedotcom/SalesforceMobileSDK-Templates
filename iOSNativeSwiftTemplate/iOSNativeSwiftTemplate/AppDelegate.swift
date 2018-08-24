@@ -95,14 +95,10 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         // Respond to any push notification registration errors here.
     }
 
-    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-
-        // If you're using advanced authentication:
-        // --Configure your app to handle incoming requests to your
-        //   OAuth Redirect URI custom URL scheme.
-        // --Uncomment the following line and delete the original return statement:
-
-        // return  SFUserAccountManager.sharedInstance().handleAdvancedAuthenticationResponse(url, options: options)
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool
+    {
+        // Uncomment following block to enable IDP Login flow
+        // return  SFUserAccountManager.sharedInstance().handleIDPAuthenticationResponse(url, options: options)
         return false;
     }
 
