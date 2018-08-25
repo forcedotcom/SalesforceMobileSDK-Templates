@@ -26,7 +26,7 @@ import SalesforceSDKCore
 import SwipeCellKit
 
 protocol UserTableViewCellDelegate {
-    func logoutUser(user: SFUserAccount)
+    func logoutUser(user: UserAccount)
 }
 
 class UserTableViewCell: SwipeTableViewCell {
@@ -34,7 +34,7 @@ class UserTableViewCell: SwipeTableViewCell {
     var tableDelegate : UserTableViewCellDelegate?
     @IBOutlet weak var email: UILabel!
     @IBOutlet weak var userFullName: UILabel!
-    var user: SFUserAccount?
+    var user: UserAccount?
  
     @IBOutlet weak var currentUserImage: UIImageView!
     @IBOutlet weak var userPicture: UIImageView!

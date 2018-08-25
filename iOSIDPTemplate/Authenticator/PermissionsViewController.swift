@@ -29,7 +29,7 @@ class PermissionsViewController: UIViewController,UITableViewDelegate,UITableVie
     @IBOutlet weak var tableView: UITableView!
     let cellIdentifier = "mycell"
     
-    var userList: [SFUserAccount] = []
+    var userList: [UserAccount] = []
     var userSelectionDelegate :SFSDKUserSelectionViewDelegate?
     
     var spAppOptions: [AnyHashable : Any]!
@@ -48,9 +48,9 @@ class PermissionsViewController: UIViewController,UITableViewDelegate,UITableVie
         super.viewDidLoad()
         let loginHost = spAppOptions["login_host"]
         if let host  = loginHost {
-            userList = SFUserAccountManager.sharedInstance().userAccounts(forDomain: host as! String) as! [SFUserAccount];
+            userList = UserAccountManager.sharedInstance().userAccounts(forDomain: host as! String) as! [UserAccount];
         } else {
-            userList = SFUserAccountManager.sharedInstance().allUserAccounts()!
+            userList = UserAccountManager.sharedInstance().allUserAccounts()!
         }
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
         

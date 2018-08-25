@@ -96,7 +96,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
     }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-       return SFUserAccountManager.sharedInstance().handleAdvancedAuthenticationResponse(url, options: options)
+        return UserAccountManager.sharedInstance().handleAdvancedAuthenticationResponse(url, options: options)
     }
     
     // MARK: - Private methods

@@ -25,7 +25,7 @@ import Foundation
 import UIKit
 import SalesforceSDKCore
 
-class RootViewController : UITableViewController, SFRestDelegate
+class RootViewController : UITableViewController, RestClientDelegate
 {
     var dataRows = [NSDictionary]()
     
@@ -36,12 +36,12 @@ class RootViewController : UITableViewController, SFRestDelegate
         self.title = "Mobile SDK Sample App"
         
         //Here we use a query that should work on either Force.com or Database.com
-        let request = SFRestAPI.sharedInstance().request(forQuery:"SELECT Name FROM User LIMIT 10");
-        SFRestAPI.sharedInstance().send(request, delegate: self);
+        let request = RestClient.sharedInstance().buildQueryRequest(soql:"SELECT Name FROM User LIMIT 10")
+        RestClient.sharedInstance().send(request, delegate: self);
     }
     
     // MARK: - SFRestDelegate
-    func request(_ request: SFRestRequest, didLoadResponse jsonResponse: Any)
+    func request(_ request: RestRequest, didLoadResponse jsonResponse: Any)
     {
         self.dataRows = (jsonResponse as! NSDictionary)["records"] as! [NSDictionary]
         SFSDKLogger.log(type(of:self), level:.debug, message:"request:didLoadResponse: #records: \(self.dataRows.count)")
@@ -50,19 +50,19 @@ class RootViewController : UITableViewController, SFRestDelegate
         })
     }
     
-    func request(_ request: SFRestRequest, didFailLoadWithError error: Error)
+    func request(_ request: RestRequest, didFailLoadWithError error: Error)
     {
         SFSDKLogger.log(type(of:self), level:.debug, message:"didFailLoadWithError: \(error)")
         // Add your failed error handling here
     }
     
-    func requestDidCancelLoad(_ request: SFRestRequest)
+    internal func requestDidCancelLoad(_ request: RestRequest)
     {
         SFSDKLogger.log(type(of:self), level:.debug, message:"requestDidCancelLoad: \(request)")
         // Add your failed error handling here
     }
     
-    func requestDidTimeout(_ request: SFRestRequest)
+    func requestDidTimeout(_ request: RestRequest)
     {
         SFSDKLogger.log(type(of:self), level:.debug, message:"requestDidTimeout: \(request)")
         // Add your failed error handling here

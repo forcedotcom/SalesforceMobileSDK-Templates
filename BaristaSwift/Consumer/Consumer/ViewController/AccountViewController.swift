@@ -174,7 +174,7 @@ class AccountViewController: UIViewController {
     }
     
     @objc func didPressLogoutButton() {
-        SFUserAccountManager.sharedInstance().logout()
+        UserAccountManager.sharedInstance().logout()
     }
 
     override func didReceiveMemoryWarning() {

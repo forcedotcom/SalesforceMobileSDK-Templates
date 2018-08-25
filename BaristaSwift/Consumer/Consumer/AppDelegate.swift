@@ -92,7 +92,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         //SFUserAccountManager.sharedInstance().loginViewControllerConfig = loginViewConfig
         
         SFSDKAuthHelper.loginIfRequired { [weak self] in
-            if let _ = SFUserAccountManager.sharedInstance().currentUserIdentity?.userId {
+            if let _ = UserAccountManager.sharedInstance().currentUserIdentity?.userId {
                 _ = AccountStore.instance.syncDown()
                     .then { _ -> Promise<Account> in
                         return AccountStore.instance.getOrCreateMyAccount()
@@ -106,7 +106,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
                         }
                 }
             } else {
-                SFUserAccountManager.sharedInstance().logout()
+                UserAccountManager.sharedInstance().logout()
             }
         }
         

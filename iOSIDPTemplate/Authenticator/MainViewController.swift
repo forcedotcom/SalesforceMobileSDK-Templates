@@ -67,7 +67,7 @@ extension MainViewController : ActionsPopoverTableViewDelegate {
         }
 
         let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-           SFUserAccountManager.sharedInstance().logoutAllUsers()
+            UserAccountManager.sharedInstance().logoutAllUsers()
         }
 
         alert.addAction(cancelAction)
@@ -80,7 +80,7 @@ extension MainViewController : ActionsPopoverTableViewDelegate {
         let alert = UIAlertController(title: "Error", message: "Error adding a User", preferredStyle: .alert)
         
         let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-            SFUserAccountManager.sharedInstance().logoutAllUsers()
+            UserAccountManager.sharedInstance().logoutAllUsers()
         }
         
         alert.addAction(okAction)
@@ -88,7 +88,7 @@ extension MainViewController : ActionsPopoverTableViewDelegate {
     }
 
     func showSwitchUserSheet() {
-        SFUserAccountManager.sharedInstance().login(completion: { (authInfo, account) in
+        UserAccountManager.sharedInstance().login(onSuccess: { (authInfo, account) in
             
         }) { (authInfo, error) in
             
