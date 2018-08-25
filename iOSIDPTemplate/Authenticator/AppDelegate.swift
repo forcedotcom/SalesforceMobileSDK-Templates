@@ -95,8 +95,9 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         // Respond to any push notification registration errors here.
     }
     
-    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-       return SFUserAccountManager.sharedInstance().handleAdvancedAuthenticationResponse(url, options: options)
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool
+    {
+        return  SFUserAccountManager.sharedInstance().handleIDPAuthenticationResponse(url, options: options)
     }
     
     // MARK: - Private methods

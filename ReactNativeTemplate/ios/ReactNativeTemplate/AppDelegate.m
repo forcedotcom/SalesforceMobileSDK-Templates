@@ -98,15 +98,11 @@
     // Respond to any push notification registration errors here.
 }
 
-- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options{
-
-    // If you're using advanced authentication:
-    // --Configure your app to handle incoming requests to your
-    //   OAuth Redirect URI custom URL scheme.
-    // --Uncomment the following line and delete the original return statement:
-
-    // return [[SFUserAccountManager sharedInstance] handleAdvancedAuthenticationResponse:url options:options];
-  return NO;
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+{
+    // Uncomment following block to enable IDP Login flow
+    // return [[SFUserAccountManager sharedInstance] handleIDPAuthenticationResponse:url options:options];
+    return NO;
 }
 
 #pragma mark - Private methods
