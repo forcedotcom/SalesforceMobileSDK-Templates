@@ -37,6 +37,8 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         super.init()
         _ = SalesforceSwiftSDKManager.initSDK()
         
+        SalesforceSwiftSDKManager.shared().isIdentityProvider = true;
+        
         SFSDKAuthHelper.registerBlock(forCurrentUserChangeNotifications: { [weak self] in
             self?.resetViewState {
                 self?.setupRootViewController()
@@ -97,7 +99,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool
     {
-        return  SFUserAccountManager.sharedInstance().handleIDPAuthenticationResponse(url, options: options)
+        return  UserAccountManager.sharedInstance().handleAdvancedAuthenticationResponse(url, options: options)
     }
     
     // MARK: - Private methods
