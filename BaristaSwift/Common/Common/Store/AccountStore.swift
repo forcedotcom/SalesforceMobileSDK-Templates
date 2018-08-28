@@ -37,7 +37,7 @@ public class AccountStore: Store<Account> {
     public static let instance = AccountStore()
     
     public func myAccount() -> Account? {
-        let identity = SFUserAccountManager.sharedInstance().currentUserIdentity
+        let identity = UserAccountManager.sharedInstance().currentUserIdentity
         guard let userId = identity?.userId else {return nil}
         return self.account(userId)
     }
@@ -49,7 +49,7 @@ public class AccountStore: Store<Account> {
             return Promise.value(myAccount)
         } else {
             SalesforceSwiftLogger.log(type(of:self), level:.info, message:"creating new account")
-            guard let user = SFUserAccountManager.sharedInstance().currentUser else {
+            guard let user = UserAccountManager.sharedInstance().currentUser else {
                 return Promise(error: AccountErrors.noUser)
             }
             let newAccount = Account()

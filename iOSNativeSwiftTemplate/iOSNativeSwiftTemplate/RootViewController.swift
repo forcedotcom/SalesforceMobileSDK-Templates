@@ -36,7 +36,7 @@ class RootViewController : UITableViewController
     {
         super.loadView()
         self.title = "Mobile SDK Sample App"
-        let restApi = SFRestAPI.sharedInstance()
+        let restApi = RestClient.sharedInstance()
         restApi.Promises
         .query(soql: "SELECT Name FROM User LIMIT 10")
         .then {  request  in

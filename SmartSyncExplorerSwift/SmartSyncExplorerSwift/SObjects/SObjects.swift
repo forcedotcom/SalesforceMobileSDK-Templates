@@ -221,7 +221,7 @@ class SObjectDataManager {
 
     init(dataSpec: SObjectDataSpec) {
 
-        syncMgr = SFSmartSyncSyncManager.sharedInstance(SFUserAccountManager.sharedInstance().currentUser!)
+        syncMgr = SFSmartSyncSyncManager.sharedInstance(UserAccountManager.sharedInstance().currentUser!)
         self.dataSpec = dataSpec
         searchFilterQueue = DispatchQueue(label: kSearchFilterQueueName)
         // Setup store and syncs if needed

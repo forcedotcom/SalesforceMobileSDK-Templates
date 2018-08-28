@@ -213,7 +213,7 @@ class RootViewController: UniversalViewController {
     fileprivate func showLogoutActionSheet() {
         let alert = UIAlertController(title: nil, message: "Are you sure you want to log out", preferredStyle: .alert)
         let logout = UIAlertAction(title: "Logout", style: .destructive) { (action) in
-            SFUserAccountManager.sharedInstance().logout()
+            UserAccountManager.sharedInstance().logout()
         }
         self.logoutAlert = alert
         let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -223,7 +223,7 @@ class RootViewController: UniversalViewController {
     }
     
     fileprivate func showSwitchUserController() {
-        let controller = SFDefaultUserManagementViewController { (userManagementAction) in
+        let controller = UserManagementViewController { (userManagementAction) in
             self.dismiss(animated: true, completion: nil)
         }
         self.present(controller, animated: true, completion: nil)

@@ -45,12 +45,12 @@ public class Store<objectType: StoreProtocol> {
     
     private final let soupName: String = objectType.objectName;
     
-    public let sqlQueryString: String = SFRestAPI.soqlQuery(withFields: objectType.createFields, sObject: objectType.objectName, whereClause: nil, groupBy: nil, having: nil, orderBy: [objectType.orderPath], limit: 100)!
+    public let sqlQueryString: String = RestClient.soqlQuery(withFields: objectType.createFields, sObject: objectType.objectName, whereClause: nil, groupBy: nil, having: nil, orderBy: [objectType.orderPath], limit: 100)!
     
     public let queryString: String = "SELECT \(objectType.selectFieldsString()) FROM {\(objectType.objectName)} WHERE {\(objectType.objectName):\(Record.Field.locallyDeleted.rawValue)} != 1 ORDER BY {\(objectType.objectName):\(objectType.orderPath)} ASC"
     
     public init() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleUserWillLogout), name: NSNotification.Name(kSFNotificationUserWillLogout), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUserWillLogout), name: NSNotification.Name(UserAccountManager.Notification.userWillLogout.rawValue), object: nil)
     }
     
     private func setupSoup(store: SFSmartStore) {
