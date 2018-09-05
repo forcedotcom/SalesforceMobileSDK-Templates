@@ -230,7 +230,7 @@ class RootViewController: UniversalViewController {
     }
     
     fileprivate func showDBInspector() {
-        let inspector = SFSmartStoreInspectorViewController(store: self.sObjectsDataManager.store)
+        let inspector = InspectorViewController(store: self.sObjectsDataManager.store)
         self.present(inspector, animated: true, completion: nil)
     }
     

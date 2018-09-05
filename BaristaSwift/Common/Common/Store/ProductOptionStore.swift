@@ -36,7 +36,7 @@ public class ProductOptionStore: Store<ProductOption> {
     public static let instance = ProductOptionStore()
     
     public override func records() -> [ProductOption] {
-        let query: SFQuerySpec = SFQuerySpec.newAllQuerySpec(ProductOption.objectName, withOrderPath: ProductOption.orderPath, with: .descending, withPageSize: 100)
+        let query: QuerySpec = QuerySpec.buildAllQuerySpec(soupName: ProductOption.objectName, orderPath: ProductOption.orderPath, order: .descending, pageSize: 100)
         if let results = runQuery(query: query) {
             return ProductOption.from(results)
         }
@@ -45,7 +45,7 @@ public class ProductOptionStore: Store<ProductOption> {
     
     public func options(_ forProduct:Product) -> [ProductOption]? {
         guard let productID = forProduct.productId else {return nil}
-        let query = SFQuerySpec.newExactQuerySpec(ProductOption.objectName, withPath: ProductOption.Field.configuredProduct.rawValue, withMatchKey: productID, withOrderPath: ProductOption.orderPath, with: .ascending, withPageSize: 100)
+        let query = QuerySpec.buildExactQuerySpec(soupName: ProductOption.objectName, path: ProductOption.Field.configuredProduct.rawValue, matchKey: productID, orderPath: ProductOption.orderPath, order: .ascending, pageSize: 100)
         if let results = runQuery(query: query) {
             return ProductOption.from(results)
         }
@@ -75,7 +75,7 @@ public class ProductOptionStore: Store<ProductOption> {
     }
     
     public func optionFromOptionalSKU(_ sku:String) -> ProductOption? {
-        let query = SFQuerySpec.newExactQuerySpec(ProductOption.objectName, withPath: ProductOption.Field.optionSKU.rawValue, withMatchKey: sku, withOrderPath: ProductOption.orderPath, with: .descending, withPageSize: 1)
+        let query = QuerySpec.buildExactQuerySpec(soupName: ProductOption.objectName, path: ProductOption.Field.optionSKU.rawValue, matchKey: sku, orderPath: ProductOption.orderPath, order: .descending, pageSize: 1)
         if let results = runQuery(query: query) {
             return ProductOption.from(results)
         }

@@ -37,7 +37,7 @@ public class QuoteLineItemStore: Store<QuoteLineItem> {
     public static let instance = QuoteLineItemStore()
     
     public override func records() -> [QuoteLineItem] {
-        let query: SFQuerySpec = SFQuerySpec.newAllQuerySpec(QuoteLineItem.objectName, withOrderPath: QuoteLineItem.orderPath, with: .descending, withPageSize: 100)
+        let query: QuerySpec = QuerySpec.buildAllQuerySpec(soupName: QuoteLineItem.objectName, orderPath: QuoteLineItem.orderPath, order: .descending, pageSize: 100)
         if let results = runQuery(query: query) {
             return QuoteLineItem.from(results)
         }
@@ -45,7 +45,7 @@ public class QuoteLineItemStore: Store<QuoteLineItem> {
     }
     
     public func lineItemsForGroup(_ lineGroupId:String) -> [QuoteLineItem] {
-        let query = SFQuerySpec.newExactQuerySpec(QuoteLineItem.objectName, withPath: QuoteLineItem.Field.group.rawValue, withMatchKey: lineGroupId, withOrderPath: QuoteLineItem.Field.lineNumber.rawValue, with: .ascending, withPageSize: 100)
+        let query = QuerySpec.buildExactQuerySpec(soupName: QuoteLineItem.objectName, path: QuoteLineItem.Field.group.rawValue, matchKey: lineGroupId, orderPath: QuoteLineItem.Field.lineNumber.rawValue, order: .ascending, pageSize: 100)
         if let results = runQuery(query: query) {
             return QuoteLineItem.from(results)
         }

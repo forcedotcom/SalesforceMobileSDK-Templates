@@ -53,30 +53,30 @@ public class Store<objectType: StoreProtocol> {
         NotificationCenter.default.addObserver(self, selector: #selector(handleUserWillLogout), name: NSNotification.Name(UserAccountManager.Notification.userWillLogout.rawValue), object: nil)
     }
     
-    private func setupSoup(store: SFSmartStore) {
+    private func setupSoup(store: SmartStore) {
         // Create soup if needed
         if (!store.soupExists(soupName)) {
-            let indexSpecs: [AnyObject] = SFSoupIndex.asArraySoupIndexes(objectType.indexes) as [AnyObject]
+            let indexSpecs: [AnyObject] = SoupIndex.asArraySoupIndexes(objectType.indexes) as [AnyObject]
             do {
-                try store.registerSoup(soupName, withIndexSpecs: indexSpecs, error: ())
+                try store.registerSoup(soupName:soupName, indexSpecs: indexSpecs)
             } catch let error as NSError {
                 SalesforceSwiftLogger.log(type(of:self), level:.error, message: "\(objectType.objectName) failed to register soup: \(error.localizedDescription)")
             }
         }
     }
     
-    private func setupSyncs(smartSync:  SFSmartSyncSyncManager) {
+    private func setupSyncs(smartSync:  SyncManager) {
         // Create sync down if needed
-        if (!smartSync.hasSync(withName: syncDownName)) {
-            let target: SFSoqlSyncDownTarget = SFSoqlSyncDownTarget.newSyncTarget(sqlQueryString)
-            let options: SFSyncOptions = SFSyncOptions.newSyncOptions(forSyncDown: .leaveIfChanged)
+        if (!smartSync.hasSync(syncName: syncDownName)) {
+            let target: SoqlSyncDownTarget = SoqlSyncDownTarget.newSyncTarget(sqlQueryString)
+            let options: SyncOptions = SyncOptions.newSyncOptions(forSyncDown: .leaveIfChanged)
             smartSync.createSyncDown(target, options: options, soupName: soupName, syncName: syncDownName)
         }
         
         // Create sync up if needed
-        if (!smartSync.hasSync(withName: syncUpName)) {
-            let target = SFSyncUpTarget.init(createFieldlist: objectType.createFields, updateFieldlist: objectType.updateFields)
-            let options: SFSyncOptions = SFSyncOptions.newSyncOptions(forSyncUp: objectType.readFields, mergeMode: .overwrite)
+        if (!smartSync.hasSync(syncName: syncUpName)) {
+            let target = SyncUpTarget.init(createFieldlist: objectType.createFields, updateFieldlist: objectType.updateFields)
+            let options: SyncOptions = SyncOptions.newSyncOptions(forSyncUp: objectType.readFields, mergeMode: .overwrite)
             smartSync.createSyncUp(target, options: options, soupName: soupName, syncName: syncUpName)
         }
     }
@@ -87,9 +87,9 @@ public class Store<objectType: StoreProtocol> {
         self.syncsInitialized = false
     }
 
-    public var smartSync : SFSmartSyncSyncManager {
+    public var smartSync : SyncManager {
         get {
-            let smartSync = SFSmartSyncSyncManager.sharedInstance(for: store)!
+            let smartSync = SyncManager.sharedInstance(store: store)!
             if (!syncsInitialized) {
                 setupSyncs(smartSync: smartSync)
                 syncsInitialized = true
@@ -98,9 +98,9 @@ public class Store<objectType: StoreProtocol> {
         }
     }
     
-    public  var store: SFSmartStore {
+    public  var store: SmartStore {
         get {
-            let store = SFSmartStore.sharedStore(withName: kDefaultSmartStoreName) as! SFSmartStore
+            let store = SmartStore.sharedStore(storeName: SmartStore.defaultStoreName) as! SmartStore
             if (!soupInitialized) {
                 setupSoup(store: store)
                 soupInitialized = true
@@ -111,7 +111,7 @@ public class Store<objectType: StoreProtocol> {
     }
     
     public var count: UInt {
-        guard let query: SFQuerySpec = SFQuerySpec.newSmartQuerySpec(queryString, withPageSize: 1) else {
+        guard let query: QuerySpec = QuerySpec.buildSmartQuerySpec(smartSql: queryString, pageSize: 1) else {
             return 0
         }
         return countQuery(query: query)
@@ -200,38 +200,39 @@ public class Store<objectType: StoreProtocol> {
     
     internal func upsertEntries(_ entries:[Any]) -> [Any] {
         let startDate = Date()
-        let results = store.upsertEntries(entries, toSoup: soupName)
+        let results = store.upsert(entries: entries, soupName: soupName)
         printTiming(startDate, action:"UPSERTING", numRecords: UInt(results.count))
         return results
     }
     
-    internal func countQuery(query: SFQuerySpec) -> UInt {
-        var error: NSError? = nil
+    internal func countQuery(query: QuerySpec) -> UInt {
         let startDate = Date()
-        let count = store.count(with: query, error: &error)
-        printTiming(startDate, action:"QUERYING ", numRecords: count)
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"query \(query.smartSql) failed: \(error!.localizedDescription)")
+        let count : UInt
+        do {
+            try count = store.count(querySpec: query).uintValue
+            printTiming(startDate, action:"QUERYING ", numRecords: count)
+            return count
+        } catch let error {
+            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"query \(query.smartSql) failed: \(error.localizedDescription)")
             return 0
         }
-        return count
-
     }
 
-    internal func runQuery(query:SFQuerySpec, pageIndex:UInt = 0) -> [Any]? {
-        var error: NSError? = nil
+    internal func runQuery(query:QuerySpec, pageIndex:UInt = 0) -> [Any]? {
         let startDate = Date()
-        let results: [Any] = store.query(with: query, pageIndex: pageIndex, error: &error)
-        printTiming(startDate, action:"QUERYING ", numRecords: UInt(results.count))
-        guard error == nil else {
-            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"query \(query.smartSql) failed: \(error!.localizedDescription)")
+        let results: [Any]
+        do {
+            try results = store.query(querySpec: query, pageIndex: pageIndex)
+            printTiming(startDate, action:"QUERYING ", numRecords: UInt(results.count))
+            return results
+        } catch let error {
+            SalesforceSwiftLogger.log(type(of:self), level:.error, message:"query \(query.smartSql) failed: \(error.localizedDescription)")
             return nil
         }
-        return results
     }
  
     public func record(index: Int) -> objectType {
-        let query:SFQuerySpec = SFQuerySpec.newSmartQuerySpec(queryString, withPageSize: 1)!
+        let query:QuerySpec = QuerySpec.buildSmartQuerySpec(smartSql: queryString, pageSize: 1)!
         if let results = runQuery(query: query, pageIndex: UInt(index)) {
             return objectType.from(results)
         } else {
@@ -241,7 +242,7 @@ public class Store<objectType: StoreProtocol> {
     
     public func record(forExternalId externalId: String?) -> objectType? {
         guard let id = externalId else {return nil}
-        let query = SFQuerySpec.newExactQuerySpec(soupName, withPath: Record.Field.externalId.rawValue, withMatchKey: id, withOrderPath: objectType.orderPath, with: .descending, withPageSize: 1)
+        let query = QuerySpec.buildExactQuerySpec(soupName: soupName, path: Record.Field.externalId.rawValue, matchKey: id, orderPath: objectType.orderPath, order: .descending, pageSize: 1)
         if let results = runQuery(query: query) {
             return objectType.from(results)
         } else {
@@ -250,7 +251,7 @@ public class Store<objectType: StoreProtocol> {
     }
     
     public func records() -> [objectType] {
-        let query:SFQuerySpec = SFQuerySpec.newSmartQuerySpec(queryString, withPageSize: pageSize)!
+        let query:QuerySpec = QuerySpec.buildSmartQuerySpec(smartSql: queryString, pageSize: pageSize)!
         if let results = runQuery(query: query) {
             return objectType.from(results)
         } else {

@@ -39,7 +39,7 @@ public class OrderStore: Store<Order> {
     // SELECT Id,name,(select Id, OrderId, OrderItemNumber, PricebookEntry.Product2.Name, PricebookEntry.Product2.id, Quantity, UnitPrice FROM OrderItems ) from order where id=\(orderId)
     
     public func records<T:Order>(for user:String) -> [T] {
-        let query = SFQuerySpec.newExactQuerySpec(Order.objectName, withPath: Order.Field.createdById.rawValue, withMatchKey: user, withOrderPath: Order.Field.orderId.rawValue, with: .descending, withPageSize: 100)
+        let query = QuerySpec.buildExactQuerySpec(soupName: Order.objectName, path: Order.Field.createdById.rawValue, matchKey: user, orderPath: Order.Field.orderId.rawValue, order: .descending, pageSize: 100)
         if let results = runQuery(query: query) {
             return T.from(results)
         }
@@ -47,7 +47,7 @@ public class OrderStore: Store<Order> {
     }
     
     public override func records() -> [Order] {
-        let query: SFQuerySpec = SFQuerySpec.newAllQuerySpec(Order.objectName, withOrderPath: Order.orderPath, with: .descending, withPageSize: 100)
+        let query: QuerySpec = QuerySpec.buildAllQuerySpec(soupName: Order.objectName, orderPath: Order.orderPath, order: .descending, pageSize: 100)
         if let results = runQuery(query: query) {
             return Order.from(results)
         }
@@ -55,7 +55,7 @@ public class OrderStore: Store<Order> {
     }
     
     public func pendingOrder() -> Order? {
-        let query: SFQuerySpec = SFQuerySpec.newAllQuerySpec(Order.objectName, withOrderPath: Order.orderPath, with: .descending, withPageSize: 100)
+        let query: QuerySpec = QuerySpec.buildAllQuerySpec(soupName: Order.objectName, orderPath: Order.orderPath, order: .descending, pageSize: 100)
         if let results = runQuery(query: query) {
             let records:[Order] = Order.from(results)
             let pending = records.filter({$0.orderStatus() == .pending})
@@ -65,7 +65,7 @@ public class OrderStore: Store<Order> {
     }
     
     public func incompleteOrders() -> [Order] {
-        let query: SFQuerySpec = SFQuerySpec.newAllQuerySpec(Order.objectName, withOrderPath: Order.orderPath, with: .descending, withPageSize: 100)
+        let query: QuerySpec = QuerySpec.buildAllQuerySpec(soupName: Order.objectName, orderPath: Order.orderPath, order: .descending, pageSize: 100)
         if let results = runQuery(query: query) {
             let records:[Order] = Order.from(results)
             let incomplete = records.filter({$0.orderStatus() == .submitted})

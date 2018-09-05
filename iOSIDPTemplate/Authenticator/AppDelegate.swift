@@ -99,7 +99,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool
     {
-        return  UserAccountManager.sharedInstance().handleAdvancedAuthenticationResponse(url, options: options)
+        return  UserAccountManager.sharedInstance().handleIDPAuthenticationResponse(url, options: options)
     }
     
     // MARK: - Private methods

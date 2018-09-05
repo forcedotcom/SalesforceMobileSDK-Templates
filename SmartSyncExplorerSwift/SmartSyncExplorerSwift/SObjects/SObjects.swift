@@ -158,22 +158,22 @@ class SObjectDataSpec  {
         }
     }
     
-    func buildSoupIndexSpecs(_ origIndexSpecs: [SFSoupIndex]?) -> [SFSoupIndex]? {
+    func buildSoupIndexSpecs(_ origIndexSpecs: [SoupIndex]?) -> [SoupIndex]? {
         
-        var mutableIndexSpecs: [SFSoupIndex] = []
+        var mutableIndexSpecs: [SoupIndex] = []
         guard let origIndexSpecs = origIndexSpecs else {
             return mutableIndexSpecs
         }
         
-        let isLocalDataIndexSpec = SFSoupIndex(path: kSyncTargetLocal, indexType: kSoupIndexTypeString, columnName: kSyncTargetLocal)
+        let isLocalDataIndexSpec = SoupIndex(path: kSyncTargetLocal, indexType: kSoupIndexTypeString, columnName: kSyncTargetLocal)
         mutableIndexSpecs.insert(isLocalDataIndexSpec!, at: 0)
         
-        let foundIdSpec:[SFSoupIndex]? = origIndexSpecs.filter { (index) -> Bool in
+        let foundIdSpec:[SoupIndex]? = origIndexSpecs.filter { (index) -> Bool in
             return index.path == SObjectConstants.kSObjectIdField
         }
         
         if (foundIdSpec==nil || (foundIdSpec?.count)! < 1) {
-            let dataIndexSpec = SFSoupIndex(path: SObjectConstants.kSObjectIdField, indexType: kSoupIndexTypeString, columnName: SObjectConstants.kSObjectIdField)
+            let dataIndexSpec = SoupIndex(path: SObjectConstants.kSObjectIdField, indexType: kSoupIndexTypeString, columnName: SObjectConstants.kSObjectIdField)
             mutableIndexSpecs.insert(dataIndexSpec!, at: 0)
         }
         
@@ -208,20 +208,20 @@ class SObjectDataManager {
     
     private var searchFilterQueue: DispatchQueue?
     
-    var syncMgr: SFSmartSyncSyncManager?
+    var syncMgr: SyncManager?
     var dataSpec: SObjectDataSpec
     var fullDataRowList = [SObjectData]()
     var dataRows = [SObjectData]()
     
-    var store: SFSmartStore {
+    var store: SmartStore {
         get {
-            return SFSmartStore.sharedStore(withName: kDefaultSmartStoreName) as! SFSmartStore
+            return SmartStore.sharedStore(storeName: SmartStore.defaultStoreName) as! SmartStore
         }
     }
 
     init(dataSpec: SObjectDataSpec) {
 
-        syncMgr = SFSmartSyncSyncManager.sharedInstance(UserAccountManager.sharedInstance().currentUser!)
+        syncMgr = SyncManager.sharedInstance(UserAccountManager.sharedInstance().currentUser!)
         self.dataSpec = dataSpec
         searchFilterQueue = DispatchQueue(label: kSearchFilterQueueName)
         // Setup store and syncs if needed
@@ -230,7 +230,7 @@ class SObjectDataManager {
     }
 
     func queryLocalData() -> Promise<[Any]>  {
-        let sobjectsQuerySpec = SFQuerySpec.newAllQuerySpec(self.dataSpec.soupName, withOrderPath: dataSpec.orderByFieldName, with: .ascending, withPageSize: kMaxQueryPageSize)
+        let sobjectsQuerySpec = QuerySpec.buildAllQuerySpec(soupName: self.dataSpec.soupName, orderPath: dataSpec.orderByFieldName, order: .ascending, pageSize: kMaxQueryPageSize)
         return store.Promises.query(querySpec: sobjectsQuerySpec, pageIndex: 0)
     }
     
