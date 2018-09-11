@@ -35,7 +35,7 @@ import Common
 class AccountViewController: UIViewController {
 
     @IBAction func smartStoreDebugButtonPressed(_ sender: Any) {
-        let smartStoreViewController = SFSmartStoreInspectorViewController.init(store:  SFSmartStore.sharedStore(withName: kDefaultSmartStoreName) as! SFSmartStore)
+        let smartStoreViewController = InspectorViewController.init(store:  SmartStore.sharedStore(name: SmartStore.defaultStoreName)!)
         present(smartStoreViewController, animated: true, completion: nil)
     }
     

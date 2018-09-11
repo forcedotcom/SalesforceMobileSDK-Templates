@@ -58,7 +58,7 @@ public class Store<objectType: StoreProtocol> {
         if (!store.soupExists(soupName)) {
             let indexSpecs: [AnyObject] = SoupIndex.asArraySoupIndexes(objectType.indexes) as [AnyObject]
             do {
-                try store.registerSoup(soupName:soupName, indexSpecs: indexSpecs)
+                try store.registerSoup(soupName:soupName, indexSpecs: indexSpecs as! [SoupIndex])
             } catch let error as NSError {
                 SalesforceSwiftLogger.log(type(of:self), level:.error, message: "\(objectType.objectName) failed to register soup: \(error.localizedDescription)")
             }
@@ -100,7 +100,7 @@ public class Store<objectType: StoreProtocol> {
     
     public  var store: SmartStore {
         get {
-            let store = SmartStore.sharedStore(storeName: SmartStore.defaultStoreName) as! SmartStore
+            let store = SmartStore.sharedStore(name: SmartStore.defaultStoreName)!
             if (!soupInitialized) {
                 setupSoup(store: store)
                 soupInitialized = true
@@ -200,7 +200,7 @@ public class Store<objectType: StoreProtocol> {
     
     internal func upsertEntries(_ entries:[Any]) -> [Any] {
         let startDate = Date()
-        let results = store.upsert(entries: entries, soupName: soupName)
+        let results = store.upsert(entries: entries as! [[AnyHashable : Any]], soupName: soupName)
         printTiming(startDate, action:"UPSERTING", numRecords: UInt(results.count))
         return results
     }

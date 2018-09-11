@@ -215,7 +215,7 @@ class SObjectDataManager {
     
     var store: SmartStore {
         get {
-            return SmartStore.sharedStore(storeName: SmartStore.defaultStoreName) as! SmartStore
+            return SmartStore.sharedStore(name: SmartStore.defaultStoreName)!
         }
     }
 
