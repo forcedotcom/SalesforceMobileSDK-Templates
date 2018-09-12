@@ -39,7 +39,7 @@ public class ProductStore: Store<Product> {
         if let category = category, let categoryId = category.id {
             let queryString = "SELECT \(Product.selectFieldsString()) FROM {\(ProductCategoryAssociation.objectName)}, {\(Product.objectName)} WHERE {\(ProductCategoryAssociation.objectName):\(ProductCategoryAssociation.Field.categoryId.rawValue)} = '\(categoryId)' AND {\(Product.objectName):\(Product.Field.id.rawValue)} = {\(ProductCategoryAssociation.objectName):\(ProductCategoryAssociation.Field.productId.rawValue)} ORDER BY {\(Product.objectName):\(Product.Field.name.rawValue)} ASC"
             
-            let query:SFQuerySpec = SFQuerySpec.newSmartQuerySpec(queryString, withPageSize: 100)!
+            let query:QuerySpec = QuerySpec.buildSmartQuerySpec(smartSql: queryString, pageSize: 100)!
             if let results = runQuery(query: query) {
                 return Product.from(results)
             }
@@ -58,7 +58,7 @@ public class ProductStore: Store<Product> {
     fileprivate func featuredProducts<T:Product>(pageSize: UInt) -> [T] {
         let queryString = "SELECT \(Product.selectFieldsString()) FROM {\(Product.objectName)} WHERE {\(Product.objectName):\(Product.Field.isFeaturedItem.rawValue)} = 1 ORDER BY {\(Product.objectName):\(Product.Field.featuredItemPriority.rawValue)} ASC"
         
-        let query:SFQuerySpec = SFQuerySpec.newSmartQuerySpec(queryString, withPageSize: pageSize)!
+        let query:QuerySpec = QuerySpec.buildSmartQuerySpec(smartSql: queryString, pageSize: pageSize)!
         if let results = runQuery(query: query) {
             return T.from(results)
         }
@@ -66,12 +66,12 @@ public class ProductStore: Store<Product> {
     }
     
     public func product<T:Product>(from productId:String) -> T? {
-        let query = SFQuerySpec.newExactQuerySpec(Product.objectName,
-                                                  withPath: Product.Field.productId.rawValue,
-                                                  withMatchKey: productId,
-                                                  withOrderPath: Product.Field.productId.rawValue,
-                                                  with: .ascending,
-                                                  withPageSize: 1)
+        let query = QuerySpec.buildExactQuerySpec(soupName: Product.objectName,
+                                                  path: Product.Field.productId.rawValue,
+                                                  matchKey: productId,
+                                                  orderPath: Product.Field.productId.rawValue,
+                                                  order: .ascending,
+                                                  pageSize: 1)
         if let results = runQuery(query: query) {
             return T.from(results)
         }

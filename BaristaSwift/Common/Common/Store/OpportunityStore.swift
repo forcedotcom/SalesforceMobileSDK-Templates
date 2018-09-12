@@ -36,7 +36,7 @@ public class OpportunityStore: Store<Opportunity> {
     public static let instance = OpportunityStore()
     
     public override func records() -> [Opportunity] {
-        let query: SFQuerySpec = SFQuerySpec.newAllQuerySpec(Opportunity.objectName, withOrderPath: Opportunity.orderPath, with: .descending, withPageSize: 100)
+        let query: QuerySpec = QuerySpec.buildAllQuerySpec(soupName: Opportunity.objectName, orderPath: Opportunity.orderPath, order: .descending, pageSize: 100)
         if let results = runQuery(query: query) {
             return Opportunity.from(results)
         }
@@ -45,7 +45,7 @@ public class OpportunityStore: Store<Opportunity> {
     
     public func opportunitiesForAccount(_ account:Account) -> [Opportunity] {
         guard let accountId = account.accountId else {return []}
-        let query = SFQuerySpec.newExactQuerySpec(Opportunity.objectName, withPath: Opportunity.Field.accountName.rawValue, withMatchKey: accountId, withOrderPath: Opportunity.orderPath, with: .descending, withPageSize: 100)
+        let query = QuerySpec.buildExactQuerySpec(soupName: Opportunity.objectName, path: Opportunity.Field.accountName.rawValue, matchKey: accountId, orderPath: Opportunity.orderPath, order: .descending, pageSize: 100)
         if let results = runQuery(query: query) {
             return Opportunity.from(results)
         }
@@ -61,7 +61,7 @@ public class OpportunityStore: Store<Opportunity> {
     }
     
     public func opportunitiesInReview() -> [Opportunity] {
-        let query: SFQuerySpec = SFQuerySpec.newAllQuerySpec(Opportunity.objectName, withOrderPath: Opportunity.orderPath, with: .ascending, withPageSize: 100)
+        let query: QuerySpec = QuerySpec.buildAllQuerySpec(soupName: Opportunity.objectName, orderPath: Opportunity.orderPath, order: .ascending, pageSize: 100)
         if let results = runQuery(query: query) {
             let allRecords:[Opportunity] = Opportunity.from(results)
             let inReview = allRecords.filter({$0.stage == .negotiationReview})

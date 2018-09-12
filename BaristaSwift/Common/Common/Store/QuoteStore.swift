@@ -37,7 +37,7 @@ public class QuoteStore: Store<Quote> {
     public static let instance = QuoteStore()
     
     public override func records() -> [Quote] {
-        let query: SFQuerySpec = SFQuerySpec.newAllQuerySpec(Quote.objectName, withOrderPath: Quote.orderPath, with: .descending, withPageSize: 100)
+        let query: QuerySpec = QuerySpec.buildAllQuerySpec(soupName: Quote.objectName, orderPath: Quote.orderPath, order: .descending, pageSize: 100)
         if let results = runQuery(query: query) {
             return Quote.from(results)
         }
@@ -49,7 +49,7 @@ public class QuoteStore: Store<Quote> {
     }
     
     public func quoteFromId(_ quoteId:String) -> Quote? {
-        let query = SFQuerySpec.newExactQuerySpec(Quote.objectName, withPath: Quote.Field.quoteId.rawValue, withMatchKey: quoteId, withOrderPath: Quote.orderPath, with: .descending, withPageSize: 1)
+        let query = QuerySpec.buildExactQuerySpec(soupName: Quote.objectName, path: Quote.Field.quoteId.rawValue, matchKey: quoteId, orderPath: Quote.orderPath, order: .descending, pageSize: 1)
         if let results = runQuery(query: query) {
             return Quote.from(results)
         }
@@ -57,7 +57,7 @@ public class QuoteStore: Store<Quote> {
     }
     
     public func quotesFromOpportunityId(_ opportunityId:String) -> [Quote] {
-        let query = SFQuerySpec.newExactQuerySpec(Quote.objectName, withPath: Quote.Field.opportunity.rawValue, withMatchKey: opportunityId, withOrderPath: Quote.orderPath, with: .descending, withPageSize: 1)
+        let query = QuerySpec.buildExactQuerySpec(soupName: Quote.objectName, path: Quote.Field.opportunity.rawValue, matchKey: opportunityId, orderPath: Quote.orderPath, order: .descending, pageSize: 1)
         if let results = runQuery(query: query) {
             return Quote.from(results)
         }

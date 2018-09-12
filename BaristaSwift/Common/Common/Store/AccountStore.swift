@@ -62,7 +62,7 @@ public class AccountStore: Store<Account> {
     
     public func account(_ forUserId:String) -> Account? {
         // todo only sync down users record
-        let query = SFQuerySpec.newAllQuerySpec(Account.objectName, withOrderPath: Account.orderPath, with: .descending, withPageSize: 100)
+        let query = QuerySpec.buildAllQuerySpec(soupName: Account.objectName, orderPath: Account.orderPath, order: .descending, pageSize: 100)
         if let results = runQuery(query: query) {
             let accounts: [Account] = Account.from(results)
             let filteredAccounts = accounts.filter { (account) -> Bool in
@@ -75,7 +75,7 @@ public class AccountStore: Store<Account> {
     }
     
     public func account(forAccountId:String) -> Account? {
-        let query = SFQuerySpec.newExactQuerySpec(Account.objectName, withPath: Account.Field.accountId.rawValue, withMatchKey: forAccountId, withOrderPath: Account.orderPath, with: .ascending, withPageSize: 1)
+        let query = QuerySpec.buildExactQuerySpec(soupName: Account.objectName, path: Account.Field.accountId.rawValue, matchKey: forAccountId, orderPath: Account.orderPath, order: .ascending, pageSize: 1)
         if let results = runQuery(query: query) {
             return Account.from(results)
         }

@@ -36,7 +36,7 @@ public class UserStore: Store<User> {
     public static let instance = UserStore()
     
     public func user(_ forUserId:String) -> User? {
-        let query = SFQuerySpec.newExactQuerySpec(User.objectName, withPath: User.Field.id.rawValue, withMatchKey: forUserId, withOrderPath: User.orderPath, with: .ascending, withPageSize: 1)
+        let query = QuerySpec.buildExactQuerySpec(soupName: User.objectName, path: User.Field.id.rawValue, matchKey: forUserId, orderPath: User.orderPath, order: .ascending, pageSize: 1)
         if let results = runQuery(query: query) {
             return User.from(results)
         }

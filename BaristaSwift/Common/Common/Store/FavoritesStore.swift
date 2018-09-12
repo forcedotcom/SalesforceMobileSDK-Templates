@@ -38,7 +38,7 @@ public class FavoritesStore: Store<UserFavorite> {
     
     public func myFavorites() -> [UserFavorite] {
         guard let account = AccountStore.instance.myAccount(), let accountId = account.accountId else { return [] }
-        let query = SFQuerySpec.newExactQuerySpec(UserFavorite.objectName, withPath: UserFavorite.Field.accountId.rawValue, withMatchKey: accountId, withOrderPath: UserFavorite.orderPath, with: .descending, withPageSize: 50)
+        let query = QuerySpec.buildExactQuerySpec(soupName: UserFavorite.objectName, path: UserFavorite.Field.accountId.rawValue, matchKey: accountId, orderPath: UserFavorite.orderPath, order: .descending, pageSize: 50)
 
         if let results = runQuery(query: query) {
             return UserFavorite.from(results)

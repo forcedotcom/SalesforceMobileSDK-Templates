@@ -38,12 +38,12 @@ public class OrderItemStore: Store<OrderItem> {
     
     public func items(from order:Order) -> [OrderItem] {
         guard let orderId = order.orderId else { return [] }
-        let query = SFQuerySpec.newExactQuerySpec(OrderItem.objectName,
-                                                  withPath: OrderItem.Field.orderId.rawValue,
-                                                  withMatchKey: orderId,
-                                                  withOrderPath: OrderItem.Field.itemId.rawValue,
-                                                  with: .ascending,
-                                                  withPageSize: 100)
+        let query = QuerySpec.buildExactQuerySpec(soupName: OrderItem.objectName,
+                                                  path: OrderItem.Field.orderId.rawValue,
+                                                  matchKey: orderId,
+                                                  orderPath: OrderItem.Field.itemId.rawValue,
+                                                  order: .ascending,
+                                                  pageSize: 100)
         if let results = runQuery(query: query) {
             return OrderItem.from(results)
         }
@@ -51,7 +51,7 @@ public class OrderItemStore: Store<OrderItem> {
     }
     
     public override func records() -> [OrderItem] {
-        let query: SFQuerySpec = SFQuerySpec.newAllQuerySpec(OrderItem.objectName, withOrderPath: OrderItem.orderPath, with: .descending, withPageSize: 100)
+        let query: QuerySpec = QuerySpec.buildAllQuerySpec(soupName: OrderItem.objectName, orderPath: OrderItem.orderPath, order: .descending, pageSize: 100)
         if let results = runQuery(query: query) {
             return OrderItem.from(results)
         }

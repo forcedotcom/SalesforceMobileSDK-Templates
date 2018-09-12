@@ -36,7 +36,7 @@ public class PricebookStore: Store<Pricebook> {
     public static let instance = PricebookStore()
     
     public func freePricebook() -> Pricebook? {
-        let query = SFQuerySpec.newExactQuerySpec(Pricebook.objectName, withPath: Pricebook.Field.name.rawValue, withMatchKey: "Free", withOrderPath: Pricebook.orderPath, with: .descending, withPageSize: 1)
+        let query = QuerySpec.buildExactQuerySpec(soupName: Pricebook.objectName, path: Pricebook.Field.name.rawValue, matchKey: "Free", orderPath: Pricebook.orderPath, order: .descending, pageSize: 1)
         if let results = runQuery(query: query) {
             return Pricebook.from(results)
         }
