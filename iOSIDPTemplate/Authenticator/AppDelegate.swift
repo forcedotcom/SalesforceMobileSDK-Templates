@@ -24,7 +24,6 @@
 import Foundation
 import UIKit
 import SalesforceSDKCore
-import SalesforceSwiftSDK
 
 
 class AppDelegate : UIResponder, UIApplicationDelegate
@@ -35,11 +34,12 @@ class AppDelegate : UIResponder, UIApplicationDelegate
     init()
     {
         super.init()
-        _ = SalesforceSwiftSDKManager.initSDK()
         
-        SalesforceSwiftSDKManager.shared().isIdentityProvider = true;
+        SalesforceSDK.initializeSDK()
         
-        SFSDKAuthHelper.registerBlock(forCurrentUserChangeNotifications: { [weak self] in
+        SalesforceSDK.shared().isIdentityProvider = true
+        
+        AuthHelper.registerBlock(forCurrentUserChangeNotifications: { [weak self] in
             self?.resetViewState {
                 self?.setupRootViewController()
             }
@@ -72,7 +72,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         //loginViewConfig.navBarFont = UIFont(name: "Helvetica", size: 16.0)
         //SFUserAccountManager.sharedInstance().loginViewControllerConfig = loginViewConfig
        
-        SFSDKAuthHelper.loginIfRequired { [weak self] in
+        AuthHelper.loginIfRequired { [weak self] in
             self?.setupRootViewController()
         }
         return true
