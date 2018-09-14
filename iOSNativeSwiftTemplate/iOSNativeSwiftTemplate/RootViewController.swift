@@ -25,30 +25,29 @@
 import Foundation
 import UIKit
 import SalesforceSDKCore
-import SalesforceSwiftSDK
-import PromiseKit
+
 class RootViewController : UITableViewController
 {
-    var dataRows = [NSDictionary]()
+    var dataRows = [Dictionary<String, Any>]()
     
     // MARK: - View lifecycle
     override func loadView()
     {
         super.loadView()
         self.title = "Mobile SDK Sample App"
-        let restApi = RestClient.sharedInstance()
-        restApi.Promises
-        .query(soql: "SELECT Name FROM User LIMIT 10")
-        .then {  request  in
-            restApi.Promises.send(request: request)
-        }.done { [unowned self] response in
-            self.dataRows = response.asJsonDictionary()["records"] as! [NSDictionary]
-            SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"request:didLoadResponse: #records: \(self.dataRows.count)")
-            DispatchQueue.main.async(execute: {
-                self.tableView.reloadData()
-            })
-        }.catch { error in
-             SalesforceSwiftLogger.log(type(of:self), level:.debug, message:"Error: \(error)")
+    
+        let request = RestClient.sharedInstance().buildQueryRequest(soql: "SELECT Name FROM User LIMIT 10")
+        RestClient.sharedInstance().send(request: request, onFailure: { (error, urlResponse) in
+            SFSDKLogger.sharedInstance().log(type(of:self), level:.debug, message:"Error invoking: \(request)")
+        }) { [weak self] (response, urlResponse) in
+            if let jsonResponse = response as? Dictionary<String,Any> {
+                if let result = jsonResponse ["records"] as? [Dictionary<String,Any>] {
+                    DispatchQueue.main.async {
+                        self?.dataRows = result
+                        self?.tableView.reloadData()
+                    }
+                }
+            }
         }
     }
     
@@ -76,11 +75,11 @@ class RootViewController : UITableViewController
         
         // If you want to add an image to your cell, here's how.
         let image = UIImage(named: "icon.png")
-        cell!.imageView!.image = image
+        cell!.imageView?.image = image
         
         // Configure the cell to show the data.
         let obj = dataRows[indexPath.row]
-        cell!.textLabel!.text = obj["Name"] as? String
+        cell!.textLabel?.text = obj["Name"] as? String
         
         // This adds the arrow to the right hand side.
         cell?.accessoryType = UITableViewCellAccessoryType.disclosureIndicator

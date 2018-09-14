@@ -25,7 +25,6 @@
 import Foundation
 import UIKit
 import SalesforceSDKCore
-import SalesforceSwiftSDK
 
 
 class AppDelegate : UIResponder, UIApplicationDelegate
@@ -36,9 +35,8 @@ class AppDelegate : UIResponder, UIApplicationDelegate
     init()
     {
         super.init()
-        _ = SalesforceSwiftSDKManager.initSDK()
-       
-        SFSDKAuthHelper.registerBlock(forCurrentUserChangeNotifications: { [weak self] in
+        SalesforceSDK.initializeSDK()
+        AuthHelper.registerBlock(forCurrentUserChangeNotifications: { [weak self] in
             self?.resetViewState {
                 self?.setupRootViewController()
             }
@@ -60,7 +58,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         // SFPushNotificationManager.sharedInstance().registerForRemoteNotifications()
         
         //Uncomment the code below to see how you can customize the color, textcolor, font and fontsize of the navigation bar
-        //var loginViewConfig = SFSDKLoginViewControllerConfig()
+        //var loginViewConfig = LoginViewControllerConfig()
         //Set showSettingsIcon to NO if you want to hide the settings icon on the nav bar
         //loginViewConfig.showSettingsIcon = false
         //Set showNavBar to NO if you want to hide the top bar
@@ -68,8 +66,8 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         //loginViewConfig.navBarColor = UIColor(red: 0.051, green: 0.765, blue: 0.733, alpha: 1.0)
         //loginViewConfig.navBarTextColor = UIColor.white
         //loginViewConfig.navBarFont = UIFont(name: "Helvetica", size: 16.0)
-        //SFUserAccountManager.sharedInstance().loginViewControllerConfig = loginViewConfig
-        SFSDKAuthHelper.loginIfRequired { [weak self] in
+        //UserAccountManager.sharedInstance().loginViewControllerConfig = loginViewConfig
+        AuthHelper.loginIfRequired { [weak self] in
             self?.setupRootViewController()
         }
        
@@ -83,7 +81,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         //
         //
         // SFPushNotificationManager.sharedInstance().didRegisterForRemoteNotifications(withDeviceToken: deviceToken)
-        // if (SFUserAccountManager.sharedInstance().currentUser?.credentials.accessToken != nil)
+        // if (UserAccountManager.sharedInstance().currentUser?.credentials.accessToken != nil)
         // {
         //     SFPushNotificationManager.sharedInstance().registerSalesforceNotifications(completionBlock: nil, fail: nil)
         // }
@@ -98,7 +96,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool
     {
         // Uncomment following block to enable IDP Login flow
-        // return  SFUserAccountManager.sharedInstance().handleIDPAuthenticationResponse(url, options: options)
+        // return  UserAccountManager.sharedInstance().handleIDPAuthenticationResponse(url, options: options)
         return false;
     }
 
