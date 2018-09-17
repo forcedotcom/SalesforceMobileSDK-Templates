@@ -141,17 +141,15 @@ class RootViewController: UniversalViewController {
     
     func syncUpDown(){
         let alert = self.showAlert("Syncing", message: "Syncing with Salesforce")
-        let action = self.dismissAlertAction(alert)
-       
         sObjectsDataManager.updateRemoteData({ [weak self] (sObjectsData) in
             DispatchQueue.main.async {
-                alert.addAction(action)
                 alert.message = "Sync Complete!"
+                alert.dismiss(animated: true, completion: nil)
                 self?.refreshList()
             }
         }, onFailure: { [weak self] (error, syncState) in
-            alert.addAction(action)
             alert.message = "Sync Failed!"
+            alert.dismiss(animated: true, completion: nil)
             self?.refreshList()
         })
     }
@@ -181,14 +179,7 @@ class RootViewController: UniversalViewController {
         self.present(alert, animated: true, completion: nil)
         return alert
     }
-    
-    fileprivate func dismissAlertAction(_ forController:UIAlertController) -> UIAlertAction {
-        let action = UIAlertAction(title: "Ok", style: .default) { (action) in
-            forController.dismiss(animated: true, completion: nil)
-        }
-        return action
-    }
-    
+
     fileprivate func refreshList() {
         self.sObjectsDataManager.filter(onSearchTerm: self.searchText) {[weak self]  dataRows in
              DispatchQueue.main.async {
