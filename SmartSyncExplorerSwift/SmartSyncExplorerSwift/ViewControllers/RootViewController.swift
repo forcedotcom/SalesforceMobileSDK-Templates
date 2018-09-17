@@ -29,10 +29,7 @@
 
 import UIKit
 import CoreGraphics
-import SalesforceSDKCore
-import SmartStore
-import PromiseKit
-import SalesforceSwiftSDK
+import SmartSync.SFSDKSmartSyncLogger
 
 class RootViewController: UniversalViewController {
     
@@ -88,18 +85,12 @@ class RootViewController: UniversalViewController {
         self.tableView.dataSource = self
         self.view.addSubview(self.tableView)
         
-        if #available(iOS 11.0, *) {
-            let safe = self.view.safeAreaLayoutGuide
-            self.commonConstraints.append(contentsOf: [self.tableView.leftAnchor.constraint(equalTo: safe.leftAnchor),
-                                                       self.tableView.rightAnchor.constraint(equalTo: safe.rightAnchor),
-                                                       self.tableView.topAnchor.constraint(equalTo: safe.topAnchor),
-                                                       self.tableView.bottomAnchor.constraint(equalTo: safe.bottomAnchor)])
-        }else {
-            self.commonConstraints.append(contentsOf: [self.tableView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
-                                                       self.tableView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
-                                                       self.tableView.topAnchor.constraint(equalTo: self.view.topAnchor),
-                                                       self.tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)])
-        }
+        let safe = self.view.safeAreaLayoutGuide
+        self.commonConstraints.append(contentsOf: [self.tableView.leftAnchor.constraint(equalTo: safe.leftAnchor),
+                                                   self.tableView.rightAnchor.constraint(equalTo: safe.rightAnchor),
+                                                   self.tableView.topAnchor.constraint(equalTo: safe.topAnchor),
+                                                   self.tableView.bottomAnchor.constraint(equalTo: safe.bottomAnchor)])
+
        
         
        
@@ -151,21 +142,18 @@ class RootViewController: UniversalViewController {
     func syncUpDown(){
         let alert = self.showAlert("Syncing", message: "Syncing with Salesforce")
         let action = self.dismissAlertAction(alert)
-        sObjectsDataManager.updateRemoteData()
-            .done { _ in
+       
+        sObjectsDataManager.updateRemoteData({ [weak self] (sObjectsData) in
+            DispatchQueue.main.async {
                 alert.addAction(action)
                 alert.message = "Sync Complete!"
-                self.refreshList()
-                DispatchQueue.main.async {
-                    
-                    
-                }
-            }.catch { error in
-                alert.addAction(action)
-                alert.message = "Sync failed!"
-                self.refreshList()
+                self?.refreshList()
             }
-
+        }, onFailure: { [weak self] (error, syncState) in
+            alert.addAction(action)
+            alert.message = "Sync Failed!"
+            self?.refreshList()
+        })
     }
     
     @objc func clearPopoversForPasscode() {
@@ -297,31 +285,39 @@ extension RootViewController: UITableViewDataSource {
 extension RootViewController: ContactDetailViewDelegate {
    
     func userDidDelete(object: SObjectData) {
-        _ = self.sObjectsDataManager.deleteLocalData(object)
-            .done { [weak self] result in
-               self?.refreshList()
-            }
+        do {
+            _ = try self.sObjectsDataManager.deleteLocalData(object)
+        } catch {
+           SmartSyncLogger.e(RootViewController.self, message: "Delete local data failed" )
+        }
+        self.refreshList()
     }
     
     func userDidUndelete(object: SObjectData) {
-        _ = self.sObjectsDataManager.undeleteLocalData(object)
-            .done { [weak self] result in
-               self?.refreshList()
-            }
+        do {
+           _ = try self.sObjectsDataManager.undeleteLocalData(object)
+        } catch {
+            SmartSyncLogger.e(RootViewController.self, message: "Undelete local data failed" )
+        }
+        self.refreshList()
     }
     
     func userDidUpdate(object: SObjectData) {
-        _ = self.sObjectsDataManager.updateLocalData(object)
-            .done { [weak self] result in
-               self?.refreshList()
-            }
+        do {
+           _ = try self.sObjectsDataManager.updateLocalData(object)
+        } catch {
+             SmartSyncLogger.e(RootViewController.self, message: "Update local data failed" )
+        }
+        self.refreshList()
     }
     
     func userDidAdd(object: SObjectData) {
-        _ = self.sObjectsDataManager.createLocalData(object)
-            .done { [weak self] result in
-                self?.refreshList()
-            }
+        do {
+            _ = try self.sObjectsDataManager.createLocalData(object)
+        }catch {
+            
+        }
+        self.refreshList()
     }
 }
 

@@ -29,8 +29,7 @@
 import Foundation
 import SmartStore
 import SmartSync
-import PromiseKit
-import SalesforceSwiftSDK
+
 
 enum SObjectConstants {
     static let kSObjectIdField    = "Id"
@@ -208,7 +207,7 @@ class SObjectDataManager {
     
     private var searchFilterQueue: DispatchQueue?
     
-    var syncMgr: SyncManager?
+    var syncMgr: SyncManager
     var dataSpec: SObjectDataSpec
     var fullDataRowList = [SObjectData]()
     var dataRows = [SObjectData]()
@@ -220,7 +219,6 @@ class SObjectDataManager {
     }
 
     init(dataSpec: SObjectDataSpec) {
-
         syncMgr = SyncManager.sharedInstance(UserAccountManager.sharedInstance().currentUser!)
         self.dataSpec = dataSpec
         searchFilterQueue = DispatchQueue(label: kSearchFilterQueueName)
@@ -228,84 +226,78 @@ class SObjectDataManager {
         SmartSyncSDKManager.shared().setupUserStoreFromDefaultConfig()
         SmartSyncSDKManager.shared().setupUserSyncsFromDefaultConfig()
     }
-
-    func queryLocalData() -> Promise<[Any]>  {
+    
+    func queryLocalData() throws -> [Any]  {
         let sobjectsQuerySpec = QuerySpec.buildAllQuerySpec(soupName: self.dataSpec.soupName, orderPath: dataSpec.orderByFieldName, order: .ascending, pageSize: kMaxQueryPageSize)
-        return store.Promises.query(querySpec: sobjectsQuerySpec, pageIndex: 0)
+        return try store.query(querySpec: sobjectsQuerySpec, pageIndex: 0)
     }
     
-    func populateDataRows(_ queryResults: [Any]?) -> [SObjectData] {
+    func populateDataRows(_ queryResults: [Any]?) -> Void {
         var mutableDataRows: [SObjectData] = [SObjectData]()
         queryResults?.forEach({ (record) in
             let sObject = ContactSObjectData(soupDict: record as? [String : Any])
             mutableDataRows.append(sObject)
         })
-        return mutableDataRows
+        self.fullDataRowList =  mutableDataRows
     }
-
-    func createLocalData(_ newData: SObjectData?) -> Promise<[SObjectData]> {
+    
+    func createLocalData(_ newData: SObjectData?) throws -> [SObjectData] {
         guard let newData = newData else {
-            return .value([SObjectData]())
+            return []
         }
         newData.updateSoup(forFieldName: kSyncTargetLocal, fieldValue: true)
         newData.updateSoup(forFieldName: kSyncTargetLocallyCreated, fieldValue: true)
         let sobjectSpec = type(of: newData).dataSpec()
-        return store.Promises.upsertEntries(entries: [newData.soupDict], soupName: (sobjectSpec?.soupName)!)
-        .then { result -> Promise<[Any]> in
-            self.queryLocalData()
-         }.then { sObjects -> Promise<[SObjectData]>  in
-            self.fullDataRowList = self.populateDataRows(sObjects)
-            return .value(self.fullDataRowList)
-        }
+        
+        store.upsert(entries: [newData.soupDict], soupName: (sobjectSpec?.soupName)!)
+        let sObjects = try self.queryLocalData()
+        self.populateDataRows(sObjects)
+        return self.fullDataRowList
     }
 
-    func updateLocalData(_ updatedData: SObjectData?) -> Promise<[SObjectData]> {
+    
+    func updateLocalData(_ updatedData: SObjectData?) throws -> [SObjectData] {
         guard let updatedData = updatedData else {
-            return .value([SObjectData]())
+            return []
         }
         updatedData.updateSoup(forFieldName: kSyncTargetLocal, fieldValue: true)
         updatedData.updateSoup(forFieldName: kSyncTargetLocallyUpdated, fieldValue: true)
         let sobjectSpec = type(of: updatedData).dataSpec()
-        return store.Promises.upsertEntries(entries: [updatedData.soupDict], soupName: (sobjectSpec?.soupName)!)
-            .then { result -> Promise<[Any]> in
-                self.queryLocalData()
-            }.then { sObjects -> Promise<[SObjectData]>  in
-                self.fullDataRowList = self.populateDataRows(sObjects)
-                return .value(self.fullDataRowList)
-            }
+        
+        store.upsert(entries: [updatedData.soupDict], soupName: (sobjectSpec?.soupName)!)
+        let sObjects = try self.queryLocalData()
+        self.populateDataRows(sObjects)
+        return self.fullDataRowList
     }
 
-    func deleteLocalData(_ dataToDelete: SObjectData?) -> Promise<[SObjectData]> {
+    
+    func deleteLocalData(_ dataToDelete: SObjectData?) throws -> [SObjectData] {
         guard let dataToDelete = dataToDelete else {
-            return .value([SObjectData]())
+            return []
         }
         dataToDelete.updateSoup(forFieldName: kSyncTargetLocal, fieldValue: true)
         dataToDelete.updateSoup(forFieldName: kSyncTargetLocallyDeleted, fieldValue: true)
         let sobjectSpec = type(of: dataToDelete).dataSpec()
-        return store.Promises.upsertEntries(entries: [dataToDelete.soupDict], soupName: (sobjectSpec?.soupName)!)
-            .then { result -> Promise<[Any]> in
-                self.queryLocalData()
-            }.then { sObjects -> Promise<[SObjectData]>  in
-                self.fullDataRowList = self.populateDataRows(sObjects)
-                return .value(self.fullDataRowList)
-            }
+        
+        store.upsert(entries: [dataToDelete.soupDict], soupName: (sobjectSpec?.soupName)!)
+        let sObjects = try self.queryLocalData()
+        self.populateDataRows(sObjects)
+        return self.fullDataRowList
     }
 
-    func undeleteLocalData(_ dataToUnDelete: SObjectData?) -> Promise<[SObjectData]> {
+
+    func undeleteLocalData(_ dataToUnDelete: SObjectData?) throws -> [SObjectData] {
         guard let dataToUnDelete = dataToUnDelete else {
-            return .value([SObjectData]())
+            return []
         }
         dataToUnDelete.updateSoup(forFieldName: kSyncTargetLocallyDeleted, fieldValue: false)
         let locallyCreatedOrUpdated = dataLocallyCreated(dataToUnDelete) || dataLocallyUpdated(dataToUnDelete) ? 1 : 0
         dataToUnDelete.updateSoup(forFieldName: kSyncTargetLocal, fieldValue: locallyCreatedOrUpdated)
         let sobjectSpec = type(of: dataToUnDelete).dataSpec()
-        return store.Promises.upsertEntries(entries: [dataToUnDelete.soupDict], soupName: (sobjectSpec?.soupName)!, externalIdPath: SObjectConstants.kSObjectIdField)
-            .then { result -> Promise<[Any]> in
-                self.queryLocalData()
-            }.then { sObjects -> Promise<[SObjectData]>  in
-                self.fullDataRowList = self.populateDataRows(sObjects)
-                return .value(self.fullDataRowList)
-            }
+        try store.upsert(entries: [dataToUnDelete.soupDict], soupName: (sobjectSpec?.soupName)!, externalIdPath: SObjectConstants.kSObjectIdField)
+        let sObjects = try self.queryLocalData()
+        self.populateDataRows(sObjects)
+        return self.fullDataRowList
     }
 
     func dataHasLocalChanges(_ data: SObjectData?) -> Bool {
@@ -340,33 +332,59 @@ class SObjectDataManager {
         return value ?? false
     }
  
-   func refreshRemoteData() -> Promise<[SObjectData]>  {
-     return when(fulfilled: [self.syncMgr!.Promises.reSync(syncName: kSyncDownName)])
-           .then { _ -> Promise<[Any]> in
-              self.queryLocalData()
-           }
-           .then { result -> Promise<[SObjectData]> in
-               return .value(self.populateDataRows(result))
-           }
+    func refreshRemoteData(_ completion: @escaping ([SObjectData]) -> Void,onFailure: @escaping (NSError?, SyncState) -> Void  ) throws -> Void {
+       
+        self.syncMgr.reSync(syncName: kSyncDownName) { [weak self] (syncState) in
+            switch (syncState.status) {
+            case .done:
+                do {
+                    let objects = try self?.queryLocalData()
+                    self?.populateDataRows(objects)
+                    completion(self?.fullDataRowList ?? [])
+                } catch {
+                   SmartSyncLogger.e(SObjectDataManager.self, message: "Resync \(syncState.syncName) failed \(error)" )
+                }
+                break
+            case .failed:
+                 SmartSyncLogger.e(SObjectDataManager.self, message: "Resync \(syncState.syncName) failed" )
+                 onFailure(nil,syncState)
+            default:
+                break
+            }
+        }
+ 
     }
-
-    func updateRemoteData() -> Promise<[SObjectData]> {
-        return  when(fulfilled: [self.syncMgr!.Promises.reSync(syncName: kSyncUpName)])
-                .then { _ in
-                    return self.queryLocalData()
-                }
-                .then { result -> Promise<Void> in
-                    self.fullDataRowList = self.populateDataRows(result)
-                    return Promise().asVoid()
-                }
-                .then { _ in
-                    return self.refreshRemoteData()
-                }
-                .then { result -> Promise<[SObjectData]>  in
-                    self.fullDataRowList = result
-                    return .value(self.fullDataRowList)
-                }
+    
+    func updateRemoteData(_ onSuccess: @escaping ([SObjectData]) -> Void, onFailure:@escaping (NSError?, SyncState) -> Void) -> Void {
         
+        self.syncMgr.reSync(syncName: kSyncUpName) { [weak self] (syncState) in
+            guard let strongSelf = self else {
+                return
+            }
+            switch (syncState.status) {
+                case .done:
+                    do {
+                        let objects = try strongSelf.queryLocalData()
+                        strongSelf.populateDataRows(objects)
+                        try strongSelf.refreshRemoteData({ (sobjs) in
+                                 onSuccess(sobjs)
+                            }, onFailure:  { (error,syncState) in
+                                onFailure(error,syncState)
+                            }
+                        )
+                    } catch let error as NSError {
+                        SmartSyncLogger.e(SObjectDataManager.self, message: "Error with Resync \(error)" )
+                        onFailure(error,syncState)
+                    }
+                    break
+            case .failed:
+                    SmartSyncLogger.e(SObjectDataManager.self, message: "Resync \(syncState.syncName) failed" )
+                    onFailure(nil,syncState)
+                    break
+                default:
+                    break
+            }
+        }
     }
 
     func filter(onSearchTerm searchTerm: String?, completion completionBlock: @escaping ([SObjectData]) -> Void) {
@@ -375,15 +393,19 @@ class SObjectDataManager {
             return
         }
 
-        searchFilterQueue?.async(execute: {[unowned self] () -> Void in
-            self.dataRows = self.fullDataRowList
-            if self.dataRows.count < 1 {
+        searchFilterQueue?.async(execute: { [weak self] () -> Void in
+            guard let strongSelf = self else {
+                return
+            }
+            
+            strongSelf.dataRows = strongSelf.fullDataRowList
+            if strongSelf.dataRows.count < 1 {
                 // No data yet.
                 return
             }
             var matchingDataRows = [SObjectData]()
             if searchTerm.count > 0 {
-                self.fullDataRowList.forEach({ (sDataObject) in
+                strongSelf.fullDataRowList.forEach({ (sDataObject) in
                     let dataSpec: SObjectDataSpec? = ContactSObjectData.dataSpec()
                     
                     if let dataSpec = dataSpec {
@@ -399,10 +421,10 @@ class SObjectDataManager {
                             }
                         })
                     }
-                    self.dataRows = matchingDataRows
+                    strongSelf.dataRows = matchingDataRows
                 })
             }
-            completionBlock(self.dataRows)
+            completionBlock(strongSelf.dataRows)
         })
     }
 }
