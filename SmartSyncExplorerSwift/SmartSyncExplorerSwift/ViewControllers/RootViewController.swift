@@ -29,7 +29,7 @@
 
 import UIKit
 import CoreGraphics
-import SmartSync.SFSDKSmartSyncLogger
+import SmartSync
 
 class RootViewController: UniversalViewController {
     
@@ -194,7 +194,6 @@ class RootViewController: UniversalViewController {
              DispatchQueue.main.async {
                 self?.tableView.reloadData()
             }
-            
         }
     }
     
@@ -287,8 +286,8 @@ extension RootViewController: ContactDetailViewDelegate {
     func userDidDelete(object: SObjectData) {
         do {
             _ = try self.sObjectsDataManager.deleteLocalData(object)
-        } catch {
-           SmartSyncLogger.e(RootViewController.self, message: "Delete local data failed" )
+        } catch let error as NSError {
+           SmartSyncLogger.e(RootViewController.self, message: "Delete local data failed \(error)" )
         }
         self.refreshList()
     }
@@ -296,8 +295,8 @@ extension RootViewController: ContactDetailViewDelegate {
     func userDidUndelete(object: SObjectData) {
         do {
            _ = try self.sObjectsDataManager.undeleteLocalData(object)
-        } catch {
-            SmartSyncLogger.e(RootViewController.self, message: "Undelete local data failed" )
+        } catch let error as NSError {
+            SmartSyncLogger.e(RootViewController.self, message: "Undelete local data failed \(error)" )
         }
         self.refreshList()
     }
@@ -305,8 +304,8 @@ extension RootViewController: ContactDetailViewDelegate {
     func userDidUpdate(object: SObjectData) {
         do {
            _ = try self.sObjectsDataManager.updateLocalData(object)
-        } catch {
-             SmartSyncLogger.e(RootViewController.self, message: "Update local data failed" )
+        } catch let error as NSError {
+             SmartSyncLogger.e(RootViewController.self, message: "Update local data failed \(error)" )
         }
         self.refreshList()
     }
@@ -314,8 +313,8 @@ extension RootViewController: ContactDetailViewDelegate {
     func userDidAdd(object: SObjectData) {
         do {
             _ = try self.sObjectsDataManager.createLocalData(object)
-        }catch {
-            
+        } catch let error as NSError{
+             SmartSyncLogger.e(RootViewController.self, message: "Add local data failed \(error)" )
         }
         self.refreshList()
     }
