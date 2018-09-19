@@ -29,7 +29,7 @@
 
 import UIKit
 import SalesforceSDKCore
-import SalesforceSwiftSDK
+import SalesforceMobileSDKPromises
 import SmartSync
 import Fabric
 import Crashlytics
@@ -52,7 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         super.init()
         _ =  SalesforceSwiftSDKManager.initSDK()
        
-        SFSDKAuthHelper.registerBlock(forCurrentUserChangeNotifications: { [weak self] in
+        AuthHelper.registerBlock(forCurrentUserChangeNotifications: { [weak self] in
             self?.resetViewState {
                 self?.setupRootViewController()
             }
@@ -75,7 +75,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // SFPushNotificationManager.sharedInstance().registerForRemoteNotifications()
         
         //Uncomment the code below to see how you can customize the color, textcolor, font and fontsize of the navigation bar
-        //var loginViewConfig = SFSDKLoginViewControllerConfig()
+        //var loginViewConfig = LoginViewControllerConfig()
         //Set showSettingsIcon to NO if you want to hide the settings icon on the nav bar
         //loginViewConfig.showSettingsIcon = false
         //Set showNavBar to NO if you want to hide the top bar
@@ -83,9 +83,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //loginViewConfig.navBarColor = UIColor(red: 0.051, green: 0.765, blue: 0.733, alpha: 1.0)
         //loginViewConfig.navBarTextColor = UIColor.white
         //loginViewConfig.navBarFont = UIFont(name: "Helvetica", size: 16.0)
-        //SFUserAccountManager.sharedInstance().loginViewControllerConfig = loginViewConfig
+        //UserAccountManager.sharedInstance().loginViewControllerConfig = loginViewConfig
         
-        SFSDKAuthHelper.loginIfRequired { [weak self] in
+        AuthHelper.loginIfRequired { [weak self] in
             if let _ = UserAccountManager.sharedInstance().currentUserIdentity?.userId {
                 _ = AccountStore.instance.syncDown()
                     .then { _ -> Promise<Account> in

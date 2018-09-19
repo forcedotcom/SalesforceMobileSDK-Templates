@@ -29,7 +29,7 @@
 
 import Foundation
 import UIKit
-import SalesforceSwiftSDK
+import SalesforceMobileSDKPromises
 
 let imageCache = NSCache<NSString, AnyObject>()
 

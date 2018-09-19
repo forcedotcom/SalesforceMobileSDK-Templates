@@ -28,7 +28,7 @@
  */
 
 import UIKit
-import SalesforceSwiftSDK
+import SalesforceMobileSDKPromises
 
 public class ImageCache {
     

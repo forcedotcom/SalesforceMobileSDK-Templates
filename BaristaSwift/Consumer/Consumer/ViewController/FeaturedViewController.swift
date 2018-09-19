@@ -29,7 +29,7 @@
 
 import UIKit
 import Common
-import SalesforceSwiftSDK
+import SalesforceMobileSDKPromises
 import PromiseKit
 
 class FeaturedViewController: UIViewController {

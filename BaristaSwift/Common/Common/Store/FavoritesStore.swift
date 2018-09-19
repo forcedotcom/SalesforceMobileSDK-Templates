@@ -28,7 +28,7 @@
  */
 
 import Foundation
-import SalesforceSwiftSDK
+import SalesforceMobileSDKPromises
 import SmartStore
 import SmartSync
 import PromiseKit

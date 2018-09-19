@@ -29,7 +29,7 @@
 
 import Foundation
 import SalesforceSDKCore
-import SalesforceSwiftSDK
+import SalesforceMobileSDKPromises
 import SmartSync
 import PromiseKit
 
