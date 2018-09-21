@@ -67,23 +67,20 @@ class RootViewController : UITableViewController
         let cellIdentifier = "CellIdentifier"
         
         // Dequeue or create a cell of the appropriate type.
-        var cell:UITableViewCell? = tableView.dequeueReusableCell(withIdentifier:cellIdentifier)
-        if (cell == nil)
-        {
-            cell = UITableViewCell(style: .subtitle, reuseIdentifier: cellIdentifier)
-        }
+        let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier:cellIdentifier) ??  UITableViewCell(style: .subtitle, reuseIdentifier: cellIdentifier)
+        
         
         // If you want to add an image to your cell, here's how.
         let image = UIImage(named: "icon.png")
-        cell!.imageView?.image = image
+        cell.imageView?.image = image
         
         // Configure the cell to show the data.
         let obj = dataRows[indexPath.row]
-        cell!.textLabel?.text = obj["Name"] as? String
+        cell.textLabel?.text = obj["Name"] as? String
         
         // This adds the arrow to the right hand side.
-        cell?.accessoryType = UITableViewCellAccessoryType.disclosureIndicator
+        cell.accessoryType = UITableViewCellAccessoryType.disclosureIndicator
         
-        return cell!
+        return cell
     }
 }
