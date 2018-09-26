@@ -7,10 +7,15 @@ dependencies {
 }
 
 android {
-  compileSdkVersion 28
-  buildToolsVersion '27.0.3'
-  
-  buildTypes {
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
+
+    defaultConfig {
+        targetSdkVersion 28
+        minSdkVersion 21
+    }
+
+    buildTypes {
       debug {
          testCoverageEnabled = true
       }
