@@ -86,9 +86,6 @@
         <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
 	</application>
 
-    <uses-sdk android:minSdkVersion="21"
-        android:targetSdkVersion="28" />
-
     <!--
         GCM permission to ensure that only this application can
         receive the messages and registration result. This must be of
