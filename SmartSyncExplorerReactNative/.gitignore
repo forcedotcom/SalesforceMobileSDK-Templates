@@ -25,3 +25,4 @@ main.jsbundle
 buck-out/
 mobile_sdk/
 package-lock.json
+package-lock.json.*

@@ -42,3 +42,4 @@ android/keystores/debug.keystore
 
 # NPM
 package-lock.json
+package-lock.json.*
