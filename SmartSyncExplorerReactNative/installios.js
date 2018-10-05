@@ -4,6 +4,10 @@ var packageJson = require('./package.json')
 var execSync = require('child_process').execSync;
 var path = require('path');
 var fs = require('fs');
+
+console.log('Installing npm dependencies');
+execSync('npm install', {stdio:[0,1,2]});
+
 var rimraf = require('rimraf');
 
 console.log('Installing sdk dependencies');
@@ -17,9 +21,6 @@ if (fs.existsSync(targetDir)) {
     execSync('git clone --branch ' + branch + ' --single-branch --depth 1 ' + repoUrl + ' ' + targetDir, {stdio:[0,1,2]});
     rimraf.sync(path.join('mobile_sdk', 'SalesforceMobileSDK-iOS', 'libs', 'SalesforceReact', 'package.json')); // confuses metro bundler
 }
-
-console.log('Installing npm dependencies');
-execSync('npm install', {stdio:[0,1,2]});
 
 console.log('Installing pod dependencies');
 execSync('pod update', {stdio:[0,1,2], cwd:'ios'});
