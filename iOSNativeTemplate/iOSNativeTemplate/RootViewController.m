@@ -25,6 +25,7 @@
 
 #import "RootViewController.h"
 
+#import <SalesforceSDKCommon/SFLogger.h>
 #import <SalesforceSDKCore/SFRestAPI.h>
 #import <SalesforceSDKCore/SFRestRequest.h>
 
@@ -63,7 +64,8 @@
 
 - (void)request:(SFRestRequest *)request didLoadResponse:(id)jsonResponse rawResponse:(NSURLResponse *)rawResponse {
     NSArray *records = jsonResponse[@"records"];
-    NSLog(@"request:didLoadResponse: #records: %lu", (unsigned long)records.count);
+    [SFLogger d:[self class]
+         format:@"request:didLoadResponse: #records: %lu", (unsigned long)records.count];
     self.dataRows = records;
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.tableView reloadData];

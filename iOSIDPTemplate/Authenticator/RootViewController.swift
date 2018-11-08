@@ -44,7 +44,7 @@ class RootViewController : UITableViewController, RestClientDelegate
     func request(_ request: RestRequest, didLoadResponse jsonResponse: Any)
     {
         self.dataRows = (jsonResponse as! NSDictionary)["records"] as! [NSDictionary]
-        SFSDKLogger.log(type(of:self), level:.debug, message:"request:didLoadResponse: #records: \(self.dataRows.count)")
+        SFLogger.d(type(of:self), message:"request:didLoadResponse: #records: \(self.dataRows.count)")
         DispatchQueue.main.async(execute: {
             self.tableView.reloadData()
         })
@@ -52,19 +52,19 @@ class RootViewController : UITableViewController, RestClientDelegate
     
     func request(_ request: RestRequest, didFailLoadWithError error: Error)
     {
-        SFSDKLogger.log(type(of:self), level:.debug, message:"didFailLoadWithError: \(error)")
+        SFLogger.d(type(of:self), message:"didFailLoadWithError: \(error)")
         // Add your failed error handling here
     }
     
     internal func requestDidCancelLoad(_ request: RestRequest)
     {
-        SFSDKLogger.log(type(of:self), level:.debug, message:"requestDidCancelLoad: \(request)")
+        SFLogger.d(type(of:self), message:"requestDidCancelLoad: \(request)")
         // Add your failed error handling here
     }
     
     func requestDidTimeout(_ request: RestRequest)
     {
-        SFSDKLogger.log(type(of:self), level:.debug, message:"requestDidTimeout: \(request)")
+        SFLogger.d(type(of:self),  message:"requestDidTimeout: \(request)")
         // Add your failed error handling here
     }
     
