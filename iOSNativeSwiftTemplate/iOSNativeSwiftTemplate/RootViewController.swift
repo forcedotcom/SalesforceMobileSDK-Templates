@@ -38,7 +38,7 @@ class RootViewController : UITableViewController
     
         let request = RestClient.sharedInstance().buildQueryRequest(soql: "SELECT Name FROM User LIMIT 10")
         RestClient.sharedInstance().send(request: request, onFailure: { (error, urlResponse) in
-            SFSDKLogger.sharedInstance().log(type(of:self), level:.debug, message:"Error invoking: \(request)")
+            SFLogger.d(type(of:self), message:"Error invoking: \(request)")
         }) { [weak self] (response, urlResponse) in
             if let jsonResponse = response as? Dictionary<String,Any> {
                 if let result = jsonResponse ["records"] as? [Dictionary<String,Any>] {

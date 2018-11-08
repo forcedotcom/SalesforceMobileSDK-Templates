@@ -155,7 +155,7 @@ class RootViewController: UniversalViewController {
     }
     
     @objc func clearPopoversForPasscode() {
-        SFSDKLogger.log(type(of: self), level: .debug, message: "Passcode screen loading. Clearing popovers")
+        SFLogger.d(type(of: self), message: "Passcode screen loading. Clearing popovers")
         
         if let alert = self.logoutAlert {
             alert.dismiss(animated: true, completion: nil)

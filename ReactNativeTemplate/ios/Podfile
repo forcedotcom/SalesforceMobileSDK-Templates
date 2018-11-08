@@ -29,6 +29,7 @@ pod 'React', :path => '../node_modules/react-native', :subspecs => [
     'RCTLinkingIOS'
 ]
 
+pod 'SalesforceSDKCommon', :path => '../mobile_sdk/SalesforceMobileSDK-iOS'
 pod 'SalesforceAnalytics', :path => '../mobile_sdk/SalesforceMobileSDK-iOS'
 pod 'SalesforceSDKCore', :path => '../mobile_sdk/SalesforceMobileSDK-iOS'
 pod 'SmartStore', :path => '../mobile_sdk/SalesforceMobileSDK-iOS'
