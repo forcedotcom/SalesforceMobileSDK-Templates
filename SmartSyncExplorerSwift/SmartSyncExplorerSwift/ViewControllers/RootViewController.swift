@@ -155,7 +155,7 @@ class RootViewController: UniversalViewController {
     }
     
     @objc func clearPopoversForPasscode() {
-        SFLogger.d(type(of: self), message: "Passcode screen loading. Clearing popovers")
+        SalesforceLogger.d(type(of: self), message: "Passcode screen loading. Clearing popovers")
         
         if let alert = self.logoutAlert {
             alert.dismiss(animated: true, completion: nil)
@@ -191,7 +191,7 @@ class RootViewController: UniversalViewController {
     fileprivate func showLogoutActionSheet() {
         let alert = UIAlertController(title: nil, message: "Are you sure you want to log out", preferredStyle: .alert)
         let logout = UIAlertAction(title: "Logout", style: .destructive) { (action) in
-            UserAccountManager.sharedInstance().logout()
+            UserAccountManager.shared.logout()
         }
         self.logoutAlert = alert
         let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -201,7 +201,7 @@ class RootViewController: UniversalViewController {
     }
     
     fileprivate func showSwitchUserController() {
-        let controller = UserManagementViewController { (userManagementAction) in
+        let controller = SalesforceUserManagementViewController  { (userManagementAction) in
             self.dismiss(animated: true, completion: nil)
         }
         self.present(controller, animated: true, completion: nil)
