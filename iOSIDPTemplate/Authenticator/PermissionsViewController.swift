@@ -47,10 +47,10 @@ class PermissionsViewController: UIViewController,UITableViewDelegate,UITableVie
     override func viewDidLoad() {
         super.viewDidLoad()
         let loginHost = spAppOptions["login_host"]
-        if let host  = loginHost {
-            userList = UserAccountManager.sharedInstance().userAccounts(forDomain: host as! String) as! [UserAccount];
+        if let host  = loginHost as? String {
+            userList = UserAccountManager.shared.userAccounts(forDomain: host)
         } else {
-            userList = UserAccountManager.sharedInstance().allUserAccounts()!
+            userList = UserAccountManager.shared.userAccounts() ?? []
         }
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
         

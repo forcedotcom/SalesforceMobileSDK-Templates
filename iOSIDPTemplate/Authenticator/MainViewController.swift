@@ -27,7 +27,7 @@ import SalesforceSDKCore
 
 class MainViewController: UINavigationController {
     
-    var popOverController:WYPopoverController?
+    var popOverController: WYPopoverController?
     @IBOutlet weak var showPopoverButton: UIBarButtonItem!
 
     @IBAction func popOverAction(_ sender: UIBarButtonItem) {
@@ -67,7 +67,7 @@ extension MainViewController : ActionsPopoverTableViewDelegate {
         }
 
         let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-            UserAccountManager.sharedInstance().logoutAllUsers()
+            UserAccountManager.shared.logoutAllUsers()
         }
 
         alert.addAction(cancelAction)
@@ -80,7 +80,7 @@ extension MainViewController : ActionsPopoverTableViewDelegate {
         let alert = UIAlertController(title: "Error", message: "Error adding a User", preferredStyle: .alert)
         
         let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-            UserAccountManager.sharedInstance().logoutAllUsers()
+            UserAccountManager.shared.logoutAllUsers()
         }
         
         alert.addAction(okAction)
@@ -88,7 +88,7 @@ extension MainViewController : ActionsPopoverTableViewDelegate {
     }
 
     func showSwitchUserSheet() {
-        UserAccountManager.sharedInstance().login(onSuccess: { (authInfo, account) in
+        UserAccountManager.shared.login(onSuccess: { (authInfo, account) in
             
         }) { (authInfo, error) in
             

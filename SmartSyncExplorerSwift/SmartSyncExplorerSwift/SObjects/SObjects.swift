@@ -214,22 +214,22 @@ class SObjectDataManager {
     
     var store: SmartStore {
         get {
-            return SmartStore.sharedStore(name: SmartStore.defaultStoreName)!
+            return SmartStore.shared(withName: SmartStore.defaultStoreName)!
         }
     }
 
     init(dataSpec: SObjectDataSpec) {
-        syncMgr = SyncManager.sharedInstance(UserAccountManager.sharedInstance().currentUser!)
+        syncMgr = SyncManager.sharedInstance(forUserAccount: UserAccountManager.shared.currentUserAccount!)
         self.dataSpec = dataSpec
         searchFilterQueue = DispatchQueue(label: kSearchFilterQueueName)
         // Setup store and syncs if needed
-        SmartSyncSDKManager.shared().setupUserStoreFromDefaultConfig()
-        SmartSyncSDKManager.shared().setupUserSyncsFromDefaultConfig()
+        SmartSyncSDKManager.shared.setupUserStoreFromDefaultConfig()
+        SmartSyncSDKManager.shared.setupUserSyncsFromDefaultConfig()
     }
     
     func queryLocalData() throws -> [Any]  {
         let sobjectsQuerySpec = QuerySpec.buildAllQuerySpec(soupName: self.dataSpec.soupName, orderPath: dataSpec.orderByFieldName, order: .ascending, pageSize: kMaxQueryPageSize)
-        return try store.query(querySpec: sobjectsQuerySpec, pageIndex: 0)
+        return try store.query(using: sobjectsQuerySpec, startingFromPageIndex: 0)
     }
     
     func populateDataRows(_ queryResults: [Any]?) -> Void {
@@ -249,7 +249,7 @@ class SObjectDataManager {
         newData.updateSoup(forFieldName: kSyncTargetLocallyCreated, fieldValue: true)
         let sobjectSpec = type(of: newData).dataSpec()
         
-        store.upsert(entries: [newData.soupDict], soupName: (sobjectSpec?.soupName)!)
+        store.upsert(entries: [newData.soupDict], forSoupNamed: (sobjectSpec?.soupName)!)
         let sObjects = try self.queryLocalData()
         self.populateDataRows(sObjects)
         return self.fullDataRowList
@@ -264,7 +264,7 @@ class SObjectDataManager {
         updatedData.updateSoup(forFieldName: kSyncTargetLocallyUpdated, fieldValue: true)
         let sobjectSpec = type(of: updatedData).dataSpec()
         
-        store.upsert(entries: [updatedData.soupDict], soupName: (sobjectSpec?.soupName)!)
+        store.upsert(entries: [updatedData.soupDict], forSoupNamed: (sobjectSpec?.soupName)!)
         let sObjects = try self.queryLocalData()
         self.populateDataRows(sObjects)
         return self.fullDataRowList
@@ -279,7 +279,7 @@ class SObjectDataManager {
         dataToDelete.updateSoup(forFieldName: kSyncTargetLocallyDeleted, fieldValue: true)
         let sobjectSpec = type(of: dataToDelete).dataSpec()
         
-        store.upsert(entries: [dataToDelete.soupDict], soupName: (sobjectSpec?.soupName)!)
+        store.upsert(entries: [dataToDelete.soupDict], forSoupNamed: (sobjectSpec?.soupName)!)
         let sObjects = try self.queryLocalData()
         self.populateDataRows(sObjects)
         return self.fullDataRowList
@@ -294,7 +294,7 @@ class SObjectDataManager {
         let locallyCreatedOrUpdated = dataLocallyCreated(dataToUnDelete) || dataLocallyUpdated(dataToUnDelete) ? 1 : 0
         dataToUnDelete.updateSoup(forFieldName: kSyncTargetLocal, fieldValue: locallyCreatedOrUpdated)
         let sobjectSpec = type(of: dataToUnDelete).dataSpec()
-        try store.upsert(entries: [dataToUnDelete.soupDict], soupName: (sobjectSpec?.soupName)!, externalIdPath: SObjectConstants.kSObjectIdField)
+        try store.upsert(entries: [dataToUnDelete.soupDict], forSoupNamed: (sobjectSpec?.soupName)!, withExternalIdPath: SObjectConstants.kSObjectIdField)
         let sObjects = try self.queryLocalData()
         self.populateDataRows(sObjects)
         return self.fullDataRowList
@@ -334,7 +334,7 @@ class SObjectDataManager {
  
     func refreshRemoteData(_ completion: @escaping ([SObjectData]) -> Void,onFailure: @escaping (NSError?, SyncState) -> Void  ) throws -> Void {
        
-        self.syncMgr.reSync(syncName: kSyncDownName) { [weak self] (syncState) in
+        self.syncMgr.reSync(named: kSyncDownName) { [weak self] (syncState) in
             switch (syncState.status) {
             case .done:
                 do {
@@ -357,7 +357,7 @@ class SObjectDataManager {
     
     func updateRemoteData(_ onSuccess: @escaping ([SObjectData]) -> Void, onFailure:@escaping (NSError?, SyncState) -> Void) -> Void {
         
-        self.syncMgr.reSync(syncName: kSyncUpName) { [weak self] (syncState) in
+        self.syncMgr.reSync(named: kSyncUpName) { [weak self] (syncState) in
             guard let strongSelf = self else {
                 return
             }

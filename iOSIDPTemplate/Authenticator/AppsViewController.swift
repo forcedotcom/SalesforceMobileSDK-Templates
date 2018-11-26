@@ -55,7 +55,7 @@ class AppsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.messageLabel.text = "Launch app as user\n" + (UserAccountManager.sharedInstance().currentUser?.fullName)!;
+        self.messageLabel.text = "Launch app as user\n" + (UserAccountManager.shared.currentUserAccount?.fullName)!;
         self.messageLabel.textAlignment = .center;
         self.messageLabel.font = messageLabel.font.withSize(16);
     }
@@ -65,7 +65,7 @@ class AppsViewController: UIViewController {
     }
     
     func launchSPApp(appUrl :String) {
-        let userAccount = UserAccountManager.sharedInstance().currentUser
+        let userAccount = UserAccountManager.shared.currentUserAccount
         let userHint =  (userAccount?.accountIdentity.userId)! + ":" + (userAccount?.accountIdentity.orgId)!
         let urlString = appUrl + "://oauth2/v1.0/idpinit?user_hint=" + userHint + "&login_host=" + (userAccount?.credentials.domain)!
         let url = URL(string: urlString)
