@@ -24,14 +24,14 @@
 
 import Foundation
 import UIKit
-import SalesforceSDKCore
+import SmartSync
 
 class AppDelegate : UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
     override init() {
         super.init()
-        SalesforceManager.initializeSDK()
+        SmartSyncSDKManager.initializeSDK()
         
         AuthHelper.registerBlock(forCurrentUserChangeNotifications: {
             self.resetViewState {
