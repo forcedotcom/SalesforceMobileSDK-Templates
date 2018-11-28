@@ -59,7 +59,7 @@ class PermissionsViewController: UIViewController,UITableViewDelegate,UITableVie
         self.tableView.rowHeight = 80
         
         self.navigationController?.navigationBar.barTintColor = UIColor(red: 0, green: 0.439, blue: 0.824, alpha: 1.0)
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor : UIColor.white]
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.white]
         
         self.title = "Login as"
         var appName:String = ""
@@ -107,8 +107,8 @@ class PermissionsViewController: UIViewController,UITableViewDelegate,UITableVie
     
     func getAttributedText( appName:String ) ->  NSMutableAttributedString {
         let info = "Select user for \n";
-        let plainAttribute = [NSAttributedStringKey.foregroundColor: UIColor.black, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15)]
-        let highlightAttribute = [NSAttributedStringKey.foregroundColor: UIColor.salesforceBlue(), NSAttributedStringKey.font: UIFont.systemFont(ofSize: 24)]
+        let plainAttribute = [NSAttributedString.Key.foregroundColor: UIColor.black, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15)]
+        let highlightAttribute = [NSAttributedString.Key.foregroundColor: UIColor.salesforceBlue(), NSAttributedString.Key.font: UIFont.systemFont(ofSize: 24)]
         let partOne = NSMutableAttributedString(string: info, attributes: plainAttribute)
         let partTwo = NSMutableAttributedString(string: appName, attributes: highlightAttribute)
         let combination = NSMutableAttributedString()
