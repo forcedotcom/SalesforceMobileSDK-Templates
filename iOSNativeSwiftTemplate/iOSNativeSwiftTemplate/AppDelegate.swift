@@ -24,14 +24,14 @@
 
 import Foundation
 import UIKit
-import SalesforceSDKCore
+import SmartSync
 
 class AppDelegate : UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
     override init() {
         super.init()
-        SalesforceManager.initializeSDK()
+        SmartSyncSDKManager.initializeSDK()
         
         AuthHelper.registerBlock(forCurrentUserChangeNotifications: {
             self.resetViewState {
@@ -79,7 +79,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
         //
         //
         // SFPushNotificationManager.sharedInstance().didRegisterForRemoteNotifications(withDeviceToken: deviceToken)
-        // if (UserAccountManager.sharedInstance().currentUser?.credentials.accessToken != nil)
+        // if (UserAccountManager.shared.currentUserAccount?.credentials.accessToken != nil)
         // {
         //     SFPushNotificationManager.sharedInstance().registerSalesforceNotifications(completionBlock: nil, fail: nil)
         // }
@@ -90,9 +90,10 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
         // Respond to any push notification registration errors here.
     }
     
-    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey 
+ : Any] = [:]) -> Bool {
         // Uncomment following block to enable IDP Login flow
-        // return  UserAccountManager.shared.handleIDPAuthenticationResponse(url, options: options)
+        // return  UserAccountManager.shared.handleIdentityProviderResponse(from: url, with: options)
         return false;
     }
     
@@ -105,14 +106,14 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
             return
         }
         
-        self.window!.rootViewController = InitialViewController(nibName: nil, bundle: nil)
-        self.window!.makeKeyAndVisible()
+        self.window?.rootViewController = InitialViewController(nibName: nil, bundle: nil)
+        self.window?.makeKeyAndVisible()
     }
     
     func setupRootViewController() {
         let rootVC = RootViewController(nibName: nil, bundle: nil)
         let navVC = UINavigationController(rootViewController: rootVC)
-        self.window!.rootViewController = navVC
+        self.window?.rootViewController = navVC
     }
     
     func resetViewState(_ postResetBlock: @escaping () -> ()) {
