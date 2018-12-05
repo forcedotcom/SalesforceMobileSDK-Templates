@@ -62,11 +62,10 @@
         [SmartSyncSDKManager initializeSDK];
         
         //App Setup for any changes to the current authenticated user
-        __weak typeof (self) weakSelf = self;
+       
         [SFSDKAuthHelper registerBlockForCurrentUserChangeNotifications:^{
-            __strong typeof (weakSelf) strongSelf = weakSelf;
-            [strongSelf resetViewState:^{
-                [strongSelf setupRootViewController];
+            [self resetViewState:^{
+                [self setupRootViewController];
             }];
         }];
     }
@@ -89,9 +88,8 @@
     //loginViewConfig.navBarTextColor = [UIColor whiteColor];
     //loginViewConfig.navBarFont = [UIFont fontWithName:@"Helvetica" size:16.0];
     //[SFUserAccountManager sharedInstance].loginViewControllerConfig = loginViewConfig;
-    __weak typeof (self) weakSelf = self;
     [SFSDKAuthHelper loginIfRequired:^{
-        [weakSelf setupRootViewController];
+        [self setupRootViewController];
     }];
     return YES;
 }
