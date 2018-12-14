@@ -28,6 +28,7 @@ import React from 'react';
 import {
     Alert,
     Platform,
+    SafeAreaView,
     StyleSheet,
     Text,
     View
@@ -96,6 +97,7 @@ var onSync = () => {
 var onSave = () => {
     const contact = contactScreenInstance.state.contact;
     const navigator = contactScreenInstance.props.navigator;
+    contact.__last_error__ = null;
     contact.__locally_updated__ = contact.__local__ = true;
     storeMgr.saveContact(contact, () => navigator.pop());
 }
@@ -142,18 +144,23 @@ class App extends React.Component {
 
     render() {
         const initialRoute = {name: 'Contacts'};
-        return (
-                <NavigationExperimental.Navigator
-                  style={styles.container}
-                  initialRoute={initialRoute}
-                  configureScene={() => NavigationExperimental.Navigator.SceneConfigs.PushFromRight}
-                  renderScene={(route, navigator) => this.renderScene(route, navigator)}
-                  navigationBar={<NavigationExperimental.Navigator.NavigationBar routeMapper={NavigationBarRouteMapper} style={styles.navBar} />} />
+        return (<SafeAreaView style={styles.safeArea}>
+                  <NavigationExperimental.Navigator
+                    style={styles.container}
+                    initialRoute={initialRoute}
+                    configureScene={() => NavigationExperimental.Navigator.SceneConfigs.PushFromRight}
+                    renderScene={(route, navigator) => this.renderScene(route, navigator)}
+                    navigationBar={<NavigationExperimental.Navigator.NavigationBar routeMapper={NavigationBarRouteMapper} style={styles.navBar} />} />
+                </SafeAreaView>
         );
     }
 }
 
 var styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: 'red'
+    },
     container: {
         backgroundColor: 'white',
     },
@@ -177,7 +184,7 @@ var styles = StyleSheet.create({
         paddingTop: Platform.OS === 'ios' ? 56 : 38,
         backgroundColor: 'white',
         flex: 1,
-    },
+    }
 });
 
 export default App;

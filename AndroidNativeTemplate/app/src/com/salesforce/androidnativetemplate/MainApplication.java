@@ -28,8 +28,6 @@ package com.salesforce.androidnativetemplate;
 
 import android.app.Application;
 
-import com.salesforce.androidsdk.analytics.security.Encryptor;
-import com.salesforce.androidsdk.app.SalesforceSDKManager.KeyInterface;
 import com.salesforce.androidsdk.smartsync.app.SmartSyncSDKManager;
 
 /**
@@ -40,7 +38,7 @@ public class MainApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		SmartSyncSDKManager.initNative(getApplicationContext(), new NativeKeyImpl(), MainActivity.class);
+		SmartSyncSDKManager.initNative(getApplicationContext(), MainActivity.class);
 
         /*
          * Uncomment the following line to enable IDP login flow. This will allow the user to
@@ -56,13 +54,5 @@ public class MainApplication extends Application {
 		 * for the key 'androidPushNotificationClientId'.
 		 */
 		// SmartSyncSDKManager.getInstance().setPushNotificationReceiver(pnInterface);
-	}
-}
-
-class NativeKeyImpl implements KeyInterface {
-
-	@Override
-	public String getKey(String name) {
-		return Encryptor.hash(name + "12s9adpahk;n12-97sdainkasd=012", name + "12kl0dsakj4-cxh1qewkjasdol8");
 	}
 }

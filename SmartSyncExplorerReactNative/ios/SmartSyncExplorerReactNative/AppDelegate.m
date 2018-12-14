@@ -26,7 +26,6 @@
 #import "InitialViewController.h"
 #import <React/RCTRootView.h>
 #import <React/RCTBundleURLProvider.h>
-#import <SalesforceAnalytics/SFSDKLogger.h>
 #import <SalesforceSDKCore/SFSDKAppConfig.h>
 #import <SalesforceSDKCore/SFPushNotificationManager.h>
 #import <SalesforceSDKCore/SFDefaultUserManagementViewController.h>
@@ -34,11 +33,8 @@
 #import <SalesforceSDKCore/SFUserAccountManager.h>
 #import <SalesforceReact/SalesforceReactSDKManager.h>
 #import <SalesforceSDKCore/SFLoginViewController.h>
-
-// Fill these in when creating a new Connected Application on Force.com
-static NSString * const RemoteAccessConsumerKey = @"3MVG9Iu66FKeHhINkB1l7xt7kR8czFcCTUhgoA8Ol2Ltf1eYHOU4SqQRSEitYFDUpqRWcoQ2.dBv_a1Dyu5xa";
-static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect/oauth/done";
-
+#import <SalesforceReact/SFSDKReactLogger.h>
+#import <SalesforceSDKCore/SFSDKAuthHelper.h>
 @implementation AppDelegate
 
 - (id)init
@@ -47,49 +43,18 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
     if (self) {
 
         // Need to use SalesforceReactSDKManager in Salesforce Mobile SDK apps using React Native
-        [SalesforceSDKManager setInstanceClass:[SalesforceReactSDKManager class]];
-
-        [SalesforceSDKManager sharedManager].appConfig.remoteAccessConsumerKey = RemoteAccessConsumerKey;
-        [SalesforceSDKManager sharedManager].appConfig.oauthRedirectURI = OAuthRedirectURI;
-        [SalesforceSDKManager sharedManager].appConfig.oauthScopes = [NSSet setWithArray:@[ @"web", @"api" ]];
-        // Uncomment the following line if you don't want login to happen when the application launches
-        // [SalesforceSDKManager sharedManager].appConfig.shouldAuthenticate = NO;
-
-        //Uncomment the following line inorder to enable/force the use of advanced authentication flow.
-        //[SFUserAccountManager sharedInstance].advancedAuthConfiguration = SFOAuthAdvancedAuthConfigurationRequire;
-        // OR
-        // To  retrieve advanced auth configuration from the org, to determine whether to initiate advanced authentication.
-        //[SFUserAccountManager sharedInstance].advancedAuthConfiguration = SFOAuthAdvancedAuthConfigurationAllow;
-
-        // NOTE: If advanced authentication is configured or forced,  it will launch Safari to handle authentication
-        // instead of a webview. You must implement application:openURL:options: to handle the callback.
-
-        __weak AppDelegate *weakSelf = self;
-        [SalesforceSDKManager sharedManager].postLaunchAction = ^(SFSDKLaunchAction launchActionList) {
-            //
-            // If you wish to register for push notifications, uncomment the line below.  Note that,
-            // if you want to receive push notifications from Salesforce, you will also need to
-            // implement the application:didRegisterForRemoteNotificationsWithDeviceToken: method (below).
-            //
-            //[[SFPushNotificationManager sharedInstance] registerForRemoteNotifications];
-            //
-
-            [SFSDKLogger log:[weakSelf class] level:DDLogLevelInfo format:@"Post-launch: launch actions taken: %@", [SalesforceSDKManager launchActionsStringRepresentation:launchActionList]];
-            [weakSelf setupRootViewController];
-        };
-        [SalesforceSDKManager sharedManager].launchErrorAction = ^(NSError *error, SFSDKLaunchAction launchActionList) {
-            [SFSDKLogger log:[weakSelf class] level:DDLogLevelError format:@"Error during SDK launch: %@", [error localizedDescription]];
-            [weakSelf initializeAppViewState];
-            [[SalesforceSDKManager sharedManager] launch];
-        };
-        [SalesforceSDKManager sharedManager].postLogoutAction = ^{
-            [weakSelf handleSdkManagerLogout];
-        };
-        [SalesforceSDKManager sharedManager].switchUserAction = ^(SFUserAccount *fromUser, SFUserAccount *toUser) {
-            [weakSelf handleUserSwitch:fromUser toUser:toUser];
-        };
+        [SalesforceReactSDKManager initializeSDK];
+        //App Setup for any changes to the current authenticated user
+        __weak typeof (self) weakSelf = self;
+        [SFSDKAuthHelper registerBlockForCurrentUserChangeNotifications:^{
+          __strong typeof (weakSelf) strongSelf = weakSelf;
+          [strongSelf resetViewState:^{
+            [strongSelf setupRootViewController];
+          }];
+        }];
+      
     }
-    
+      
     return self;
 }
 
@@ -110,7 +75,10 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
     //loginViewConfig.navBarFont = [UIFont fontWithName:@"Helvetica" size:16.0];
     //[SFUserAccountManager sharedInstance].loginViewControllerConfig = loginViewConfig;
 
-    [[SalesforceSDKManager sharedManager] launch];
+    __weak typeof (self) weakSelf = self;
+    [SFSDKAuthHelper loginIfRequired:^{
+      [weakSelf setupRootViewController];
+    }];
     return YES;
 }
 
@@ -119,10 +87,10 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
     //
     // Uncomment the code below to register your device token with the push notification manager
     //
-    //[[SFPushNotificationManager sharedInstance] didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
-    //if ([SFUserAccountManager sharedInstance].currentUser.credentials.accessToken != nil) {
-    //    [[SFPushNotificationManager sharedInstance] registerForSalesforceNotifications];
-    //}
+    // [[SFPushNotificationManager sharedInstance] didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+    // if ([SFUserAccountManager sharedInstance].currentUser.credentials.accessToken != nil) {
+    //     [[SFPushNotificationManager sharedInstance] registerSalesforceNotificationsWithCompletionBlock:nil failBlock:nil];
+    // }
     //
 }
 
@@ -184,46 +152,4 @@ static NSString * const OAuthRedirectURI        = @"testsfdc:///mobilesdk/detect
         postResetBlock();
     }
 }
-
-- (void)handleSdkManagerLogout
-{
-    [SFSDKLogger log:[self class] level:DDLogLevelDebug format:@"SFUserAccountManager logged out.  Resetting app."];
-    [self resetViewState:^{
-        [self initializeAppViewState];
-
-        // Multi-user pattern:
-        // - If there are two or more existing accounts after logout, let the user choose the account
-        //   to switch to.
-        // - If there is one existing account, automatically switch to that account.
-        // - If there are no further authenticated accounts, present the login screen.
-        //
-        // Alternatively, you could just go straight to re-initializing your app state, if you know
-        // your app does not support multiple accounts.  The logic below will work either way.
-        NSArray *allAccounts = [SFUserAccountManager sharedInstance].allUserAccounts;
-        if ([allAccounts count] > 1) {
-            SFDefaultUserManagementViewController *userSwitchVc = [[SFDefaultUserManagementViewController alloc] initWithCompletionBlock:^(SFUserManagementAction action) {
-                [self.window.rootViewController dismissViewControllerAnimated:YES completion:NULL];
-            }];
-            [self.window.rootViewController presentViewController:userSwitchVc animated:YES completion:NULL];
-        } else {
-            if ([allAccounts count] == 1) {
-                [SFUserAccountManager sharedInstance].currentUser = ([SFUserAccountManager sharedInstance].allUserAccounts)[0];
-            }
-            
-            [[SalesforceSDKManager sharedManager] launch];
-        }
-    }];
-}
-
-- (void)handleUserSwitch:(SFUserAccount *)fromUser
-                  toUser:(SFUserAccount *)toUser
-{
-    [SFSDKLogger log:[self class] level:DDLogLevelDebug format:@"SFUserAccountManager changed from user %@ to %@.  Resetting app.",
-     fromUser.userName, toUser.userName];
-    [self resetViewState:^{
-        [self initializeAppViewState];
-        [[SalesforceSDKManager sharedManager] launch];
-    }];
-}
-
 @end

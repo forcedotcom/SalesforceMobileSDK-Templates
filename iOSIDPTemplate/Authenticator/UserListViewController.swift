@@ -29,7 +29,7 @@ class UserListViewController: UITableViewController,UserTableViewCellDelegate, S
     
     struct LoginHostAccount {
         var hostName: String
-        var userAccount: SFUserAccount
+        var userAccount: UserAccount
     }
     
     let cellIdentifier = "mycell"
@@ -49,9 +49,9 @@ class UserListViewController: UITableViewController,UserTableViewCellDelegate, S
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidLogin(notification:)), name:NSNotification.Name(rawValue: kSFNotificationUserDidLogIn) , object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidLogin(notification:)), name:UserAccountManager.didLogInUser, object: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidLogout(notification:)), name:NSNotification.Name(rawValue: kSFNotificationUserDidLogout) , object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidLogout(notification:)), name: UserAccountManager.didLogoutUser, object: nil)
         
         self.tableView.rowHeight = 80
         let bundle = Bundle(for: type(of: self))
@@ -66,7 +66,7 @@ class UserListViewController: UITableViewController,UserTableViewCellDelegate, S
     }
     
     func reloadData(){
-        let userAccountLists = SFUserAccountManager.sharedInstance().allUserAccounts()!
+        let userAccountLists = UserAccountManager.shared.userAccounts() ?? []
         var userAccounts: [LoginHostAccount] = []
         groups?.removeAll()
         groupIds.removeAll()
@@ -96,7 +96,7 @@ class UserListViewController: UITableViewController,UserTableViewCellDelegate, S
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let result = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! UserTableViewCell
         let userAccounts = self.groups![groupIds[indexPath.section]]
-        if( SFUserAccountManager.sharedInstance().currentUser?
+        if( UserAccountManager.shared.currentUserAccount?
             .accountIdentity.isEqual(userAccounts![indexPath.row].userAccount.accountIdentity))! {
             result.currentUserImage.isHidden = false;
         } else {
@@ -112,8 +112,8 @@ class UserListViewController: UITableViewController,UserTableViewCellDelegate, S
         return result
     }
     
-    func logoutUser(user: SFUserAccount) {
-        SFUserAccountManager.sharedInstance().logoutUser(user)
+    func logoutUser(user: UserAccount) {
+        UserAccountManager.shared.logout(user)
     }
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
@@ -127,7 +127,7 @@ class UserListViewController: UITableViewController,UserTableViewCellDelegate, S
             action?.image = UIImage(named: "Logout")
         } else {
             action = SwipeAction(style: .default, title: "Make Current") { action, indexPath in
-                SFUserAccountManager.sharedInstance().switch(toUser: userAccounts?[indexPath.row].userAccount);
+                UserAccountManager.shared.switchToUserAccount(userAccounts?[indexPath.row].userAccount)
                 self.reloadData()
             }
             action?.backgroundColor = UIColor(red: 94/255, green: 232/255, blue: 9/255, alpha: 1.0)

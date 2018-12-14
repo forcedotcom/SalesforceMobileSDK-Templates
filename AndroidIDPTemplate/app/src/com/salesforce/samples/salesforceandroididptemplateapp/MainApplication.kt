@@ -27,9 +27,6 @@
 package com.salesforce.samples.salesforceandroididptemplateapp
 
 import android.app.Application
-
-import com.salesforce.androidsdk.analytics.security.Encryptor
-import com.salesforce.androidsdk.app.SalesforceSDKManager.KeyInterface
 import com.salesforce.androidsdk.smartsync.app.SmartSyncSDKManager
 
 /**
@@ -43,7 +40,7 @@ class MainApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        SmartSyncSDKManager.initNative(applicationContext, NativeKeyImpl(), MainActivity::class.java)
+        SmartSyncSDKManager.initNative(applicationContext, MainActivity::class.java)
         SmartSyncSDKManager.getInstance().registerUsedAppFeature(FEATURE_APP_USES_KOTLIN)
 
         /*
@@ -60,12 +57,5 @@ class MainApplication : Application() {
 		 * for the key 'androidPushNotificationClientId'.
 		 */
         // SmartSyncSDKManager.getInstance().pushNotificationReceiver = pnInterface
-    }
-}
-
-internal class NativeKeyImpl : KeyInterface {
-
-    override fun getKey(name: String): String {
-        return Encryptor.hash(name + "12s9adpahk;n12-97sdainkasd=012", name + "12kl0dsakj4-cxh1qewkjasdol8")
     }
 }

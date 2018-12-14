@@ -28,8 +28,7 @@ class PermissionsNavViewController: UINavigationController,SFSDKUserSelectionVie
 
     var permissionsController: PermissionsViewController
 
-    var userSelectionDelegate : SFSDKUserSelectionViewDelegate?
-    {
+    var userSelectionDelegate : SFSDKUserSelectionViewDelegate? {
         set {
             permissionsController.userSelectionDelegate = newValue
         }
@@ -37,8 +36,7 @@ class PermissionsNavViewController: UINavigationController,SFSDKUserSelectionVie
             return permissionsController.userSelectionDelegate
         }
     }
-     var spAppOptions: [AnyHashable : Any]!
-     {
+     var spAppOptions: [AnyHashable : Any]! {
         set {
             permissionsController.spAppOptions = newValue
         }

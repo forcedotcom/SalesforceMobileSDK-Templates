@@ -27,7 +27,7 @@ import SalesforceSDKCore
 
 class MainViewController: UINavigationController {
     
-    var popOverController:WYPopoverController?
+    var popOverController: WYPopoverController?
     @IBOutlet weak var showPopoverButton: UIBarButtonItem!
 
     @IBAction func popOverAction(_ sender: UIBarButtonItem) {
@@ -62,12 +62,12 @@ extension MainViewController : ActionsPopoverTableViewDelegate {
 
         let alert = UIAlertController(title: "Logout", message: "Are you sure you want to log out?", preferredStyle: .alert)
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) { (result : UIAlertAction) -> Void in
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { (result : UIAlertAction) -> Void in
             print("Cancel")
         }
 
-        let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-           SFUserAccountManager.sharedInstance().logoutAllUsers()
+        let okAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) { (result : UIAlertAction) -> Void in
+            UserAccountManager.shared.logoutAllUsers()
         }
 
         alert.addAction(cancelAction)
@@ -79,8 +79,8 @@ extension MainViewController : ActionsPopoverTableViewDelegate {
         
         let alert = UIAlertController(title: "Error", message: "Error adding a User", preferredStyle: .alert)
         
-        let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-            SFUserAccountManager.sharedInstance().logoutAllUsers()
+        let okAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) { (result : UIAlertAction) -> Void in
+            UserAccountManager.shared.logoutAllUsers()
         }
         
         alert.addAction(okAction)
@@ -88,7 +88,7 @@ extension MainViewController : ActionsPopoverTableViewDelegate {
     }
 
     func showSwitchUserSheet() {
-        SFUserAccountManager.sharedInstance().login(completion: { (authInfo, account) in
+        UserAccountManager.shared.login(onSuccess: { (authInfo, account) in
             
         }) { (authInfo, error) in
             

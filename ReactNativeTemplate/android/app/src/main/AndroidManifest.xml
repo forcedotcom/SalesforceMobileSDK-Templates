@@ -9,7 +9,8 @@
 	<application android:icon="@drawable/sf__icon"
 	    android:label="@string/app_name"
 		android:name=".MainApplication"
-		android:manageSpaceActivity="com.salesforce.androidsdk.ui.ManageSpaceActivity">
+		android:manageSpaceActivity="com.salesforce.androidsdk.ui.ManageSpaceActivity"
+		android:usesCleartextTraffic="true">
 
 		<!-- Launcher screen -->
 		<activity android:name=".MainActivity"
@@ -85,9 +86,6 @@
 
         <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
 	</application>
-
-    <uses-sdk android:minSdkVersion="21"
-        android:targetSdkVersion="27" />
 
     <!--
         GCM permission to ensure that only this application can
