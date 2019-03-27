@@ -79,7 +79,7 @@ class RootViewController : UITableViewController {
         cell.textLabel?.text = obj["Name"] as? String
         
         // This adds the arrow to the right hand side.
-        cell.accessoryType = UITableViewCellAccessoryType.disclosureIndicator
+        cell.accessoryType = UITableViewCell.AccessoryType.disclosureIndicator
         return cell
     }
 }

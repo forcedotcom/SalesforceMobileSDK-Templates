@@ -67,7 +67,7 @@ class ContactTableViewCell: UITableViewCell {
     fileprivate var rightCreatedImageView = UIImageView()
     fileprivate var rightArrowImageView = UIImageView()
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         self.leftImageView.translatesAutoresizingMaskIntoConstraints = false
