@@ -90,8 +90,14 @@ class PermissionsViewController: UIViewController,UITableViewDelegate,UITableVie
         let result = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)  as! UserTableViewCell
         result.currentUserImage.isHidden = true;
         result.user = userList[indexPath.row]
-        result.userFullName.text = userList[indexPath.row].fullName
-        result.email.text = userList[indexPath.row].userName
+        if let fName = userList[indexPath.row].idData?.firstName,
+           let lName = userList[indexPath.row].idData?.lastName {
+            result.userFullName.text = fName + " "  + lName
+        } else {
+             result.userFullName.text = userList[indexPath.row].idData?.username ?? "Not Available"
+        }
+        
+        result.email.text = userList[indexPath.row].idData?.email
         let image = UIImage(named: (userList[indexPath.row].idData?.firstName?.lowercased())!)
         if let img = image  {
            result.userPicture.image = img
