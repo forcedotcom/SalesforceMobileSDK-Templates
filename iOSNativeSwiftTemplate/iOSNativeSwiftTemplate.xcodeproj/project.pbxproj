@@ -372,6 +372,7 @@
 				INFOPLIST_FILE = iOSNativeSwiftTemplate/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "-DSIGNPOST_ENABLED";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.iosnativeswifttemplate.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "iOSNativeSwiftTemplate/Bridging-Header.h";

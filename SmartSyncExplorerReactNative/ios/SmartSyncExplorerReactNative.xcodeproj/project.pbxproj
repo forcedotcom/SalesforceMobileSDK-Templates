@@ -289,6 +289,13 @@
 				CODE_SIGN_ENTITLEMENTS = SmartSyncExplorerReactNative/SmartSyncExplorerReactNative.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+					"$(inherited)",
+					"SQLITE_HAS_CODEC=1",
+					"SIGNPOST_ENABLED=1",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
