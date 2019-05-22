@@ -55,9 +55,11 @@ class AppsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.messageLabel.text = "Launch app as user\n" + (UserAccountManager.shared.currentUserAccount?.fullName)!;
-        self.messageLabel.textAlignment = .center;
-        self.messageLabel.font = messageLabel.font.withSize(16);
+        if let identity  =  UserAccountManager.shared.currentUserAccount?.idData {
+            self.messageLabel.text = "Launch app as user  \(identity.firstName ?? "")  \(identity.lastName)"
+        }
+        self.messageLabel.textAlignment = .center
+        self.messageLabel.font = messageLabel.font.withSize(16)
     }
 
     override func didReceiveMemoryWarning() {

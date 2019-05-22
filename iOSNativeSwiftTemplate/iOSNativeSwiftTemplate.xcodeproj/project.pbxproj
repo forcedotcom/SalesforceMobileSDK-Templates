@@ -125,7 +125,6 @@
 				4FD6C4701B754AF1002F9F90 /* Sources */,
 				4FD6C4711B754AF1002F9F90 /* Frameworks */,
 				4FD6C4721B754AF1002F9F90 /* Resources */,
-				68C67C5E03B67EF3A0901D3D /* [CP] Copy Pods Resources */,
 				7056FC8D1D194E5113988767 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
@@ -149,7 +148,7 @@
 				TargetAttributes = {
 					4FD6C4731B754AF1002F9F90 = {
 						CreatedOnToolsVersion = 6.4;
-						LastSwiftMigration = 0900;
+						LastSwiftMigration = 1020;
 						SystemCapabilities = {
 							com.apple.Keychain = {
 								enabled = 1;
@@ -163,6 +162,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -190,28 +190,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		68C67C5E03B67EF3A0901D3D /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOSNativeSwiftTemplate/Pods-iOSNativeSwiftTemplate-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		7056FC8D1D194E5113988767 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-iOSNativeSwiftTemplate/Pods-iOSNativeSwiftTemplate-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-iOSNativeSwiftTemplate/Pods-iOSNativeSwiftTemplate-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/FMDB/FMDB.framework",
 				"${BUILT_PRODUCTS_DIR}/SQLCipher/SQLCipher.framework",
 				"${BUILT_PRODUCTS_DIR}/SalesforceAnalytics/SalesforceAnalytics.framework",
@@ -232,7 +217,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iOSNativeSwiftTemplate/Pods-iOSNativeSwiftTemplate-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-iOSNativeSwiftTemplate/Pods-iOSNativeSwiftTemplate-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FF74F0F7AF3E58C14EBE5178 /* [CP] Check Pods Manifest.lock */ = {
@@ -382,16 +367,15 @@
 			baseConfigurationReference = 762732C14CFE40A989C3AD70 /* Pods-iOSNativeSwiftTemplate.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = iOSNativeSwiftTemplate/iOSNativeSwiftTemplate.entitlements;
 				INFOPLIST_FILE = iOSNativeSwiftTemplate/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "-DSIGNPOST_ENABLED";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.iosnativeswifttemplate.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "iOSNativeSwiftTemplate/Bridging-Header.h";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -400,7 +384,6 @@
 			baseConfigurationReference = 045D1C5BC2F1EADFDFB3671E /* Pods-iOSNativeSwiftTemplate.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = iOSNativeSwiftTemplate/iOSNativeSwiftTemplate.entitlements;
 				INFOPLIST_FILE = iOSNativeSwiftTemplate/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -408,8 +391,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.iosnativeswifttemplate.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "iOSNativeSwiftTemplate/Bridging-Header.h";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};

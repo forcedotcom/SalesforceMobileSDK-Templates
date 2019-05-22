@@ -345,7 +345,7 @@ class ContactDetailViewController: UniversalViewController {
     }
     
     fileprivate func updateViewsForEditingState() {
-        var style:UITextBorderStyle = .none
+        var style:UITextField.BorderStyle = .none
         var backgroundColor = UIColor.clear
         if self.isEditingContact {
             style = .roundedRect
