@@ -14,34 +14,34 @@
     force.login(
         function() {
             console.log("Auth succeeded"); 
-            showUsersList();
+            showContactsList();
         },
         function(error) {
             console.log("Auth failed: " + error); 
         }
     );
 
-    /* This method will render a list of users from current salesforce org */
-    var showUsersList = function() {
+    /* This method will render a list of contacts from current salesforce org */
+    var showContactsList = function() {
 
         fetchRecords(function(data) {
-            var users = data.records;
+            var contacts = data.records;
 
             var listItemsHtml = '';
-            for (var i=0; i < users.length; i++) {
-                listItemsHtml += ('<li class="table-view-cell"><div class="media-body">' + users[i].Name + '</div></li>');
+            for (var i=0; i < contacts.length; i++) {
+                listItemsHtml += ('<li class="table-view-cell"><div class="media-body">' + contacts[i].Name + '</div></li>');
             }
 
-            document.querySelector('#users').innerHTML = listItemsHtml;
+            document.querySelector('#contacts').innerHTML = listItemsHtml;
         })
     }
 
-    /* This method will fetch a list of user records from salesforce. 
+    /* This method will fetch a list of contact records from salesforce.
     Just change the soql query to fetch another sobject. */
     var fetchRecords = function (successHandler) {
-        var soql = 'SELECT Id, Name FROM User LIMIT 10';
+        var soql = 'SELECT Id, Name FROM Contact LIMIT 10';
         force.query(soql, successHandler, function(error) {
-            alert('Failed to fetch users: ' + error);
+            alert('Failed to fetch contacts: ' + error);
         });
     };
     </script>
@@ -50,10 +50,10 @@
 <body>
 
     <header class="bar bar-nav">
-        <h1 class="title">Users</h1>
+        <h1 class="title">Contacts</h1>
     </header>
-    <ul id="users" class="table-view content">
-        <!-- Placeholder to add users list -->
+    <ul id="contacts" class="table-view content">
+        <!-- Placeholder to add contacts list -->
     </ul>
 
 </body>
