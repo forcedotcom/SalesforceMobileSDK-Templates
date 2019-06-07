@@ -47,10 +47,8 @@ parse_opts "$@"
 SDK_TAG=""
 if [ "$OPT_IS_DEV" == "yes" ]
 then
-    echo "here 1"
     SDK_TAG="dev"
 else
-    echo "here 2"
     SDK_TAG="v${OPT_VERSION}"
 fi
 
