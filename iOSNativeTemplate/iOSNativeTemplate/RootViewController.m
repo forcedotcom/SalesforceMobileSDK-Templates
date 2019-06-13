@@ -56,7 +56,7 @@
     self.title = @"Mobile SDK Sample App";
     
     //Here we use a query that should work on either Force.com or Database.com
-    SFRestRequest *request = [[SFRestAPI sharedInstance] requestForQuery:@"SELECT Name FROM User LIMIT 10"];
+    SFRestRequest *request = [[SFRestAPI sharedInstance] requestForQuery:@"SELECT Name FROM Contact LIMIT 10"];
     [[SFRestAPI sharedInstance] send:request delegate:self];
 }
 

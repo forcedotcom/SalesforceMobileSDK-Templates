@@ -35,7 +35,7 @@ import {
 import {StackNavigator} from 'react-navigation';
 import {oauth, net} from 'react-native-force';
 
-class UserListScreen extends React.Component {
+class ContactListScreen extends React.Component {
     static navigationOptions = {
         title: 'Mobile SDK Sample App'
     };
@@ -59,7 +59,7 @@ class UserListScreen extends React.Component {
 
     fetchData() {
         var that = this;
-        net.query('SELECT Id, Name FROM User LIMIT 10',
+        net.query('SELECT Id, Name FROM Contact LIMIT 10',
                   (response) => that.setState({data: response.records})
                  );
     }
@@ -91,6 +91,6 @@ const styles = StyleSheet.create({
 });
 
 export const App = StackNavigator({
-    UserList: { screen: UserListScreen }
+    ContactList: { screen: ContactListScreen }
 });
 
