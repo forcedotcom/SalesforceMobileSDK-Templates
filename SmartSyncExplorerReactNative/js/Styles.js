@@ -24,22 +24,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {
-    Platform,
-    StyleSheet
-} from 'react-native';
+import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
-    safeArea: {
-        flex: 1,
-        backgroundColor: 'red'
-    },
-    container: {
-        backgroundColor: 'white',
-    },
     navBar: {
         backgroundColor: 'red',
-        height: Platform.OS === 'ios' ? 56 : 38,
     },
     navBarButton: {
         paddingLeft: 6,
@@ -51,14 +40,8 @@ export default StyleSheet.create({
         paddingLeft: 6,
     },
     navBarTitleText: {
-        paddingTop: Platform.OS === 'ios' ? 0 : 18,
         fontSize: 26,
         color: 'white',
         fontWeight: 'bold',
-    },
-    scene: {
-        paddingTop: Platform.OS === 'ios' ? 56 : 38,
-        backgroundColor: 'white',
-        flex: 1,
     }
 });
