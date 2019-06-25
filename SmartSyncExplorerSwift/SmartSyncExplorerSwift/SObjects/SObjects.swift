@@ -342,11 +342,11 @@ class SObjectDataManager {
                     self?.populateDataRows(objects)
                     completion(self?.fullDataRowList ?? [])
                 } catch {
-                   SmartSyncLogger.e(SObjectDataManager.self, message: "Resync \(syncState.syncName) failed \(error)" )
+                   SmartSyncLogger.e(SObjectDataManager.self, message: "Resync \(syncState.name) failed \(error)" )
                 }
                 break
             case .failed:
-                 SmartSyncLogger.e(SObjectDataManager.self, message: "Resync \(syncState.syncName) failed" )
+                 SmartSyncLogger.e(SObjectDataManager.self, message: "Resync \(syncState.name) failed" )
                  onFailure(nil,syncState)
             default:
                 break
@@ -379,7 +379,7 @@ class SObjectDataManager {
                     }
                     break
                 case .failed:
-                    SmartSyncLogger.e(SObjectDataManager.self, message: "Resync \(syncState.syncName) failed" )
+                    SmartSyncLogger.e(SObjectDataManager.self, message: "Resync \(syncState.name) failed" )
                     onFailure(nil,syncState)
                     break
                 default:
