@@ -34,33 +34,77 @@ import {
     Text
 } from 'react-native';
 
+import styles from './Styles';
+import NavImgButton from './NavImgButton';
 import Field from './Field';
 import storeMgr from './StoreMgr';
 import { Card, Button } from 'react-native-elements';
 
 // State: contact
 // Props: contact
-var createReactClass = require('create-react-class');
-const ContactScreen = createReactClass({
-    getInitialState() {
+class ContactScreen extends React.Component {
+    static navigationOptions = ({ navigation }) => {
+        const { params = {} } = navigation.state;
         return {
-            contact: this.props.contact
+            title: 'Contact',
+            headerLeft: (<NavImgButton icon='arrow-back' color='white' onPress={() => params.onBack()} />),
+            headerRight: (
+                    <View style={styles.navButtonsGroup}>
+                    <NavImgButton icon='save' onPress={() => params.onSave()} />
+                    </View>
+            )
         };
-    },
+    }
 
+    constructor(props) {
+        super(props);
+        this.state = { contact: this.props.navigation.getParam('contact', {}) };
+        this.onBack = this.onBack.bind(this);
+        this.onSave = this.onSave.bind(this);
+        this.onChange = this.onChange.bind(this);
+        this.onDeleteUndeleteContact = this.onDeleteUndeleteContact.bind(this);
+    }
+
+    componentDidMount() {
+        this.props.navigation.setParams({
+            onBack: this.onBack,
+            onSave: this.onSave
+        });
+    }
+    
+    onBack() {
+        const contact = this.state.contact;
+        const navigation = this.props.navigation;
+        if (contact.__locally_created__ && !contact.__locally_modified__) {
+            // Nothing typed in - delete
+            storeMgr.deleteContact(contact, () => navigation.pop());
+        }
+        else {
+            navigation.pop()
+        }
+    }
+
+    onSave() {
+        const contact = this.state.contact;
+        const navigation = this.props.navigation;
+        contact.__last_error__ = null;
+        contact.__locally_updated__ = contact.__local__ = true;
+        storeMgr.saveContact(contact, () => navigation.pop());
+    }
+    
     onChange(fieldKey, fieldValue) {
         const contact = this.state.contact;
         contact[fieldKey] = fieldValue;
         this.setState({contact});
-    },
+    }
 
     onDeleteUndeleteContact() {
         const contact = this.state.contact;
-        const navigator = this.navigator;
+        const navigation = this.props.navigation;
         contact.__locally_deleted__ = !contact.__locally_deleted__;
         contact.__local__ = contact.__locally_deleted__ || contact.__locally_updated__ || contact.__locally_created__;
-        storeMgr.saveContact(contact, () => {this.props.navigator.pop()});
-    },
+        storeMgr.saveContact(contact, () => {navigation.pop()});
+    }
 
     renderErrorIfAny() {
         var errorMessage = null;
@@ -92,7 +136,7 @@ const ContactScreen = createReactClass({
                     </View>
             );
         }
-    },
+    }
 
     renderDeleteUndeleteButton() {
         var iconName = 'delete';
@@ -115,7 +159,7 @@ const ContactScreen = createReactClass({
                 />
                 </View>
         );
-    },
+    }
 
     render() {
         return (
@@ -134,6 +178,6 @@ const ContactScreen = createReactClass({
                 </ScrollView>
                );
     }
-});
+}
 
 export default ContactScreen;

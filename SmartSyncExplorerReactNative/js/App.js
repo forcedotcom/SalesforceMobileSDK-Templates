@@ -25,167 +25,26 @@
  */
 
 import React from 'react';
-import {
-    Alert,
-    Platform,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    View
-} from 'react-native';
-
-import {
-    Icon
-} from 'react-native-elements';
-
-import NavigationExperimental from 'react-native-deprecated-custom-components';
-import {oauth} from 'react-native-force';
-import storeMgr from './StoreMgr';
+import { createStackNavigator } from 'react-navigation';
+import styles from './Styles';
 import SearchScreen from './SearchScreen';
 import ContactScreen from './ContactScreen';
-let contactScreenInstance;
 
-class NavImgButton extends React.Component { 
-    render() {
-        return (<View style={styles.navBarButton}>
-                  <Icon size={32} name={this.props.icon} type={this.props.iconType} color="white" underlayColor="red" onPress={() => this.props.onPress()} />
-                </View>);
-    }
-}
-
-
-// Router
-const NavigationBarRouteMapper = {
-    LeftButton(route, navigator, index, navState) {
-        if (route.name === 'Contact') {
-            return (<NavImgButton icon='arrow-back' color='white' onPress={onBack} />);
+export default createStackNavigator(
+    {
+        Contacts: {
+            screen: SearchScreen
+        },
+        Contact: {
+            screen: ContactScreen
         }
     },
-
-    RightButton(route, navigator, index, navState) {
-        if (route.name === 'Contacts') {
-            return (<View style={styles.navButtonsGroup}>
-                      <NavImgButton icon='add' onPress={() => onAdd(navigator)} />
-                      <NavImgButton icon='cloud-sync' iconType='material-community' onPress={onSync} />
-                      <NavImgButton icon='logout' iconType='material-community' onPress={onLogout} />
-                    </View>);
-        }
-        else if (route.name === 'Contact') {
-            return (<View style={styles.navButtonsGroup}>
-                      <NavImgButton icon='save' onPress={onSave} />
-                    </View>);
-        }
-    },
-    
-    Title(route, navigator, index, navState) {
-        return (<Text style={styles.navBarTitleText}> {route.name} </Text>);
-  },
-
-};
-
-// Actions handlers
-var onAdd = navigator => {
-    storeMgr.addContact(
-        (contact) => navigator.push({name: 'Contact', contact})
-    );
-}
-
-var onSync = () => {
-    storeMgr.reSyncData();
-}
-
-var onSave = () => {
-    const contact = contactScreenInstance.state.contact;
-    const navigator = contactScreenInstance.props.navigator;
-    contact.__last_error__ = null;
-    contact.__locally_updated__ = contact.__local__ = true;
-    storeMgr.saveContact(contact, () => navigator.pop());
-}
-
-var onBack = () => {
-    const contact = contactScreenInstance.state.contact;
-    const navigator = contactScreenInstance.props.navigator;
-    if (contact.__locally_created__ && !contact.__locally_modified__) {
-        // Nothing typed in - delete
-        storeMgr.deleteContact(contact, () => navigator.pop());
-    }
-    else {
-        navigator.pop()
-    }
-}
-
-var onLogout = () => {
-    Alert.alert(
-        'Logout',
-        'Are you sure you want to logout',
-        [
-            {text: 'Cancel' },
-            {text: 'OK', onPress: () => oauth.logout()},
-        ],
-        { cancelable: true }
-    )
-}
-
-// App component
-class App extends React.Component {
-    componentDidMount() {
-        storeMgr.syncData();
-    }
-
-    renderScene(route, navigator) {
-        if (route.name === 'Contacts') {
-            return (<SearchScreen style={styles.scene} navigator={navigator} />);
-        }
-        else if (route.name === 'Contact') {
-            return (<ContactScreen style={styles.scene} navigator={navigator} contact={route.contact} ref={(screen) => contactScreenInstance = screen}
-                    />);
+    {
+        initialRouteName: 'Contacts',
+        navigationOptions: {
+            headerStyle: styles.navBar,
+            headerTitleStyle: styles.navBarTitleText,
+            tabBarVisible: false
         }
     }
-
-    render() {
-        const initialRoute = {name: 'Contacts'};
-        return (<SafeAreaView style={styles.safeArea}>
-                  <NavigationExperimental.Navigator
-                    style={styles.container}
-                    initialRoute={initialRoute}
-                    configureScene={() => NavigationExperimental.Navigator.SceneConfigs.PushFromRight}
-                    renderScene={(route, navigator) => this.renderScene(route, navigator)}
-                    navigationBar={<NavigationExperimental.Navigator.NavigationBar routeMapper={NavigationBarRouteMapper} style={styles.navBar} />} />
-                </SafeAreaView>
-        );
-    }
-}
-
-var styles = StyleSheet.create({
-    safeArea: {
-        flex: 1,
-        backgroundColor: 'red'
-    },
-    container: {
-        backgroundColor: 'white',
-    },
-    navBar: {
-        backgroundColor: 'red',
-        height: Platform.OS === 'ios' ? 56 : 38,
-    },
-    navBarButton: {
-        paddingLeft: 6,
-    },
-    navButtonsGroup: {
-        flexDirection: 'row',
-    },
-    navBarTitleText: {
-        paddingTop: Platform.OS === 'ios' ? 0 : 18,
-        fontSize: 26,
-        color: 'white',
-        fontWeight: 'bold',
-    },
-    scene: {
-        paddingTop: Platform.OS === 'ios' ? 56 : 38,
-        backgroundColor: 'white',
-        flex: 1,
-    }
-});
-
-export default App;
-
+);

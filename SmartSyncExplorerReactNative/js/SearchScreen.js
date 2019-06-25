@@ -26,40 +26,65 @@
 
 import React from 'react';
 import {
+    Alert,
     View,
-    ListView
+    FlatList
 } from 'react-native';
-import {
-    SearchBar
-} from 'react-native-elements';
+import { SearchBar } from 'react-native-elements';
 
-import Subscribable from 'Subscribable';
 import dismissKeyboard from 'dismissKeyboard';
+import styles from './Styles';
+import NavImgButton from './NavImgButton';
 import ContactScreen from './ContactScreen';
 import ContactCell from './ContactCell';
 import storeMgr from './StoreMgr';
 
-var createReactClass = require('create-react-class');
-const SearchScreen = createReactClass({
-    mixins: [Subscribable.Mixin],
-    
-    getInitialState() {
-      const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+class SearchScreen extends React.Component {
+    static navigationOptions = ({ navigation }) => {
+        const { params = {} } = navigation.state;
         return {
+            title: 'Contacts',
+            headerRight: (
+                    <View style={styles.navButtonsGroup}>
+                    <NavImgButton icon='add' onPress={() => params.onAdd()} />
+                    <NavImgButton icon='cloud-sync' iconType='material-community' onPress={() => params.onSync()} />
+                    <NavImgButton icon='logout' iconType='material-community' onPress={() => params.onLogout()} />
+                    </View>
+            )
+        };
+    }
+
+    constructor(props) {
+        super(props);
+        this.state = {
             isLoading: false,
             filter: '',
-            dataSource: ds.cloneWithRows([]),
+            data: [],
             queryNumber: 0
-      };
-    },
+        };
+        this.onSearchChange = this.onSearchChange.bind(this);
+        this.onAdd = this.onAdd.bind(this);
+        this.onSync = this.onSync.bind(this);
+        this.onLogout = this.onLogout.bind(this);
+        this.selectContact = this.selectContact.bind(this);
+        this.extractKey = this.extractKey.bind(this);
+        this.renderRow = this.renderRow.bind(this);
+        this.refresh = this.refresh.bind(this);
+    }
 
     componentDidMount() {
-        storeMgr.addStoreChangeListener(() => { this.refresh(); });
-    },
+        this.props.navigation.setParams({
+            onAdd: this.onAdd,
+            onSync: this.onSync,
+            onLogout: this.onLogout
+        });
+        storeMgr.syncData();
+        storeMgr.addStoreChangeListener(this.refresh);
+    }
     
     refresh() {
         this.searchContacts(this.state.filter);
-    },
+    }
 
     render() {
         return (
@@ -72,37 +97,61 @@ const SearchScreen = createReactClass({
                     value={this.state.filter}    
                     placeholder='Search a contact...'
                   />
-                  <ListView
-                    automaticallyAdjustContentInsets={false}
-                    dataSource={this.state.dataSource}
-                    enableEmptySections={true}
-                    renderRow={this.renderRow} />
+                  <FlatList
+                    data={this.state.data}
+                    keyExtractor={this.extractKey}
+                    renderItem={this.renderRow} />
                 </View>
       );
-    },
+    }
+
+    extractKey(item: Object) {
+        return `list-${item._soupEntryId}`
+    }
 
     renderRow(row: Object)  {
+        const contact = row.item
         return (
                 <ContactCell
-                  onSelect={() => this.selectContact(row)}
-                  contact={row}
+                  onSelect={() => this.selectContact(contact)}
+                  contact={contact}
                 />
         );
-    },
+    }
 
     selectContact(contact: Object) {
         dismissKeyboard();
-        this.props.navigator.push({
-            name: 'Contact',
-            contact: contact,
-        });
-    },
+        this.props.navigation.push('Contact', { contact:contact });
+    }
 
     onSearchChange(text) {
-        var filter = text.toLowerCase();
+        const filter = text.toLowerCase();
         clearTimeout(this.timeoutID);
         this.timeoutID = setTimeout(() => this.searchContacts(filter), 10);
-    },
+    }
+
+    onAdd() {
+        const navigation = this.props.navigation;
+        storeMgr.addContact(
+            (contact) => navigation.push('Contact', {contact: contact})
+        );
+    }
+
+    onSync() {
+        storeMgr.reSyncData();
+    }
+
+    onLogout() {
+        Alert.alert(
+            'Logout',
+            'Are you sure you want to logout',
+            [
+                {text: 'Cancel' },
+                {text: 'OK', onPress: () => oauth.logout()},
+            ],
+            { cancelable: true }
+        )
+    }
 
     searchContacts(query: string) {
         this.setState({
@@ -117,7 +166,7 @@ const SearchScreen = createReactClass({
                 that.setState({
                     isLoading: false,
                     filter: query,
-                    dataSource: that.state.dataSource.cloneWithRows(contacts),
+                    data: contacts,
                     queryNumber: currentStoreQuery
                 });
             },
@@ -127,6 +176,6 @@ const SearchScreen = createReactClass({
                 });
             });
     }
-});
+}
 
 export default SearchScreen;
