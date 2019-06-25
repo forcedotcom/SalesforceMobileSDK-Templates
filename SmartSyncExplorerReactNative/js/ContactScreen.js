@@ -45,12 +45,17 @@ import { Card, Button } from 'react-native-elements';
 class ContactScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         const { params = {} } = navigation.state;
+        var deleteUndeleteIconName = 'delete';
+        if (params.contact.__locally_deleted__) {
+            deleteUndeleteIconName = 'delete-restore';
+        } 
+        
         return {
             title: 'Contact',
             headerLeft: (<NavImgButton icon='arrow-back' color='white' onPress={() => params.onBack()} />),
             headerRight: (
                     <View style={styles.navButtonsGroup}>
-                    <NavImgButton icon='save' onPress={() => params.onSave()} />
+                        <NavImgButton icon={deleteUndeleteIconName} iconType='material-community' onPress={() => params.onDeleteUndeleteContact()} />
                     </View>
             )
         };
@@ -68,7 +73,8 @@ class ContactScreen extends React.Component {
     componentDidMount() {
         this.props.navigation.setParams({
             onBack: this.onBack,
-            onSave: this.onSave
+            onDeleteUndeleteContact: this.onDeleteUndeleteContact,
+            contact: this.state.contact
         });
     }
     
@@ -99,7 +105,7 @@ class ContactScreen extends React.Component {
     }
 
     onDeleteUndeleteContact() {
-        const contact = this.state.contact;
+        var contact = this.state.contact;
         const navigation = this.props.navigation;
         contact.__locally_deleted__ = !contact.__locally_deleted__;
         contact.__local__ = contact.__locally_deleted__ || contact.__locally_updated__ || contact.__locally_created__;
@@ -138,29 +144,20 @@ class ContactScreen extends React.Component {
         }
     }
 
-    renderDeleteUndeleteButton() {
-        var iconName = 'delete';
-        var title = 'Delete';
-        var bgColor = 'red';
-        if (this.state.contact.__locally_deleted__) {
-            iconName = 'delete-restore';
-            title = 'Undelete';
-            bgColor = 'blue';
-        } 
-
+    renderSaveButton() {
         return (
                 <View style={{marginTop:10}}>
                 <Button
-                  backgroundColor={bgColor}
+                  backgroundColor='blue'
                   containerStyle={{alignItems:'stretch'}}
-                  icon={{name: iconName, type: 'material-community'}}
-                  title={title}
-                  onPress={this.onDeleteUndeleteContact}
+                  icon={{name: 'save'}}
+                  title='Save'
+                  onPress={this.onSave}
                 />
                 </View>
         );
     }
-
+    
     render() {
         return (
                 <ScrollView>
@@ -172,7 +169,7 @@ class ContactScreen extends React.Component {
                     <Field fieldLabel="Mobile phone" fieldValue={this.state.contact.MobilePhone} onChange={(text) => this.onChange("MobilePhone", text)}/>
                     <Field fieldLabel="Email address" fieldValue={this.state.contact.Email} onChange={(text) => this.onChange("Email", text)}/>
                     <Field fieldLabel="Department" fieldValue={this.state.contact.Department} onChange={(text) => this.onChange("Department", text)}/>
-                    {this.renderDeleteUndeleteButton()}
+                    {this.renderSaveButton()}
                   </View>
                 </ScrollView>
                );
