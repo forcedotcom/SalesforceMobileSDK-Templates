@@ -34,33 +34,83 @@ import {
     Text
 } from 'react-native';
 
+import styles from './Styles';
+import NavImgButton from './NavImgButton';
 import Field from './Field';
 import storeMgr from './StoreMgr';
 import { Card, Button } from 'react-native-elements';
 
 // State: contact
 // Props: contact
-var createReactClass = require('create-react-class');
-const ContactScreen = createReactClass({
-    getInitialState() {
+class ContactScreen extends React.Component {
+    static navigationOptions = ({ navigation }) => {
+        const { params = {} } = navigation.state;
+        var deleteUndeleteIconName = 'delete';
+        if (params.contact.__locally_deleted__) {
+            deleteUndeleteIconName = 'delete-restore';
+        } 
+        
         return {
-            contact: this.props.contact
+            title: 'Contact',
+            headerLeft: (<NavImgButton icon='arrow-back' color='white' onPress={() => params.onBack()} />),
+            headerRight: (
+                    <View style={styles.navButtonsGroup}>
+                        <NavImgButton icon={deleteUndeleteIconName} iconType='material-community' onPress={() => params.onDeleteUndeleteContact()} />
+                    </View>
+            )
         };
-    },
+    }
 
+    constructor(props) {
+        super(props);
+        this.state = { contact: this.props.navigation.getParam('contact', {}) };
+        this.onBack = this.onBack.bind(this);
+        this.onSave = this.onSave.bind(this);
+        this.onChange = this.onChange.bind(this);
+        this.onDeleteUndeleteContact = this.onDeleteUndeleteContact.bind(this);
+    }
+
+    componentDidMount() {
+        this.props.navigation.setParams({
+            onBack: this.onBack,
+            onDeleteUndeleteContact: this.onDeleteUndeleteContact,
+            contact: this.state.contact
+        });
+    }
+    
+    onBack() {
+        const contact = this.state.contact;
+        const navigation = this.props.navigation;
+        if (contact.__locally_created__ && !contact.__locally_modified__) {
+            // Nothing typed in - delete
+            storeMgr.deleteContact(contact, () => navigation.pop());
+        }
+        else {
+            navigation.pop()
+        }
+    }
+
+    onSave() {
+        const contact = this.state.contact;
+        const navigation = this.props.navigation;
+        contact.__last_error__ = null;
+        contact.__locally_updated__ = contact.__local__ = true;
+        storeMgr.saveContact(contact, () => navigation.pop());
+    }
+    
     onChange(fieldKey, fieldValue) {
         const contact = this.state.contact;
         contact[fieldKey] = fieldValue;
         this.setState({contact});
-    },
+    }
 
     onDeleteUndeleteContact() {
-        const contact = this.state.contact;
-        const navigator = this.navigator;
+        var contact = this.state.contact;
+        const navigation = this.props.navigation;
         contact.__locally_deleted__ = !contact.__locally_deleted__;
         contact.__local__ = contact.__locally_deleted__ || contact.__locally_updated__ || contact.__locally_created__;
-        storeMgr.saveContact(contact, () => {this.props.navigator.pop()});
-    },
+        storeMgr.saveContact(contact, () => {navigation.pop()});
+    }
 
     renderErrorIfAny() {
         var errorMessage = null;
@@ -92,31 +142,22 @@ const ContactScreen = createReactClass({
                     </View>
             );
         }
-    },
+    }
 
-    renderDeleteUndeleteButton() {
-        var iconName = 'delete';
-        var title = 'Delete';
-        var bgColor = 'red';
-        if (this.state.contact.__locally_deleted__) {
-            iconName = 'delete-restore';
-            title = 'Undelete';
-            bgColor = 'blue';
-        } 
-
+    renderSaveButton() {
         return (
                 <View style={{marginTop:10}}>
                 <Button
-                  backgroundColor={bgColor}
+                  backgroundColor='blue'
                   containerStyle={{alignItems:'stretch'}}
-                  icon={{name: iconName, type: 'material-community'}}
-                  title={title}
-                  onPress={this.onDeleteUndeleteContact}
+                  icon={{name: 'save'}}
+                  title='Save'
+                  onPress={this.onSave}
                 />
                 </View>
         );
-    },
-
+    }
+    
     render() {
         return (
                 <ScrollView>
@@ -128,12 +169,11 @@ const ContactScreen = createReactClass({
                     <Field fieldLabel="Mobile phone" fieldValue={this.state.contact.MobilePhone} onChange={(text) => this.onChange("MobilePhone", text)}/>
                     <Field fieldLabel="Email address" fieldValue={this.state.contact.Email} onChange={(text) => this.onChange("Email", text)}/>
                     <Field fieldLabel="Department" fieldValue={this.state.contact.Department} onChange={(text) => this.onChange("Department", text)}/>
-                    <Field fieldLabel="Home phone" fieldValue={this.state.contact.HomePhone} onChange={(text) => this.onChange("HomePhone", text)}/>
-                    {this.renderDeleteUndeleteButton()}
+                    {this.renderSaveButton()}
                   </View>
                 </ScrollView>
                );
     }
-});
+}
 
 export default ContactScreen;

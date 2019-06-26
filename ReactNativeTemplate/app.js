@@ -95,4 +95,3 @@ export const App = createStackNavigator({
         screen: ContactListScreen
     }
 });
-

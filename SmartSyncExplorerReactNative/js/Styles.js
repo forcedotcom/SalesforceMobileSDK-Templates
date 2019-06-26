@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-present, salesforce.com, inc.
+ * Copyright (c) 2019-present, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -24,27 +24,24 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-import React from 'react';
-import { createStackNavigator } from 'react-navigation';
-import styles from './Styles';
-import SearchScreen from './SearchScreen';
-import ContactScreen from './ContactScreen';
+import { StyleSheet } from 'react-native';
 
-export default createStackNavigator(
-    {
-        Contacts: {
-            screen: SearchScreen
-        },
-        Contact: {
-            screen: ContactScreen
-        }
+export default StyleSheet.create({
+    navBar: {
+        backgroundColor: 'red',
     },
-    {
-        initialRouteName: 'Contacts',
-        navigationOptions: {
-            headerStyle: styles.navBar,
-            headerTitleStyle: styles.navBarTitleText,
-            tabBarVisible: false
-        }
+    navBarButton: {
+        paddingLeft: 6,
+    },
+    navButtonsGroup: {
+        flexDirection: 'row',
+    },
+    navBarButton: {
+        paddingLeft: 6,
+    },
+    navBarTitleText: {
+        fontSize: 26,
+        color: 'white',
+        fontWeight: 'bold',
     }
-);
+});

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-present, salesforce.com, inc.
+ * Copyright (c) 2019-present, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -25,26 +25,16 @@
  */
 
 import React from 'react';
-import { createStackNavigator } from 'react-navigation';
+import { View } from 'react-native';
+import { Icon} from 'react-native-elements';
 import styles from './Styles';
-import SearchScreen from './SearchScreen';
-import ContactScreen from './ContactScreen';
 
-export default createStackNavigator(
-    {
-        Contacts: {
-            screen: SearchScreen
-        },
-        Contact: {
-            screen: ContactScreen
-        }
-    },
-    {
-        initialRouteName: 'Contacts',
-        navigationOptions: {
-            headerStyle: styles.navBar,
-            headerTitleStyle: styles.navBarTitleText,
-            tabBarVisible: false
-        }
+class NavImgButton extends React.Component { 
+    render() {
+        return (<View style={styles.navBarButton}>
+                  <Icon size={32} name={this.props.icon} type={this.props.iconType} color='white' underlayColor='red' onPress={() => this.props.onPress()} />
+                </View>);
     }
-);
+}
+
+export default NavImgButton;
