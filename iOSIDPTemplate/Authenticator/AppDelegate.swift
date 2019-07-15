@@ -83,11 +83,14 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         // Uncomment the code below to register your device token with the push notification manager
         //
         //
-        // SFPushNotificationManager.sharedInstance().didRegisterForRemoteNotifications(withDeviceToken: deviceToken)
-        // if (UserAccountManager.shared.currentUser?.credentials.accessToken != nil)
-        // {
-        //     SFPushNotificationManager.sharedInstance().registerSalesforceNotifications(completionBlock: nil, fail: nil)
-        // }
+        //SFPushNotificationManager.sharedInstance().didRegisterForRemoteNotifications(withDeviceToken: deviceToken)
+        //if let _ = UserAccountManager.shared.currentUserAccount?.credentials.accessToken {
+        //    SFPushNotificationManager.sharedInstance().registerSalesforceNotifications(completionBlock: {
+        //        SalesforceLogger.e(AppDelegate.self, message: "Registration for Salesforce notifications succeeded")
+        //    }, fail: {
+        //        SalesforceLogger.e(AppDelegate.self, message: "Registration for Salesforce notifications failed")
+        //    })
+        //}
     }
     
     
