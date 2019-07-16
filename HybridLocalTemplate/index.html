@@ -2,10 +2,17 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <link href="ratchet.css" rel="stylesheet">
     <link href="ratchet-theme.css" rel="stylesheet">
-
+    <style>
+        body {
+            top: env(safe-area-inset-top)
+        }
+        .bar-nav {
+            top: env(safe-area-inset-top)
+        }        
+    </style>
    <script src="cordova.js"></script>
    <script src="force.js"></script>
    
@@ -39,7 +46,7 @@
     /* This method will fetch a list of contact records from salesforce.
     Just change the soql query to fetch another sobject. */
     var fetchRecords = function (successHandler) {
-        var soql = 'SELECT Id, Name FROM Contact LIMIT 10';
+        var soql = 'SELECT Id, Name FROM Contact LIMIT 100';
         force.query(soql, successHandler, function(error) {
             alert('Failed to fetch contacts: ' + error);
         });
