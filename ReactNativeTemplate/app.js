@@ -32,7 +32,7 @@ import {
     FlatList,
 } from 'react-native';
 
-import {StackNavigator} from 'react-navigation';
+import { createStackNavigator } from "react-navigation";
 import {oauth, net} from 'react-native-force';
 
 class ContactListScreen extends React.Component {
@@ -90,7 +90,8 @@ const styles = StyleSheet.create({
     }
 });
 
-export const App = StackNavigator({
-    ContactList: { screen: ContactListScreen }
+export const App = createStackNavigator({
+    Home: {
+        screen: ContactListScreen
+    }
 });
-

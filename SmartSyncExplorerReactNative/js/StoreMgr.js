@@ -53,7 +53,7 @@ function syncDownContacts() {
     
     console.log("Starting syncDown");
     syncInFlight = true;
-    const fieldlist = ["Id", "FirstName", "LastName", "Title", "Email", "MobilePhone","Department","HomePhone", "LastModifiedDate"];
+    const fieldlist = ["Id", "FirstName", "LastName", "Title", "Email", "MobilePhone","Department", "LastModifiedDate"];
     const target = {type:"soql", query:`SELECT ${fieldlist.join(",")} FROM Contact LIMIT 10000`};
     return syncDown(false, target, "contacts", {mergeMode:smartsync.MERGE_MODE.OVERWRITE}, syncName)
         .then(() => {
@@ -87,7 +87,7 @@ function syncUpContacts() {
 
     console.log("Starting syncUp");
     syncInFlight = true;
-    const fieldlist = ["FirstName", "LastName", "Title", "Email", "MobilePhone","Department","HomePhone"];
+    const fieldlist = ["FirstName", "LastName", "Title", "Email", "MobilePhone","Department"];
     return syncUp(false, {}, "contacts", {mergeMode:smartsync.MERGE_MODE.OVERWRITE, fieldlist})
         .then(() => {
             console.log("syncUp completed or failed");
@@ -136,7 +136,7 @@ function saveContact(contact, callback) {
 
 function addContact(successCallback, errorCallback) {
     const contact = {Id: `local_${(new Date()).getTime()}`,
-                   FirstName: null, LastName: null, Title: null, Email: null, MobilePhone: null, HomePhone: null, Department: null, attributes: {type: "Contact"},
+                   FirstName: null, LastName: null, Title: null, Email: null, MobilePhone: null, Department: null, attributes: {type: "Contact"},
                    __locally_created__: true,
                    __locally_updated__: false,
                    __locally_deleted__: false,
