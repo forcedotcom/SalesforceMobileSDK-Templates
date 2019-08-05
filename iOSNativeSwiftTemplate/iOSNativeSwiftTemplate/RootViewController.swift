@@ -34,7 +34,7 @@ class RootViewController : UITableViewController {
     override func loadView() {
         super.loadView()
         self.title = "Mobile SDK Sample App"
-        let request = RestClient.shared.request(forQuery: "SELECT Name FROM Contact LIMIT 10")
+        let request = RestClient.shared.request(forQuery: "SELECT Name FROM Contact LIMIT 10", apiVersion: SFRestDefaultAPIVersion)
         
         RestClient.shared.send(request: request, onFailure: { (error, urlResponse) in
             SalesforceLogger.d(type(of:self), message:"Error invoking: \(request)")
