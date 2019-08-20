@@ -3,7 +3,7 @@ platform :ios, '11.0'
 project 'ReactNativeTemplate.xcodeproj'
 target 'ReactNativeTemplate' do
 
-source 'https://github.com/CocoaPods/Specs.git'
+source 'https://cdn.cocoapods.org/'
 
 pod 'React', :path => '../node_modules/react-native/'
 pod 'React-Core', :path => '../node_modules/react-native/React'

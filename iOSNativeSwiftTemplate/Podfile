@@ -3,7 +3,7 @@ platform :ios, '11.0'
 project 'iOSNativeSwiftTemplate.xcodeproj'
 target 'iOSNativeSwiftTemplate' do
 
-source 'https://github.com/CocoaPods/Specs.git'
+source 'https://cdn.cocoapods.org/'
 
 use_frameworks!
 
