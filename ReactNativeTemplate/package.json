@@ -14,7 +14,7 @@
         "eslint": "^5.0.0",
         "acorn": "^6.0.0",
         "react": "16.8.6",
-        "react-native": "0.60.4",
+        "react-native": "0.60.5",
         "react-native-force": "git+https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#dev",
         "react-navigation": "2.18.3"
     },
