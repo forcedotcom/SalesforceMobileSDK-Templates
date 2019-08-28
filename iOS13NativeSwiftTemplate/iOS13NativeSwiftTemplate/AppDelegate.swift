@@ -25,6 +25,7 @@
 import Foundation
 import UIKit
 import SmartSync
+import SwiftUI
 
 class AppDelegate : UIResponder, UIApplicationDelegate {
     var window: UIWindow?
@@ -115,9 +116,10 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
     }
     
     func setupRootViewController() {
-        let rootVC = RootViewController(nibName: nil, bundle: nil)
-        let navVC = UINavigationController(rootViewController: rootVC)
-        self.window?.rootViewController = navVC
+        
+        self.window?.rootViewController = UIHostingController(
+            rootView: ContactListView()
+        )
     }
     
     func resetViewState(_ postResetBlock: @escaping () -> ()) {

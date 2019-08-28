@@ -8,8 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		4F393A291C3C8BCD00B3EA13 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F393A281C3C8BCD00B3EA13 /* main.swift */; };
+		4FA795692315F215007C88D6 /* ContactListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA795682315F215007C88D6 /* ContactListView.swift */; };
+		4FA7956B2315F2B1007C88D6 /* ContactListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA7956A2315F2B1007C88D6 /* ContactListModel.swift */; };
+		4FA7956D2315F350007C88D6 /* RestClientExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA7956C2315F350007C88D6 /* RestClientExtension.swift */; };
 		4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */; };
-		4FD6C49F1B755242002F9F90 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C49C1B755242002F9F90 /* RootViewController.swift */; };
 		4FD6C4A01B755242002F9F90 /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C49D1B755242002F9F90 /* InitialViewController.swift */; };
 		78A235BD93AB7D080D67CD51 /* Pods_iOS13NativeSwiftTemplate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82A29C75280BDF73123F14B4 /* Pods_iOS13NativeSwiftTemplate.framework */; };
 		B7168FBC1FACC6F900A48DB5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */; };
@@ -20,11 +22,13 @@
 /* Begin PBXFileReference section */
 		045D1C5BC2F1EADFDFB3671E /* Pods-iOS13NativeSwiftTemplate.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS13NativeSwiftTemplate.release.xcconfig"; path = "Pods/Target Support Files/Pods-iOS13NativeSwiftTemplate/Pods-iOS13NativeSwiftTemplate.release.xcconfig"; sourceTree = "<group>"; };
 		4F393A281C3C8BCD00B3EA13 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		4FA795682315F215007C88D6 /* ContactListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListView.swift; sourceTree = "<group>"; };
+		4FA7956A2315F2B1007C88D6 /* ContactListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListModel.swift; sourceTree = "<group>"; };
+		4FA7956C2315F350007C88D6 /* RestClientExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestClientExtension.swift; sourceTree = "<group>"; };
 		4FD6C4741B754AF1002F9F90 /* iOS13NativeSwiftTemplate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOS13NativeSwiftTemplate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FD6C4781B754AF1002F9F90 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4FD6C49A1B755242002F9F90 /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
-		4FD6C49C1B755242002F9F90 /* RootViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 		4FD6C49D1B755242002F9F90 /* InitialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitialViewController.swift; sourceTree = "<group>"; };
 		4FF12F8A1DCA91F5004D9EF9 /* iOS13NativeSwiftTemplate.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iOS13NativeSwiftTemplate.entitlements; sourceTree = "<group>"; };
 		762732C14CFE40A989C3AD70 /* Pods-iOS13NativeSwiftTemplate.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS13NativeSwiftTemplate.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iOS13NativeSwiftTemplate/Pods-iOS13NativeSwiftTemplate.debug.xcconfig"; sourceTree = "<group>"; };
@@ -89,10 +93,12 @@
 			isa = PBXGroup;
 			children = (
 				4FD6C49A1B755242002F9F90 /* Bridging-Header.h */,
-				4FD6C49C1B755242002F9F90 /* RootViewController.swift */,
 				4FD6C49D1B755242002F9F90 /* InitialViewController.swift */,
 				4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */,
 				4F393A281C3C8BCD00B3EA13 /* main.swift */,
+				4FA795682315F215007C88D6 /* ContactListView.swift */,
+				4FA7956A2315F2B1007C88D6 /* ContactListModel.swift */,
+				4FA7956C2315F350007C88D6 /* RestClientExtension.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -194,25 +200,12 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-iOS13NativeSwiftTemplate/Pods-iOS13NativeSwiftTemplate-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/FMDB/FMDB.framework",
-				"${BUILT_PRODUCTS_DIR}/SQLCipher/SQLCipher.framework",
-				"${BUILT_PRODUCTS_DIR}/SalesforceAnalytics/SalesforceAnalytics.framework",
-				"${BUILT_PRODUCTS_DIR}/SalesforceSDKCommon/SalesforceSDKCommon.framework",
-				"${BUILT_PRODUCTS_DIR}/SalesforceSDKCore/SalesforceSDKCore.framework",
-				"${BUILT_PRODUCTS_DIR}/SmartStore/SmartStore.framework",
-				"${BUILT_PRODUCTS_DIR}/SmartSync/SmartSync.framework",
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-iOS13NativeSwiftTemplate/Pods-iOS13NativeSwiftTemplate-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FMDB.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SQLCipher.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SalesforceAnalytics.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SalesforceSDKCommon.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SalesforceSDKCore.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SmartStore.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SmartSync.framework",
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-iOS13NativeSwiftTemplate/Pods-iOS13NativeSwiftTemplate-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -244,8 +237,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4FA795692315F215007C88D6 /* ContactListView.swift in Sources */,
+				4FA7956D2315F350007C88D6 /* RestClientExtension.swift in Sources */,
 				4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */,
-				4FD6C49F1B755242002F9F90 /* RootViewController.swift in Sources */,
+				4FA7956B2315F2B1007C88D6 /* ContactListModel.swift in Sources */,
 				4F393A291C3C8BCD00B3EA13 /* main.swift in Sources */,
 				4FD6C4A01B755242002F9F90 /* InitialViewController.swift in Sources */,
 			);
@@ -301,7 +296,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -351,7 +346,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -369,7 +364,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = iOS13NativeSwiftTemplate/iOS13NativeSwiftTemplate.entitlements;
 				INFOPLIST_FILE = iOS13NativeSwiftTemplate/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -389,7 +384,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = iOS13NativeSwiftTemplate/iOS13NativeSwiftTemplate.entitlements;
 				INFOPLIST_FILE = iOS13NativeSwiftTemplate/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
