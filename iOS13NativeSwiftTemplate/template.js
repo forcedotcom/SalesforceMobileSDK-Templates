@@ -37,7 +37,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
 
     // Values in template
     var templateAppName = 'iOS13NativeSwiftTemplate';
-    var templatePackageName = 'com.salesforce.iosnativeswifttemplate';
+    var templatePackageName = 'com.salesforce.ios13nativeswifttemplate';
     var templateOrganization = 'iOS13NativeSwiftTemplateOrganizationName';
 
     // Key files
