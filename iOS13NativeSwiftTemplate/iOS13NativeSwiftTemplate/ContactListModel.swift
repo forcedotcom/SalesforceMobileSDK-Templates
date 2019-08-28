@@ -27,11 +27,17 @@ import SalesforceSDKCore
 import SwiftUI
 import Combine
 
+/**
+ Model object for single contact
+ */
 struct Contact :  Hashable, Identifiable, Decodable  {
     let id: UUID = UUID()
     let name: String
 }
 
+/**
+ View Model for Contact list
+ */
 class ContactListModel: ObservableObject {
     
     @Published var contacts: [Contact] = []

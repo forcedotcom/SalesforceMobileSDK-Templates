@@ -27,14 +27,25 @@ import SalesforceSDKCore
 import SwiftUI
 import Combine
 
+/**
+  Error used by Combine friendly send:request method in RestClient extension below
+ */
 enum RequestError: Error {
     case httpError(code: Int, error: Error?)
     case emptyResponse
     case unknown
 }
 
+/**
+ RestClient extension that adds a send:request method returning a Combine Publisher
+ */
 extension RestClient {
     
+    /**
+        Send a request and return a Future Publisher to consume the response
+        @param request:RestRequest
+        @return a Future<[[String:Any]], RequestError> Publisher
+     */
     func send(request: RestRequest) -> Future<[[String:Any]], RequestError> {
         Future<[[String:Any]], RequestError> { promise in
             self.send(request: request,

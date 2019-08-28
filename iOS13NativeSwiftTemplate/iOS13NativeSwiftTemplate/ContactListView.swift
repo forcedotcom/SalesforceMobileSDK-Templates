@@ -27,6 +27,9 @@ import SwiftUI
 import Combine
 import SalesforceSDKCore
 
+/**
+ SwiftUI View for Contact list
+ */
 struct ContactListView : View {
     @ObservedObject var viewModel = ContactListModel()
     
