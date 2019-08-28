@@ -40,8 +40,8 @@ class ContactListModel: ObservableObject {
         
         let request = RestClient.shared.request(forQuery: "SELECT Name FROM Contact LIMIT 1000", apiVersion:"v46.0")
         _ = RestClient.shared.send(request: request)
-            .tryMap{  // transform to Contact array
             .receive(on: RunLoop.main)
+            .tryMap {  // transform to Contact array
                 $0.map { (item) -> Contact in
                     Contact(name: item["Name"] as! String)
                 }
