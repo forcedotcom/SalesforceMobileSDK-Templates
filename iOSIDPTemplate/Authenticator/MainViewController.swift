@@ -62,11 +62,11 @@ extension MainViewController : ActionsPopoverTableViewDelegate {
 
         let alert = UIAlertController(title: "Logout", message: "Are you sure you want to log out?", preferredStyle: .alert)
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { (result : UIAlertAction) -> Void in
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { _ in
             print("Cancel")
         }
-
-        let okAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) { (result : UIAlertAction) -> Void in
+       
+        let okAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) { _ in
             UserAccountManager.shared.logoutAllUsers()
         }
 
@@ -79,7 +79,7 @@ extension MainViewController : ActionsPopoverTableViewDelegate {
         
         let alert = UIAlertController(title: "Error", message: "Error adding a User", preferredStyle: .alert)
         
-        let okAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) { (result : UIAlertAction) -> Void in
+        let okAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) { _ in
             UserAccountManager.shared.logoutAllUsers()
         }
         
@@ -88,10 +88,6 @@ extension MainViewController : ActionsPopoverTableViewDelegate {
     }
 
     func showSwitchUserSheet() {
-        UserAccountManager.shared.login(onSuccess: { (authInfo, account) in
-            
-        }) { (authInfo, error) in
-            
-        }
+        UserAccountManager.shared.login(onSuccess: nil, onFailure: nil)
     }
 }

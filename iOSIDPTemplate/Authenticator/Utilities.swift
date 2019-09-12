@@ -25,22 +25,22 @@ import Foundation
 import UIKit
 import SalesforceSDKCore
 
-let app_one_key = "app-one"
+let appOneKey = "app-one"
 
-let app_two_key = "app-two"
+let appTwoKey = "app-two"
 
-let app_one_default_url = "smartsyncexplorer"
+let appOneDefaultUrl = "smartsyncexplorer"
 
-let app_two_default_url = "accounteditor"
+let appTwoDefaultUrl = "accounteditor"
 
 func readAppOneUrl() -> String {
-    let url:String? =  readStringFromDefaults(key: app_one_key)
-    return url ?? app_one_default_url
+    let url:String? =  readStringFromDefaults(key: appOneKey)
+    return url ?? appOneDefaultUrl
 }
 
 func readAppTwoUrl() -> String {
-    let url:String? =  readStringFromDefaults(key: app_two_key)
-    return url ?? app_two_default_url
+    let url:String? =  readStringFromDefaults(key: appTwoKey)
+    return url ?? appTwoDefaultUrl
 }
 
 func writeStringToDefaults(key: String, value: String) {
@@ -55,14 +55,13 @@ func readStringFromDefaults(key: String) -> String? {
 }
 
 extension String {
-    
     func base64Encoded() -> String? {
         if let data = self.data(using: .utf8) {
             return data.base64EncodedString()
         }
         return nil
     }
-    
+
     //: ### Base64 decoding a string
     func base64Decoded() -> String? {
         if let data = Data(base64Encoded: self) {
@@ -73,11 +72,12 @@ extension String {
 }
 
 public extension Sequence {
+    
     func groupBy<U : Hashable>(_ key: (Iterator.Element) -> U) -> [U:[Iterator.Element]] {
         var dict: [U:[Iterator.Element]] = [:]
-        for el in self {
-            let key = key(el)
-            if case nil = dict[key]?.append(el) { dict[key] = [el] }
+        for elem in self {
+            let key = key(elem)
+            if case nil = dict[key]?.append(elem) { dict[key] = [elem] }
         }
         return dict
     }

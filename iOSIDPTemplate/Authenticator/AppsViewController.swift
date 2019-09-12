@@ -31,8 +31,10 @@ class AppsViewController: UIViewController {
     @IBOutlet weak var appTwoButton: UIButton!
     
     @IBAction func toolBarAction(_ sender: Any) {
-       let controller =  self.navigationController as! MainViewController
-       controller.popOverAction(sender as! UIBarButtonItem)
+        if let controller =  self.navigationController as? MainViewController,
+            let barButton = sender as? UIBarButtonItem {
+            controller.popOverAction(barButton)
+        }
     }
     
     @IBOutlet weak var messageLabel: UILabel!
@@ -48,11 +50,11 @@ class AppsViewController: UIViewController {
         //authenticator
         launchSPApp(appUrl: "sampleapptwo")
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         if let identity  =  UserAccountManager.shared.currentUserAccount?.idData {
