@@ -26,7 +26,7 @@ import UIKit
 import SalesforceSDKCore
 
 
-class AppDelegate : UIResponder, UIApplicationDelegate
+class AppDelegate: UIResponder, UIApplicationDelegate
 {
     var window: UIWindow?
     
@@ -34,9 +34,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         super.init()
         
         SalesforceManager.initializeSDK()
-        
         SalesforceManager.shared.isIdentityProvider = true
-        
         AuthHelper.registerBlock(forCurrentUserChangeNotifications: {
             self.resetViewState {
                 self.setupRootViewController()
@@ -93,7 +91,6 @@ class AppDelegate : UIResponder, UIApplicationDelegate
         //}
     }
     
-    
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error ) {
         // Respond to any push notification registration errors here.
     }
@@ -104,7 +101,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
     
     // MARK: - Private methods
     func initializeAppViewState() {
-        if (!Thread.isMainThread) {
+        if !Thread.isMainThread {
             DispatchQueue.main.async {
                 self.initializeAppViewState()
             }
@@ -123,10 +120,10 @@ class AppDelegate : UIResponder, UIApplicationDelegate
 
     }
     
-    func resetViewState(_ postResetBlock: @escaping () -> ()) {
+    func resetViewState(_ postResetBlock: @escaping () -> Void) {
         
         if let rootViewController = self.window?.rootViewController {
-            if let _ = rootViewController.presentedViewController {
+            if rootViewController.presentedViewController != nil {
                 rootViewController.dismiss(animated: false, completion: postResetBlock)
                 return
             }

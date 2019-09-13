@@ -25,7 +25,7 @@ import UIKit
 import SalesforceSDKCore
 import SwipeCellKit
 
-class UserListViewController: UITableViewController,UserTableViewCellDelegate, SwipeTableViewCellDelegate {
+class UserListViewController: UITableViewController, UserTableViewCellDelegate, SwipeTableViewCellDelegate {
     
     struct LoginHostAccount {
         var hostName: String
@@ -33,17 +33,18 @@ class UserListViewController: UITableViewController,UserTableViewCellDelegate, S
     }
     
     let cellIdentifier = "mycell"
-    var groups : Dictionary<String, Array<LoginHostAccount>>?
+    var groups: [String: [LoginHostAccount]]?
     var groupIds : [String] = []
-   
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
     @IBAction func toolbarItemAction(_ sender: Any) {
-        let controller =  self.navigationController as! MainViewController
-        controller.popOverAction(sender as! UIBarButtonItem)
+        if let controller =  self.navigationController as? MainViewController,
+            let buttonItem = sender as? UIBarButtonItem {
+             controller.popOverAction(buttonItem)
+        }
     }
     
     override func viewDidLoad() {
@@ -65,7 +66,7 @@ class UserListViewController: UITableViewController,UserTableViewCellDelegate, S
         self.reloadData()
     }
     
-    func reloadData(){
+    func reloadData() {
         let userAccountLists = UserAccountManager.shared.userAccounts() ?? []
         var userAccounts: [LoginHostAccount] = []
         groups?.removeAll()
@@ -73,7 +74,7 @@ class UserListViewController: UITableViewController,UserTableViewCellDelegate, S
         userAccountLists.forEach { (account) in
             userAccounts.append(LoginHostAccount(hostName: account.credentials.domain!, userAccount: account))
         }
-        self.groups = userAccounts.groupBy{$0.hostName}
+        self.groups = userAccounts.groupBy { $0.hostName }
         self.groups?.keys.forEach({ (groupName) in
             groupIds.append(groupName)
         })
@@ -98,9 +99,9 @@ class UserListViewController: UITableViewController,UserTableViewCellDelegate, S
         let userAccounts = self.groups![groupIds[indexPath.section]]
         if( UserAccountManager.shared.currentUserAccount?
             .accountIdentity.isEqual(userAccounts![indexPath.row].userAccount.accountIdentity))! {
-            result.currentUserImage.isHidden = false;
+            result.currentUserImage.isHidden = false
         } else {
-            result.currentUserImage.isHidden = true;
+            result.currentUserImage.isHidden = true
         }
         result.tableDelegate = self
         result.delegate = self;
@@ -126,13 +127,13 @@ class UserListViewController: UITableViewController,UserTableViewCellDelegate, S
         var action:SwipeAction?
         let userAccounts = self.groups![groupIds[indexPath.section]]
         if (orientation == .right) {
-            action = SwipeAction(style: .destructive, title: "Logout") { action, indexPath in
+            action = SwipeAction(style: .destructive, title: "Logout") { _, indexPath in
                 self.logoutUser(user: (userAccounts?[indexPath.row].userAccount)!)
                 self.reloadData()
             }
             action?.image = UIImage(named: "Logout")
         } else {
-            action = SwipeAction(style: .default, title: "Make Current") { action, indexPath in
+            action = SwipeAction(style: .default, title: "Make Current") { _, indexPath in
                 UserAccountManager.shared.switchToUserAccount(userAccounts?[indexPath.row].userAccount)
                 self.reloadData()
             }
@@ -154,11 +155,11 @@ class UserListViewController: UITableViewController,UserTableViewCellDelegate, S
         return 44
     }
     
-    @objc func handleUserDidLogout( notification : Notification ) {
+    @objc func handleUserDidLogout( notification: Notification ) {
         self.reloadData()
     }
-    
-    @objc func handleUserDidLogin( notification : Notification ) {
+
+    @objc func handleUserDidLogin( notification: Notification ) {
         self.reloadData()
     }
 }

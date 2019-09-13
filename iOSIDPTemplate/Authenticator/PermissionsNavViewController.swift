@@ -24,7 +24,7 @@
 import UIKit
 import SalesforceSDKCore
 
-class PermissionsNavViewController: UINavigationController,SFSDKUserSelectionView {
+class PermissionsNavViewController: UINavigationController, SFSDKUserSelectionView {
 
     var permissionsController: PermissionsViewController
 
@@ -36,7 +36,7 @@ class PermissionsNavViewController: UINavigationController,SFSDKUserSelectionVie
             return permissionsController.userSelectionDelegate
         }
     }
-     var spAppOptions: [AnyHashable : Any]! {
+     var spAppOptions: [AnyHashable: Any]! {
         set {
             permissionsController.spAppOptions = newValue
         }

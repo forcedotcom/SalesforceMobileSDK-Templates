@@ -35,12 +35,15 @@ class UniversalViewController: UIViewController {
     var compactConstraints: [NSLayoutConstraint] = []
     var regularConstraints: [NSLayoutConstraint] = []
     
+    open override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         self.navigationController?.navigationBar.barTintColor = UIColor.appDarkBlue
         self.navigationController?.navigationBar.isTranslucent = false
-        UIApplication.shared.statusBarStyle = .lightContent
         
         guard let font = UIFont.appRegularFont(20) else { return }
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: font]
@@ -49,7 +52,7 @@ class UniversalViewController: UIViewController {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         
-        if self.commonConstraints.count > 0 && self.commonConstraints[0].isActive == false{
+        if self.commonConstraints.count > 0 && self.commonConstraints[0].isActive == false {
             self.view.addConstraints(self.commonConstraints)
         }
         

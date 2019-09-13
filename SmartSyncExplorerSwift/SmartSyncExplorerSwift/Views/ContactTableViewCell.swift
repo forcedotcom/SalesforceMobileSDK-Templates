@@ -36,7 +36,7 @@ class ContactTableViewCell: UITableViewCell {
             self.leftImageView.image = leftImage
         }
     }
-    var title:String? {
+    var title: String? {
         didSet {
             self.titleLabel.text = title
         }
@@ -47,14 +47,14 @@ class ContactTableViewCell: UITableViewCell {
             self.detailLabel.text = subtitle
         }
     }
-    
-    var showRefresh:Bool = false {
+
+    var showRefresh: Bool = false {
         didSet {
             self.rightRefreshImageView.alpha = showRefresh ? 1.0 : 0.0
         }
     }
-    
-    var showCreated:Bool = false {
+
+    var showCreated: Bool = false {
         didSet {
             self.rightCreatedImageView.alpha = showCreated ? 1.0 : 0.0
         }
