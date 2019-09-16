@@ -24,13 +24,13 @@
 import UIKit
 import SalesforceSDKCore
 
-class PermissionsViewController: UIViewController,UITableViewDelegate,UITableViewDataSource,SFSDKUserSelectionView {
+class PermissionsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, SFSDKUserSelectionView {
  
     @IBOutlet weak var tableView: UITableView!
     let cellIdentifier = "mycell"
     
     var userList: [UserAccount] = []
-    var userSelectionDelegate :SFSDKUserSelectionViewDelegate?
+    weak var userSelectionDelegate :SFSDKUserSelectionViewDelegate?
     
     var spAppOptions: [AnyHashable : Any]!
     @IBOutlet weak var infoTextView: UITextView!
@@ -63,8 +63,9 @@ class PermissionsViewController: UIViewController,UITableViewDelegate,UITableVie
         
         self.title = "Login as"
         var appName:String = ""
-        if (spAppOptions.index(forKey:"app_name") != nil) {
-            appName = spAppOptions["app_name"] as! String
+        if spAppOptions.index(forKey:"app_name") != nil ,
+            let appNameFromOptions = spAppOptions["app_name"] as? String {
+            appName = appNameFromOptions
         }
         self.infoTextView.attributedText = self.getAttributedText(appName: appName)
         self.infoTextView.textAlignment = .center
@@ -87,8 +88,11 @@ class PermissionsViewController: UIViewController,UITableViewDelegate,UITableVie
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let result = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)  as! UserTableViewCell
-        result.currentUserImage.isHidden = true;
+        
+        guard let result = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? UserTableViewCell else {
+            return UITableViewCell()
+        }
+        result.currentUserImage.isHidden = true
         result.user = userList[indexPath.row]
         if let fName = userList[indexPath.row].idData?.firstName,
            let lName = userList[indexPath.row].idData?.lastName {
@@ -99,20 +103,20 @@ class PermissionsViewController: UIViewController,UITableViewDelegate,UITableVie
         
         result.email.text = userList[indexPath.row].idData?.email
         let image = UIImage(named: (userList[indexPath.row].idData?.firstName?.lowercased())!)
-        if let img = image  {
+        if let img = image {
            result.userPicture.image = img
         } else {
             result.userPicture.image = UIImage(named: "placeholder")
         }
-        return result;
+        return result
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        userSelectionDelegate?.selectedUser(userList[indexPath.row],spAppContext: self.spAppOptions)
+        userSelectionDelegate?.selectedUser(userList[indexPath.row], spAppContext: self.spAppOptions)
     }
-    
-    func getAttributedText( appName:String ) ->  NSMutableAttributedString {
-        let info = "Select user for \n";
+
+    func getAttributedText(appName: String) -> NSMutableAttributedString {
+        let info = "Select user for \n"
         let plainAttribute = [NSAttributedString.Key.foregroundColor: UIColor.black, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15)]
         let highlightAttribute = [NSAttributedString.Key.foregroundColor: UIColor.salesforceBlue(), NSAttributedString.Key.font: UIFont.systemFont(ofSize: 24)]
         let partOne = NSMutableAttributedString(string: info, attributes: plainAttribute)

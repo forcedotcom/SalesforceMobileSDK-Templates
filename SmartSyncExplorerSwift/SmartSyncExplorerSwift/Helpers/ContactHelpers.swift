@@ -31,10 +31,9 @@ import Foundation
 import UIKit.UIColor
 
 class ContactHelper {
-    static func nameStringFromContact(_ obj:ContactSObjectData) -> String {
+    static func nameStringFromContact(_ obj: ContactSObjectData) -> String {
         let firstName = obj.firstName?.trimmingCharacters(in: .whitespacesAndNewlines)
         let lastName = obj.lastName?.trimmingCharacters(in: .whitespacesAndNewlines)
-        
         if firstName == nil && lastName == nil {
             return ""
         } else if firstName == nil && lastName != nil {
@@ -44,15 +43,14 @@ class ContactHelper {
         } else {
             return "\(firstName!) \(lastName!)"
         }
-       
     }
     
-    static func titleStringFromContact(_ obj:ContactSObjectData) -> String {
+    static func titleStringFromContact(_ obj: ContactSObjectData) -> String {
         let title = obj.title?.trimmingCharacters(in: .whitespacesAndNewlines)
         return title != nil ? title! : ""
     }
     
-    static func initialsStringFromContact(_ obj:ContactSObjectData) -> String {
+    static func initialsStringFromContact(_ obj: ContactSObjectData) -> String {
         let firstName = obj.firstName?.trimmingCharacters(in: .whitespacesAndNewlines)
         let lastName = obj.lastName?.trimmingCharacters(in: .whitespacesAndNewlines)
         var initialsString = ""
@@ -63,24 +61,23 @@ class ContactHelper {
         if let last = lastName, last.count > 0, let lastChar = last.first {
             initialsString.append(lastChar)
         }
-        
         return initialsString
     }
     
-    static func colorFromContact(_ obj:ContactSObjectData) -> UIColor {
+    static func colorFromContact(_ obj: ContactSObjectData) -> UIColor {
         guard let lastName = obj.lastName?.trimmingCharacters(in: .whitespacesAndNewlines) else {
             return UIColor.white
         }
         var codeSeedFromName:UInt32 = 0
-        for (_, element) in lastName.unicodeScalars.enumerated() {
-            codeSeedFromName = codeSeedFromName + element.value
+        for element in lastName.unicodeScalars {
+            codeSeedFromName += element.value
         }
         
         let index = codeSeedFromName % UInt32(Constants.ContactColorCodes.count)
         let hexValue = Constants.ContactColorCodes[Int(index)]
         return ContactHelper.colorFrom(hexValue)
     }
-    
+
     static func colorFrom(_ hex:UInt32) -> UIColor {
         return UIColor(displayP3Red: CGFloat((hex & 0xFF0000) >> 16) / 255.0,
                        green: CGFloat((hex & 0xFF00) >> 8) / 255.0,

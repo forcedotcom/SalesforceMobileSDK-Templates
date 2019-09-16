@@ -26,33 +26,32 @@ import Foundation
 import UIKit
 import SalesforceSDKCore
 
-class RootViewController : UITableViewController {
+class RootViewController: UITableViewController {
     
-    var dataRows = [Dictionary<String, Any>]()
+    var dataRows = [[String: Any]]()
     
     // MARK: - View lifecycle
     override func loadView() {
         super.loadView()
         self.title = "Mobile SDK Sample App"
-        let request = RestClient.shared.request(forQuery: "SELECT Name FROM Contact LIMIT 10")
+        let request = RestClient.shared.request(forQuery: "SELECT Name FROM Contact LIMIT 10", apiVersion: SFRestDefaultAPIVersion)
         
-        RestClient.shared.send(request: request, onFailure: { (error, urlResponse) in
+        RestClient.shared.send(request: request, onFailure: { (_, _) in
             SalesforceLogger.d(type(of:self), message:"Error invoking: \(request)")
-        }) { [weak self] (response, urlResponse) in
+        }, onSuccess:{ [weak self] (response, _) in
             
             guard let strongSelf = self,
-                let jsonResponse = response as? Dictionary<String,Any>,
-                let result = jsonResponse ["records"] as? [Dictionary<String,Any>]  else {
+                let jsonResponse = response as? [String:Any],
+                let result = jsonResponse ["records"] as? [[String:Any]]  else {
                     return
             }
             
-            SalesforceLogger.d(type(of:strongSelf),message:"Invoked: \(request)")
-            
+            SalesforceLogger.d(type(of:strongSelf), message:"Invoked: \(request)")
             DispatchQueue.main.async {
                 strongSelf.dataRows = result
                 strongSelf.tableView.reloadData()
             }
-        }
+        })
     }
     
     // MARK: - Table view data source

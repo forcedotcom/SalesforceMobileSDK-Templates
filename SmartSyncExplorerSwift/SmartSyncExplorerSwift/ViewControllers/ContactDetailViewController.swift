@@ -3,7 +3,7 @@
  SmartSyncExplorerSwift
  
  Created by Nicholas McDonald on 1/22/18.
-
+ 
  Copyright (c) 2018-present, salesforce.com, inc. All rights reserved.
  
  Redistribution and use of this software in source and binary forms, with or without modification,
@@ -37,26 +37,24 @@ protocol ContactDetailViewDelegate {
     func userDidAdd(object: SObjectData)
 }
 
-
 class ContactDetailViewController: UniversalViewController {
     typealias ContactDetailEditCompletion = () -> Void
-    fileprivate var isNewContact:Bool = false
-    fileprivate var isEditingContact:Bool = false
-    fileprivate var isContactUpdated:Bool = false
-    fileprivate var contact:ContactSObjectData?
+    fileprivate var isNewContact: Bool = false
+    fileprivate var isEditingContact: Bool = false
+    fileprivate var isContactUpdated: Bool = false
+    fileprivate var contact: ContactSObjectData?
     fileprivate var completion: ContactDetailEditCompletion?
-    
-    fileprivate var firstNameField:UITextField!
-    fileprivate var lastNameField:UITextField!
-    fileprivate var mobilePhoneField:UITextField!
-    fileprivate var homePhoneField:UITextField!
-    fileprivate var jobTitleField:UITextField!
-    fileprivate var emailField:UITextField!
-    fileprivate var departmentField:UITextField!
+    fileprivate var firstNameField: UITextField!
+    fileprivate var lastNameField: UITextField!
+    fileprivate var mobilePhoneField: UITextField!
+    fileprivate var homePhoneField: UITextField!
+    fileprivate var jobTitleField: UITextField!
+    fileprivate var emailField: UITextField!
+    fileprivate var departmentField: UITextField!
     var detailViewDelegate: ContactDetailViewDelegate?
     var objectManager: SObjectDataManager
     
-    init(_ contact: ContactSObjectData?, objectManager: SObjectDataManager,completion:ContactDetailEditCompletion?) {
+    init(_ contact: ContactSObjectData?, objectManager: SObjectDataManager, completion:ContactDetailEditCompletion?) {
         self.completion = completion
         self.objectManager = objectManager
         super.init(nibName: nil, bundle: nil)
@@ -77,18 +75,14 @@ class ContactDetailViewController: UniversalViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        self.view.backgroundColor = UIColor.detailViewControllerBackground
         
+        self.view.backgroundColor = UIColor.detailViewControllerBackground
         let back = self.backBarButton()
         self.navigationItem.leftBarButtonItem = back
-        
         let edit = self.editBarButton()
         self.navigationItem.rightBarButtonItem = edit
-        
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        
         let firstNameLabel = self.fieldLabel("First Name")
         self.firstNameField = self.field(self.contact?.firstName)
         let lastNameLabel = self.fieldLabel("Last Name")
@@ -103,14 +97,11 @@ class ContactDetailViewController: UniversalViewController {
         self.emailField = self.field(self.contact?.email)
         let departmentLabel = self.fieldLabel("Department")
         self.departmentField = self.field(self.contact?.department)
-        
         let deleteButton = self.deleteButton()
-        
         self.firstNameField.autocorrectionType = .no
         self.lastNameField.autocorrectionType = .no
         self.emailField.autocorrectionType = .no
         self.emailField.autocapitalizationType = .none
-        
         self.view.addSubview(scrollView)
         scrollView.addSubview(firstNameLabel)
         scrollView.addSubview(self.firstNameField)
@@ -141,13 +132,13 @@ class ContactDetailViewController: UniversalViewController {
             leftAnchor = self.view.safeAreaLayoutGuide.leftAnchor
         }
         
-        let regInset:CGFloat = 60.0
-        let regCenterInset:CGFloat = 12.0
-        let regVertSpace:CGFloat = 30.0
-        let compInset:CGFloat = 13.0
-        let compVertSpace:CGFloat = 16.0
-        let interitemSpace:CGFloat = 0.0
-        let textFieldHeight:CGFloat = 44.0
+        let regInset: CGFloat = 60.0
+        let regCenterInset: CGFloat = 12.0
+        let regVertSpace: CGFloat = 30.0
+        let compInset: CGFloat = 13.0
+        let compVertSpace: CGFloat = 16.0
+        let interitemSpace: CGFloat = 0.0
+        let textFieldHeight: CGFloat = 44.0
         
         self.commonConstraints.append(contentsOf: [scrollView.leftAnchor.constraint(equalTo: leftAnchor),
                                                    scrollView.rightAnchor.constraint(equalTo: rightAnchor),
@@ -161,7 +152,7 @@ class ContactDetailViewController: UniversalViewController {
                                                    self.emailField.heightAnchor.constraint(equalToConstant: textFieldHeight),
                                                    self.departmentField.heightAnchor.constraint(equalToConstant: textFieldHeight)])
         
-        self.regularConstraints.append(contentsOf: [firstNameLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: regInset),
+      self.regularConstraints.append(contentsOf: [firstNameLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: regInset),
                                                     firstNameLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: regInset),
                                                     self.firstNameField.leftAnchor.constraint(equalTo: firstNameLabel.leftAnchor),
                                                     self.firstNameField.rightAnchor.constraint(equalTo: centerXAnchor, constant: -regCenterInset),
@@ -240,19 +231,19 @@ class ContactDetailViewController: UniversalViewController {
                                                     deleteButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -compInset),
                                                     deleteButton.topAnchor.constraint(equalTo: self.departmentField.bottomAnchor, constant:compVertSpace),
                                                     deleteButton.heightAnchor.constraint(equalToConstant: 44.0),
-                                                    deleteButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant:-compInset)
+                                                    deleteButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -compInset)
             ])
-        
+    
         if self.isNewContact {
             self.beginEditingFields()
         }
     }
-    
+
     @objc func userDidPressBack() {
         self.endEditingFields()
         self.navigationController?.popViewController(animated: true)
     }
-    
+
     @objc func userDidPressDelete() {
         self.endEditingFields()
         if let c = self.contact {
@@ -260,7 +251,7 @@ class ContactDetailViewController: UniversalViewController {
         }
         self.completeEditing()
     }
-    
+
     @objc func userDidPressUndelete() {
         self.endEditingFields()
         if let c = self.contact {
@@ -268,21 +259,21 @@ class ContactDetailViewController: UniversalViewController {
         }
         self.completeEditing()
     }
-    
+
     @objc func userDidPressEdit() {
         self.beginEditingFields()
     }
-    
+
     @objc func userDidPressCancelEdit() {
         self.endEditingFields()
         self.reloadContactDetails()
     }
-    
+
     @objc func userDidPressSave() {
         self.endEditingFields()
         self.saveFieldsIfRequired()
     }
-    
+
     fileprivate func saveFieldsIfRequired() {
         var contactUpdated = false
         guard let c = self.contact else {return}
@@ -521,7 +512,7 @@ class ContactDetailViewController: UniversalViewController {
         field.isUserInteractionEnabled = false
         return field
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
