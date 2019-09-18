@@ -33,6 +33,7 @@ import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
+import com.salesforce.androidsdk.BuildConfig;
 import com.salesforce.androidsdk.reactnative.app.SalesforceReactSDKManager;
 
 import java.util.List;
