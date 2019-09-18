@@ -91,8 +91,8 @@ class MainActivity : SalesforceActivity() {
         tabHost.addTab(appsTabSpec)
 
         // Getting a handle on list views.
-        usersListView = findViewById<ListView>(R.id.users_list)
-        appsListView = findViewById<ListView>(R.id.apps_list)
+        usersListView = findViewById(R.id.users_list)
+        appsListView = findViewById(R.id.apps_list)
 
         // Setting click listeners for the list views.
         (usersListView as ListView).onItemClickListener = OnItemClickListener { _, _, position, _ -> handleUserListItemClick(position) }
@@ -110,9 +110,8 @@ class MainActivity : SalesforceActivity() {
         findViewById<ViewGroup>(R.id.root).visibility = View.VISIBLE
 
         // Displays list of users available.
-        val users = UserAccountManager.getInstance().authenticatedUsers
         usersListView?.adapter = ArrayAdapter(this,
-                android.R.layout.simple_selectable_list_item, buildListOfUsers())
+                android.R.layout.simple_selectable_list_item, arrayListOf(buildListOfUsers()))
 
         // Displays list of apps available.
         appsListView?.adapter = ArrayAdapter(this, android.R.layout.simple_selectable_list_item,
