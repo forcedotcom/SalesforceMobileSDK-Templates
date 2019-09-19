@@ -55,13 +55,13 @@ class MainActivity : SalesforceActivity() {
         private const val USERS_TAB = "Users"
         private const val APPS_TAB = "Apps"
         private const val ADD_NEW_USER = "Add New User"
-        private const val SMART_SYNC_EXPLORER = "MobileSyncExplorer"
+        private const val MOBILE_SYNC_EXPLORER = "MobileSyncExplorer"
         private const val REST_EXPLORER = "RestExplorer"
         private const val ACCOUNT_EDITOR = "AccountEditor"
-        private const val SMART_SYNC_EXPLORER_PACKAGE = "com.salesforce.samples.mobilesyncexplorer"
+        private const val MOBILE_SYNC_EXPLORER_PACKAGE = "com.salesforce.samples.mobilesyncexplorer"
         private const val REST_EXPLORER_PACKAGE = "com.salesforce.samples.restexplorer"
         private const val ACCOUNT_EDITOR_PACKAGE = "com.salesforce.samples.accounteditor"
-        private const val SMART_SYNC_COMPONENT_NAME = "MainActivity"
+        private const val MOBILE_SYNC_COMPONENT_NAME = "MainActivity"
         private const val REST_EXPLORER_COMPONENT_NAME = "ExplorerActivity"
         private const val ACCOUNT_EDITOR_COMPONENT_NAME = "SalesforceDroidGapActivity"
         private const val COLON = ":"
@@ -115,7 +115,7 @@ class MainActivity : SalesforceActivity() {
 
         // Displays list of apps available.
         appsListView?.adapter = ArrayAdapter(this, android.R.layout.simple_selectable_list_item,
-                arrayListOf(SMART_SYNC_EXPLORER, REST_EXPLORER, ACCOUNT_EDITOR))
+                arrayListOf(MOBILE_SYNC_EXPLORER, REST_EXPLORER, ACCOUNT_EDITOR))
     }
 
     private fun buildListOfUsers(): List<String>? {
@@ -159,9 +159,9 @@ class MainActivity : SalesforceActivity() {
         var appPackageName = ""
         var appComponentName = ""
         when (appName) {
-            SMART_SYNC_EXPLORER -> {
-                appPackageName = SMART_SYNC_EXPLORER_PACKAGE
-                appComponentName = SMART_SYNC_COMPONENT_NAME
+            MOBILE_SYNC_EXPLORER -> {
+                appPackageName = MOBILE_SYNC_EXPLORER_PACKAGE
+                appComponentName = MOBILE_SYNC_COMPONENT_NAME
             }
             REST_EXPLORER -> {
                 appPackageName = REST_EXPLORER_PACKAGE
