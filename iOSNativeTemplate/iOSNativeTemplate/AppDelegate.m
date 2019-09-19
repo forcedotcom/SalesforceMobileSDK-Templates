@@ -30,8 +30,8 @@
 #import <SalesforceSDKCore/SFDefaultUserManagementViewController.h>
 #import <SalesforceSDKCore/SalesforceSDKManager.h>
 #import <SalesforceSDKCore/SFUserAccountManager.h>
-#import <SmartSync/SmartSyncSDKManager.h>
-#import <SmartSync/SFSDKSmartSyncLogger.h>
+#import <MobileSync/MobileSyncSDKManager.h>
+#import <MobileSync/SFSDKMobileSyncLogger.h>
 #import <SalesforceSDKCore/SFLoginViewController.h>
 #import <SalesforceSDKCore/SFSDKLoginViewControllerConfig.h>
 #import <SalesforceSDKCore/SFSDKAuthHelper.h>
@@ -59,7 +59,7 @@
 {
     self = [super init];
     if (self) {
-        [SmartSyncSDKManager initializeSDK];
+        [MobileSyncSDKManager initializeSDK];
         
         //App Setup for any changes to the current authenticated user
        

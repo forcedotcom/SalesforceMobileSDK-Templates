@@ -11,7 +11,7 @@ pod 'SalesforceSDKCommon', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
 pod 'SalesforceAnalytics', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
 pod 'SalesforceSDKCore', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
 pod 'SmartStore', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
-pod 'SmartSync', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
+pod 'MobileSync', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
 
 end
 
