@@ -119,18 +119,11 @@ class ContactDetailViewController: UniversalViewController {
         scrollView.addSubview(self.departmentField)
         scrollView.addSubview(deleteButton)
         
-        var topAnchor = self.view.topAnchor
-        var bottomAnchor = self.view.bottomAnchor
-        var centerXAnchor = self.view.centerXAnchor
-        var rightAnchor = self.view.rightAnchor
-        var leftAnchor = self.view.leftAnchor
-        if #available(iOS 11.0, *) {
-            topAnchor = self.view.safeAreaLayoutGuide.topAnchor
-            bottomAnchor = self.view.safeAreaLayoutGuide.bottomAnchor
-            centerXAnchor = self.view.safeAreaLayoutGuide.centerXAnchor
-            rightAnchor = self.view.safeAreaLayoutGuide.rightAnchor
-            leftAnchor = self.view.safeAreaLayoutGuide.leftAnchor
-        }
+        var topAnchor = self.view.safeAreaLayoutGuide.topAnchor
+        var bottomAnchor = self.view.safeAreaLayoutGuide.bottomAnchor
+        var centerXAnchor = self.view.safeAreaLayoutGuide.centerXAnchor
+        var rightAnchor = self.view.safeAreaLayoutGuide.rightAnchor
+        var leftAnchor = self.view.safeAreaLayoutGuide.leftAnchor
         
         let regInset: CGFloat = 60.0
         let regCenterInset: CGFloat = 12.0
