@@ -36,9 +36,9 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var path = require('path');
 
     // Values in template
-    var templateAppName = 'SmartSyncExplorerSwift';
+    var templateAppName = 'MobileSyncExplorerSwift';
     var templatePackageName = 'com.salesforce.mobilesdk';
-    var templateOrganization = 'SmartSyncExplorerSwiftOrganizationName';
+    var templateOrganization = 'MobileSyncExplorerSwiftOrganizationName';
 
     // Key files
     var templatePodfile = 'Podfile';

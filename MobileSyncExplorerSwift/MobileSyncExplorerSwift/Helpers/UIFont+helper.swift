@@ -1,6 +1,6 @@
 /*
  UIFont+helper.swift
- SmartSyncExplorerSwift
+ MobileSyncExplorerSwift
 
  Created by Nicholas McDonald on 12/6/17.
 

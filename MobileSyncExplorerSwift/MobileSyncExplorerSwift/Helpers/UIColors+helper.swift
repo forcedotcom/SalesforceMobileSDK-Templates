@@ -1,6 +1,6 @@
 /*
  UIColors+helper.swift
- SmartSyncExplorerSwift
+ MobileSyncExplorerSwift
 
  Created by Nicholas McDonald on 11/29/17.
 

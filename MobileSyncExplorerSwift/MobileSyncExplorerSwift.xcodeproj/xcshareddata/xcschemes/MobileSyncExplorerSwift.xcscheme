@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "4FD6C4731B754AF1002F9F90"
-               BuildableName = "SmartSyncExplorerSwift.app"
-               BlueprintName = "SmartSyncExplorerSwift"
-               ReferencedContainer = "container:SmartSyncExplorerSwift.xcodeproj">
+               BuildableName = "MobileSyncExplorerSwift.app"
+               BlueprintName = "MobileSyncExplorerSwift"
+               ReferencedContainer = "container:MobileSyncExplorerSwift.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4FD6C4731B754AF1002F9F90"
-            BuildableName = "SmartSyncExplorerSwift.app"
-            BlueprintName = "SmartSyncExplorerSwift"
-            ReferencedContainer = "container:SmartSyncExplorerSwift.xcodeproj">
+            BuildableName = "MobileSyncExplorerSwift.app"
+            BlueprintName = "MobileSyncExplorerSwift"
+            ReferencedContainer = "container:MobileSyncExplorerSwift.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -56,9 +56,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4FD6C4731B754AF1002F9F90"
-            BuildableName = "SmartSyncExplorerSwift.app"
-            BlueprintName = "SmartSyncExplorerSwift"
-            ReferencedContainer = "container:SmartSyncExplorerSwift.xcodeproj">
+            BuildableName = "MobileSyncExplorerSwift.app"
+            BlueprintName = "MobileSyncExplorerSwift"
+            ReferencedContainer = "container:MobileSyncExplorerSwift.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -75,9 +75,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4FD6C4731B754AF1002F9F90"
-            BuildableName = "SmartSyncExplorerSwift.app"
-            BlueprintName = "SmartSyncExplorerSwift"
-            ReferencedContainer = "container:SmartSyncExplorerSwift.xcodeproj">
+            BuildableName = "MobileSyncExplorerSwift.app"
+            BlueprintName = "MobileSyncExplorerSwift"
+            ReferencedContainer = "container:MobileSyncExplorerSwift.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

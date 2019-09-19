@@ -29,4 +29,4 @@ import { AppRegistry } from 'react-native';
 
 import App from './js/App';
 
-AppRegistry.registerComponent('SmartSyncExplorerReactNative', () => App);
+AppRegistry.registerComponent('MobileSyncExplorerReactNative', () => App);

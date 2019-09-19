@@ -1,6 +1,6 @@
 /*
  ViewController.swift
- SmartSyncExplorerSwift
+ MobileSyncExplorerSwift
  
  Created by Raj Rao on 05/16/18.
  
@@ -28,7 +28,7 @@
  */
 import Foundation
 import SmartStore
-import SmartSync
+import MobileSync
 
 
 enum SObjectConstants {
@@ -223,8 +223,8 @@ class SObjectDataManager {
         self.dataSpec = dataSpec
         searchFilterQueue = DispatchQueue(label: kSearchFilterQueueName)
         // Setup store and syncs if needed
-        SmartSyncSDKManager.shared.setupUserStoreFromDefaultConfig()
-        SmartSyncSDKManager.shared.setupUserSyncsFromDefaultConfig()
+        MobileSyncSDKManager.shared.setupUserStoreFromDefaultConfig()
+        MobileSyncSDKManager.shared.setupUserSyncsFromDefaultConfig()
     }
     
     func queryLocalData() throws -> [Any]  {
@@ -342,11 +342,11 @@ class SObjectDataManager {
                     self?.populateDataRows(objects)
                     completion(self?.fullDataRowList ?? [])
                 } catch {
-                   SmartSyncLogger.e(SObjectDataManager.self, message: "Resync \(syncState.name) failed \(error)" )
+                   MobileSyncLogger.e(SObjectDataManager.self, message: "Resync \(syncState.name) failed \(error)" )
                 }
                 break
             case .failed:
-                 SmartSyncLogger.e(SObjectDataManager.self, message: "Resync \(syncState.name) failed" )
+                 MobileSyncLogger.e(SObjectDataManager.self, message: "Resync \(syncState.name) failed" )
                  onFailure(nil,syncState)
             default:
                 break
@@ -374,12 +374,12 @@ class SObjectDataManager {
                         }
                         )
                     } catch let error as NSError {
-                        SmartSyncLogger.e(SObjectDataManager.self, message: "Error with Resync \(error)" )
+                        MobileSyncLogger.e(SObjectDataManager.self, message: "Error with Resync \(error)" )
                         onFailure(error,syncState)
                     }
                     break
                 case .failed:
-                    SmartSyncLogger.e(SObjectDataManager.self, message: "Resync \(syncState.name) failed" )
+                    MobileSyncLogger.e(SObjectDataManager.self, message: "Resync \(syncState.name) failed" )
                     onFailure(nil,syncState)
                     break
                 default:

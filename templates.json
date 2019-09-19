@@ -69,15 +69,15 @@
     },
     {
 
-        "path": "SmartSyncExplorerSwift",
-        "description": "Sample Swift application using SmartSync data framework",
+        "path": "MobileSyncExplorerSwift",
+        "description": "Sample Swift application using MobileSync data framework",
         "appType": "native_swift",
         "platforms": ["ios"]
     },
     {
 
-        "path": "SmartSyncExplorerReactNative",
-        "description": "Sample application using SmartSync data framework",
+        "path": "MobileSyncExplorerReactNative",
+        "description": "Sample application using MobileSync data framework",
         "appType": "react_native",
         "platforms": ["android", "ios"]
     }

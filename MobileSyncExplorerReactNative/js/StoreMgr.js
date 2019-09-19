@@ -25,13 +25,13 @@
  */
 
 import EventEmitter from './events';
-import {smartstore, smartsync, forceUtil} from 'react-native-force';
+import {smartstore, mobilesync, forceUtil} from 'react-native-force';
 
 const registerSoup = forceUtil.promiser(smartstore.registerSoup);
-const getSyncStatus = forceUtil.promiser(smartsync.getSyncStatus);
-const syncDown = forceUtil.promiserNoRejection(smartsync.syncDown);
-const syncUp = forceUtil.promiserNoRejection(smartsync.syncUp);
-const reSync = forceUtil.promiserNoRejection(smartsync.reSync);
+const getSyncStatus = forceUtil.promiser(mobilesync.getSyncStatus);
+const syncDown = forceUtil.promiserNoRejection(mobilesync.syncDown);
+const syncUp = forceUtil.promiserNoRejection(mobilesync.syncUp);
+const reSync = forceUtil.promiserNoRejection(mobilesync.reSync);
 
 const syncName = "smartSyncExplorerSyncDown";
 let syncInFlight = false;
@@ -55,7 +55,7 @@ function syncDownContacts() {
     syncInFlight = true;
     const fieldlist = ["Id", "FirstName", "LastName", "Title", "Email", "MobilePhone","Department", "LastModifiedDate"];
     const target = {type:"soql", query:`SELECT ${fieldlist.join(",")} FROM Contact LIMIT 10000`};
-    return syncDown(false, target, "contacts", {mergeMode:smartsync.MERGE_MODE.OVERWRITE}, syncName)
+    return syncDown(false, target, "contacts", {mergeMode:mobilesync.MERGE_MODE.OVERWRITE}, syncName)
         .then(() => {
             console.log("syncDown completed or failed");
             syncInFlight = false;
@@ -88,7 +88,7 @@ function syncUpContacts() {
     console.log("Starting syncUp");
     syncInFlight = true;
     const fieldlist = ["FirstName", "LastName", "Title", "Email", "MobilePhone","Department"];
-    return syncUp(false, {}, "contacts", {mergeMode:smartsync.MERGE_MODE.OVERWRITE, fieldlist})
+    return syncUp(false, {}, "contacts", {mergeMode:mobilesync.MERGE_MODE.OVERWRITE, fieldlist})
         .then(() => {
             console.log("syncUp completed or failed");
             syncInFlight = false;

@@ -132,7 +132,7 @@
     jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
 
     RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
-                                                        moduleName:@"SmartSyncExplorerReactNative"
+                                                        moduleName:@"MobileSyncExplorerReactNative"
                                                  initialProperties:nil
                                                      launchOptions:self.launchOptions];
     rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];

@@ -10,27 +10,27 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		4F3AFF401DC2C79E006FF6B0 /* InitialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F3AFF3E1DC2C79E006FF6B0 /* InitialViewController.m */; };
-		6F00A4EBBB37F8CE9D7F4535 /* libPods-SmartSyncExplorerReactNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78A9CFAC4F2F0A1FDF2E7669 /* libPods-SmartSyncExplorerReactNative.a */; };
+		6F00A4EBBB37F8CE9D7F4535 /* libPods-MobileSyncExplorerReactNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78A9CFAC4F2F0A1FDF2E7669 /* libPods-MobileSyncExplorerReactNative.a */; };
 		B7168FC01FACCB8A00A48DB5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7168FBF1FACCB8900A48DB5 /* LaunchScreen.storyboard */; };
 		B77BD8B1211363F70036B284 /* bootconfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = B77BD8B0211363F70036B284 /* bootconfig.plist */; };
 		CE6BC3F620F12070009E4AAE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F3AFF441DC2C8C8006FF6B0 /* Images.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0D8CDE8158AC70656CC3EE20 /* Pods-SmartSyncExplorerReactNative.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SmartSyncExplorerReactNative.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SmartSyncExplorerReactNative/Pods-SmartSyncExplorerReactNative.debug.xcconfig"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* SmartSyncExplorerReactNative.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartSyncExplorerReactNative.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = SmartSyncExplorerReactNative/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = SmartSyncExplorerReactNative/AppDelegate.m; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = SmartSyncExplorerReactNative/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = SmartSyncExplorerReactNative/main.m; sourceTree = "<group>"; };
-		4F3AFF3D1DC2C79E006FF6B0 /* InitialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InitialViewController.h; path = SmartSyncExplorerReactNative/InitialViewController.h; sourceTree = "<group>"; };
-		4F3AFF3E1DC2C79E006FF6B0 /* InitialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InitialViewController.m; path = SmartSyncExplorerReactNative/InitialViewController.m; sourceTree = "<group>"; };
+		0D8CDE8158AC70656CC3EE20 /* Pods-MobileSyncExplorerReactNative.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileSyncExplorerReactNative.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MobileSyncExplorerReactNative/Pods-MobileSyncExplorerReactNative.debug.xcconfig"; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* MobileSyncExplorerReactNative.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MobileSyncExplorerReactNative.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = MobileSyncExplorerReactNative/AppDelegate.h; sourceTree = "<group>"; };
+		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = MobileSyncExplorerReactNative/AppDelegate.m; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = MobileSyncExplorerReactNative/Info.plist; sourceTree = "<group>"; };
+		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = MobileSyncExplorerReactNative/main.m; sourceTree = "<group>"; };
+		4F3AFF3D1DC2C79E006FF6B0 /* InitialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InitialViewController.h; path = MobileSyncExplorerReactNative/InitialViewController.h; sourceTree = "<group>"; };
+		4F3AFF3E1DC2C79E006FF6B0 /* InitialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InitialViewController.m; path = MobileSyncExplorerReactNative/InitialViewController.m; sourceTree = "<group>"; };
 		4F3AFF441DC2C8C8006FF6B0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "../mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/Images.xcassets"; sourceTree = "<group>"; };
-		4FF12F8E1DCA93E2004D9EF9 /* SmartSyncExplorerReactNative.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = SmartSyncExplorerReactNative.entitlements; path = SmartSyncExplorerReactNative/SmartSyncExplorerReactNative.entitlements; sourceTree = "<group>"; };
-		78A9CFAC4F2F0A1FDF2E7669 /* libPods-SmartSyncExplorerReactNative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SmartSyncExplorerReactNative.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		AE79D28E6E57F5B77FA24716 /* Pods-SmartSyncExplorerReactNative.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SmartSyncExplorerReactNative.release.xcconfig"; path = "Pods/Target Support Files/Pods-SmartSyncExplorerReactNative/Pods-SmartSyncExplorerReactNative.release.xcconfig"; sourceTree = "<group>"; };
+		4FF12F8E1DCA93E2004D9EF9 /* MobileSyncExplorerReactNative.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = MobileSyncExplorerReactNative.entitlements; path = MobileSyncExplorerReactNative/MobileSyncExplorerReactNative.entitlements; sourceTree = "<group>"; };
+		78A9CFAC4F2F0A1FDF2E7669 /* libPods-MobileSyncExplorerReactNative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MobileSyncExplorerReactNative.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AE79D28E6E57F5B77FA24716 /* Pods-MobileSyncExplorerReactNative.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileSyncExplorerReactNative.release.xcconfig"; path = "Pods/Target Support Files/Pods-MobileSyncExplorerReactNative/Pods-MobileSyncExplorerReactNative.release.xcconfig"; sourceTree = "<group>"; };
 		B7168FBF1FACCB8900A48DB5 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = "../mobile_sdk/salesforcemobilesdk-ios/shared/resources/LaunchScreen.storyboard"; sourceTree = "<group>"; };
-		B77BD8B0211363F70036B284 /* bootconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = bootconfig.plist; path = SmartSyncExplorerReactNative/bootconfig.plist; sourceTree = "<group>"; };
+		B77BD8B0211363F70036B284 /* bootconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = bootconfig.plist; path = MobileSyncExplorerReactNative/bootconfig.plist; sourceTree = "<group>"; };
 		CE46D5431E9C942C006E6537 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
@@ -39,21 +39,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6F00A4EBBB37F8CE9D7F4535 /* libPods-SmartSyncExplorerReactNative.a in Frameworks */,
+				6F00A4EBBB37F8CE9D7F4535 /* libPods-MobileSyncExplorerReactNative.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13B07FAE1A68108700A75B9A /* SmartSyncExplorerReactNative */ = {
+		13B07FAE1A68108700A75B9A /* MobileSyncExplorerReactNative */ = {
 			isa = PBXGroup;
 			children = (
-				4FF12F8E1DCA93E2004D9EF9 /* SmartSyncExplorerReactNative.entitlements */,
+				4FF12F8E1DCA93E2004D9EF9 /* MobileSyncExplorerReactNative.entitlements */,
 				4F3AFF421DC2C856006FF6B0 /* Classes */,
 				4F3AFF431DC2C869006FF6B0 /* Supporting Files */,
 			);
-			name = SmartSyncExplorerReactNative;
+			name = MobileSyncExplorerReactNative;
 			sourceTree = "<group>";
 		};
 		4F3AFF421DC2C856006FF6B0 /* Classes */ = {
@@ -82,8 +82,8 @@
 		6473DB45A273CC31E19C4F9A /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				0D8CDE8158AC70656CC3EE20 /* Pods-SmartSyncExplorerReactNative.debug.xcconfig */,
-				AE79D28E6E57F5B77FA24716 /* Pods-SmartSyncExplorerReactNative.release.xcconfig */,
+				0D8CDE8158AC70656CC3EE20 /* Pods-MobileSyncExplorerReactNative.debug.xcconfig */,
+				AE79D28E6E57F5B77FA24716 /* Pods-MobileSyncExplorerReactNative.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -91,7 +91,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* SmartSyncExplorerReactNative */,
+				13B07FAE1A68108700A75B9A /* MobileSyncExplorerReactNative */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				6473DB45A273CC31E19C4F9A /* Pods */,
 				C73512AABD4BDBC0734E686B /* Frameworks */,
@@ -103,7 +103,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* SmartSyncExplorerReactNative.app */,
+				13B07F961A680F5B00A75B9A /* MobileSyncExplorerReactNative.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -112,7 +112,7 @@
 			isa = PBXGroup;
 			children = (
 				CE46D5431E9C942C006E6537 /* XCTest.framework */,
-				78A9CFAC4F2F0A1FDF2E7669 /* libPods-SmartSyncExplorerReactNative.a */,
+				78A9CFAC4F2F0A1FDF2E7669 /* libPods-MobileSyncExplorerReactNative.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -120,9 +120,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* SmartSyncExplorerReactNative */ = {
+		13B07F861A680F5B00A75B9A /* MobileSyncExplorerReactNative */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "SmartSyncExplorerReactNative" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "MobileSyncExplorerReactNative" */;
 			buildPhases = (
 				0D1647048E9655B7745B0762 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
@@ -135,9 +135,9 @@
 			);
 			dependencies = (
 			);
-			name = SmartSyncExplorerReactNative;
+			name = MobileSyncExplorerReactNative;
 			productName = "Hello World";
-			productReference = 13B07F961A680F5B00A75B9A /* SmartSyncExplorerReactNative.app */;
+			productReference = 13B07F961A680F5B00A75B9A /* MobileSyncExplorerReactNative.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -158,7 +158,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "SmartSyncExplorerReactNative" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "MobileSyncExplorerReactNative" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -171,7 +171,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* SmartSyncExplorerReactNative */,
+				13B07F861A680F5B00A75B9A /* MobileSyncExplorerReactNative */,
 			);
 		};
 /* End PBXProject section */
@@ -215,7 +215,7 @@
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SmartSyncExplorerReactNative-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-MobileSyncExplorerReactNative-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -228,7 +228,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SmartSyncExplorerReactNative/Pods-SmartSyncExplorerReactNative-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-MobileSyncExplorerReactNative/Pods-MobileSyncExplorerReactNative-resources.sh",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
@@ -271,7 +271,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SmartSyncExplorerReactNative/Pods-SmartSyncExplorerReactNative-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MobileSyncExplorerReactNative/Pods-MobileSyncExplorerReactNative-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -292,10 +292,10 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0D8CDE8158AC70656CC3EE20 /* Pods-SmartSyncExplorerReactNative.debug.xcconfig */;
+			baseConfigurationReference = 0D8CDE8158AC70656CC3EE20 /* Pods-MobileSyncExplorerReactNative.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = SmartSyncExplorerReactNative/SmartSyncExplorerReactNative.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MobileSyncExplorerReactNative/MobileSyncExplorerReactNative.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -310,7 +310,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
-				INFOPLIST_FILE = SmartSyncExplorerReactNative/Info.plist;
+				INFOPLIST_FILE = MobileSyncExplorerReactNative/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -318,8 +318,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.samples.smartsyncexplorerreactnative.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = SmartSyncExplorerReactNative;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.samples.mobilesyncexplorerreactnative.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = MobileSyncExplorerReactNative;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -327,17 +327,17 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AE79D28E6E57F5B77FA24716 /* Pods-SmartSyncExplorerReactNative.release.xcconfig */;
+			baseConfigurationReference = AE79D28E6E57F5B77FA24716 /* Pods-MobileSyncExplorerReactNative.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = SmartSyncExplorerReactNative/SmartSyncExplorerReactNative.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MobileSyncExplorerReactNative/MobileSyncExplorerReactNative.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
-				INFOPLIST_FILE = SmartSyncExplorerReactNative/Info.plist;
+				INFOPLIST_FILE = MobileSyncExplorerReactNative/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -345,8 +345,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.samples.smartsyncexplorerreactnative.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = SmartSyncExplorerReactNative;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.samples.mobilesyncexplorerreactnative.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = MobileSyncExplorerReactNative;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -466,7 +466,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "SmartSyncExplorerReactNative" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "MobileSyncExplorerReactNative" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -475,7 +475,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "SmartSyncExplorerReactNative" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "MobileSyncExplorerReactNative" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

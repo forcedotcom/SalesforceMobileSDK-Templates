@@ -1,6 +1,6 @@
 /*
  ViewController.swift
- SmartSyncExplorerSwift
+ MobileSyncExplorerSwift
 
  Created by Nicholas McDonald on 1/3/18.
 

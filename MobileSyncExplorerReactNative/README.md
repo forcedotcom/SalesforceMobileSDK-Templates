@@ -1,6 +1,6 @@
 
-# SmartSyncExplorerReactNative
-SmartSyncExplorer application written using React Native 
+# MobileSyncExplorerReactNative
+MobileSyncExplorer application written using React Native 
 
 ## To get started do the following from this directory
 ``` shell
@@ -18,7 +18,7 @@ npm start (Windows users please use "npm run-script start-windows" instead of np
 ```
 
 ## To run the application on iOS
-* Open ios/SmartSyncExplorerReactNative.xcworkspace in XCode
+* Open ios/MobileSyncExplorerReactNative.xcworkspace in XCode
 
 ## To run the application on Android
 * Open android/ in Android Studio

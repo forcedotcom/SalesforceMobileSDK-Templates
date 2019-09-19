@@ -28,7 +28,7 @@ package com.salesforce.androidnativetemplate;
 
 import android.app.Application;
 
-import com.salesforce.androidsdk.smartsync.app.SmartSyncSDKManager;
+import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager;
 
 /**
  * Application class for our application.
@@ -38,14 +38,14 @@ public class MainApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		SmartSyncSDKManager.initNative(getApplicationContext(), MainActivity.class);
+		MobileSyncSDKManager.initNative(getApplicationContext(), MainActivity.class);
 
         /*
          * Uncomment the following line to enable IDP login flow. This will allow the user to
          * either authenticate using the current app or use a designated IDP app for login.
          * Replace 'idpAppURIScheme' with the URI scheme of the IDP app meant to be used.
          */
-		// SmartSyncSDKManager.getInstance().setIDPAppURIScheme(idpAppURIScheme);
+		// MobileSyncSDKManager.getInstance().setIDPAppURIScheme(idpAppURIScheme);
 
 		/*
 		 * Un-comment the line below to enable push notifications in this app.
@@ -53,6 +53,6 @@ public class MainApplication extends Application {
 		 * Add your Google package ID in 'bootonfig.xml', as the value
 		 * for the key 'androidPushNotificationClientId'.
 		 */
-		// SmartSyncSDKManager.getInstance().setPushNotificationReceiver(pnInterface);
+		// MobileSyncSDKManager.getInstance().setPushNotificationReceiver(pnInterface);
 	}
 }

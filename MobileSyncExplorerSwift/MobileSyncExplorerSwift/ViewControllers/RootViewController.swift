@@ -1,6 +1,6 @@
 /*
  ViewController.swift
- SmartSyncExplorerSwift
+ MobileSyncExplorerSwift
 
  Created by Nicholas McDonald on 1/16/18.
 
@@ -29,7 +29,7 @@
 
 import UIKit
 import CoreGraphics
-import SmartSync
+import MobileSync
 
 class RootViewController: UniversalViewController {
     
@@ -62,7 +62,7 @@ class RootViewController: UniversalViewController {
                                                name: NSNotification.Name(rawValue: kSFPasscodeFlowWillBegin),
                                                object: nil)
         
-        self.title = "SmartSync Explorer"
+        self.title = "MobileSync Explorer"
         
         guard let settings = UIImage(named: "setting")?.withRenderingMode(.alwaysOriginal),
             let sync = UIImage(named: "sync")?.withRenderingMode(.alwaysOriginal),
@@ -278,7 +278,7 @@ extension RootViewController: ContactDetailViewDelegate {
         do {
             _ = try self.sObjectsDataManager.deleteLocalData(object)
         } catch let error as NSError {
-           SmartSyncLogger.e(RootViewController.self, message: "Delete local data failed \(error)" )
+           MobileSyncLogger.e(RootViewController.self, message: "Delete local data failed \(error)" )
         }
         self.refreshList()
     }
@@ -287,7 +287,7 @@ extension RootViewController: ContactDetailViewDelegate {
         do {
            _ = try self.sObjectsDataManager.undeleteLocalData(object)
         } catch let error as NSError {
-            SmartSyncLogger.e(RootViewController.self, message: "Undelete local data failed \(error)" )
+            MobileSyncLogger.e(RootViewController.self, message: "Undelete local data failed \(error)" )
         }
         self.refreshList()
     }
@@ -296,7 +296,7 @@ extension RootViewController: ContactDetailViewDelegate {
         do {
            _ = try self.sObjectsDataManager.updateLocalData(object)
         } catch let error as NSError {
-             SmartSyncLogger.e(RootViewController.self, message: "Update local data failed \(error)" )
+             MobileSyncLogger.e(RootViewController.self, message: "Update local data failed \(error)" )
         }
         self.refreshList()
     }
@@ -305,7 +305,7 @@ extension RootViewController: ContactDetailViewDelegate {
         do {
             _ = try self.sObjectsDataManager.createLocalData(object)
         } catch let error as NSError{
-             SmartSyncLogger.e(RootViewController.self, message: "Add local data failed \(error)" )
+             MobileSyncLogger.e(RootViewController.self, message: "Add local data failed \(error)" )
         }
         self.refreshList()
     }

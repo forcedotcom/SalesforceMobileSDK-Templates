@@ -24,14 +24,14 @@
 
 import Foundation
 import UIKit
-import SmartSync
+import MobileSync
 
 class AppDelegate : UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
     override init() {
         super.init()
-        SmartSyncSDKManager.initializeSDK()
+        MobileSyncSDKManager.initializeSDK()
         
         AuthHelper.registerBlock(forCurrentUserChangeNotifications: {
             self.resetViewState {

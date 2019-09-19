@@ -12,5 +12,5 @@ project( ':libs:SalesforceSDK' ).projectDir = new File( libsRootDir, 'Salesforce
 include ':libs:SmartStore'
 project( ':libs:SmartStore' ).projectDir = new File( libsRootDir, 'SmartStore' )
 
-include ':libs:SmartSync'
-project( ':libs:SmartSync' ).projectDir = new File( libsRootDir, 'SmartSync' )
+include ':libs:MobileSync'
+project( ':libs:MobileSync' ).projectDir = new File( libsRootDir, 'MobileSync' )

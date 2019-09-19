@@ -1,2 +1,2 @@
-# SmartSyncExplorerSwift
-SmartSyncExplorer Sample in Swift
+# MobileSyncExplorerSwift
+MobileSyncExplorer Sample in Swift

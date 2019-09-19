@@ -24,7 +24,7 @@
 
 import Foundation
 import UIKit
-import SmartSync
+import MobileSync
 import SwiftUI
 
 class AppDelegate : UIResponder, UIApplicationDelegate {
@@ -32,7 +32,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
     
     override init() {
         super.init()
-        SmartSyncSDKManager.initializeSDK()
+        MobileSyncSDKManager.initializeSDK()
         
         AuthHelper.registerBlock(forCurrentUserChangeNotifications: {
             self.resetViewState {

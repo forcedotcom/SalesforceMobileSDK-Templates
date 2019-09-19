@@ -1,6 +1,6 @@
 /*
  ViewController.swift
- SmartSyncExplorerSwift
+ MobileSyncExplorerSwift
  
  Created by Raj Rao on 05/16/18.
  
@@ -27,7 +27,7 @@
  WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import Foundation
-import SmartSync.SFSmartSyncConstants
+import MobileSync.SFMobileSyncConstants
 
 enum ContactConstants {
     static let kContactFirstNameField    = "FirstName"

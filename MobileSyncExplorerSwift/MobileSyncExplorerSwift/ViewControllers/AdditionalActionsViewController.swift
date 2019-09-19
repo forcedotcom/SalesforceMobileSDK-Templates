@@ -1,6 +1,6 @@
 /*
  AdditionalActionsViewController.swift
- SmartSyncExplorerSwift
+ MobileSyncExplorerSwift
 
  Created by Nicholas McDonald on 2/3/18.
  

@@ -1,6 +1,6 @@
 /*
  UniversalViewController.swift
- SmartSyncExplorerSwift
+ MobileSyncExplorerSwift
 
  Created by Nicholas McDonald on 1/22/18.
 

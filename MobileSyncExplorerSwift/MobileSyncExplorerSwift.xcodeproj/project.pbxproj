@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		4F393A291C3C8BCD00B3EA13 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F393A281C3C8BCD00B3EA13 /* main.swift */; };
 		4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */; };
-		78A235BD93AB7D080D67CD51 /* Pods_SmartSyncExplorerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82A29C75280BDF73123F14B4 /* Pods_SmartSyncExplorerSwift.framework */; };
+		78A235BD93AB7D080D67CD51 /* Pods_MobileSyncExplorerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82A29C75280BDF73123F14B4 /* Pods_MobileSyncExplorerSwift.framework */; };
 		B7168FBC1FACC6F900A48DB5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */; };
 		B767370220AB57C600F04103 /* userstore.json in Resources */ = {isa = PBXBuildFile; fileRef = B767370020AB57C600F04103 /* userstore.json */; };
 		B767370320AB57C600F04103 /* usersyncs.json in Resources */ = {isa = PBXBuildFile; fileRef = B767370120AB57C600F04103 /* usersyncs.json */; };
@@ -31,15 +31,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		045D1C5BC2F1EADFDFB3671E /* Pods-SmartSyncExplorerSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SmartSyncExplorerSwift.release.xcconfig"; path = "Pods/Target Support Files/Pods-SmartSyncExplorerSwift/Pods-SmartSyncExplorerSwift.release.xcconfig"; sourceTree = "<group>"; };
+		045D1C5BC2F1EADFDFB3671E /* Pods-MobileSyncExplorerSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileSyncExplorerSwift.release.xcconfig"; path = "Pods/Target Support Files/Pods-MobileSyncExplorerSwift/Pods-MobileSyncExplorerSwift.release.xcconfig"; sourceTree = "<group>"; };
 		4F393A281C3C8BCD00B3EA13 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		4FD6C4741B754AF1002F9F90 /* SmartSyncExplorerSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartSyncExplorerSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4FD6C4741B754AF1002F9F90 /* MobileSyncExplorerSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MobileSyncExplorerSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FD6C4781B754AF1002F9F90 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4FD6C49A1B755242002F9F90 /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
-		4FF12F8A1DCA91F5004D9EF9 /* SmartSyncExplorerSwift.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SmartSyncExplorerSwift.entitlements; sourceTree = "<group>"; };
-		762732C14CFE40A989C3AD70 /* Pods-SmartSyncExplorerSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SmartSyncExplorerSwift.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SmartSyncExplorerSwift/Pods-SmartSyncExplorerSwift.debug.xcconfig"; sourceTree = "<group>"; };
-		82A29C75280BDF73123F14B4 /* Pods_SmartSyncExplorerSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SmartSyncExplorerSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4FF12F8A1DCA91F5004D9EF9 /* MobileSyncExplorerSwift.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MobileSyncExplorerSwift.entitlements; sourceTree = "<group>"; };
+		762732C14CFE40A989C3AD70 /* Pods-MobileSyncExplorerSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileSyncExplorerSwift.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MobileSyncExplorerSwift/Pods-MobileSyncExplorerSwift.debug.xcconfig"; sourceTree = "<group>"; };
+		82A29C75280BDF73123F14B4 /* Pods_MobileSyncExplorerSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MobileSyncExplorerSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = "../mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/LaunchScreen.storyboard"; sourceTree = "<group>"; };
 		B767370020AB57C600F04103 /* userstore.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = userstore.json; sourceTree = "<group>"; };
 		B767370120AB57C600F04103 /* usersyncs.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = usersyncs.json; sourceTree = "<group>"; };
@@ -65,7 +65,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				78A235BD93AB7D080D67CD51 /* Pods_SmartSyncExplorerSwift.framework in Frameworks */,
+				78A235BD93AB7D080D67CD51 /* Pods_MobileSyncExplorerSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,7 +75,7 @@
 		4FD6C46B1B754AF1002F9F90 = {
 			isa = PBXGroup;
 			children = (
-				4FD6C4761B754AF1002F9F90 /* SmartSyncExplorerSwift */,
+				4FD6C4761B754AF1002F9F90 /* MobileSyncExplorerSwift */,
 				4FD6C4751B754AF1002F9F90 /* Products */,
 				DDFDDF0A29E4BDD114B51BBC /* Pods */,
 				6B868AEB1ACA7FCA4636C7F7 /* Frameworks */,
@@ -85,21 +85,21 @@
 		4FD6C4751B754AF1002F9F90 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4FD6C4741B754AF1002F9F90 /* SmartSyncExplorerSwift.app */,
+				4FD6C4741B754AF1002F9F90 /* MobileSyncExplorerSwift.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		4FD6C4761B754AF1002F9F90 /* SmartSyncExplorerSwift */ = {
+		4FD6C4761B754AF1002F9F90 /* MobileSyncExplorerSwift */ = {
 			isa = PBXGroup;
 			children = (
 				B76D65DF20B4AECF00B55764 /* Resources */,
 				B76D657120B332D400B55764 /* Views */,
-				4FF12F8A1DCA91F5004D9EF9 /* SmartSyncExplorerSwift.entitlements */,
+				4FF12F8A1DCA91F5004D9EF9 /* MobileSyncExplorerSwift.entitlements */,
 				4FD6C4A11B755265002F9F90 /* Classes */,
 				4FD6C4771B754AF1002F9F90 /* Supporting Files */,
 			);
-			path = SmartSyncExplorerSwift;
+			path = MobileSyncExplorerSwift;
 			sourceTree = "<group>";
 		};
 		4FD6C4771B754AF1002F9F90 /* Supporting Files */ = {
@@ -128,7 +128,7 @@
 		6B868AEB1ACA7FCA4636C7F7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				82A29C75280BDF73123F14B4 /* Pods_SmartSyncExplorerSwift.framework */,
+				82A29C75280BDF73123F14B4 /* Pods_MobileSyncExplorerSwift.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -187,8 +187,8 @@
 		DDFDDF0A29E4BDD114B51BBC /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				762732C14CFE40A989C3AD70 /* Pods-SmartSyncExplorerSwift.debug.xcconfig */,
-				045D1C5BC2F1EADFDFB3671E /* Pods-SmartSyncExplorerSwift.release.xcconfig */,
+				762732C14CFE40A989C3AD70 /* Pods-MobileSyncExplorerSwift.debug.xcconfig */,
+				045D1C5BC2F1EADFDFB3671E /* Pods-MobileSyncExplorerSwift.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -196,9 +196,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		4FD6C4731B754AF1002F9F90 /* SmartSyncExplorerSwift */ = {
+		4FD6C4731B754AF1002F9F90 /* MobileSyncExplorerSwift */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4FD6C4931B754AF1002F9F90 /* Build configuration list for PBXNativeTarget "SmartSyncExplorerSwift" */;
+			buildConfigurationList = 4FD6C4931B754AF1002F9F90 /* Build configuration list for PBXNativeTarget "MobileSyncExplorerSwift" */;
 			buildPhases = (
 				FF74F0F7AF3E58C14EBE5178 /* [CP] Check Pods Manifest.lock */,
 				4FD6C4701B754AF1002F9F90 /* Sources */,
@@ -210,9 +210,9 @@
 			);
 			dependencies = (
 			);
-			name = SmartSyncExplorerSwift;
-			productName = SmartSyncExplorerSwift;
-			productReference = 4FD6C4741B754AF1002F9F90 /* SmartSyncExplorerSwift.app */;
+			name = MobileSyncExplorerSwift;
+			productName = MobileSyncExplorerSwift;
+			productReference = 4FD6C4741B754AF1002F9F90 /* MobileSyncExplorerSwift.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -223,7 +223,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 0710;
 				LastUpgradeCheck = 1020;
-				ORGANIZATIONNAME = SmartSyncExplorerSwiftOrganizationName;
+				ORGANIZATIONNAME = MobileSyncExplorerSwiftOrganizationName;
 				TargetAttributes = {
 					4FD6C4731B754AF1002F9F90 = {
 						CreatedOnToolsVersion = 6.4;
@@ -236,7 +236,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 4FD6C46F1B754AF1002F9F90 /* Build configuration list for PBXProject "SmartSyncExplorerSwift" */;
+			buildConfigurationList = 4FD6C46F1B754AF1002F9F90 /* Build configuration list for PBXProject "MobileSyncExplorerSwift" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -249,7 +249,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				4FD6C4731B754AF1002F9F90 /* SmartSyncExplorerSwift */,
+				4FD6C4731B754AF1002F9F90 /* MobileSyncExplorerSwift */,
 			);
 		};
 /* End PBXProject section */
@@ -277,14 +277,14 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SmartSyncExplorerSwift/Pods-SmartSyncExplorerSwift-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-MobileSyncExplorerSwift/Pods-MobileSyncExplorerSwift-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/FMDB/FMDB.framework",
 				"${BUILT_PRODUCTS_DIR}/SQLCipher/SQLCipher.framework",
 				"${BUILT_PRODUCTS_DIR}/SalesforceAnalytics/SalesforceAnalytics.framework",
 				"${BUILT_PRODUCTS_DIR}/SalesforceSDKCommon/SalesforceSDKCommon.framework",
 				"${BUILT_PRODUCTS_DIR}/SalesforceSDKCore/SalesforceSDKCore.framework",
 				"${BUILT_PRODUCTS_DIR}/SmartStore/SmartStore.framework",
-				"${BUILT_PRODUCTS_DIR}/SmartSync/SmartSync.framework",
+				"${BUILT_PRODUCTS_DIR}/MobileSync/MobileSync.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -294,11 +294,11 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SalesforceSDKCommon.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SalesforceSDKCore.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SmartStore.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SmartSync.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MobileSync.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SmartSyncExplorerSwift/Pods-SmartSyncExplorerSwift-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MobileSyncExplorerSwift/Pods-MobileSyncExplorerSwift-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FF74F0F7AF3E58C14EBE5178 /* [CP] Check Pods Manifest.lock */ = {
@@ -312,7 +312,7 @@
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SmartSyncExplorerSwift-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-MobileSyncExplorerSwift-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -457,33 +457,33 @@
 		};
 		4FD6C4941B754AF1002F9F90 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 762732C14CFE40A989C3AD70 /* Pods-SmartSyncExplorerSwift.debug.xcconfig */;
+			baseConfigurationReference = 762732C14CFE40A989C3AD70 /* Pods-MobileSyncExplorerSwift.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = SmartSyncExplorerSwift/SmartSyncExplorerSwift.entitlements;
-				INFOPLIST_FILE = SmartSyncExplorerSwift/Info.plist;
+				CODE_SIGN_ENTITLEMENTS = MobileSyncExplorerSwift/MobileSyncExplorerSwift.entitlements;
+				INFOPLIST_FILE = MobileSyncExplorerSwift/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_SWIFT_FLAGS = "-DSIGNPOST_ENABLED";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.mobilesdk.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "SmartSyncExplorerSwift/Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "MobileSyncExplorerSwift/Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
 		4FD6C4951B754AF1002F9F90 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 045D1C5BC2F1EADFDFB3671E /* Pods-SmartSyncExplorerSwift.release.xcconfig */;
+			baseConfigurationReference = 045D1C5BC2F1EADFDFB3671E /* Pods-MobileSyncExplorerSwift.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = SmartSyncExplorerSwift/SmartSyncExplorerSwift.entitlements;
-				INFOPLIST_FILE = SmartSyncExplorerSwift/Info.plist;
+				CODE_SIGN_ENTITLEMENTS = MobileSyncExplorerSwift/MobileSyncExplorerSwift.entitlements;
+				INFOPLIST_FILE = MobileSyncExplorerSwift/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.mobilesdk.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "SmartSyncExplorerSwift/Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "MobileSyncExplorerSwift/Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -491,7 +491,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		4FD6C46F1B754AF1002F9F90 /* Build configuration list for PBXProject "SmartSyncExplorerSwift" */ = {
+		4FD6C46F1B754AF1002F9F90 /* Build configuration list for PBXProject "MobileSyncExplorerSwift" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4FD6C4911B754AF1002F9F90 /* Debug */,
@@ -500,7 +500,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4FD6C4931B754AF1002F9F90 /* Build configuration list for PBXNativeTarget "SmartSyncExplorerSwift" */ = {
+		4FD6C4931B754AF1002F9F90 /* Build configuration list for PBXNativeTarget "MobileSyncExplorerSwift" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4FD6C4941B754AF1002F9F90 /* Debug */,

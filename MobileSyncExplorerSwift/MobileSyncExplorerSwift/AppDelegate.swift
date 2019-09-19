@@ -25,7 +25,7 @@
 import Foundation
 import UIKit
 import SalesforceSDKCore
-import SmartSync
+import MobileSync
 
 class AppDelegate : UIResponder, UIApplicationDelegate
 {
@@ -35,7 +35,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate
     init()
     {
         super.init()
-        SmartSyncSDKManager.initializeSDK()
+        MobileSyncSDKManager.initializeSDK()
         AuthHelper.registerBlock(forCurrentUserChangeNotifications: { [weak self] in
             self?.resetViewState {
                 self?.setupRootViewController()
