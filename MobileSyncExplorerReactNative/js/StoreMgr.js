@@ -33,7 +33,7 @@ const syncDown = forceUtil.promiserNoRejection(mobilesync.syncDown);
 const syncUp = forceUtil.promiserNoRejection(mobilesync.syncUp);
 const reSync = forceUtil.promiserNoRejection(mobilesync.reSync);
 
-const syncName = "smartSyncExplorerSyncDown";
+const syncName = "mobileSyncExplorerSyncDown";
 let syncInFlight = false;
 let lastStoreQuerySent = 0;
 let lastStoreResponseReceived = 0;
