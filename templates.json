@@ -15,6 +15,13 @@
     },
     {
 
+        "path": "iOS13OfflineNativeSwiftTemplate",
+        "description": "Basic offline-first Swift application optimized for iOS 13",
+        "appType": "native_swift",
+        "platforms": ["ios"]
+    },
+    {
+
         "path": "iOSNativeTemplate",
         "description": "Basic Objective-C application",
         "appType": "native",
