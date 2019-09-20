@@ -22,9 +22,7 @@
  WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import UIKit
 import SalesforceSDKCore
-import SwiftUI
 import Combine
 
 /**
