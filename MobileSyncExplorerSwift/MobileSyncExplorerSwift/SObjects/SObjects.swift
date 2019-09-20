@@ -200,7 +200,7 @@ class SObjectDataFieldSpec  {
 class SObjectDataManager {
 
     //Constants
-    private let kSearchFilterQueueName = "com.salesforce.smartSyncExplorer.searchFilterQueue"
+    private let kSearchFilterQueueName = "com.salesforce.mobileSyncExplorer.searchFilterQueue"
     private let kSyncDownName = "syncDownContacts";
     private let kSyncUpName = "syncUpContacts";
     private let kMaxQueryPageSize: UInt = 1000;
