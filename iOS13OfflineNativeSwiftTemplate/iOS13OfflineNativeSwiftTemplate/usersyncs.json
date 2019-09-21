@@ -1,0 +1,11 @@
+{
+  "syncs": [
+    {
+      "syncName": "syncDownUsers",
+      "syncType": "syncDown",
+      "soupName": "User",
+      "target": {"type":"soql", "query":"SELECT Name FROM User LIMIT 100"},
+      "options": {"mergeMode":"OVERWRITE"}
+    }
+  ]
+}

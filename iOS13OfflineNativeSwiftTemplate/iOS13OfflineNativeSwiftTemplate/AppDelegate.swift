@@ -68,6 +68,10 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
         //loginViewConfig.navigationBarFont = UIFont(name: "Helvetica", size: 16.0)
         //UserAccountManager.shared.loginViewControllerConfig = loginViewConfig
         AuthHelper.loginIfRequired {
+            // Setup store based on config userstore.json
+            MobileSyncSDKManager.shared.setupUserStoreFromDefaultConfig()
+            // Setup syncs based on config usersyncs.json
+            MobileSyncSDKManager.shared.setupUserSyncsFromDefaultConfig()
             self.setupRootViewController()
         }
         

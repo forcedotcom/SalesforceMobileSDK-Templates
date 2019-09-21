@@ -1,0 +1,12 @@
+{
+  "soups": [
+    {
+      "soupName": "User",
+      "indexes": [
+        { "path": "Id", "type": "string"},
+        { "path": "Name", "type": "string"},
+        { "path": "__local__", "type": "string"}
+      ]
+    }
+  ]
+}

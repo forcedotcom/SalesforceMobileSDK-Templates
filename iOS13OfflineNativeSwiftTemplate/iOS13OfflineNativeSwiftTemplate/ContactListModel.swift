@@ -26,6 +26,8 @@ import UIKit
 import SalesforceSDKCore
 import SwiftUI
 import Combine
+import SmartStore
+import MobileSync
 
 /**
  Model object for single contact
@@ -41,21 +43,41 @@ struct Contact :  Hashable, Identifiable, Decodable  {
 class ContactListModel: ObservableObject {
     
     @Published var contacts: [Contact] = []
+    
+    var store: SmartStore?
+    var syncManager: SyncManager?
 
-    func fetchContacts() {
-        
-        let request = RestClient.shared.request(forQuery: "SELECT Name FROM Contact LIMIT 1000", apiVersion:"v46.0")
-        _ = RestClient.shared.send(request: request)
+    init() {
+        store = SmartStore.shared(withName: SmartStore.defaultStoreName)
+        syncManager = SyncManager.sharedInstance(store: store!)
+    }
+    
+    private func loadFromStores() {
+        _ = self.store?.query("select {User:Name} from {User}")
             .receive(on: RunLoop.main)
             .tryMap {  // transform to Contact array
-                $0.map { (item) -> Contact in
-                    Contact(name: item["Name"] as! String)
+                $0.map { (row) -> Contact in
+                    Contact(name: (row as! [String])[0])
                 }
             }
             .catch { error in
                 return Just([])
             }
             .assign(to: \.contacts, on:self)
+    }
+    
+    func fetchContacts() {
+        _ = syncManager?.reSync(named: "syncDownUsers")
+            .receive(on: RunLoop.main)
+            .catch { error in
+                Just(false)
+            }
+            .sink { success in
+                self.loadFromStores()
+            }
+        
+        // Show what is cached right away
+        self.loadFromStores()
     }
 }
         
