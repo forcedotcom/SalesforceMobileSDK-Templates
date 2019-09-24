@@ -67,5 +67,6 @@ update_package_json "./HybridRemoteTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./AndroidIDPTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./iOSNativeSwiftTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./iOS13NativeSwiftTemplate/package.json"  "${SDK_TAG}"
+update_package_json "./iOS13OfflineNativeSwiftTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./MobileSyncExplorerReactNative/package.json"  "${SDK_TAG}"
 
