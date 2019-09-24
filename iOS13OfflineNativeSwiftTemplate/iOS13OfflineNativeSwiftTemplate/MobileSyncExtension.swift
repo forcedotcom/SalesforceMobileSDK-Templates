@@ -40,9 +40,9 @@ extension SyncManager {
             
             do {
                 try self.reSync(named: syncName) { (state) in
-                    if (state.isDone()) {
+                    if state.isDone() {
                         promise(.success(true))
-                    } else if (state.hasFailed()) {
+                    } else if state.hasFailed() {
                         promise(.success(false))
                     }
                 }

@@ -26,7 +26,7 @@ import SmartStore
 import Combine
 
 struct Constants {
-    static let page_size:UInt = 65536
+    static let PAGE_SIZE: UInt = 65536
 }
 
 /**
@@ -49,7 +49,7 @@ extension SmartStore {
      */
     func query(_ smartSql: String) -> Future<[Any], QueryError> {
         Future<[Any], QueryError> { promise in
-            let querySpec = QuerySpec.buildSmartQuerySpec(smartSql: smartSql, pageSize: Constants.page_size)!
+            let querySpec = QuerySpec.buildSmartQuerySpec(smartSql: smartSql, pageSize: Constants.PAGE_SIZE)!
             
             do {
                 let results = try self.query(using: querySpec, startingFromPageIndex: 0)
