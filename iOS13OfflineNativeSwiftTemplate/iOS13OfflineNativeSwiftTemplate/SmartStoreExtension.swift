@@ -22,46 +22,41 @@
  WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import SalesforceSDKCore
+import SmartStore
 import Combine
 
+struct Constants {
+    static let PAGE_SIZE: UInt = 65536
+}
+
 /**
-  Error used by Combine friendly send:request method in RestClient extension below
+  Error used by Combine friendly query:smartSql method in SmartStore extension below
  */
-enum RequestError: Error {
-    case httpError(code: Int, error: Error?)
-    case emptyResponse
+enum QueryError: Error {
+    case error(_ error: Error?)
     case unknown
 }
 
 /**
- RestClient extension that adds a send:request method returning a Combine Publisher
+ SmartStore extension that adds a query:smartSql method returning a Combine Publisher
  */
-extension RestClient {
+extension SmartStore {
     
     /**
-        Send a request and return a Future Publisher to consume the response
-        @param request:RestRequest
-        @return a Future<[[String:Any]], RequestError> Publisher
+        Runs a query and return a Future Publisher to consume the result
+        @param smartSql:String the query smart sql
+        @return a Future<[Any], QueryError> Publisher
      */
-    func send(request: RestRequest) -> Future<[[String:Any]], RequestError> {
-        Future<[[String:Any]], RequestError> { promise in
-            self.send(request: request,
-                      onFailure: { (error, urlResponse) in
-                        if let httpUrlResponse = urlResponse as? HTTPURLResponse {
-                            promise(.failure(.httpError(code:httpUrlResponse.statusCode, error:error)))
-                        } else {
-                            promise(.failure(.unknown))
-                        }
-            },
-                      onSuccess: { (response, urlresponse) in
-                        if let jsonResponse = response as? [String:Any],
-                            let result = jsonResponse ["records"] as? [[String:Any]]  {
-                            promise(.success(result))
-                        } else {
-                            promise(.failure(.emptyResponse))
-                        }
-            })
+    func query(_ smartSql: String) -> Future<[Any], QueryError> {
+        Future<[Any], QueryError> { promise in
+            let querySpec = QuerySpec.buildSmartQuerySpec(smartSql: smartSql, pageSize: Constants.PAGE_SIZE)!
+            
+            do {
+                let results = try self.query(using: querySpec, startingFromPageIndex: 0)
+                promise(.success(results))
+            } catch let error {
+                promise(.failure(.error(error)))
+            }
         }
     }
     

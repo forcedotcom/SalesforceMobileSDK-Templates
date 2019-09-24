@@ -36,9 +36,9 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var path = require('path');
 
     // Values in template
-    var templateAppName = 'iOS13NativeSwiftTemplate';
-    var templatePackageName = 'com.salesforce.ios13nativeswifttemplate';
-    var templateOrganization = 'iOS13NativeSwiftTemplateOrganizationName';
+    var templateAppName = 'iOS13OfflineNativeSwiftTemplate';
+    var templatePackageName = 'com.salesforce.iOS13OfflineNativeSwiftTemplate';
+    var templateOrganization = 'iOS13OfflineNativeSwiftTemplateOrganizationName';
 
     // Key files
     var templatePodfile = 'Podfile';

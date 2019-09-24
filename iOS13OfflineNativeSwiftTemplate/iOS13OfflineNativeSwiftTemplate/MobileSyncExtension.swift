@@ -22,46 +22,33 @@
  WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import SalesforceSDKCore
+import MobileSync
 import Combine
 
 /**
-  Error used by Combine friendly send:request method in RestClient extension below
+ SyncManager extension
  */
-enum RequestError: Error {
-    case httpError(code: Int, error: Error?)
-    case emptyResponse
-    case unknown
-}
-
-/**
- RestClient extension that adds a send:request method returning a Combine Publisher
- */
-extension RestClient {
+extension SyncManager {
     
     /**
-        Send a request and return a Future Publisher to consume the response
-        @param request:RestRequest
-        @return a Future<[[String:Any]], RequestError> Publisher
+        Runs a sync and return a Future Publisher
+        @param synaName:String the name of the sync to (re)run
+        @return a Future<Bool, Error> Publisher: boolean indicates completion/failure, error is only returned if the sync could not be started (e.g. invalid name)
      */
-    func send(request: RestRequest) -> Future<[[String:Any]], RequestError> {
-        Future<[[String:Any]], RequestError> { promise in
-            self.send(request: request,
-                      onFailure: { (error, urlResponse) in
-                        if let httpUrlResponse = urlResponse as? HTTPURLResponse {
-                            promise(.failure(.httpError(code:httpUrlResponse.statusCode, error:error)))
-                        } else {
-                            promise(.failure(.unknown))
-                        }
-            },
-                      onSuccess: { (response, urlresponse) in
-                        if let jsonResponse = response as? [String:Any],
-                            let result = jsonResponse ["records"] as? [[String:Any]]  {
-                            promise(.success(result))
-                        } else {
-                            promise(.failure(.emptyResponse))
-                        }
-            })
+    func reSync(named syncName: String) -> Future<Bool, Error> {
+        Future<Bool, Error> { promise in
+            
+            do {
+                try self.reSync(named: syncName) { (state) in
+                    if state.isDone() {
+                        promise(.success(true))
+                    } else if state.hasFailed() {
+                        promise(.success(false))
+                    }
+                }
+            } catch let error {
+                promise(.failure(error))
+            }
         }
     }
     

@@ -22,13 +22,62 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import Foundation
 import UIKit
 import SalesforceSDKCore
+import SwiftUI
+import Combine
+import SmartStore
+import MobileSync
 
-UIApplicationMain(
-    CommandLine.argc,
-    CommandLine.unsafeArgv,
-    NSStringFromClass(SFApplication.self),
-    NSStringFromClass(AppDelegate.self)
-)
+/**
+ Model object for single contact
+ */
+struct Contact :  Hashable, Identifiable, Decodable  {
+    let id: UUID = UUID()
+    let name: String
+}
+
+/**
+ View Model for Contact list
+ */
+class ContactListModel: ObservableObject {
+    
+    @Published var contacts: [Contact] = []
+    
+    var store: SmartStore?
+    var syncManager: SyncManager?
+
+    init() {
+        store = SmartStore.shared(withName: SmartStore.defaultStoreName)
+        syncManager = SyncManager.sharedInstance(store: store!)
+    }
+    
+    private func loadFromStores() {
+        _ = self.store?.query("select {User:Name} from {User}")
+            .receive(on: RunLoop.main)
+            .tryMap {  // transform to Contact array
+                $0.map { (row) -> Contact in
+                    Contact(name: (row as! [String])[0])
+                }
+            }
+            .catch { error in
+                return Just([])
+            }
+            .assign(to: \.contacts, on:self)
+    }
+    
+    func fetchContacts() {
+        _ = syncManager?.reSync(named: "syncDownUsers")
+            .receive(on: RunLoop.main)
+            .catch { error in
+                Just(false)
+            }
+            .sink { success in
+                self.loadFromStores()
+            }
+        
+        // Show what is cached right away
+        self.loadFromStores()
+    }
+}
+        

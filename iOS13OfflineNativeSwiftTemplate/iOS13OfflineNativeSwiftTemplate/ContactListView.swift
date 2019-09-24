@@ -22,47 +22,34 @@
  WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import SalesforceSDKCore
+import Foundation
+import SwiftUI
 import Combine
+import SalesforceSDKCore
 
 /**
-  Error used by Combine friendly send:request method in RestClient extension below
+ SwiftUI View for Contact list
  */
-enum RequestError: Error {
-    case httpError(code: Int, error: Error?)
-    case emptyResponse
-    case unknown
-}
-
-/**
- RestClient extension that adds a send:request method returning a Combine Publisher
- */
-extension RestClient {
+struct ContactListView : View {
+    @ObservedObject var viewModel = ContactListModel()
     
-    /**
-        Send a request and return a Future Publisher to consume the response
-        @param request:RestRequest
-        @return a Future<[[String:Any]], RequestError> Publisher
-     */
-    func send(request: RestRequest) -> Future<[[String:Any]], RequestError> {
-        Future<[[String:Any]], RequestError> { promise in
-            self.send(request: request,
-                      onFailure: { (error, urlResponse) in
-                        if let httpUrlResponse = urlResponse as? HTTPURLResponse {
-                            promise(.failure(.httpError(code:httpUrlResponse.statusCode, error:error)))
-                        } else {
-                            promise(.failure(.unknown))
-                        }
-            },
-                      onSuccess: { (response, urlresponse) in
-                        if let jsonResponse = response as? [String:Any],
-                            let result = jsonResponse ["records"] as? [[String:Any]]  {
-                            promise(.success(result))
-                        } else {
-                            promise(.failure(.emptyResponse))
-                        }
-            })
+    var body: some View {
+        NavigationView {
+            List(viewModel.contacts)  { dataItem in
+                HStack {
+                    Text(dataItem.name)
+                }
+            }
+            .navigationBarTitle(Text("Mobile SDK iOS 13 Sample App"), displayMode: .inline)
         }
+        .onAppear { self.viewModel.fetchContacts() }
     }
-    
 }
+
+#if DEBUG
+struct ContactList_Previews : PreviewProvider {
+    static var previews: some View {
+        ContactList()
+    }
+}
+#endif
