@@ -1,4 +1,4 @@
-platform :ios, '12.4'
+platform :ios, '12.2'
 
 project 'Authenticator.xcodeproj'
 target 'Authenticator' do
