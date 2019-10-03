@@ -1,4 +1,4 @@
-platform :ios, '12.4'
+platform :ios, '12.2'
 
 project 'MobileSyncExplorerReactNative.xcodeproj'
 target 'MobileSyncExplorerReactNative' do
