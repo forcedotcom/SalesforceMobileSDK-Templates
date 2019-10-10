@@ -45,15 +45,27 @@ class ContactListModel: ObservableObject {
     func fetchContacts() {
         
         let request = RestClient.shared.request(forQuery: "SELECT Name FROM Contact LIMIT 1000", apiVersion:"v46.0")
-        _ = RestClient.shared.send(request: request)
+        
+        _ = RestClient.shared
+            .publisher(for: request)
             .receive(on: RunLoop.main)
-            .tryMap {  // transform to Contact array
+            .tryMap ({ restresponse -> [String: Any] in
+                let records = try restresponse.asJson() as? [String: Any]
+                return records ?? [:]
+             })
+             .map ({ response -> [[String: Any]] in
+                let records = response["records"] as? [[String:Any]]
+                return records ?? [[:]]
+             })
+            .map({
                 $0.map { (item) -> Contact in
-                    Contact(name: item["Name"] as! String)
+                    let name = item["Name"] as? String
+                    return Contact(name: name ?? "NONAME")
                 }
-            }
+            })
             .catch { error in
-                return Just([])
+                 //log and handle error as needed.
+                 return Just([])
             }
             .assign(to: \.contacts, on:self)
     }

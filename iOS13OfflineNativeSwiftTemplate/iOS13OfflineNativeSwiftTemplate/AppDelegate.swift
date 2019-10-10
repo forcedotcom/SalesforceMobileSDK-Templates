@@ -25,7 +25,7 @@
 import Foundation
 import UIKit
 import MobileSync
-import SwiftUI
+import SalesforceSDKCore
 
 class AppDelegate : UIResponder, UIApplicationDelegate {
     var window: UIWindow?
@@ -33,48 +33,24 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
     override init() {
         super.init()
         MobileSyncSDKManager.initializeSDK()
-        
-        AuthHelper.registerBlock(forCurrentUserChangeNotifications: {
-            self.resetViewState {
-                self.setupRootViewController()
-            }
-        })
-        
+    }
+    
+    // MARK: UISceneSession Lifecycle
+    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        // Called when a new scene session is being created.
+        // Use this method to select a configuration to create the new scene with.
+        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+    }
+    
+    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
+        // Called when the user discards a scene session.
+        // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
+        // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
     
     // MARK: - App delegate lifecycle
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        self.initializeAppViewState()
-        
-        // If you wish to register for push notifications, uncomment the line below.  Note that,
-        // if you want to receive push notifications from Salesforce, you will also need to
-        // implement the application:didRegisterForRemoteNotificationsWithDeviceToken: method (below).
-        //
-        // SFPushNotificationManager.sharedInstance().registerForRemoteNotifications()
-        
-        //Uncomment the code below to see how you can customize the color, textcolor,
-        //font and fontsize of the navigation bar
-        //let loginViewConfig = SalesforceLoginViewControllerConfig()
-        
-        //Set showSettingsIcon to false if you want to hide the settings
-        //icon on the nav bar
-        //loginViewConfig.showsSettingsIcon = false
-        
-        //Set showNavBar to false if you want to hide the top bar
-        //loginViewConfig.showsNavigationBar = false
-        //loginViewConfig.navigationBarColor = UIColor(red: 0.051, green: 0.765, blue: 0.733, alpha: 1.0)
-        //loginViewConfig.navigationBarTextColor = UIColor.white
-        //loginViewConfig.navigationBarFont = UIFont(name: "Helvetica", size: 16.0)
-        //UserAccountManager.shared.loginViewControllerConfig = loginViewConfig
-        AuthHelper.loginIfRequired {
-            // Setup store based on config userstore.json
-            MobileSyncSDKManager.shared.setupUserStoreFromDefaultConfig()
-            // Setup syncs based on config usersyncs.json
-            MobileSyncSDKManager.shared.setupUserSyncsFromDefaultConfig()
-            self.setupRootViewController()
-        }
-        
+        // Override point for customization after application launch.
         return true
     }
     
@@ -99,42 +75,9 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
         // Respond to any push notification registration errors here.
     }
     
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey 
- : Any] = [:]) -> Bool {
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         // Uncomment following block to enable IDP Login flow
         // return  UserAccountManager.shared.handleIdentityProviderResponse(from: url, with: options)
         return false;
     }
-    
-    // MARK: - Private methods
-    func initializeAppViewState() {
-        if (!Thread.isMainThread) {
-            DispatchQueue.main.async {
-                self.initializeAppViewState()
-            }
-            return
-        }
-        
-        self.window?.rootViewController = InitialViewController(nibName: nil, bundle: nil)
-        self.window?.makeKeyAndVisible()
-    }
-    
-    func setupRootViewController() {
-        
-        self.window?.rootViewController = UIHostingController(
-            rootView: ContactListView()
-        )
-    }
-    
-    func resetViewState(_ postResetBlock: @escaping () -> ()) {
-        if let rootViewController = self.window?.rootViewController {
-            if let _ = rootViewController.presentedViewController {
-                rootViewController.dismiss(animated: false, completion: postResetBlock)
-                return
-            }
-        }
-        postResetBlock()
-    }
-    
-    
 }

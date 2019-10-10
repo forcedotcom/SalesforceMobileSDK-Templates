@@ -10,11 +10,11 @@
 		4F393A291C3C8BCD00B3EA13 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F393A281C3C8BCD00B3EA13 /* main.swift */; };
 		4FA795692315F215007C88D6 /* ContactListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA795682315F215007C88D6 /* ContactListView.swift */; };
 		4FA7956B2315F2B1007C88D6 /* ContactListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA7956A2315F2B1007C88D6 /* ContactListModel.swift */; };
-		4FA7956D2315F350007C88D6 /* RestClientExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA7956C2315F350007C88D6 /* RestClientExtension.swift */; };
 		4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */; };
 		4FD6C4A01B755242002F9F90 /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C49D1B755242002F9F90 /* InitialViewController.swift */; };
 		78A235BD93AB7D080D67CD51 /* Pods_iOS13NativeSwiftTemplate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82A29C75280BDF73123F14B4 /* Pods_iOS13NativeSwiftTemplate.framework */; };
 		B7168FBC1FACC6F900A48DB5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */; };
+		B73B520D234FA65F001B069B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73B520C234FA65F001B069B /* SceneDelegate.swift */; };
 		B77BD8A321125B510036B284 /* bootconfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = B77BD8A221125B510036B284 /* bootconfig.plist */; };
 		CEA8CA041F071B2300448B51 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEA8CA031F071B2300448B51 /* Images.xcassets */; };
 /* End PBXBuildFile section */
@@ -24,7 +24,6 @@
 		4F393A281C3C8BCD00B3EA13 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		4FA795682315F215007C88D6 /* ContactListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListView.swift; sourceTree = "<group>"; };
 		4FA7956A2315F2B1007C88D6 /* ContactListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListModel.swift; sourceTree = "<group>"; };
-		4FA7956C2315F350007C88D6 /* RestClientExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestClientExtension.swift; sourceTree = "<group>"; };
 		4FD6C4741B754AF1002F9F90 /* iOS13NativeSwiftTemplate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOS13NativeSwiftTemplate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FD6C4781B754AF1002F9F90 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -34,6 +33,7 @@
 		762732C14CFE40A989C3AD70 /* Pods-iOS13NativeSwiftTemplate.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS13NativeSwiftTemplate.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iOS13NativeSwiftTemplate/Pods-iOS13NativeSwiftTemplate.debug.xcconfig"; sourceTree = "<group>"; };
 		82A29C75280BDF73123F14B4 /* Pods_iOS13NativeSwiftTemplate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOS13NativeSwiftTemplate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = "../mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/LaunchScreen.storyboard"; sourceTree = "<group>"; };
+		B73B520C234FA65F001B069B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		B77BD8A221125B510036B284 /* bootconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = bootconfig.plist; sourceTree = "<group>"; };
 		CEA8CA031F071B2300448B51 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/Images.xcassets"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -98,7 +98,7 @@
 				4F393A281C3C8BCD00B3EA13 /* main.swift */,
 				4FA795682315F215007C88D6 /* ContactListView.swift */,
 				4FA7956A2315F2B1007C88D6 /* ContactListModel.swift */,
-				4FA7956C2315F350007C88D6 /* RestClientExtension.swift */,
+				B73B520C234FA65F001B069B /* SceneDelegate.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -238,7 +238,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4FA795692315F215007C88D6 /* ContactListView.swift in Sources */,
-				4FA7956D2315F350007C88D6 /* RestClientExtension.swift in Sources */,
+				B73B520D234FA65F001B069B /* SceneDelegate.swift in Sources */,
 				4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */,
 				4FA7956B2315F2B1007C88D6 /* ContactListModel.swift in Sources */,
 				4F393A291C3C8BCD00B3EA13 /* main.swift in Sources */,
