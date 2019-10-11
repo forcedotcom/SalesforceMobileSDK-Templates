@@ -60,7 +60,7 @@ class RootViewController: UITableViewController {
     func handleSuccess(response: RestResponse, request: RestRequest) {
         guard let jsonResponse  = try? response.asJson() as? [String:Any], let records = jsonResponse["records"] as? [[String:Any]]  else {
                 SalesforceLogger.d(RootViewController.self, message:"Empty Response for : \(request)")
-                return;
+                return
         }
         SalesforceLogger.d(type(of:self), message:"Invoked: \(request)")
         DispatchQueue.main.async {
