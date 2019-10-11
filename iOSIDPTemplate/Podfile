@@ -12,8 +12,7 @@ pod 'SalesforceAnalytics', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
 pod 'SalesforceSDKCore', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
 pod 'SmartStore', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
 pod 'MobileSync', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
-pod 'WYPopoverController', :git => 'https://github.com/sammcewan/WYPopoverController', :tag => '0.3.8'
-pod 'SwipeCellKit', '2.5.4'
+pod 'SwipeCellKit', '2.7.1'
 end
 
 # Comment the following if you do not want the SDK to emit signpost events for instrumentation. Signposts are  enabled for non release version of the app.
