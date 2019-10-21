@@ -13,7 +13,6 @@
 		4F6CD7FC233594AD00295FE4 /* MobileSyncExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6CD7FB233594AD00295FE4 /* MobileSyncExtension.swift */; };
 		4FA795692315F215007C88D6 /* ContactListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA795682315F215007C88D6 /* ContactListView.swift */; };
 		4FA7956B2315F2B1007C88D6 /* ContactListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA7956A2315F2B1007C88D6 /* ContactListModel.swift */; };
-		4FA7956D2315F350007C88D6 /* SmartStoreExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA7956C2315F350007C88D6 /* SmartStoreExtension.swift */; };
 		4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */; };
 		4FD6C4A01B755242002F9F90 /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C49D1B755242002F9F90 /* InitialViewController.swift */; };
 		78A235BD93AB7D080D67CD51 /* Pods_iOS13OfflineNativeSwiftTemplate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82A29C75280BDF73123F14B4 /* Pods_iOS13OfflineNativeSwiftTemplate.framework */; };
@@ -31,7 +30,6 @@
 		4F6CD7FB233594AD00295FE4 /* MobileSyncExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileSyncExtension.swift; sourceTree = "<group>"; };
 		4FA795682315F215007C88D6 /* ContactListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListView.swift; sourceTree = "<group>"; };
 		4FA7956A2315F2B1007C88D6 /* ContactListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListModel.swift; sourceTree = "<group>"; };
-		4FA7956C2315F350007C88D6 /* SmartStoreExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartStoreExtension.swift; sourceTree = "<group>"; };
 		4FD6C4741B754AF1002F9F90 /* iOS13OfflineNativeSwiftTemplate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOS13OfflineNativeSwiftTemplate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FD6C4781B754AF1002F9F90 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -108,7 +106,6 @@
 				4F393A281C3C8BCD00B3EA13 /* main.swift */,
 				4FA795682315F215007C88D6 /* ContactListView.swift */,
 				4FA7956A2315F2B1007C88D6 /* ContactListModel.swift */,
-				4FA7956C2315F350007C88D6 /* SmartStoreExtension.swift */,
 				4F6CD7FB233594AD00295FE4 /* MobileSyncExtension.swift */,
 				B73B520E234FBE0A001B069B /* SceneDelegate.swift */,
 			);
@@ -252,7 +249,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4FA795692315F215007C88D6 /* ContactListView.swift in Sources */,
-				4FA7956D2315F350007C88D6 /* SmartStoreExtension.swift in Sources */,
 				4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */,
 				4F6CD7FC233594AD00295FE4 /* MobileSyncExtension.swift in Sources */,
 				4FA7956B2315F2B1007C88D6 /* ContactListModel.swift in Sources */,

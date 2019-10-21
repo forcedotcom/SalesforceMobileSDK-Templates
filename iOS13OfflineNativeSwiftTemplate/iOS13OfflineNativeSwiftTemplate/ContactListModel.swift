@@ -53,7 +53,7 @@ class ContactListModel: ObservableObject {
     }
     
     private func loadFromStores() {
-        _ = self.store?.query("select {User:Name} from {User}")
+        _ = self.store?.publisher(for: "select {User:Name} from {User}")
             .receive(on: RunLoop.main)
             .tryMap {  // transform to Contact array
                 $0.map { (row) -> Contact in
