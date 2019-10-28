@@ -25,7 +25,6 @@
 import Foundation
 import SwiftUI
 import Combine
-import SalesforceSDKCore
 
 /**
  SwiftUI View for Contact list
