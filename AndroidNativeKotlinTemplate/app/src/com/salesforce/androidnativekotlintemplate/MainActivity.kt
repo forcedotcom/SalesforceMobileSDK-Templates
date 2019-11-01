@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.salesforce.androidnativekotlintemplate
+package com.salesforce.androidnativekotlin
 
 import android.os.Bundle
 import android.view.View
@@ -33,6 +33,7 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
 import com.salesforce.androidsdk.app.SalesforceSDKManager
+import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.androidsdk.rest.ApiVersionStrings
 import com.salesforce.androidsdk.rest.RestClient
 import com.salesforce.androidsdk.rest.RestClient.AsyncRequestCallback
@@ -52,6 +53,11 @@ class MainActivity : SalesforceActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Set Theme
+        val idDarkTheme = MobileSyncSDKManager.getInstance().isDarkTheme(this)
+        setTheme(if (idDarkTheme) R.style.SalesforceSDK_Dark else R.style.SalesforceSDK)
+        MobileSyncSDKManager.getInstance().setViewNavigationVisibility(this)
 
         // Setup view
         setContentView(R.layout.main)

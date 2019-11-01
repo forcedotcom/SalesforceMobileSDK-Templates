@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.salesforce.samples.salesforceandroididptemplateapp
+package com.salesforce.androididp
 
 import android.content.Intent
 import android.os.Bundle
@@ -38,6 +38,7 @@ import android.widget.TabHost
 import com.salesforce.androidsdk.accounts.UserAccount
 import com.salesforce.androidsdk.accounts.UserAccountManager
 import com.salesforce.androidsdk.auth.idp.IDPInititatedLoginReceiver
+import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.androidsdk.rest.RestClient
 import com.salesforce.androidsdk.ui.SalesforceActivity
 
@@ -74,6 +75,9 @@ class MainActivity : SalesforceActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val isDarkTheme = MobileSyncSDKManager.getInstance().isDarkTheme(this)
+        setTheme(if (isDarkTheme) R.style.SalesforceSDK_Dark else R.style.SalesforceSDK)
+        MobileSyncSDKManager.getInstance().setViewNavigationVisibility(this)
         setContentView(R.layout.main)
         val tabHost = findViewById<TabHost>(R.id.tab_host)
         tabHost.setup()
