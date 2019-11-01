@@ -74,6 +74,9 @@ class MainActivity : SalesforceActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val isDarkTheme = MobileSyncSDKManager.getInstance().isDarkTheme(this)
+        setTheme(if (isDarkTheme) R.style.SalesforceSDK_Dark else R.style.SalesforceSDK)
+        MobileSyncSDKManager.getInstance().setViewNavigationVisibility(this)
         setContentView(R.layout.main)
         val tabHost = findViewById<TabHost>(R.id.tab_host)
         tabHost.setup()

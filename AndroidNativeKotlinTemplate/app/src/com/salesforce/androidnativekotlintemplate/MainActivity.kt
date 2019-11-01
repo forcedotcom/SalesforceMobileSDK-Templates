@@ -53,6 +53,11 @@ class MainActivity : SalesforceActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Set Theme
+        val idDarkTheme = MobileSyncSDKManager.getInstance().isDarkTheme(this)
+        setTheme(if (idDarkTheme) R.style.SalesforceSDK_Dark else R.style.SalesforceSDK)
+        MobileSyncSDKManager.getInstance().setViewNavigationVisibility(this)
+
         // Setup view
         setContentView(R.layout.main)
     }

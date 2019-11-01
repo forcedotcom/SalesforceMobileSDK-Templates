@@ -57,6 +57,11 @@ public class MainActivity extends SalesforceActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		// Setup theme
+		boolean isDarkTheme = MobileSyncSDKManager.getInstance().isDarkTheme(this);
+		setTheme(isDarkTheme ? R.style.SalesforceSDK_Dark : R.style.SalesforceSDK);
+		MobileSyncSDKManager.getInstance().setViewNavigationVisibility(this);
+
 		// Setup view
 		setContentView(R.layout.main);
 	}
