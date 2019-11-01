@@ -10,7 +10,6 @@
 		4F393A291C3C8BCD00B3EA13 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F393A281C3C8BCD00B3EA13 /* main.swift */; };
 		4F6CD7F923358D1C00295FE4 /* userstore.json in Resources */ = {isa = PBXBuildFile; fileRef = 4F6CD7F723358D1C00295FE4 /* userstore.json */; };
 		4F6CD7FA23358D1C00295FE4 /* usersyncs.json in Resources */ = {isa = PBXBuildFile; fileRef = 4F6CD7F823358D1C00295FE4 /* usersyncs.json */; };
-		4F6CD7FC233594AD00295FE4 /* MobileSyncExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6CD7FB233594AD00295FE4 /* MobileSyncExtension.swift */; };
 		4FA795692315F215007C88D6 /* ContactListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA795682315F215007C88D6 /* ContactListView.swift */; };
 		4FA7956B2315F2B1007C88D6 /* ContactListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA7956A2315F2B1007C88D6 /* ContactListModel.swift */; };
 		4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */; };
@@ -27,7 +26,6 @@
 		4F393A281C3C8BCD00B3EA13 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		4F6CD7F723358D1C00295FE4 /* userstore.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = userstore.json; sourceTree = "<group>"; };
 		4F6CD7F823358D1C00295FE4 /* usersyncs.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = usersyncs.json; sourceTree = "<group>"; };
-		4F6CD7FB233594AD00295FE4 /* MobileSyncExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileSyncExtension.swift; sourceTree = "<group>"; };
 		4FA795682315F215007C88D6 /* ContactListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListView.swift; sourceTree = "<group>"; };
 		4FA7956A2315F2B1007C88D6 /* ContactListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListModel.swift; sourceTree = "<group>"; };
 		4FD6C4741B754AF1002F9F90 /* iOS13OfflineNativeSwiftTemplate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOS13OfflineNativeSwiftTemplate.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -106,7 +104,6 @@
 				4F393A281C3C8BCD00B3EA13 /* main.swift */,
 				4FA795682315F215007C88D6 /* ContactListView.swift */,
 				4FA7956A2315F2B1007C88D6 /* ContactListModel.swift */,
-				4F6CD7FB233594AD00295FE4 /* MobileSyncExtension.swift */,
 				B73B520E234FBE0A001B069B /* SceneDelegate.swift */,
 			);
 			name = Classes;
@@ -250,7 +247,6 @@
 			files = (
 				4FA795692315F215007C88D6 /* ContactListView.swift in Sources */,
 				4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */,
-				4F6CD7FC233594AD00295FE4 /* MobileSyncExtension.swift in Sources */,
 				4FA7956B2315F2B1007C88D6 /* ContactListModel.swift in Sources */,
 				4F393A291C3C8BCD00B3EA13 /* main.swift in Sources */,
 				4FD6C4A01B755242002F9F90 /* InitialViewController.swift in Sources */,

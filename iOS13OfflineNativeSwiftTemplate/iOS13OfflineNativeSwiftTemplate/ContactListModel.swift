@@ -22,9 +22,6 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import UIKit
-import SalesforceSDKCore
-import SwiftUI
 import Combine
 import SmartStore
 import MobileSync
@@ -67,12 +64,9 @@ class ContactListModel: ObservableObject {
     }
     
     func fetchContacts() {
-        _ = syncManager?.reSync(named: "syncDownUsers")
+        _ = syncManager?.publisher(for: "syncDownUsers")
             .receive(on: RunLoop.main)
-            .catch { error in
-                Just(false)
-            }
-            .sink { success in
+            .map { state in
                 self.loadFromStores()
             }
         
