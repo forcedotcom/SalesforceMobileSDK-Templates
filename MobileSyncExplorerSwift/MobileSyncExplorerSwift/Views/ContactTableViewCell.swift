@@ -80,7 +80,7 @@ class ContactTableViewCell: UITableViewCell {
         self.titleLabel.font = UIFont.appRegularFont(16)
         self.titleLabel.textColor = UIColor.contactCellTitle
         self.detailLabel.font = UIFont.appRegularFont(12)
-        self.detailLabel.textColor = UIColor.contactCellSubtitle
+        self.detailLabel.textColor = UIColor.secondaryLabelText
         self.rightRefreshImageView.image = UIImage(named: "sync")?.withRenderingMode(.alwaysTemplate)
         self.rightRefreshImageView.tintColor = UIColor.appBlue
         self.rightCreatedImageView.image = UIImage(named: "plusButton")?.withRenderingMode(.alwaysTemplate)

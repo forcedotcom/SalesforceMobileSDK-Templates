@@ -493,7 +493,7 @@ class ContactDetailViewController: UniversalViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.appRegularFont(13)
-        label.textColor = UIColor.labelText
+        label.textColor = UIColor.secondaryLabelText
         label.text = text
         return label
     }
@@ -502,7 +502,7 @@ class ContactDetailViewController: UniversalViewController {
         let field = UITextField()
         field.translatesAutoresizingMaskIntoConstraints = false
         field.font = UIFont.appRegularFont(16)
-        field.textColor = UIColor.fieldText
+        field.textColor = UIColor.salesforceLabel
         field.text = text
         field.isUserInteractionEnabled = false
         return field

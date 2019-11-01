@@ -68,30 +68,16 @@ extension UIColor {
         }
         return lightStyleColor
     }
-    
-    class var contactCellSubtitle: UIColor {
-        if #available(iOS 13, *) {
-            return UIColor.secondaryLabel
-        }
-        return UIColor(displayP3Red: 168.0/255.0, green: 183.0/255.0, blue: 199.0/255.0, alpha: 1.0)
-    }
-    
+
     class var contactCellDeletedBackground: UIColor {
         return UIColor(displayP3Red: 194.0/255.0, green: 57.0/255.0, blue: 52.0/255.0, alpha: 0.3)
     }
     
-    class var labelText: UIColor {
+    class var secondaryLabelText: UIColor {
         if #available(iOS 13, *) {
             return UIColor.secondaryLabel
         }
         return UIColor(displayP3Red: 84.0/255.0, green: 105.0/255.0, blue: 141.0/255.0, alpha: 1.0)
-    }
-    
-    class var fieldText: UIColor {
-        if #available(iOS 13, *) {
-            return UIColor.label
-        }
-        return UIColor(displayP3Red: 42.0/255.0, green: 66.0/255.0, blue: 108.0/255.0, alpha: 1.0)
     }
     
     class var destructiveButton: UIColor {
