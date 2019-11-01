@@ -94,15 +94,10 @@ class PermissionsViewController: UIViewController, UITableViewDelegate, UITableV
         }
         result.currentUserImage.isHidden = true
         result.user = userList[indexPath.row]
-        if let fName = userList[indexPath.row].idData?.firstName,
-           let lName = userList[indexPath.row].idData?.lastName {
-            result.userFullName.text = fName + " "  + lName
-        } else {
-             result.userFullName.text = userList[indexPath.row].idData?.username ?? "Not Available"
-        }
+        result.userFullName.text = userList[indexPath.row].idData.username
         
-        result.email.text = userList[indexPath.row].idData?.email
-        let image = UIImage(named: (userList[indexPath.row].idData?.firstName?.lowercased())!)
+        result.email.text = userList[indexPath.row].idData.email
+        let image = UIImage(named: (userList[indexPath.row].idData.firstName?.lowercased())!)
         if let img = image {
            result.userPicture.image = img
         } else {
@@ -118,7 +113,7 @@ class PermissionsViewController: UIViewController, UITableViewDelegate, UITableV
     func getAttributedText(appName: String) -> NSMutableAttributedString {
         let info = "Select user for \n"
         let plainAttribute = [NSAttributedString.Key.foregroundColor: UIColor.black, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15)]
-        let highlightAttribute = [NSAttributedString.Key.foregroundColor: UIColor.salesforceBlue(), NSAttributedString.Key.font: UIFont.systemFont(ofSize: 24)]
+        let highlightAttribute = [NSAttributedString.Key.foregroundColor: UIColor.salesforceBlue, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 24)]
         let partOne = NSMutableAttributedString(string: info, attributes: plainAttribute)
         let partTwo = NSMutableAttributedString(string: appName, attributes: highlightAttribute)
         let combination = NSMutableAttributedString()
