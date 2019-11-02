@@ -28,11 +28,11 @@ import React from 'react';
 import {
     Alert,
     View,
-    FlatList
+    FlatList,
+    Keyboard
 } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 
-import dismissKeyboard from 'dismissKeyboard';
 import styles from './Styles';
 import NavImgButton from './NavImgButton';
 import ContactScreen from './ContactScreen';
@@ -120,7 +120,7 @@ class SearchScreen extends React.Component {
     }
 
     selectContact(contact: Object) {
-        dismissKeyboard();
+        Keyboard.dismiss()
         this.props.navigation.push('Contact', { contact:contact });
     }
 
