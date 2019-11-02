@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		4F08604A236D0F380087150A /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4F086048236D0EFC0087150A /* MaterialCommunityIcons.ttf */; };
+		4F08604B236D0F3B0087150A /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4F086049236D0EFC0087150A /* MaterialIcons.ttf */; };
 		4F3AFF401DC2C79E006FF6B0 /* InitialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F3AFF3E1DC2C79E006FF6B0 /* InitialViewController.m */; };
 		B32F1C4036A8391603B18D54 /* Pods_MobileSyncExplorerReactNative.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3247CCC5F9B41C7C5432A725 /* Pods_MobileSyncExplorerReactNative.framework */; };
 		B7168FC01FACCB8A00A48DB5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7168FBF1FACCB8900A48DB5 /* LaunchScreen.storyboard */; };
@@ -24,6 +26,8 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = MobileSyncExplorerReactNative/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = MobileSyncExplorerReactNative/main.m; sourceTree = "<group>"; };
 		3247CCC5F9B41C7C5432A725 /* Pods_MobileSyncExplorerReactNative.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MobileSyncExplorerReactNative.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4F086048236D0EFC0087150A /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
+		4F086049236D0EFC0087150A /* MaterialIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		4F3AFF3D1DC2C79E006FF6B0 /* InitialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InitialViewController.h; path = MobileSyncExplorerReactNative/InitialViewController.h; sourceTree = "<group>"; };
 		4F3AFF3E1DC2C79E006FF6B0 /* InitialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InitialViewController.m; path = MobileSyncExplorerReactNative/InitialViewController.m; sourceTree = "<group>"; };
 		4F3AFF441DC2C8C8006FF6B0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "../mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/Images.xcassets"; sourceTree = "<group>"; };
@@ -50,10 +54,20 @@
 			isa = PBXGroup;
 			children = (
 				4FF12F8E1DCA93E2004D9EF9 /* MobileSyncExplorerReactNative.entitlements */,
+				4F086047236D0EB80087150A /* Fonts */,
 				4F3AFF421DC2C856006FF6B0 /* Classes */,
 				4F3AFF431DC2C869006FF6B0 /* Supporting Files */,
 			);
 			name = MobileSyncExplorerReactNative;
+			sourceTree = "<group>";
+		};
+		4F086047236D0EB80087150A /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				4F086048236D0EFC0087150A /* MaterialCommunityIcons.ttf */,
+				4F086049236D0EFC0087150A /* MaterialIcons.ttf */,
+			);
+			name = Fonts;
 			sourceTree = "<group>";
 		};
 		4F3AFF421DC2C856006FF6B0 /* Classes */ = {
@@ -184,6 +198,8 @@
 			files = (
 				B77BD8B1211363F70036B284 /* bootconfig.plist in Resources */,
 				CE6BC3F620F12070009E4AAE /* Images.xcassets in Resources */,
+				4F08604B236D0F3B0087150A /* MaterialIcons.ttf in Resources */,
+				4F08604A236D0F380087150A /* MaterialCommunityIcons.ttf in Resources */,
 				B7168FC01FACCB8A00A48DB5 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
