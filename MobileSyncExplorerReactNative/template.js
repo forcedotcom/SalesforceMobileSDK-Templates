@@ -53,8 +53,6 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         var templateProjectDir = path.join('ios', templateAppName + '.xcodeproj');
         var templateProjectFile = path.join(templateProjectDir, 'project.pbxproj');
         var templateSchemeFile = path.join('ios', templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', templateAppName + '.xcscheme');
-        var templatePrefixFile = path.join('ios', templateAppName, 'Prefix.pch');
-        var templateInfoFile = path.join('ios', templateAppName, 'Info.plist');
         var templateEntitlementsFile = path.join('ios', templateAppName, templateAppName + '.entitlements');
         var templateAppDelegateFile = path.join('ios', templateAppName, 'AppDelegate.m');
 
@@ -66,7 +64,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         replaceInFiles(templateAppName, config.appname, [templatePackageJsonFile, templateIndexIosFile, templatePodfile, templateProjectFile, templateSchemeFile, templateEntitlementsFile, templateAppDelegateFile]);
 
         // package name
-        replaceInFiles(templatePackageName, config.packagename, [templateProjectFile, templateEntitlementsFile, templateProjectFile]);
+        replaceInFiles(templatePackageName, config.packagename, [templateProjectFile, templateEntitlementsFile]);
 
         // org name
         replaceInFiles(templateOrganization, config.organization, [templateProjectFile]);
