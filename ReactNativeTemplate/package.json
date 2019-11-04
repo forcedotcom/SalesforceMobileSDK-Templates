@@ -13,8 +13,8 @@
     "dependencies": {
         "eslint": "^5.0.0",
         "acorn": "^6.0.0",
-        "react": "16.8.6",
-        "react-native": "0.60.5",
+        "react": "16.9.0",
+        "react-native": "0.61.3",
         "react-native-force": "git+https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#dev",
         "react-navigation": "2.18.3"
     },
@@ -26,7 +26,7 @@
         "babel-jest": "^24.1.0",
         "jest": "^24.1.0",
         "metro-react-native-babel-preset": "^0.54.1",
-        "react-test-renderer": "16.8.6"
+        "react-test-renderer": "16.9.0"
     },
     "jest": {
         "preset": "react-native"
