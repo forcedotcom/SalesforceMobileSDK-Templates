@@ -56,10 +56,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
         self.initializeAppViewState()
         AuthHelper.loginIfRequired {
-           // Setup store based on config userstore.json
-           MobileSyncSDKManager.shared.setupUserStoreFromDefaultConfig()
-           // Setup syncs based on config usersyncs.json
-           MobileSyncSDKManager.shared.setupUserSyncsFromDefaultConfig()
            self.setupRootViewController()
        }
     }
@@ -94,7 +90,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
    }
    
    func setupRootViewController() {
-       
+       // Setup store based on config userstore.json
+       MobileSyncSDKManager.shared.setupUserStoreFromDefaultConfig()
+       // Setup syncs based on config usersyncs.json
+       MobileSyncSDKManager.shared.setupUserSyncsFromDefaultConfig()
+
        self.window?.rootViewController = UIHostingController(
            rootView: ContactListView()
        )
