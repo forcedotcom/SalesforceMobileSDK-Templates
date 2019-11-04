@@ -55,7 +55,7 @@ class RootViewController: UniversalViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor.white
+        self.view.backgroundColor = UIColor.salesforceSystemBackground
         
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(clearPopoversForPasscode),
@@ -73,7 +73,7 @@ class RootViewController: UniversalViewController {
         self.navigationItem.rightBarButtonItems = [settingsButton, syncButton, addButton]
         
         self.searchController.searchResultsUpdater = self
-        self.searchController.dimsBackgroundDuringPresentation = false
+        self.searchController.obscuresBackgroundDuringPresentation = false
         self.definesPresentationContext = true
         
         self.tableView.tableHeaderView = self.searchController.searchBar
@@ -94,7 +94,7 @@ class RootViewController: UniversalViewController {
        
         
        
-        
+        super.applyConstraints()
         syncUpDown()
     }
 

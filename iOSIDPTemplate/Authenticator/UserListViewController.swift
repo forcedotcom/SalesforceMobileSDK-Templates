@@ -107,14 +107,14 @@ class UserListViewController: UITableViewController, UserTableViewCellDelegate, 
         result.delegate = self;
         result.user = userAccounts?[indexPath.row].userAccount
         
-        if let fName = result.user?.idData?.firstName, let lName = result.user?.idData?.lastName {
+        if let fName = result.user?.idData.firstName, let lName = result.user?.idData.lastName {
            result.userFullName.text = fName + " " + lName
         } else {
-            result.userFullName.text = result.user?.idData?.username ?? "Not Available"
+            result.userFullName.text = result.user?.idData.username ?? "Not Available"
         }
         
-        result.email.text = result.user?.idData?.username
-        let imageName = (userAccounts?[indexPath.row].userAccount.idData?.firstName?.lowercased()) ?? "placeholder"
+        result.email.text = result.user?.idData.username
+        let imageName = (userAccounts?[indexPath.row].userAccount.idData.firstName?.lowercased()) ?? "placeholder"
         result.userPicture.image = UIImage(named: imageName) ?? UIImage(named: "placeholder")
         return result
     }
@@ -147,7 +147,6 @@ class UserListViewController: UITableViewController, UserTableViewCellDelegate, 
         let headerLabel  = groupIds[section]
         let headerFooterView = UITableViewHeaderFooterView(reuseIdentifier: "headerfooterview")
         headerFooterView.textLabel?.text = headerLabel
-        headerFooterView.textLabel?.textColor = UIColor.black
         return headerFooterView
     }
     

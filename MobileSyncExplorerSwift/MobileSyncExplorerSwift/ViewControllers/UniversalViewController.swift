@@ -51,7 +51,10 @@ class UniversalViewController: UIViewController {
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        
+        self.applyConstraints()
+    }
+
+    func applyConstraints () {
         if self.commonConstraints.count > 0 && self.commonConstraints[0].isActive == false {
             self.view.addConstraints(self.commonConstraints)
         }

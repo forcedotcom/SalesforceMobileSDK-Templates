@@ -119,11 +119,11 @@ class ContactDetailViewController: UniversalViewController {
         scrollView.addSubview(self.departmentField)
         scrollView.addSubview(deleteButton)
         
-        var topAnchor = self.view.safeAreaLayoutGuide.topAnchor
-        var bottomAnchor = self.view.safeAreaLayoutGuide.bottomAnchor
-        var centerXAnchor = self.view.safeAreaLayoutGuide.centerXAnchor
-        var rightAnchor = self.view.safeAreaLayoutGuide.rightAnchor
-        var leftAnchor = self.view.safeAreaLayoutGuide.leftAnchor
+        let topAnchor = self.view.safeAreaLayoutGuide.topAnchor
+        let bottomAnchor = self.view.safeAreaLayoutGuide.bottomAnchor
+        let centerXAnchor = self.view.safeAreaLayoutGuide.centerXAnchor
+        let rightAnchor = self.view.safeAreaLayoutGuide.rightAnchor
+        let leftAnchor = self.view.safeAreaLayoutGuide.leftAnchor
         
         let regInset: CGFloat = 60.0
         let regCenterInset: CGFloat = 12.0
@@ -226,7 +226,7 @@ class ContactDetailViewController: UniversalViewController {
                                                     deleteButton.heightAnchor.constraint(equalToConstant: 44.0),
                                                     deleteButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -compInset)
             ])
-    
+        super.applyConstraints()
         if self.isNewContact {
             self.beginEditingFields()
         }
@@ -333,7 +333,7 @@ class ContactDetailViewController: UniversalViewController {
         var backgroundColor = UIColor.clear
         if self.isEditingContact {
             style = .roundedRect
-            backgroundColor = UIColor.white
+            backgroundColor = UIColor.detailViewEditingBackground
             
             let cancel = self.cancelEditBarButton()
             self.navigationItem.leftBarButtonItem = cancel
@@ -428,16 +428,18 @@ class ContactDetailViewController: UniversalViewController {
         let editView = UIButton(type: .custom)
         editView.translatesAutoresizingMaskIntoConstraints = false
         editView.addTarget(self, action: #selector(userDidPressEdit), for: .touchUpInside)
-        editView.backgroundColor = UIColor.white
-        editView.layer.cornerRadius = 3.0
+        editView.backgroundColor = UIColor.init(forLightStyle: UIColor.white, darkStyle: UIColor.clear)
         
+        editView.layer.cornerRadius = 3.0
+        editView.layer.borderColor = UIColor.white.cgColor
+        editView.layer.borderWidth = 0.5
         editView.widthAnchor.constraint(equalToConstant: 58.0).isActive = true
         editView.heightAnchor.constraint(equalToConstant: 32.0).isActive = true
         
         let editLabel = UILabel()
         editLabel.translatesAutoresizingMaskIntoConstraints = false
         editLabel.text = "Edit"
-        editLabel.textColor = UIColor.appBlue
+        editLabel.textColor = UIColor.init(forLightStyle: UIColor.appBlue, darkStyle: UIColor.white)
         editLabel.font = UIFont.appRegularFont(12)
         editView.addSubview(editLabel)
         
@@ -491,7 +493,7 @@ class ContactDetailViewController: UniversalViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.appRegularFont(13)
-        label.textColor = UIColor.labelText
+        label.textColor = UIColor.secondaryLabelText
         label.text = text
         return label
     }
@@ -500,7 +502,7 @@ class ContactDetailViewController: UniversalViewController {
         let field = UITextField()
         field.translatesAutoresizingMaskIntoConstraints = false
         field.font = UIFont.appRegularFont(16)
-        field.textColor = UIColor.fieldText
+        field.textColor = UIColor.salesforceLabel
         field.text = text
         field.isUserInteractionEnabled = false
         return field

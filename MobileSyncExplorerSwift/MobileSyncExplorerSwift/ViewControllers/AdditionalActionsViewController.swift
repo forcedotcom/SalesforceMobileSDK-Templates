@@ -61,7 +61,7 @@ class AdditionalActionsViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "reuseId", for: indexPath)
         
         cell.textLabel?.font = UIFont.appRegularFont(12.0)
-        cell.textLabel?.textColor = UIColor.labelText
+        cell.textLabel?.textColor = UIColor.salesforceLabel
         
         if indexPath.row == 0 {
             cell.textLabel?.text = "Logout"
