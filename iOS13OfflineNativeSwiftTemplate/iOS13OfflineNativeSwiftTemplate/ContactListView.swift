@@ -35,8 +35,9 @@ struct ContactListView : View {
     var body: some View {
         NavigationView {
             List(viewModel.contacts)  { dataItem in
-                HStack {
-                    Text(dataItem.name)
+                HStack{
+                  Text(dataItem.FirstName ?? "")
+                  Text(dataItem.LastName ?? "")
                 }
             }
             .navigationBarTitle(Text("Mobile SDK iOS 13 Sample App"), displayMode: .inline)
