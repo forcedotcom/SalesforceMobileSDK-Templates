@@ -1,10 +1,10 @@
 {
   "syncs": [
     {
-      "syncName": "syncDownUsers",
+      "syncName": "syncDownContacts",
       "syncType": "syncDown",
-      "soupName": "User",
-      "target": {"type":"soql", "query":"SELECT Name FROM User LIMIT 100"},
+      "soupName": "Contact",
+      "target": {"type":"soql", "query":"SELECT FirstName, LastName FROM Contact LIMIT 25"},
       "options": {"mergeMode":"OVERWRITE"}
     }
   ]
