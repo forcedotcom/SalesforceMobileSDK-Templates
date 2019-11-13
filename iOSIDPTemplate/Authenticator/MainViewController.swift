@@ -89,6 +89,8 @@ extension MainViewController : ActionsPopoverTableViewDelegate {
     }
 
     func showSwitchUserSheet() {
-        UserAccountManager.shared.login(onSuccess: nil, onFailure: nil)
+        _ = UserAccountManager.shared.login { _ in
+            
+        }
     }
 }
