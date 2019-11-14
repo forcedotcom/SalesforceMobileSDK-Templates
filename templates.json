@@ -14,6 +14,12 @@
         "platforms": ["ios"]
     },
     {
+        "path": "iOSNativeSwiftEncryptedNotificationTemplate",
+        "description": "Basic Swift application with notification service extension",
+        "appType": "native_swift",
+        "platforms": ["ios"]
+    },
+    {
 
         "path": "iOSNativeTemplate",
         "description": "Basic Objective-C application",
