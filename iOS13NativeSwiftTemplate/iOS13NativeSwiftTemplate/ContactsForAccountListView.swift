@@ -22,8 +22,33 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import Foundation
-import UIKit
 
-class InitialViewController : UIViewController {
+import Foundation
+import SwiftUI
+import Combine
+import SalesforceSDKCore
+
+struct ContactsForAccountListView: View {
+  @ObservedObject var viewModel = ContactsForAccountModel()
+  
+  var account: Account
+  
+  var body: some View {
+    List(viewModel.contacts) {dataItem in
+      NavigationLink(destination: ContactDetailView(contact: dataItem)){
+        HStack{
+          Text(dataItem.FirstName ?? "")
+          Text(dataItem.LastName ?? "")
+        }
+      }
+    }
+    .navigationBarTitle(Text("Contacts for \(account.name)"))
+    .onAppear {
+      self.viewModel.account = self.account
+      self.viewModel.fetchContactsForAccount()
+    }
+  }
+  
 }
+
+

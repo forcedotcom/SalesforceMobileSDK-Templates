@@ -2,4 +2,4 @@
 
 # SalesforceMobileSDK-Templates
 
-Use the forceios/forcedroid/forcehybrid/forcereact to create a new application based on one of the template.
+Use the forceios/forcedroid/forcehybrid/forcereact or sfdx with sfdx-mobilesdk-plugin to create a new application based on one of the template.

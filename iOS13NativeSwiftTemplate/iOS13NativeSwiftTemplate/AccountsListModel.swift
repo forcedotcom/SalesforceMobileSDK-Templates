@@ -22,52 +22,59 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import UIKit
-import SalesforceSDKCore
-import SwiftUI
 import Combine
+import SmartStore
+import MobileSync
 
 /**
- Model object for single contact
+ Model object for a single Account
  */
-struct Contact :  Hashable, Identifiable, Decodable  {
-    let id: UUID = UUID()
+struct Account: Hashable, Identifiable, Decodable {
+    let id: String
     let name: String
+    let industry: String
 }
 
 /**
- View Model for Contact list
+ ViewModel for Account List
  */
-class ContactListModel: ObservableObject {
+class AccountsListModel: ObservableObject {
     
-    @Published var contacts: [Contact] = []
-
-    func fetchContacts() {
-        
-        let request = RestClient.shared.request(forQuery: "SELECT Name FROM Contact LIMIT 1000", apiVersion:"v46.0")
-        
-        _ = RestClient.shared
-            .publisher(for: request)
-            .receive(on: RunLoop.main)
-            .tryMap ({ restresponse -> [String: Any] in
-                let records = try restresponse.asJson() as? [String: Any]
-                return records ?? [:]
-             })
-             .map ({ response -> [[String: Any]] in
-                let records = response["records"] as? [[String:Any]]
-                return records ?? [[:]]
-             })
-            .map({
-                $0.map { (item) -> Contact in
-                    let name = item["Name"] as? String
-                    return Contact(name: name ?? "NONAME")
-                }
-            })
-            .catch { error in
-                 //log and handle error as needed.
-                 return Just([])
-            }
-            .assign(to: \.contacts, on:self)
+    @Published var accounts: [Account] = []
+    
+    var store: SmartStore?
+    var syncManager: SyncManager?
+    
+    init() {
+        store = SmartStore.shared(withName: SmartStore.defaultStoreName)
+        syncManager = SyncManager.sharedInstance(store: store!)
     }
-}
+    
+    func fetchAccounts(){
+        _ = syncManager?.publisher(for: "syncDownAccounts")
+            .receive(on: RunLoop.main)
+            .sink(receiveCompletion: { _ in }, receiveValue: { _ in
+                self.loadFromSmartStore()
+            })
         
+        self.loadFromSmartStore()
+    }
+    
+    private func loadFromSmartStore(){
+        _ = self.store?.publisher(for: "select {Account:Name}, {Account:Industry}, {Account:Id} from {Account}")
+            .receive(on: RunLoop.main)
+            .tryMap{
+                $0.map { (row) -> Account in
+                    let r = row as! [String?]
+                    
+                    return Account(id: r[2] ?? "", name: r[0] ?? "", industry: r[1] ?? "Unknown Industry" )
+                }
+        }
+        .catch { error -> Just<[Account]> in
+            print(error)
+            return Just([Account]())
+        }
+        .assign(to: \AccountsListModel.accounts, on:self)
+    }
+    
+}
