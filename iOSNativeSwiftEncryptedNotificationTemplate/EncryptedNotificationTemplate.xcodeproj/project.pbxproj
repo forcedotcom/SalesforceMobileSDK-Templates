@@ -225,7 +225,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 1110;
 				LastUpgradeCheck = 0940;
-				ORGANIZATIONNAME = Salesforce;
+				ORGANIZATIONNAME = EncryptedNotificationTemplateOrganizationName;
 				TargetAttributes = {
 					4FD6C4731B754AF1002F9F90 = {
 						CreatedOnToolsVersion = 6.4;
