@@ -24,6 +24,7 @@ WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH 
 
 import UIKit
 import SwiftUI
+import MobileSync
 import SalesforceSDKCore
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -89,9 +90,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
    }
    
    func setupRootViewController() {
-       
+       // Setup store based on config userstore.json
+       MobileSyncSDKManager.shared.setupUserStoreFromDefaultConfig()
+       // Setup syncs based on config usersyncs.json
+       MobileSyncSDKManager.shared.setupUserSyncsFromDefaultConfig()
+    
        self.window?.rootViewController = UIHostingController(
-           rootView: ContactListView()
+           rootView: AccountsListView()
        )
    }
    
@@ -104,5 +109,4 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
        }
        postResetBlock()
    }
-
 }

@@ -7,9 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4F13E93B237DD5D9005BCAE9 /* ContactDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F13E936237DD5D9005BCAE9 /* ContactDetailsView.swift */; };
+		4F13E93C237DD5D9005BCAE9 /* ContactsForAccountModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F13E937237DD5D9005BCAE9 /* ContactsForAccountModel.swift */; };
+		4F13E93D237DD5D9005BCAE9 /* ContactsForAccountListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F13E938237DD5D9005BCAE9 /* ContactsForAccountListView.swift */; };
+		4F13E93E237DD5D9005BCAE9 /* AccountsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F13E939237DD5D9005BCAE9 /* AccountsListView.swift */; };
+		4F13E93F237DD5D9005BCAE9 /* ContactDetailModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F13E93A237DD5D9005BCAE9 /* ContactDetailModel.swift */; };
+		4F13E942237DD5EE005BCAE9 /* usersyncs.json in Resources */ = {isa = PBXBuildFile; fileRef = 4F13E940237DD5EE005BCAE9 /* usersyncs.json */; };
+		4F13E943237DD5EE005BCAE9 /* userstore.json in Resources */ = {isa = PBXBuildFile; fileRef = 4F13E941237DD5EE005BCAE9 /* userstore.json */; };
+		4F13E947237DD72E005BCAE9 /* AccountsListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F13E946237DD72E005BCAE9 /* AccountsListModel.swift */; };
 		4F393A291C3C8BCD00B3EA13 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F393A281C3C8BCD00B3EA13 /* main.swift */; };
-		4FA795692315F215007C88D6 /* ContactListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA795682315F215007C88D6 /* ContactListView.swift */; };
-		4FA7956B2315F2B1007C88D6 /* ContactListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA7956A2315F2B1007C88D6 /* ContactListModel.swift */; };
 		4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */; };
 		4FD6C4A01B755242002F9F90 /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C49D1B755242002F9F90 /* InitialViewController.swift */; };
 		78A235BD93AB7D080D67CD51 /* Pods_iOS13NativeSwiftTemplate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82A29C75280BDF73123F14B4 /* Pods_iOS13NativeSwiftTemplate.framework */; };
@@ -21,13 +27,18 @@
 
 /* Begin PBXFileReference section */
 		045D1C5BC2F1EADFDFB3671E /* Pods-iOS13NativeSwiftTemplate.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS13NativeSwiftTemplate.release.xcconfig"; path = "Pods/Target Support Files/Pods-iOS13NativeSwiftTemplate/Pods-iOS13NativeSwiftTemplate.release.xcconfig"; sourceTree = "<group>"; };
+		4F13E936237DD5D9005BCAE9 /* ContactDetailsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactDetailsView.swift; sourceTree = "<group>"; };
+		4F13E937237DD5D9005BCAE9 /* ContactsForAccountModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactsForAccountModel.swift; sourceTree = "<group>"; };
+		4F13E938237DD5D9005BCAE9 /* ContactsForAccountListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactsForAccountListView.swift; sourceTree = "<group>"; };
+		4F13E939237DD5D9005BCAE9 /* AccountsListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsListView.swift; sourceTree = "<group>"; };
+		4F13E93A237DD5D9005BCAE9 /* ContactDetailModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactDetailModel.swift; sourceTree = "<group>"; };
+		4F13E940237DD5EE005BCAE9 /* usersyncs.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = usersyncs.json; sourceTree = "<group>"; };
+		4F13E941237DD5EE005BCAE9 /* userstore.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = userstore.json; sourceTree = "<group>"; };
+		4F13E946237DD72E005BCAE9 /* AccountsListModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsListModel.swift; sourceTree = "<group>"; };
 		4F393A281C3C8BCD00B3EA13 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		4FA795682315F215007C88D6 /* ContactListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListView.swift; sourceTree = "<group>"; };
-		4FA7956A2315F2B1007C88D6 /* ContactListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListModel.swift; sourceTree = "<group>"; };
 		4FD6C4741B754AF1002F9F90 /* iOS13NativeSwiftTemplate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOS13NativeSwiftTemplate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FD6C4781B754AF1002F9F90 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		4FD6C49A1B755242002F9F90 /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		4FD6C49D1B755242002F9F90 /* InitialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitialViewController.swift; sourceTree = "<group>"; };
 		4FF12F8A1DCA91F5004D9EF9 /* iOS13NativeSwiftTemplate.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iOS13NativeSwiftTemplate.entitlements; sourceTree = "<group>"; };
 		762732C14CFE40A989C3AD70 /* Pods-iOS13NativeSwiftTemplate.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS13NativeSwiftTemplate.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iOS13NativeSwiftTemplate/Pods-iOS13NativeSwiftTemplate.debug.xcconfig"; sourceTree = "<group>"; };
@@ -50,6 +61,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4F13E944237DD626005BCAE9 /* SwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				B73B520C234FA65F001B069B /* SceneDelegate.swift */,
+				4F13E939237DD5D9005BCAE9 /* AccountsListView.swift */,
+				4F13E938237DD5D9005BCAE9 /* ContactsForAccountListView.swift */,
+				4F13E936237DD5D9005BCAE9 /* ContactDetailsView.swift */,
+			);
+			name = SwiftUI;
+			sourceTree = "<group>";
+		};
+		4F13E945237DD62D005BCAE9 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				4F13E946237DD72E005BCAE9 /* AccountsListModel.swift */,
+				4F13E937237DD5D9005BCAE9 /* ContactsForAccountModel.swift */,
+				4F13E93A237DD5D9005BCAE9 /* ContactDetailModel.swift */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
 		4FD6C46B1B754AF1002F9F90 = {
 			isa = PBXGroup;
 			children = (
@@ -81,6 +113,8 @@
 		4FD6C4771B754AF1002F9F90 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				4F13E941237DD5EE005BCAE9 /* userstore.json */,
+				4F13E940237DD5EE005BCAE9 /* usersyncs.json */,
 				B77BD8A221125B510036B284 /* bootconfig.plist */,
 				B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */,
 				CEA8CA031F071B2300448B51 /* Images.xcassets */,
@@ -92,13 +126,11 @@
 		4FD6C4A11B755265002F9F90 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				4FD6C49A1B755242002F9F90 /* Bridging-Header.h */,
+				4F13E944237DD626005BCAE9 /* SwiftUI */,
+				4F13E945237DD62D005BCAE9 /* Models */,
 				4FD6C49D1B755242002F9F90 /* InitialViewController.swift */,
 				4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */,
 				4F393A281C3C8BCD00B3EA13 /* main.swift */,
-				4FA795682315F215007C88D6 /* ContactListView.swift */,
-				4FA7956A2315F2B1007C88D6 /* ContactListModel.swift */,
-				B73B520C234FA65F001B069B /* SceneDelegate.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -186,7 +218,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F13E943237DD5EE005BCAE9 /* userstore.json in Resources */,
 				B77BD8A321125B510036B284 /* bootconfig.plist in Resources */,
+				4F13E942237DD5EE005BCAE9 /* usersyncs.json in Resources */,
 				CEA8CA041F071B2300448B51 /* Images.xcassets in Resources */,
 				B7168FBC1FACC6F900A48DB5 /* LaunchScreen.storyboard in Resources */,
 			);
@@ -237,10 +271,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4FA795692315F215007C88D6 /* ContactListView.swift in Sources */,
 				B73B520D234FA65F001B069B /* SceneDelegate.swift in Sources */,
 				4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */,
-				4FA7956B2315F2B1007C88D6 /* ContactListModel.swift in Sources */,
+				4F13E93B237DD5D9005BCAE9 /* ContactDetailsView.swift in Sources */,
+				4F13E947237DD72E005BCAE9 /* AccountsListModel.swift in Sources */,
+				4F13E93C237DD5D9005BCAE9 /* ContactsForAccountModel.swift in Sources */,
+				4F13E93F237DD5D9005BCAE9 /* ContactDetailModel.swift in Sources */,
+				4F13E93D237DD5D9005BCAE9 /* ContactsForAccountListView.swift in Sources */,
+				4F13E93E237DD5D9005BCAE9 /* AccountsListView.swift in Sources */,
 				4F393A291C3C8BCD00B3EA13 /* main.swift in Sources */,
 				4FD6C4A01B755242002F9F90 /* InitialViewController.swift in Sources */,
 			);
