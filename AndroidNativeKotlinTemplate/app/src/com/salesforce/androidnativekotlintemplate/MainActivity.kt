@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.salesforce.androidnativekotlin
+package com.salesforce.androidnativekotlintemplate
 
 import android.os.Bundle
 import android.view.View
@@ -55,7 +55,7 @@ class MainActivity : SalesforceActivity() {
         super.onCreate(savedInstanceState)
 
         // Set Theme
-        val idDarkTheme = MobileSyncSDKManager.getInstance().isDarkTheme(this)
+        val idDarkTheme = MobileSyncSDKManager.getInstance().isDarkTheme()
         setTheme(if (idDarkTheme) R.style.SalesforceSDK_Dark else R.style.SalesforceSDK)
         MobileSyncSDKManager.getInstance().setViewNavigationVisibility(this)
 
