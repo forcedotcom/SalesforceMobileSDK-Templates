@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.salesforce.androididp
+package com.salesforce.samples.salesforceandroididptemplateapp
 
 import android.content.Intent
 import android.os.Bundle
@@ -75,7 +75,7 @@ class MainActivity : SalesforceActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val isDarkTheme = MobileSyncSDKManager.getInstance().isDarkTheme(this)
+        val isDarkTheme = MobileSyncSDKManager.getInstance().isDarkTheme()
         setTheme(if (isDarkTheme) R.style.SalesforceSDK_Dark else R.style.SalesforceSDK)
         MobileSyncSDKManager.getInstance().setViewNavigationVisibility(this)
         setContentView(R.layout.main)

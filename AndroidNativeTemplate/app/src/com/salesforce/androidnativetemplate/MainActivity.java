@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.salesforce.androidnative;
+package com.salesforce.androidnativetemplate;
 
 import android.os.Bundle;
 import android.view.View;
@@ -59,7 +59,7 @@ public class MainActivity extends SalesforceActivity {
 		super.onCreate(savedInstanceState);
 
 		// Setup theme
-		boolean isDarkTheme = MobileSyncSDKManager.getInstance().isDarkTheme(this);
+		boolean isDarkTheme = MobileSyncSDKManager.getInstance().isDarkTheme();
 		setTheme(isDarkTheme ? R.style.SalesforceSDK_Dark : R.style.SalesforceSDK);
 		MobileSyncSDKManager.getInstance().setViewNavigationVisibility(this);
 
