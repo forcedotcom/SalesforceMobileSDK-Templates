@@ -74,3 +74,18 @@ struct ContactDetailView: View {
     }
 }
 
+struct ContactDetailView_Previews: PreviewProvider {
+  static var previews: some View {
+    ContactDetailView(contact: Contact(
+        Id: "123456",
+        FirstName: "Astro",
+        LastName: "Nomical",
+        PhoneNumber: "9198675309",
+        Email: "Astro.Nomical@gmail.com",
+        MailingStreet: "123 Sessame St",
+        MailingCity: "Sunny Days",
+        MailingState: "NJ",
+        MailingPostalCode: "12345"
+    ))
+  }
+}

@@ -51,4 +51,12 @@ struct ContactsForAccountListView: View {
   
 }
 
-
+struct ContactsForAccountListView_previews: PreviewProvider {
+  static var previews: some View {
+    ContactsForAccountListView(account: Account(
+        id: "12345",
+        name:"Test Account",
+        industry: "Stuff"
+    ))
+  }
+}
