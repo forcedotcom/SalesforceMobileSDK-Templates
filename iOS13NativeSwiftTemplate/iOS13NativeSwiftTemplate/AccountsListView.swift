@@ -48,10 +48,10 @@ struct AccountsListView: View {
     .onAppear{ self.viewModel.fetchAccounts() }
   }
 }
-#if DEBUG
+
 struct AccountsList_Previews: PreviewProvider {
   static var previews: some View {
     AccountsListView()
   }
 }
-#endif
+
