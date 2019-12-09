@@ -127,12 +127,12 @@
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
     // Uncomment following block to enable IDP Login flow
-//    return [self enableIdpLoginFlowForURL:url options:options];
+//    return [self enableIDPLoginFlowForURL:url options:options];
     
     return NO;
 }
 
-- (BOOL)enableIdpLoginFlowForURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+- (BOOL)enableIDPLoginFlowForURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
      return [[SFUserAccountManager sharedInstance] handleIDPAuthenticationResponse:url options:options];
 }
 

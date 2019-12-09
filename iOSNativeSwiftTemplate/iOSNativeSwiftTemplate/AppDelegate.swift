@@ -61,8 +61,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
         return true
     }
     
-    func registerForRemotePushNotifications() {
-        PushNotificationManager.sharedInstance().registerForRemoteNotifications();
+    func registerForRemotePushNotifications() {        PushNotificationManager.sharedInstance().registerForRemoteNotifications();
     }
     
     func customizeLoginView() {
@@ -107,8 +106,12 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey 
  : Any] = [:]) -> Bool {
         // Uncomment following block to enable IDP Login flow
-        // return  UserAccountManager.shared.handleIdentityProviderResponse(from: url, with: options)
+//        return self.enableIDPLoginFlowForURL(url, options: options)
         return false;
+    }
+    
+    func enableIDPLoginFlowForURL(_ url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        return  UserAccountManager.shared.handleIdentityProviderResponse(from: url, with: options)
     }
     
     // MARK: - Private methods
