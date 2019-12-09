@@ -78,32 +78,38 @@
     [self initializeAppViewState];
     
   
-    //Uncomment the code below to see how you can customize the color, textcolor, font and   fontsize of the navigation bar
-    //SFSDKLoginViewControllerConfig *loginViewConfig = [[SFSDKLoginViewControllerConfig  alloc] init];
-    //Set showSettingsIcon to NO if you want to hide the settings icon on the nav bar
-    //loginViewConfig.showSettingsIcon = YES;
-    //Set showNavBar to NO if you want to hide the top bar
-    //loginViewConfig.showNavbar = YES;
-    //loginViewConfig.navBarColor = [UIColor colorWithRed:0.051 green:0.765 blue:0.733 alpha:1.0];
-    //loginViewConfig.navBarTextColor = [UIColor whiteColor];
-    //loginViewConfig.navBarFont = [UIFont fontWithName:@"Helvetica" size:16.0];
-    //[SFUserAccountManager sharedInstance].loginViewControllerConfig = loginViewConfig;
+    //Uncomment the code below to see how you can customize the color, textcolor, font and fontsize of the navigation bar
+//    [self customizeLoginView];
+    
     [SFSDKAuthHelper loginIfRequired:^{
         [self setupRootViewController];
     }];
     return YES;
 }
 
+- (void)customizeLoginView {
+    SFSDKLoginViewControllerConfig *loginViewConfig = [[SFSDKLoginViewControllerConfig  alloc] init];
+    // Set showSettingsIcon to NO if you want to hide the settings icon on the nav bar
+    loginViewConfig.showSettingsIcon = YES;
+    // Set showNavBar to NO if you want to hide the top bar
+    loginViewConfig.showNavbar = YES;
+    loginViewConfig.navBarColor = [UIColor colorWithRed:0.051 green:0.765 blue:0.733 alpha:1.0];
+    loginViewConfig.navBarTitleColor = [UIColor whiteColor];
+    loginViewConfig.navBarFont = [UIFont fontWithName:@"Helvetica" size:16.0];
+    [SFUserAccountManager sharedInstance].loginViewControllerConfig = loginViewConfig;
+}
+
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
-    //
     // Uncomment the code below to register your device token with the push notification manager
-    //
-    // [[SFPushNotificationManager sharedInstance] didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
-    // if ([SFUserAccountManager sharedInstance].currentUser.credentials.accessToken != nil) {
-    //     [[SFPushNotificationManager sharedInstance] registerSalesforceNotificationsWithCompletionBlock:nil failBlock:nil];
-    // }
-    //
+//    [self registerForRemoteNotificationWithDeviceToken:deviceToken];
+}
+
+- (void)registerForRemoteNotificationWithDeviceToken:(NSData *)deviceToken {
+    [[SFPushNotificationManager sharedInstance] didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+    if ([SFUserAccountManager sharedInstance].currentUser.credentials.accessToken != nil) {
+     [[SFPushNotificationManager sharedInstance] registerSalesforceNotificationsWithCompletionBlock:nil failBlock:nil];
+    }
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
@@ -114,8 +120,13 @@
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
     // Uncomment following block to enable IDP Login flow
-    // return [[SFUserAccountManager sharedInstance] handleIDPAuthenticationResponse:url options:options];
+//    return [self enableIdpLoginFlowForURL:url options:options];
+    
     return NO;
+}
+
+- (BOOL)enableIdpLoginFlowForURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+     return [[SFUserAccountManager sharedInstance] handleIDPAuthenticationResponse:url options:options];
 }
 
 #pragma mark - Private methods
