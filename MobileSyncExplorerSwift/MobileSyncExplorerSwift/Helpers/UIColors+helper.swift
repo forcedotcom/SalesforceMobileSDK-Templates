@@ -49,7 +49,7 @@ extension UIColor {
     class var detailViewControllerBackground: UIColor {
         let lightStyleColor = UIColor(displayP3Red: 250.0/255.0, green: 251/255.0, blue: 253.0/255.0, alpha: 1.0)
         if #available(iOS 13, *) {
-            return UIColor.init(forLightStyle: lightStyleColor, darkStyle: UIColor.systemGroupedBackground)
+            return UIColor(forLightStyle: lightStyleColor, darkStyle: UIColor.systemGroupedBackground)
         }
         return lightStyleColor
     }
@@ -64,7 +64,7 @@ extension UIColor {
     class var contactCellTitle: UIColor {
         let lightStyleColor = UIColor(displayP3Red: 42.0/255.0, green: 66.0/255.0, blue: 108.0/255.0, alpha: 1.0)
         if #available(iOS 13, *) {
-            return UIColor.init(forLightStyle: lightStyleColor, darkStyle: UIColor.label)
+            return UIColor(forLightStyle: lightStyleColor, darkStyle: UIColor.label)
         }
         return lightStyleColor
     }
