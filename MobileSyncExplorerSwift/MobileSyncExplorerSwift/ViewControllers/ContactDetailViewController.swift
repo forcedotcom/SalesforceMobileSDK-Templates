@@ -428,7 +428,7 @@ class ContactDetailViewController: UniversalViewController {
         let editView = UIButton(type: .custom)
         editView.translatesAutoresizingMaskIntoConstraints = false
         editView.addTarget(self, action: #selector(userDidPressEdit), for: .touchUpInside)
-        editView.backgroundColor = UIColor.init(forLightStyle: UIColor.white, darkStyle: UIColor.clear)
+        editView.backgroundColor = UIColor(forLightStyle: UIColor.white, darkStyle: UIColor.clear)
         
         editView.layer.cornerRadius = 3.0
         editView.layer.borderColor = UIColor.white.cgColor
