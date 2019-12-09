@@ -96,8 +96,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
                 }
             }
         }
-    }
-    
+    }    
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error ) {
         // Respond to any push notification registration errors here.
