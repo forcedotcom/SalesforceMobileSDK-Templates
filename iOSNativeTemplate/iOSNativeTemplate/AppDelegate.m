@@ -77,7 +77,11 @@
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     [self initializeAppViewState];
     
-  
+    // If you wish to register for push notifications, uncomment the line below.  Note that,
+    // if you want to receive push notifications from Salesforce, you will also need to
+    // implement the application:didRegisterForRemoteNotificationsWithDeviceToken: method (below).
+//    [self registerForRemotePushNotifications];
+    
     //Uncomment the code below to see how you can customize the color, textcolor, font and fontsize of the navigation bar
 //    [self customizeLoginView];
     
@@ -85,6 +89,9 @@
         [self setupRootViewController];
     }];
     return YES;
+}
+- (void)registerForRemotePushNotifications {
+    [[SFPushNotificationManager sharedInstance] registerForRemoteNotifications];
 }
 
 - (void)customizeLoginView {
@@ -102,10 +109,10 @@
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
     // Uncomment the code below to register your device token with the push notification manager
-//    [self registerForRemoteNotificationWithDeviceToken:deviceToken];
+//    [self didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
 }
 
-- (void)registerForRemoteNotificationWithDeviceToken:(NSData *)deviceToken {
+- (void)didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     [[SFPushNotificationManager sharedInstance] didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
     if ([SFUserAccountManager sharedInstance].currentUser.credentials.accessToken != nil) {
      [[SFPushNotificationManager sharedInstance] registerSalesforceNotificationsWithCompletionBlock:nil failBlock:nil];
