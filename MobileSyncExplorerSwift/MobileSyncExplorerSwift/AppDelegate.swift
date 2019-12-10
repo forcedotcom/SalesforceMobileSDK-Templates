@@ -24,90 +24,98 @@
 
 import Foundation
 import UIKit
-import SalesforceSDKCore
 import MobileSync
 
-class AppDelegate : UIResponder, UIApplicationDelegate
-{
+class AppDelegate : UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
-    override
-    init()
-    {
+    override init() {
         super.init()
         MobileSyncSDKManager.initializeSDK()
-        AuthHelper.registerBlock(forCurrentUserChangeNotifications: { [weak self] in
-            self?.resetViewState {
-                self?.setupRootViewController()
+        
+        AuthHelper.registerBlock(forCurrentUserChangeNotifications: {
+            self.resetViewState {
+                self.setupRootViewController()
             }
         })
-    
+        
     }
     
     // MARK: - App delegate lifecycle
-    
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
-    {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.initializeAppViewState()
         
         // If you wish to register for push notifications, uncomment the line below.  Note that,
         // if you want to receive push notifications from Salesforce, you will also need to
-        // implement the application:didRegisterForRemoteNotificationsWithDeviceToken: method (below).
-        //
-        // PushNotificationManager.sharedInstance().registerForRemoteNotifications()
-        
-        //Uncomment the code below to see how you can customize the color, textcolor, font and fontsize of the navigation bar
-        //var loginViewConfig = LoginViewControllerConfig()
-        //Set showSettingsIcon to NO if you want to hide the settings icon on the nav bar
-        //loginViewConfig.showSettingsIcon = false
-        //Set showNavBar to NO if you want to hide the top bar
-        //loginViewConfig.showNavbar = true
-        //loginViewConfig.navBarColor = UIColor(red: 0.051, green: 0.765, blue: 0.733, alpha: 1.0)
-        //loginViewConfig.navBarTextColor = UIColor.white
-        //loginViewConfig.navBarFont = UIFont(name: "Helvetica", size: 16.0)
-        //UserAccountManager.sharedInstance().loginViewControllerConfig = loginViewConfig
-        AuthHelper.loginIfRequired { [weak self] in
-            self?.setupRootViewController()
+        // implement the application(application, didRegisterForRemoteNotificationsWithDeviceToken) method (below).
+//        self.registerForRemotePushNotifications()
+
+        //Uncomment the code below to see how you can customize the color, textcolor,
+        //font and fontsize of the navigation bar
+//        self.customizeLoginView()
+        AuthHelper.loginIfRequired {
+            self.setupRootViewController()
         }
         
         return true
     }
     
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data)
-    {
-        //
-        // Uncomment the code below to register your device token with the push notification manager
-        //
-       //PushNotificationManager.sharedInstance().didRegisterForRemoteNotifications(withDeviceToken: deviceToken)
-        //if let _ = UserAccountManager.shared.currentUserAccount?.credentials.accessToken {
-        //   PushNotificationManager.sharedInstance().registerForSalesforceNotifications { (result) in
-        //       switch (result) {
-        //           case  .success(let successFlag):
-        //               SalesforceLogger.d(AppDelegate.self, message: "Registration for Salesforce notifications status:  \(successFlag)")
-        //           case .failure(let error):
-        //               SalesforceLogger.e(AppDelegate.self, message: "Registration for Salesforce notifications failed \(error)")
-        //       }
-        //   }
-        //}
+    func registerForRemotePushNotifications() {        PushNotificationManager.sharedInstance().registerForRemoteNotifications();
     }
-
-
-    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error )
-    {
+    
+    func customizeLoginView() {
+        let loginViewConfig = SalesforceLoginViewControllerConfig()
+        
+        // Set showSettingsIcon to false if you want to hide the settings
+        // icon on the nav bar
+        loginViewConfig.showsSettingsIcon = false
+        
+        // Set showNavBar to false if you want to hide the top bar
+        loginViewConfig.showsNavigationBar = false
+        loginViewConfig.navigationBarColor = UIColor(red: 0.051, green: 0.765, blue: 0.733, alpha: 1.0)
+        loginViewConfig.navigationTitleColor = UIColor.white
+        loginViewConfig.navigationBarFont = UIFont(name: "Helvetica", size: 16.0)
+        UserAccountManager.shared.loginViewControllerConfig = loginViewConfig
+    }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        // Uncomment the code below to register your device token with the push notification manager
+//        didRgisterForRemoteNotifications(deviceToken)
+    }
+    
+    func didRgisterForRemoteNotifications(_ deviceToken: Data) {
+        PushNotificationManager.sharedInstance().didRegisterForRemoteNotifications(withDeviceToken: deviceToken)
+        if let _ = UserAccountManager.shared.currentUserAccount?.credentials.accessToken {
+            PushNotificationManager.sharedInstance().registerForSalesforceNotifications { (result) in
+                switch (result) {
+                    case  .success(let successFlag):
+                        SalesforceLogger.d(AppDelegate.self, message: "Registration for Salesforce notifications status:  \(successFlag)")
+                    case .failure(let error):
+                        SalesforceLogger.e(AppDelegate.self, message: "Registration for Salesforce notifications failed \(error)")
+                }
+            }
+        }
+    }
+    
+    
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error ) {
         // Respond to any push notification registration errors here.
     }
-
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool
-    {
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey
+ : Any] = [:]) -> Bool {
         // Uncomment following block to enable IDP Login flow
-        // return  UserAccountManager.sharedInstance().handleIDPAuthenticationResponse(url, options: options)
+//        return self.enableIDPLoginFlowForURL(url, options: options)
         return false;
     }
-
+    
+    func enableIDPLoginFlowForURL(_ url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        return  UserAccountManager.shared.handleIdentityProviderResponse(from: url, with: options)
+    }
+    
     // MARK: - Private methods
-    func initializeAppViewState()
-    {
+    func initializeAppViewState() {
         if (!Thread.isMainThread) {
             DispatchQueue.main.async {
                 self.initializeAppViewState()
@@ -115,27 +123,25 @@ class AppDelegate : UIResponder, UIApplicationDelegate
             return
         }
         
-        self.window!.rootViewController = InitialViewController(nibName: nil, bundle: nil)
-        self.window!.makeKeyAndVisible()
+        self.window?.rootViewController = InitialViewController(nibName: nil, bundle: nil)
+        self.window?.makeKeyAndVisible()
     }
     
-    func setupRootViewController()
-    {
+    func setupRootViewController() {
         let rootVC = RootViewController()
         let navVC = UINavigationController(rootViewController: rootVC)
-        self.window!.rootViewController = navVC
+        self.window?.rootViewController = navVC
     }
     
-    func resetViewState(_ postResetBlock: @escaping () -> ())
-    {
-        if let rootViewController = self.window!.rootViewController {
+    func resetViewState(_ postResetBlock: @escaping () -> ()) {
+        if let rootViewController = self.window?.rootViewController {
             if let _ = rootViewController.presentedViewController {
                 rootViewController.dismiss(animated: false, completion: postResetBlock)
                 return
             }
         }
-
         postResetBlock()
     }
+    
     
 }
