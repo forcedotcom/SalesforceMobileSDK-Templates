@@ -39,7 +39,7 @@ update_package_json ()
 {
     local file=$1
     local version=$2
-    gsed -i "s/\.git\#[^\"]*\"/\.git\#${version}\"/g" ${file}
+    gsed -i "s/\(SalesforceMobileSDK.*\)\#[^\"]*\"/\1\#${version}\"/g" ${file}
 }
 
 parse_opts "$@"
