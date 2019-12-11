@@ -115,7 +115,7 @@ class MainActivity : SalesforceActivity() {
 
         // Displays list of users available.
         usersListView?.adapter = ArrayAdapter(this,
-                android.R.layout.simple_selectable_list_item, arrayListOf(buildListOfUsers()))
+                android.R.layout.simple_selectable_list_item, buildListOfUsers())
 
         // Displays list of apps available.
         appsListView?.adapter = ArrayAdapter(this, android.R.layout.simple_selectable_list_item,
