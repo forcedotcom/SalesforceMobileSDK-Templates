@@ -122,7 +122,7 @@ class MainActivity : SalesforceActivity() {
                 arrayListOf(MOBILE_SYNC_EXPLORER, REST_EXPLORER, ACCOUNT_EDITOR))
     }
 
-    private fun buildListOfUsers(): List<String>? {
+    private fun buildListOfUsers(): List<String> {
         val users = UserAccountManager.getInstance().authenticatedUsers
         val usernames: MutableList<String> = mutableListOf()
         if (users != null) {
