@@ -42,7 +42,7 @@
         -->
         <!--
         <activity android:name="com.salesforce.androidsdk.ui.LoginActivity"
-            android:theme="@style/SalesforceSDK.ActionBarTheme"
+            android:theme="@style/SalesforceSDK"
             android:launchMode="singleInstance">
 
             <intent-filter>
@@ -71,7 +71,7 @@
         <!--
         <activity android:name="com.salesforce.androidsdk.auth.idp.IDPAccountPickerActivity"
             android:excludeFromRecents="true"
-            android:theme="@style/SalesforceSDK.ActionBarTheme">
+            android:theme="@style/SalesforceSDK">
 
             <intent-filter>
                 <data android:scheme="com.salesforce.androidnativetemplate"

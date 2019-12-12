@@ -29,7 +29,7 @@ let appOneKey = "app-one"
 
 let appTwoKey = "app-two"
 
-let appOneDefaultUrl = "smartsyncexplorer"
+let appOneDefaultUrl = "mobilesyncexplorer"
 
 let appTwoDefaultUrl = "accounteditor"
 

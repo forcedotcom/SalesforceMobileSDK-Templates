@@ -30,8 +30,8 @@
 #import <SalesforceSDKCore/SFDefaultUserManagementViewController.h>
 #import <SalesforceSDKCore/SalesforceSDKManager.h>
 #import <SalesforceSDKCore/SFUserAccountManager.h>
-#import <SmartSync/SmartSyncSDKManager.h>
-#import <SmartSync/SFSDKSmartSyncLogger.h>
+#import <MobileSync/MobileSyncSDKManager.h>
+#import <MobileSync/SFSDKMobileSyncLogger.h>
 #import <SalesforceSDKCore/SFLoginViewController.h>
 #import <SalesforceSDKCore/SFSDKLoginViewControllerConfig.h>
 #import <SalesforceSDKCore/SFSDKAuthHelper.h>
@@ -59,7 +59,7 @@
 {
     self = [super init];
     if (self) {
-        [SmartSyncSDKManager initializeSDK];
+        [MobileSyncSDKManager initializeSDK];
         
         //App Setup for any changes to the current authenticated user
        
@@ -77,33 +77,46 @@
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     [self initializeAppViewState];
     
-  
-    //Uncomment the code below to see how you can customize the color, textcolor, font and   fontsize of the navigation bar
-    //SFSDKLoginViewControllerConfig *loginViewConfig = [[SFSDKLoginViewControllerConfig  alloc] init];
-    //Set showSettingsIcon to NO if you want to hide the settings icon on the nav bar
-    //loginViewConfig.showSettingsIcon = YES;
-    //Set showNavBar to NO if you want to hide the top bar
-    //loginViewConfig.showNavbar = YES;
-    //loginViewConfig.navBarColor = [UIColor colorWithRed:0.051 green:0.765 blue:0.733 alpha:1.0];
-    //loginViewConfig.navBarTextColor = [UIColor whiteColor];
-    //loginViewConfig.navBarFont = [UIFont fontWithName:@"Helvetica" size:16.0];
-    //[SFUserAccountManager sharedInstance].loginViewControllerConfig = loginViewConfig;
+    // If you wish to register for push notifications, uncomment the line below.  Note that,
+    // if you want to receive push notifications from Salesforce, you will also need to
+    // implement the application:didRegisterForRemoteNotificationsWithDeviceToken: method (below).
+//    [self registerForRemotePushNotifications];
+    
+    //Uncomment the code below to see how you can customize the color, textcolor, font and fontsize of the navigation bar
+//    [self customizeLoginView];
+    
     [SFSDKAuthHelper loginIfRequired:^{
         [self setupRootViewController];
     }];
     return YES;
 }
+- (void)registerForRemotePushNotifications {
+    [[SFPushNotificationManager sharedInstance] registerForRemoteNotifications];
+}
+
+- (void)customizeLoginView {
+    SFSDKLoginViewControllerConfig *loginViewConfig = [[SFSDKLoginViewControllerConfig  alloc] init];
+    // Set showSettingsIcon to NO if you want to hide the settings icon on the nav bar
+    loginViewConfig.showSettingsIcon = YES;
+    // Set showNavBar to NO if you want to hide the top bar
+    loginViewConfig.showNavbar = YES;
+    loginViewConfig.navBarColor = [UIColor colorWithRed:0.051 green:0.765 blue:0.733 alpha:1.0];
+    loginViewConfig.navBarTitleColor = [UIColor whiteColor];
+    loginViewConfig.navBarFont = [UIFont fontWithName:@"Helvetica" size:16.0];
+    [SFUserAccountManager sharedInstance].loginViewControllerConfig = loginViewConfig;
+}
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
-    //
     // Uncomment the code below to register your device token with the push notification manager
-    //
-    // [[SFPushNotificationManager sharedInstance] didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
-    // if ([SFUserAccountManager sharedInstance].currentUser.credentials.accessToken != nil) {
-    //     [[SFPushNotificationManager sharedInstance] registerSalesforceNotificationsWithCompletionBlock:nil failBlock:nil];
-    // }
-    //
+//    [self didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+}
+
+- (void)didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    [[SFPushNotificationManager sharedInstance] didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+    if ([SFUserAccountManager sharedInstance].currentUser.credentials.accessToken != nil) {
+     [[SFPushNotificationManager sharedInstance] registerSalesforceNotificationsWithCompletionBlock:nil failBlock:nil];
+    }
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
@@ -114,8 +127,13 @@
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
     // Uncomment following block to enable IDP Login flow
-    // return [[SFUserAccountManager sharedInstance] handleIDPAuthenticationResponse:url options:options];
+//    return [self enableIDPLoginFlowForURL:url options:options];
+    
     return NO;
+}
+
+- (BOOL)enableIDPLoginFlowForURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+     return [[SFUserAccountManager sharedInstance] handleIDPAuthenticationResponse:url options:options];
 }
 
 #pragma mark - Private methods

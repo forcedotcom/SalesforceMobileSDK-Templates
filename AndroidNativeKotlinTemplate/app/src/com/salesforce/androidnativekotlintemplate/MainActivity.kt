@@ -33,6 +33,7 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
 import com.salesforce.androidsdk.app.SalesforceSDKManager
+import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.androidsdk.rest.ApiVersionStrings
 import com.salesforce.androidsdk.rest.RestClient
 import com.salesforce.androidsdk.rest.RestClient.AsyncRequestCallback
@@ -52,6 +53,11 @@ class MainActivity : SalesforceActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Set Theme
+        val idDarkTheme = MobileSyncSDKManager.getInstance().isDarkTheme()
+        setTheme(if (idDarkTheme) R.style.SalesforceSDK_Dark else R.style.SalesforceSDK)
+        MobileSyncSDKManager.getInstance().setViewNavigationVisibility(this)
 
         // Setup view
         setContentView(R.layout.main)

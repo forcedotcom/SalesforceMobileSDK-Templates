@@ -1,16 +1,15 @@
 apply plugin: 'com.android.application'
 
 dependencies {
-  api project(':libs:SmartSync') // From node_modules
+  api project(':libs:MobileSync') // From node_modules
 }
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 29
 
     defaultConfig {
-        targetSdkVersion 28
-        minSdkVersion 21
+        targetSdkVersion 29
+        minSdkVersion 23
     }
   
   buildTypes {

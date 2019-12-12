@@ -22,20 +22,23 @@
  WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import UIKit
-import WYPopoverController
 import SalesforceSDKCore
 
 class MainViewController: UINavigationController {
     
-    var popOverController: WYPopoverController?
+    var popOverController: UIPopoverPresentationController?
     @IBOutlet weak var showPopoverButton: UIBarButtonItem!
 
     @IBAction func popOverAction(_ sender: UIBarButtonItem) {
         let popOverContent = ActionsPopoverTableViewController(nibName: nil, bundle: nil)
         popOverContent.delegate = self
-        popOverContent.preferredContentSize = CGSize(width: 260, height: 90)
-        self.popOverController = WYPopoverController(contentViewController: popOverContent)
-        self.popOverController?.presentPopover(from: sender, permittedArrowDirections: .any, animated: true)
+        popOverContent.modalPresentationStyle = .popover
+        
+        self.popOverController = popOverContent.popoverPresentationController
+        self.popOverController?.barButtonItem = sender
+        
+        popOverContent.preferredContentSize = CGSize(width: 300, height: 200)
+        self.present(popOverContent, animated: true, completion: nil)
     }
 
     override func viewDidLoad() {
@@ -49,12 +52,10 @@ class MainViewController: UINavigationController {
 extension MainViewController : ActionsPopoverTableViewDelegate {
 
     func logoutAllUsersSelected(sender: ActionsPopoverTableViewController) {
-        popOverController?.dismissPopover(animated: true)
         showLogoutActionSheet()
     }
 
     func switchUserSelected(sender: ActionsPopoverTableViewController) {
-        popOverController?.dismissPopover(animated: true)
         showSwitchUserSheet()
     }
 
@@ -88,6 +89,8 @@ extension MainViewController : ActionsPopoverTableViewDelegate {
     }
 
     func showSwitchUserSheet() {
-        UserAccountManager.shared.login(onSuccess: nil, onFailure: nil)
+        _ = UserAccountManager.shared.login { _ in
+            
+        }
     }
 }

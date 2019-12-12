@@ -38,6 +38,7 @@ import android.widget.TabHost
 import com.salesforce.androidsdk.accounts.UserAccount
 import com.salesforce.androidsdk.accounts.UserAccountManager
 import com.salesforce.androidsdk.auth.idp.IDPInititatedLoginReceiver
+import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.androidsdk.rest.RestClient
 import com.salesforce.androidsdk.ui.SalesforceActivity
 
@@ -55,13 +56,13 @@ class MainActivity : SalesforceActivity() {
         private const val USERS_TAB = "Users"
         private const val APPS_TAB = "Apps"
         private const val ADD_NEW_USER = "Add New User"
-        private const val SMART_SYNC_EXPLORER = "SmartSyncExplorer"
+        private const val MOBILE_SYNC_EXPLORER = "MobileSyncExplorer"
         private const val REST_EXPLORER = "RestExplorer"
         private const val ACCOUNT_EDITOR = "AccountEditor"
-        private const val SMART_SYNC_EXPLORER_PACKAGE = "com.salesforce.samples.smartsyncexplorer"
+        private const val MOBILE_SYNC_EXPLORER_PACKAGE = "com.salesforce.samples.mobilesyncexplorer"
         private const val REST_EXPLORER_PACKAGE = "com.salesforce.samples.restexplorer"
         private const val ACCOUNT_EDITOR_PACKAGE = "com.salesforce.samples.accounteditor"
-        private const val SMART_SYNC_COMPONENT_NAME = "MainActivity"
+        private const val MOBILE_SYNC_COMPONENT_NAME = "MainActivity"
         private const val REST_EXPLORER_COMPONENT_NAME = "ExplorerActivity"
         private const val ACCOUNT_EDITOR_COMPONENT_NAME = "SalesforceDroidGapActivity"
         private const val COLON = ":"
@@ -74,6 +75,9 @@ class MainActivity : SalesforceActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val isDarkTheme = MobileSyncSDKManager.getInstance().isDarkTheme()
+        setTheme(if (isDarkTheme) R.style.SalesforceSDK_Dark else R.style.SalesforceSDK)
+        MobileSyncSDKManager.getInstance().setViewNavigationVisibility(this)
         setContentView(R.layout.main)
         val tabHost = findViewById<TabHost>(R.id.tab_host)
         tabHost.setup()
@@ -91,8 +95,8 @@ class MainActivity : SalesforceActivity() {
         tabHost.addTab(appsTabSpec)
 
         // Getting a handle on list views.
-        usersListView = findViewById<ListView>(R.id.users_list)
-        appsListView = findViewById<ListView>(R.id.apps_list)
+        usersListView = findViewById(R.id.users_list)
+        appsListView = findViewById(R.id.apps_list)
 
         // Setting click listeners for the list views.
         (usersListView as ListView).onItemClickListener = OnItemClickListener { _, _, position, _ -> handleUserListItemClick(position) }
@@ -110,16 +114,15 @@ class MainActivity : SalesforceActivity() {
         findViewById<ViewGroup>(R.id.root).visibility = View.VISIBLE
 
         // Displays list of users available.
-        val users = UserAccountManager.getInstance().authenticatedUsers
         usersListView?.adapter = ArrayAdapter(this,
                 android.R.layout.simple_selectable_list_item, buildListOfUsers())
 
         // Displays list of apps available.
         appsListView?.adapter = ArrayAdapter(this, android.R.layout.simple_selectable_list_item,
-                arrayListOf(SMART_SYNC_EXPLORER, REST_EXPLORER, ACCOUNT_EDITOR))
+                arrayListOf(MOBILE_SYNC_EXPLORER, REST_EXPLORER, ACCOUNT_EDITOR))
     }
 
-    private fun buildListOfUsers(): List<String>? {
+    private fun buildListOfUsers(): List<String> {
         val users = UserAccountManager.getInstance().authenticatedUsers
         val usernames: MutableList<String> = mutableListOf()
         if (users != null) {
@@ -160,9 +163,9 @@ class MainActivity : SalesforceActivity() {
         var appPackageName = ""
         var appComponentName = ""
         when (appName) {
-            SMART_SYNC_EXPLORER -> {
-                appPackageName = SMART_SYNC_EXPLORER_PACKAGE
-                appComponentName = SMART_SYNC_COMPONENT_NAME
+            MOBILE_SYNC_EXPLORER -> {
+                appPackageName = MOBILE_SYNC_EXPLORER_PACKAGE
+                appComponentName = MOBILE_SYNC_COMPONENT_NAME
             }
             REST_EXPLORER -> {
                 appPackageName = REST_EXPLORER_PACKAGE

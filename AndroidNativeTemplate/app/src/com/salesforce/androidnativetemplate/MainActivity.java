@@ -33,6 +33,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.salesforce.androidsdk.app.SalesforceSDKManager;
+import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager;
 import com.salesforce.androidsdk.rest.ApiVersionStrings;
 import com.salesforce.androidsdk.rest.RestClient;
 import com.salesforce.androidsdk.rest.RestClient.AsyncRequestCallback;
@@ -56,6 +57,11 @@ public class MainActivity extends SalesforceActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		// Setup theme
+		boolean isDarkTheme = MobileSyncSDKManager.getInstance().isDarkTheme();
+		setTheme(isDarkTheme ? R.style.SalesforceSDK_Dark : R.style.SalesforceSDK);
+		MobileSyncSDKManager.getInstance().setViewNavigationVisibility(this);
 
 		// Setup view
 		setContentView(R.layout.main);

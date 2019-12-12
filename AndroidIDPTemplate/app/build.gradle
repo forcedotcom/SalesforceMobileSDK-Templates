@@ -2,17 +2,16 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 dependencies {
-  api project(':libs:SmartSync')
+  api project(':libs:MobileSync')
   api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 29
 
     defaultConfig {
-        targetSdkVersion 28
-        minSdkVersion 21
+        targetSdkVersion 29
+        minSdkVersion 23
     }
 
     buildTypes {

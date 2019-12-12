@@ -8,6 +8,19 @@
     },
     {
 
+        "path": "iOS13NativeSwiftTemplate",
+        "description": "iOS 13 Swift application using MobileSync, SwiftUI and Combine",
+        "appType": "native_swift",
+        "platforms": ["ios"]
+    },
+    {
+        "path": "iOSNativeSwiftEncryptedNotificationTemplate",
+        "description": "Basic Swift application with notification service extension",
+        "appType": "native_swift",
+        "platforms": ["ios"]
+    },
+    {
+
         "path": "iOSNativeTemplate",
         "description": "Basic Objective-C application",
         "appType": "native",
@@ -62,15 +75,15 @@
     },
     {
 
-        "path": "SmartSyncExplorerSwift",
-        "description": "Sample Swift application using SmartSync data framework",
+        "path": "MobileSyncExplorerSwift",
+        "description": "Sample Swift application using MobileSync data framework",
         "appType": "native_swift",
         "platforms": ["ios"]
     },
     {
 
-        "path": "SmartSyncExplorerReactNative",
-        "description": "Sample application using SmartSync data framework",
+        "path": "MobileSyncExplorerReactNative",
+        "description": "Sample application using MobileSync data framework",
         "appType": "react_native",
         "platforms": ["android", "ios"]
     }

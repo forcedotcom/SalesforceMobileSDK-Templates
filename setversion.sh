@@ -39,7 +39,7 @@ update_package_json ()
 {
     local file=$1
     local version=$2
-    gsed -i "s/\.git\#[^\"]*\"/\.git\#${version}\"/g" ${file}
+    gsed -i "s/\(SalesforceMobileSDK.*\)\#[^\"]*\"/\1\#${version}\"/g" ${file}
 }
 
 parse_opts "$@"
@@ -56,15 +56,17 @@ echo -e "${YELLOW}*** POINTING TO SDK TAG ${SDK_TAG} ***${NC}"
 
 echo "*** Updating package.json files ***"
 
-update_package_json "./AndroidNativeKotlinTemplate/package.json"  "${SDK_TAG}"
-update_package_json "./iOSIDPTemplate/package.json"  "${SDK_TAG}"
-update_package_json "./ReactNativeTemplate/package.json"  "${SDK_TAG}"
-update_package_json "./SmartSyncExplorerSwift/package.json"  "${SDK_TAG}"
-update_package_json "./HybridLocalTemplate/package.json"  "${SDK_TAG}"
-update_package_json "./AndroidNativeTemplate/package.json"  "${SDK_TAG}"
-update_package_json "./iOSNativeTemplate/package.json"  "${SDK_TAG}"
-update_package_json "./HybridRemoteTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./AndroidIDPTemplate/package.json"  "${SDK_TAG}"
+update_package_json "./AndroidNativeKotlinTemplate/package.json"  "${SDK_TAG}"
+update_package_json "./AndroidNativeTemplate/package.json"  "${SDK_TAG}"
+update_package_json "./HybridLocalTemplate/package.json"  "${SDK_TAG}"
+update_package_json "./HybridRemoteTemplate/package.json"  "${SDK_TAG}"
+update_package_json "./MobileSyncExplorerReactNative/package.json"  "${SDK_TAG}"
+update_package_json "./MobileSyncExplorerSwift/package.json"  "${SDK_TAG}"
+update_package_json "./ReactNativeTemplate/package.json"  "${SDK_TAG}"
+update_package_json "./iOS13NativeSwiftTemplate/package.json"  "${SDK_TAG}"
+update_package_json "./iOSIDPTemplate/package.json"  "${SDK_TAG}"
+update_package_json "./iOSNativeSwiftEncryptedNotificationTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./iOSNativeSwiftTemplate/package.json"  "${SDK_TAG}"
-update_package_json "./SmartSyncExplorerReactNative/package.json"  "${SDK_TAG}"
+update_package_json "./iOSNativeTemplate/package.json"  "${SDK_TAG}"
 

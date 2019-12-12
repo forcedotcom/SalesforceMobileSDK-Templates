@@ -36,23 +36,39 @@ class RootViewController: UITableViewController {
         self.title = "Mobile SDK Sample App"
         let request = RestClient.shared.request(forQuery: "SELECT Name FROM Contact LIMIT 10", apiVersion: SFRestDefaultAPIVersion)
         
-        RestClient.shared.send(request: request, onFailure: { (_, _) in
-            SalesforceLogger.d(type(of:self), message:"Error invoking: \(request)")
-        }, onSuccess:{ [weak self] (response, _) in
-            
-            guard let strongSelf = self,
-                let jsonResponse = response as? [String:Any],
-                let result = jsonResponse ["records"] as? [[String:Any]]  else {
-                    return
+        RestClient.shared.send(request: request) { [weak self] (result) in
+            switch result {
+                case .success(let response):
+                    self?.handleSuccess(response: response, request: request)
+                case .failure(let error):
+                     SalesforceLogger.d(RootViewController.self, message:"Error invoking: \(request) , \(error)")
             }
-            
-            SalesforceLogger.d(type(of:strongSelf), message:"Invoked: \(request)")
-            DispatchQueue.main.async {
-                strongSelf.dataRows = result
-                strongSelf.tableView.reloadData()
-            }
-        })
+        }
+  
+        //NOTE: An alternative way of consuming the response
+        //RestClient.shared.send(request: request) { [weak self] (result) in
+        //   do {
+        //      try self?.handleSuccess(response: result.get(),request: request)
+        //   }
+        //   catch(let error) {
+        //       SalesforceLogger.d(RootViewController.self, message:"Error invoking: \(request) , \(error)")
+        //   }
+        //}
+    
     }
+    
+    func handleSuccess(response: RestResponse, request: RestRequest) {
+        guard let jsonResponse  = try? response.asJson() as? [String:Any], let records = jsonResponse["records"] as? [[String:Any]]  else {
+                SalesforceLogger.d(RootViewController.self, message:"Empty Response for : \(request)")
+                return
+        }
+        SalesforceLogger.d(type(of:self), message:"Invoked: \(request)")
+        DispatchQueue.main.async {
+           self.dataRows = records
+           self.tableView.reloadData()
+       }
+    }
+
     
     // MARK: - Table view data source
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
