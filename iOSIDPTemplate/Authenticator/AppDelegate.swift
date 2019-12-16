@@ -82,10 +82,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         // Uncomment the code below to register your device token with the push notification manager
-//        didRgisterForRemoteNotifications(deviceToken)
+//        didRegisterForRemoteNotifications(deviceToken)
     }
     
-    func didRgisterForRemoteNotifications(_ deviceToken: Data) {
+    func didRegisterForRemoteNotifications(_ deviceToken: Data) {
         PushNotificationManager.sharedInstance().didRegisterForRemoteNotifications(withDeviceToken: deviceToken)
         if let _ = UserAccountManager.shared.currentUserAccount?.credentials.accessToken {
             PushNotificationManager.sharedInstance().registerForSalesforceNotifications { (result) in
