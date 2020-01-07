@@ -44,6 +44,8 @@ class AccountsListModel: ObservableObject {
     
     var store: SmartStore?
     var syncManager: SyncManager?
+    private var syncTaskCancellable: AnyCancellable?
+    private var storeTaskCancellable: AnyCancellable?
     
     init() {
         store = SmartStore.shared(withName: SmartStore.defaultStoreName)
@@ -51,30 +53,28 @@ class AccountsListModel: ObservableObject {
     }
     
     func fetchAccounts(){
-        _ = syncManager?.publisher(for: "syncDownAccounts")
+        syncTaskCancellable = syncManager?.publisher(for: "syncDownAccounts")
             .receive(on: RunLoop.main)
             .sink(receiveCompletion: { _ in }, receiveValue: { _ in
                 self.loadFromSmartStore()
-            })
-        
+        })
         self.loadFromSmartStore()
     }
     
-    private func loadFromSmartStore(){
-        _ = self.store?.publisher(for: "select {Account:Name}, {Account:Industry}, {Account:Id} from {Account}")
+    private func loadFromSmartStore() {
+         storeTaskCancellable = self.store?.publisher(for: "select {Account:Name}, {Account:Industry}, {Account:Id} from {Account}")
             .receive(on: RunLoop.main)
-            .tryMap{
+            .tryMap {
                 $0.map { (row) -> Account in
                     let r = row as! [String?]
-                    
                     return Account(id: r[2] ?? "", name: r[0] ?? "", industry: r[1] ?? "Unknown Industry" )
                 }
-        }
-        .catch { error -> Just<[Account]> in
-            print(error)
-            return Just([Account]())
-        }
-        .assign(to: \AccountsListModel.accounts, on:self)
+            }
+            .catch { error -> Just<[Account]> in
+                print(error)
+                return Just([Account]())
+            }
+            .assign(to: \AccountsListModel.accounts, on:self)
     }
     
 }
