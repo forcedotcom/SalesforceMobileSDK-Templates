@@ -51,13 +51,14 @@ class ContactsForAccountModel: ObservableObject {
     @Published var contacts: [Contact] = []
     
     var account: Account?
+    private var contactsCancellable: AnyCancellable?
     
     func fetchContactsForAccount(){
         guard let acct = self.account else {return}
         
         let request = RestClient.shared.request(forQuery: "SELECT id, firstName, lastName, phone, email, mailingStreet, mailingCity, mailingState, mailingPostalCode FROM Contact WHERE AccountID = '\(acct.id)'", apiVersion: nil)
         
-        _ = RestClient.shared.publisher(for: request)
+        contactsCancellable = RestClient.shared.publisher(for: request)
             .receive(on: RunLoop.main)
             .tryMap({ (response) -> Data in
                 response.asData()
