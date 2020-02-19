@@ -83,6 +83,7 @@ class RootViewController: UniversalViewController {
         self.tableView.register(ContactTableViewCell.self, forCellReuseIdentifier: "cell")
         self.tableView.delegate = self
         self.tableView.dataSource = self
+        self.tableView.isAccessibilityElement = true
         self.view.addSubview(self.tableView)
         
         let safe = self.view.safeAreaLayoutGuide
@@ -268,6 +269,7 @@ extension RootViewController: UITableViewDataSource {
         cell.title = ContactHelper.nameStringFromContact(contact)
         cell.subtitle = ContactHelper.titleStringFromContact(contact)
         cell.leftImage = ContactHelper.initialsImage(ContactHelper.colorFromContact(contact), initials: ContactHelper.initialsStringFromContact(contact))
+        cell.isAccessibilityElement = true
         return cell
     }
 }
