@@ -56,8 +56,9 @@ struct ContactListView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                List {
-                    Section(header: SearchBar(text: self.$searchTerm).listRowInsets(EdgeInsets())) {
+                VStack {
+                    SearchBar(text: self.$searchTerm)
+                    List {
                         ForEach(sObjectDataManager.contacts.filter { contact in
                             self.searchTerm.isEmpty ? true : self.contactMatchesSearchTerm(contact: contact, searchTerm: self.searchTerm)
                         }) { contact in
@@ -67,9 +68,8 @@ struct ContactListView: View {
                             .listRowBackground(SObjectDataManager.dataLocallyDeleted(contact) ? Color.contactCellDeletedBackground : Color.clear)
                         }
                     }
+                    .id(UUID())
                 }
-                .id(UUID())
-
                 if sObjectDataManager.syncing {
                     SyncAlert(syncMessage: sObjectDataManager.syncMessage)
                 }
@@ -200,7 +200,7 @@ struct SearchBar: UIViewRepresentable {
     }
 
     func makeUIView(context: UIViewRepresentableContext<SearchBar>) -> UISearchBar {
-        let searchBar = UISearchBar(frame: .zero)
+        let searchBar = UISearchBar()
         searchBar.placeholder = "Search"
         searchBar.delegate = context.coordinator
         return searchBar
