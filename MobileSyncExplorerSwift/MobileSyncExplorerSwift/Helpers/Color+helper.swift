@@ -2,9 +2,9 @@
  Color+helper.swift
  MobileSyncExplorerSwift
 
- Created by Nicholas McDonald on 11/29/17.
+ Created by Brianna Birman on 3/20/20.
 
- Copyright (c) 2018-present, salesforce.com, inc. All rights reserved.
+ Copyright (c) 2020-present, salesforce.com, inc. All rights reserved.
  
  Redistribution and use of this software in source and binary forms, with or without modification,
  are permitted provided that the following conditions are met:
