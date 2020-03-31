@@ -98,7 +98,7 @@ class ContactHelper {
         ctx.fillPath()
         
         let string = initials as NSString
-        let attribs:[NSAttributedString.Key: Any] = [NSAttributedString.Key.foregroundColor: color, NSAttributedString.Key.font: UIFont.appRegularFont(19.0)!]
+        let attribs:[NSAttributedString.Key: Any] = [NSAttributedString.Key.foregroundColor: color, NSAttributedString.Key.font: UIFont.appRegularFont(19.0)]
         let size = string.size(withAttributes: attribs)
         let rect = CGRect(x: center.x - (size.width / 2.0), y: center.y - (size.height / 2.0), width: size.width, height: size.height)
         string.draw(in: rect, withAttributes: attribs)

@@ -1,11 +1,11 @@
 /*
- Constants.swift
+ Color+helper.swift
  MobileSyncExplorerSwift
 
- Created by Nicholas McDonald on 1/19/18.
- 
- Copyright (c) 2018-present, salesforce.com, inc. All rights reserved.
+ Created by Nicholas McDonald on 11/29/17.
 
+ Copyright (c) 2018-present, salesforce.com, inc. All rights reserved.
+ 
  Redistribution and use of this software in source and binary forms, with or without modification,
  are permitted provided that the following conditions are met:
  * Redistributions of source code must retain the above copyright notice, this list of conditions
@@ -28,8 +28,26 @@
  */
 
 import UIKit
+import SwiftUI
 
-class Constants {
-    static let ContactCellImageSize: CGFloat = 48.0
-    static let ContactColorCodes: [UInt32] = [0x1abc9c, 0x2ecc71, 0x3498db, 0x9b59b6, 0x34495e, 0x16a085, 0x27ae60, 0x2980b9, 0x8e44ad, 0x2c3e50, 0xf1c40f, 0xe67e22, 0xe74c3c, 0x95a5a6, 0xf39c12, 0xd35400, 0xc0392b, 0xbdc3c7, 0x7f8c8d]
+extension Color {
+    static var contactCellDeletedBackground: Color {
+        return Color(red: 194.0/255.0, green: 57.0/255.0, blue: 52.0/255.0).opacity(0.3)
+    }
+
+    static var destructiveButton: Color {
+        return Color(UIColor.systemRed)
+    }
+
+    static var disabledDestructiveButton: Color {
+        destructiveButton.opacity(0.3)
+    }
+
+    static var secondaryLabelText: Color {
+        return Color(UIColor.secondaryLabel)
+    }
+
+    static var appBlue: Color {
+        return Color(red: 0.0/255.0, green: 112.0/255.0, blue: 210.0/255.0)
+    }
 }

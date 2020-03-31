@@ -29,7 +29,7 @@
 import Foundation
 import SmartStore
 import MobileSync
-
+import Combine
 
 enum SObjectConstants {
     static let kSObjectIdField    = "Id"
@@ -171,7 +171,7 @@ class SObjectDataSpec  {
             return index.path == SObjectConstants.kSObjectIdField
         }
         
-        if (foundIdSpec==nil || (foundIdSpec?.count)! < 1) {
+        if (foundIdSpec == nil || (foundIdSpec?.count)! < 1) {
             let dataIndexSpec = SoupIndex(path: SObjectConstants.kSObjectIdField, indexType: kSoupIndexTypeString, columnName: SObjectConstants.kSObjectIdField)
             mutableIndexSpecs.insert(dataIndexSpec!, at: 0)
         }
@@ -197,20 +197,20 @@ class SObjectDataFieldSpec  {
 }
 
 
-class SObjectDataManager {
+class SObjectDataManager: ObservableObject {
+    @Published var contacts: [ContactSObjectData] = []
+    @Published var syncing: Bool = false
+    @Published var syncMessage = ""
+    private var cancellableSet: Set<AnyCancellable> = []
 
     //Constants
     private let kSearchFilterQueueName = "com.salesforce.mobileSyncExplorer.searchFilterQueue"
-    private let kSyncDownName = "syncDownContacts";
-    private let kSyncUpName = "syncUpContacts";
-    private let kMaxQueryPageSize: UInt = 1000;
-    
-    private var searchFilterQueue: DispatchQueue?
+    private let kSyncDownName = "syncDownContacts"
+    private let kSyncUpName = "syncUpContacts"
+    private let kMaxQueryPageSize: UInt = 1000
     
     var syncMgr: SyncManager
     var dataSpec: SObjectDataSpec
-    var fullDataRowList = [SObjectData]()
-    var dataRows = [SObjectData]()
     
     var store: SmartStore {
         get {
@@ -221,94 +221,108 @@ class SObjectDataManager {
     init(dataSpec: SObjectDataSpec) {
         syncMgr = SyncManager.sharedInstance(forUserAccount: UserAccountManager.shared.currentUserAccount!)
         self.dataSpec = dataSpec
-        searchFilterQueue = DispatchQueue(label: kSearchFilterQueueName)
         // Setup store and syncs if needed
         MobileSyncSDKManager.shared.setupUserStoreFromDefaultConfig()
         MobileSyncSDKManager.shared.setupUserSyncsFromDefaultConfig()
     }
     
-    func queryLocalData() throws -> [Any]  {
-        let sobjectsQuerySpec = QuerySpec.buildAllQuerySpec(soupName: self.dataSpec.soupName, orderPath: dataSpec.orderByFieldName, order: .ascending, pageSize: kMaxQueryPageSize)
-        return try store.query(using: sobjectsQuerySpec, startingFromPageIndex: 0)
+    
+    func syncUpDown() {
+        syncing = true
+        syncMessage = "Syncing with Salesforce"
+
+        syncMgr.publisher(for: kSyncUpName)
+            .flatMap { _ in
+                self.syncMgr.publisher(for: self.kSyncDownName)
+            }
+            .receive(on: RunLoop.main)
+            .sink(receiveCompletion: { [weak self] result in
+                switch result {
+                case .failure(let mobileSyncError):
+                    MobileSyncLogger.e(SObjectDataManager.self, message: "Sync failed: \(mobileSyncError.localizedDescription)")
+                    self?.syncMessage = "Sync Failed!"
+                case .finished:
+                    self?.loadFromSmartStore()
+                    self?.syncMessage = "Sync complete!"
+                }
+                self?.syncing = false
+            }, receiveValue: { _ in })
+            .store(in: &cancellableSet)
+        self.loadFromSmartStore()
     }
     
-    func populateDataRows(_ queryResults: [Any]?) -> Void {
-        var mutableDataRows: [SObjectData] = [SObjectData]()
-        queryResults?.forEach({ (record) in
-            let sObject = ContactSObjectData(soupDict: record as? [String : Any])
-            mutableDataRows.append(sObject)
-        })
-        self.fullDataRowList =  mutableDataRows
+    func loadFromSmartStore() {
+        let sobjectsQuerySpec = QuerySpec.buildAllQuerySpec(soupName: dataSpec.soupName, orderPath: dataSpec.orderByFieldName, order: .ascending, pageSize: kMaxQueryPageSize)
+        store.publisher(for: sobjectsQuerySpec.smartSql)
+            .receive(on: RunLoop.main)
+            .tryMap {
+                $0.map { (data) -> ContactSObjectData in
+                    let record = data as! [Any]
+                    return ContactSObjectData(soupDict: record[0] as? [String : Any])
+                }
+            }
+            .catch { error -> Just<[ContactSObjectData]> in
+                print(error)
+                return Just([ContactSObjectData]())
+            }
+            .assign(to: \.contacts, on: self)
+            .store(in: &cancellableSet)
     }
-    
-    func createLocalData(_ newData: SObjectData?) throws -> [SObjectData] {
+
+    func createLocalData(_ newData: SObjectData?) {
         guard let newData = newData else {
-            return []
+            return
         }
         newData.updateSoup(forFieldName: kSyncTargetLocal, fieldValue: true)
         newData.updateSoup(forFieldName: kSyncTargetLocallyCreated, fieldValue: true)
         let sobjectSpec = type(of: newData).dataSpec()
-        
+
         store.upsert(entries: [newData.soupDict], forSoupNamed: (sobjectSpec?.soupName)!)
-        let sObjects = try self.queryLocalData()
-        self.populateDataRows(sObjects)
-        return self.fullDataRowList
+        loadFromSmartStore()
     }
 
-    
-    func updateLocalData(_ updatedData: SObjectData?) throws -> [SObjectData] {
+    func updateLocalData(_ updatedData: SObjectData?) {
         guard let updatedData = updatedData else {
-            return []
+            return
         }
         updatedData.updateSoup(forFieldName: kSyncTargetLocal, fieldValue: true)
         updatedData.updateSoup(forFieldName: kSyncTargetLocallyUpdated, fieldValue: true)
         let sobjectSpec = type(of: updatedData).dataSpec()
-        
+
         store.upsert(entries: [updatedData.soupDict], forSoupNamed: (sobjectSpec?.soupName)!)
-        let sObjects = try self.queryLocalData()
-        self.populateDataRows(sObjects)
-        return self.fullDataRowList
+        loadFromSmartStore()
     }
 
-    
-    func deleteLocalData(_ dataToDelete: SObjectData?) throws -> [SObjectData] {
+    func deleteLocalData(_ dataToDelete: SObjectData?) {
         guard let dataToDelete = dataToDelete else {
-            return []
+            return
         }
         dataToDelete.updateSoup(forFieldName: kSyncTargetLocal, fieldValue: true)
         dataToDelete.updateSoup(forFieldName: kSyncTargetLocallyDeleted, fieldValue: true)
         let sobjectSpec = type(of: dataToDelete).dataSpec()
-        
+
         store.upsert(entries: [dataToDelete.soupDict], forSoupNamed: (sobjectSpec?.soupName)!)
-        let sObjects = try self.queryLocalData()
-        self.populateDataRows(sObjects)
-        return self.fullDataRowList
+        loadFromSmartStore()
     }
 
-
-    func undeleteLocalData(_ dataToUnDelete: SObjectData?) throws -> [SObjectData] {
+    func undeleteLocalData(_ dataToUnDelete: SObjectData?) {
         guard let dataToUnDelete = dataToUnDelete else {
-            return []
+            return
         }
         dataToUnDelete.updateSoup(forFieldName: kSyncTargetLocallyDeleted, fieldValue: false)
-        let locallyCreatedOrUpdated = dataLocallyCreated(dataToUnDelete) || dataLocallyUpdated(dataToUnDelete) ? 1 : 0
+        let locallyCreatedOrUpdated = SObjectDataManager.dataLocallyCreated(dataToUnDelete) || SObjectDataManager.dataLocallyUpdated(dataToUnDelete) ? 1 : 0
         dataToUnDelete.updateSoup(forFieldName: kSyncTargetLocal, fieldValue: locallyCreatedOrUpdated)
         let sobjectSpec = type(of: dataToUnDelete).dataSpec()
-        try store.upsert(entries: [dataToUnDelete.soupDict], forSoupNamed: (sobjectSpec?.soupName)!, withExternalIdPath: SObjectConstants.kSObjectIdField)
-        let sObjects = try self.queryLocalData()
-        self.populateDataRows(sObjects)
-        return self.fullDataRowList
-    }
 
-    func dataHasLocalChanges(_ data: SObjectData?) -> Bool {
-        guard let data = data else {
-            return false
+        do {
+            _ = try store.upsert(entries: [dataToUnDelete.soupDict], forSoupNamed: (sobjectSpec?.soupName)!, withExternalIdPath: SObjectConstants.kSObjectIdField)
+            loadFromSmartStore()
+        } catch let error as NSError {
+            MobileSyncLogger.e(SObjectDataManager.self, message: "Undelete local data failed \(error)")
         }
-        let value = data.fieldValue(forFieldName: kSyncTargetLocal) as? Bool
-        return value ?? false
     }
 
-    func dataLocallyCreated(_ data: SObjectData?) -> Bool {
+    static func dataLocallyCreated(_ data: SObjectData?) -> Bool {
         guard let data = data else {
             return false
         }
@@ -316,7 +330,7 @@ class SObjectDataManager {
         return value ?? false
     }
 
-    func dataLocallyUpdated(_ data: SObjectData?) -> Bool {
+    static func dataLocallyUpdated(_ data: SObjectData?) -> Bool {
         guard let data = data else {
             return false
         }
@@ -324,113 +338,11 @@ class SObjectDataManager {
         return value ?? false
     }
 
-    func dataLocallyDeleted(_ data: SObjectData?) -> Bool {
+    static func dataLocallyDeleted(_ data: SObjectData?) -> Bool {
         guard let data = data else {
             return false
         }
         let value =  data.fieldValue(forFieldName: kSyncTargetLocallyDeleted) as? Bool
         return value ?? false
     }
- 
-    func refreshRemoteData(_ completion: @escaping ([SObjectData]) -> Void,onFailure: @escaping (NSError?, SyncState) -> Void  ) throws -> Void {
-       
-        try self.syncMgr.reSync(named: kSyncDownName) { [weak self] (syncState) in
-            switch (syncState.status) {
-            case .done:
-                do {
-                    let objects = try self?.queryLocalData()
-                    self?.populateDataRows(objects)
-                    completion(self?.fullDataRowList ?? [])
-                } catch {
-                   MobileSyncLogger.e(SObjectDataManager.self, message: "Resync \(syncState.name) failed \(error)" )
-                }
-                break
-            case .failed:
-                 MobileSyncLogger.e(SObjectDataManager.self, message: "Resync \(syncState.name) failed" )
-                 onFailure(nil,syncState)
-            default:
-                break
-            }
-        }
- 
-    }
-    
-    func updateRemoteData(_ onSuccess: @escaping ([SObjectData]) -> Void, onFailure:@escaping (NSError?, SyncState?) -> Void) -> Void {
-        
-        do {
-            try self.syncMgr.reSync(named: kSyncUpName) { [weak self] (syncState) in
-                guard let strongSelf = self else {
-                    return
-                }
-                switch (syncState.status) {
-                case .done:
-                    do {
-                        let objects = try strongSelf.queryLocalData()
-                        strongSelf.populateDataRows(objects)
-                        try strongSelf.refreshRemoteData({ (sobjs) in
-                            onSuccess(sobjs)
-                        }, onFailure:  { (error,syncState) in
-                            onFailure(error,syncState)
-                        }
-                        )
-                    } catch let error as NSError {
-                        MobileSyncLogger.e(SObjectDataManager.self, message: "Error with Resync \(error)" )
-                        onFailure(error,syncState)
-                    }
-                    break
-                case .failed:
-                    MobileSyncLogger.e(SObjectDataManager.self, message: "Resync \(syncState.name) failed" )
-                    onFailure(nil,syncState)
-                    break
-                default:
-                    break
-                }
-            }
-        } catch {
-            onFailure(error as NSError, nil)
-        }
-    }
-
-    func filter(onSearchTerm searchTerm: String?, completion completionBlock: @escaping ([SObjectData]) -> Void) {
-        
-        guard let searchTerm = searchTerm else {
-            return
-        }
-
-        searchFilterQueue?.async(execute: { [weak self] () -> Void in
-            guard let strongSelf = self else {
-                return
-            }
-            
-            strongSelf.dataRows = strongSelf.fullDataRowList
-            if strongSelf.dataRows.count < 1 {
-                // No data yet.
-                return
-            }
-            var matchingDataRows = [SObjectData]()
-            if searchTerm.count > 0 {
-                strongSelf.fullDataRowList.forEach({ (sDataObject) in
-                    let dataSpec: SObjectDataSpec? = ContactSObjectData.dataSpec()
-                    
-                    if let dataSpec = dataSpec {
-                        dataSpec.objectFieldSpecs.forEach({ (fieldSpec) in
-                            if fieldSpec.isSearchable {
-                                let fieldValue = sDataObject.fieldValue(forFieldName: fieldSpec.fieldName) as? String
-                                if let fieldValue = fieldValue {
-                                    if let _ = fieldValue.range(of: searchTerm, options: [.caseInsensitive, .diacriticInsensitive], range: fieldValue.startIndex..<fieldValue.endIndex, locale: nil) {
-                                        matchingDataRows.append(sDataObject)
-                                    }
-                                }
-                                
-                            }
-                        })
-                    }
-                    strongSelf.dataRows = matchingDataRows
-                })
-            }
-            completionBlock(strongSelf.dataRows)
-        })
-    }
 }
-
-

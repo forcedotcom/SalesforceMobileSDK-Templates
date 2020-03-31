@@ -1,5 +1,5 @@
 /*
- UIFont+helper.swift
+ Fonts+helper.swift
  MobileSyncExplorerSwift
 
  Created by Nicholas McDonald on 12/6/17.
@@ -28,17 +28,16 @@
  */
 
 import UIKit
+import SwiftUI
 
 extension UIFont {
-    class func appRegularFont(_ size: CGFloat) -> UIFont? {
+    class func appRegularFont(_ size: CGFloat) -> UIFont {
         return UIFont.systemFont(ofSize: size, weight: .regular)
     }
-    
-    class func appBoldFont(_ size: CGFloat) -> UIFont? {
-       return UIFont.systemFont(ofSize: size, weight: .bold)
-    }
-    
-    class func appLightFont(_ size: CGFloat) -> UIFont? {
-         return UIFont.systemFont(ofSize: size, weight: .light)
+}
+
+extension Font {
+    static func appRegularFont(_ size: CGFloat) -> Font {
+        return Font(UIFont.appRegularFont(size))
     }
 }
