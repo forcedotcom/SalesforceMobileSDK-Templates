@@ -1,10 +1,10 @@
 /*
- UIFont+helper.swift
+ Color+helper.swift
  MobileSyncExplorerSwift
 
- Created by Nicholas McDonald on 12/6/17.
+ Created by Brianna Birman on 3/20/20.
 
- Copyright (c) 2018-present, salesforce.com, inc. All rights reserved.
+ Copyright (c) 2020-present, salesforce.com, inc. All rights reserved.
  
  Redistribution and use of this software in source and binary forms, with or without modification,
  are permitted provided that the following conditions are met:
@@ -28,17 +28,26 @@
  */
 
 import UIKit
+import SwiftUI
 
-extension UIFont {
-    class func appRegularFont(_ size: CGFloat) -> UIFont? {
-        return UIFont.systemFont(ofSize: size, weight: .regular)
+extension Color {
+    static var contactCellDeletedBackground: Color {
+        return Color(red: 194.0/255.0, green: 57.0/255.0, blue: 52.0/255.0).opacity(0.3)
     }
-    
-    class func appBoldFont(_ size: CGFloat) -> UIFont? {
-       return UIFont.systemFont(ofSize: size, weight: .bold)
+
+    static var destructiveButton: Color {
+        return Color(UIColor.systemRed)
     }
-    
-    class func appLightFont(_ size: CGFloat) -> UIFont? {
-         return UIFont.systemFont(ofSize: size, weight: .light)
+
+    static var disabledDestructiveButton: Color {
+        destructiveButton.opacity(0.3)
+    }
+
+    static var secondaryLabelText: Color {
+        return Color(UIColor.secondaryLabel)
+    }
+
+    static var appBlue: Color {
+        return Color(red: 0.0/255.0, green: 112.0/255.0, blue: 210.0/255.0)
     }
 }

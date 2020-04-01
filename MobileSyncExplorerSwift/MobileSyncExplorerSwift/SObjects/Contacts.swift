@@ -39,8 +39,7 @@ enum ContactConstants {
     static let kContactHomePhoneField    = "HomePhone"
 }
 
-class ContactSObjectData: SObjectData {
-    
+class ContactSObjectData: SObjectData, Identifiable {
     var firstName: String? {
         get {
             return super.nonNullFieldValue(ContactConstants.kContactFirstNameField) as? String
