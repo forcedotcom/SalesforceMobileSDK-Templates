@@ -262,7 +262,7 @@ class SObjectDataManager: ObservableObject {
                 }
             }
             .catch { error -> Just<[ContactSObjectData]> in
-                print(error)
+                MobileSyncLogger.e(SObjectDataManager.self, message: "Query failed: \(error)")
                 return Just([ContactSObjectData]())
             }
             .assign(to: \.contacts, on: self)

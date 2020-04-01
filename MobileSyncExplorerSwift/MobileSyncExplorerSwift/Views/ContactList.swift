@@ -32,7 +32,6 @@ import Combine
 struct ContactListView: View {
     @ObservedObject private var sObjectDataManager: SObjectDataManager = SObjectDataManager(dataSpec: ContactSObjectData.dataSpec()!)
     @State private var searchTerm: String = ""
-    @State private var dim = false
 
     init() {
         self.sObjectDataManager.syncUpDown()
