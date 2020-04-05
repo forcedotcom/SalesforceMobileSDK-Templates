@@ -27,30 +27,10 @@
 
 import SwiftUI
 import MobileSync
-import Combine
 
 struct ContactListView: View {
-    @ObservedObject private var sObjectDataManager: SObjectDataManager = SObjectDataManager(dataSpec: ContactSObjectData.dataSpec()!)
+    @ObservedObject private var viewModel = ContactListViewModel()
     @State private var searchTerm: String = ""
-
-    init() {
-        self.sObjectDataManager.syncUpDown()
-    }
-
-    func contactMatchesSearchTerm(contact: ContactSObjectData, searchTerm: String) -> Bool {
-        let dataSpec: SObjectDataSpec? = ContactSObjectData.dataSpec()
-        if let dataSpec = dataSpec {
-            for fieldSpec in dataSpec.objectFieldSpecs where fieldSpec.isSearchable {
-                let fieldValue = contact.fieldValue(forFieldName: fieldSpec.fieldName) as? String
-                if let fieldValue = fieldValue {
-                    if let _ = fieldValue.range(of: searchTerm, options: [.caseInsensitive, .diacriticInsensitive], range: fieldValue.startIndex..<fieldValue.endIndex, locale: nil) {
-                        return true
-                    }
-                }
-            }
-        }
-        return false
-    }
 
     var body: some View {
         NavigationView {
@@ -58,10 +38,10 @@ struct ContactListView: View {
                 VStack {
                     SearchBar(text: self.$searchTerm)
                     List {
-                        ForEach(sObjectDataManager.contacts.filter { contact in
-                            self.searchTerm.isEmpty ? true : self.contactMatchesSearchTerm(contact: contact, searchTerm: self.searchTerm)
+                        ForEach(viewModel.sObjectDataManager.contacts.filter { contact in
+                            self.searchTerm.isEmpty ? true : self.viewModel.contactMatchesSearchTerm(contact: contact, searchTerm: self.searchTerm)
                         }) { contact in
-                            NavigationLink(destination: ContactDetailView(contact: contact, sObjectDataManager: self.sObjectDataManager)) {
+                            NavigationLink(destination: ContactDetailView(contact: contact, sObjectDataManager: self.viewModel.sObjectDataManager)) {
                                 ContactCell(contact: contact)
                             }
                             .listRowBackground(SObjectDataManager.dataLocallyDeleted(contact) ? Color.contactCellDeletedBackground : Color.clear)
@@ -69,28 +49,78 @@ struct ContactListView: View {
                     }
                     .id(UUID())
                 }
-                if sObjectDataManager.syncing {
-                    SyncAlert(syncMessage: sObjectDataManager.syncMessage)
+                if viewModel.alertContent != nil {
+                    StatusAlert(viewModel: viewModel)
                 }
             }
             .navigationBarTitle("MobileSync Explorer")
-            .navigationBarItems(trailing: NavBarButtons(sObjectDataManager: sObjectDataManager))
+            .navigationBarItems(trailing: NavBarButtons(viewModel: viewModel))
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
-struct SyncAlert: View {
-    var syncMessage: String
-    
+struct StatusAlert: View {
+    @ObservedObject var viewModel: ContactListViewModel
+
+    func twoButtonDisplay() -> Bool {
+        if let alertContent = viewModel.alertContent {
+            return alertContent.okayButton && alertContent.stopButton
+        }
+        return false
+    }
+
+    func stopButton() -> Bool {
+        return viewModel.alertContent?.stopButton ?? false
+    }
+
+    func okayButton() -> Bool {
+        return viewModel.alertContent?.okayButton ?? false
+    }
+
     var body: some View {
         ZStack {
             Color.black.opacity(0.5).edgesIgnoringSafeArea(.all)
             VStack {
-                Text("Syncing").bold()
-                Text(syncMessage)
+                Text(viewModel.alertContent?.title ?? "").bold()
+                Text(viewModel.alertContent?.message ?? "").lineLimit(nil)
+                
+                if stopButton() || okayButton() {
+                    Divider()
+                    HStack {
+                        if stopButton() {
+                            if twoButtonDisplay() {
+                                Spacer()
+                            }
+                            Button(action: {
+                                self.viewModel.alertStopTapped()
+                            }, label: {
+                                Text("Stop").foregroundColor(Color.blue)
+                            })
+                        }
+                        
+                        if twoButtonDisplay() {
+                            Spacer()
+                            Divider()
+                            Spacer()
+                        }
+
+                        if okayButton() {
+                            Button(action: {
+                                self.viewModel.alertOkTapped()
+                            }, label: {
+                                Text("Ok").foregroundColor(Color.blue)
+                            })
+                            if twoButtonDisplay() {
+                                Spacer()
+                            }
+                        }
+                    }
+                    .frame(height: 30)
+                }
             }
-            .frame(width: 250, height: 100)
+            .padding(10)
+            .frame(maxWidth: 300, minHeight: 100)
             .background(Color(UIColor.secondarySystemBackground))
             .opacity(1.0)
             .foregroundColor(Color(UIColor.label))
@@ -109,7 +139,7 @@ enum ModalAction: Identifiable {
 }
 
 struct NavBarButtons: View {
-    var sObjectDataManager: SObjectDataManager
+    var viewModel: ContactListViewModel
     @State private var modalPresented: ModalAction?
     @State private var newContactPresented = false
     @State private var actionSheetPresented = false
@@ -117,18 +147,42 @@ struct NavBarButtons: View {
 
     var body: some View {
         HStack {
-            NavigationLink(destination: ContactDetailView(contact: nil, sObjectDataManager: self.sObjectDataManager), isActive: $newContactPresented, label: { EmptyView() })
+            NavigationLink(destination: ContactDetailView(contact: nil, sObjectDataManager: self.viewModel.sObjectDataManager), isActive: $newContactPresented, label: { EmptyView() })
             Button(action: {
                 self.newContactPresented = true
             }, label: { Image("plusButton") })
             Button(action: {
-                self.sObjectDataManager.syncUpDown()
+                self.viewModel.syncUpDown()
             }, label: { Image("sync") })
             Button(action: {
                 self.actionSheetPresented = true
             }, label: { Image("setting") })
                 .actionSheet(isPresented: $actionSheetPresented) {
                  ActionSheet(title: Text("Additional Actions"), buttons: [
+                    .default(Text("Show Info"), action: {
+                        self.viewModel.showInfo()
+                    }),
+                    .default(Text("Clear Local Data"), action: {
+                        self.viewModel.clearLocalData()
+                    }),
+                    .default(Text("Refresh Local Data"), action: {
+                        self.viewModel.refreshLocalData()
+                    }),
+                    .default(Text("Sync Down"), action: {
+                        self.viewModel.syncDown()
+                    }),
+                    .default(Text("Sync Up"), action: {
+                        self.viewModel.syncUp()
+                    }),
+                    .default(Text("Clean Sync Ghosts"), action: {
+                        self.viewModel.cleanGhosts()
+                    }),
+                    .default(Text("Stop Sync Manager"), action: {
+                        self.viewModel.stopSyncManager()
+                    }),
+                    .default(Text("Resume Sync Manager"), action: {
+                        self.viewModel.resumeSyncManager()
+                    }),
                     .default(Text("Logout"), action: {
                         self.logoutAlertPresented = true
                     }),
@@ -142,7 +196,7 @@ struct NavBarButtons: View {
                 )])
             }.sheet(item: $modalPresented) { creationType in
                 if creationType == ModalAction.inspectDB {
-                    InspectorViewControllerWrapper(store: self.sObjectDataManager.store)
+                    InspectorViewControllerWrapper(store: self.viewModel.sObjectDataManager.store)
                 } else if creationType == ModalAction.switchUser {
                     SalesforceUserManagementViewControllerWrapper()
                 }

@@ -196,17 +196,13 @@ class SObjectDataFieldSpec  {
     }
 }
 
-
 class SObjectDataManager: ObservableObject {
     @Published var contacts: [ContactSObjectData] = []
-    @Published var syncing: Bool = false
-    @Published var syncMessage = ""
     private var cancellableSet: Set<AnyCancellable> = []
 
     //Constants
-    private let kSearchFilterQueueName = "com.salesforce.mobileSyncExplorer.searchFilterQueue"
-    private let kSyncDownName = "syncDownContacts"
-    private let kSyncUpName = "syncUpContacts"
+    let kSyncDownName = "syncDownContacts"
+    let kSyncUpName = "syncUpContacts"
     private let kMaxQueryPageSize: UInt = 1000
     
     var syncMgr: SyncManager
@@ -225,12 +221,8 @@ class SObjectDataManager: ObservableObject {
         MobileSyncSDKManager.shared.setupUserStoreFromDefaultConfig()
         MobileSyncSDKManager.shared.setupUserSyncsFromDefaultConfig()
     }
-    
-    
-    func syncUpDown() {
-        syncing = true
-        syncMessage = "Syncing with Salesforce"
 
+    func syncUpDown(completion: @escaping (Bool) -> ()) {
         syncMgr.publisher(for: kSyncUpName)
             .flatMap { _ in
                 self.syncMgr.publisher(for: self.kSyncDownName)
@@ -240,18 +232,17 @@ class SObjectDataManager: ObservableObject {
                 switch result {
                 case .failure(let mobileSyncError):
                     MobileSyncLogger.e(SObjectDataManager.self, message: "Sync failed: \(mobileSyncError.localizedDescription)")
-                    self?.syncMessage = "Sync Failed!"
+                    completion(false)
                 case .finished:
-                    self?.loadFromSmartStore()
-                    self?.syncMessage = "Sync complete!"
+                    self?.loadLocalData()
+                    completion(true)
                 }
-                self?.syncing = false
             }, receiveValue: { _ in })
             .store(in: &cancellableSet)
-        self.loadFromSmartStore()
+        loadLocalData()
     }
     
-    func loadFromSmartStore() {
+    func loadLocalData() {
         let sobjectsQuerySpec = QuerySpec.buildAllQuerySpec(soupName: dataSpec.soupName, orderPath: dataSpec.orderByFieldName, order: .ascending, pageSize: kMaxQueryPageSize)
         store.publisher(for: sobjectsQuerySpec.smartSql)
             .receive(on: RunLoop.main)
@@ -278,7 +269,7 @@ class SObjectDataManager: ObservableObject {
         let sobjectSpec = type(of: newData).dataSpec()
 
         store.upsert(entries: [newData.soupDict], forSoupNamed: (sobjectSpec?.soupName)!)
-        loadFromSmartStore()
+        loadLocalData()
     }
 
     func updateLocalData(_ updatedData: SObjectData?) {
@@ -290,7 +281,7 @@ class SObjectDataManager: ObservableObject {
         let sobjectSpec = type(of: updatedData).dataSpec()
 
         store.upsert(entries: [updatedData.soupDict], forSoupNamed: (sobjectSpec?.soupName)!)
-        loadFromSmartStore()
+        loadLocalData()
     }
 
     func deleteLocalData(_ dataToDelete: SObjectData?) {
@@ -302,7 +293,7 @@ class SObjectDataManager: ObservableObject {
         let sobjectSpec = type(of: dataToDelete).dataSpec()
 
         store.upsert(entries: [dataToDelete.soupDict], forSoupNamed: (sobjectSpec?.soupName)!)
-        loadFromSmartStore()
+        loadLocalData()
     }
 
     func undeleteLocalData(_ dataToUnDelete: SObjectData?) {
@@ -316,7 +307,7 @@ class SObjectDataManager: ObservableObject {
 
         do {
             _ = try store.upsert(entries: [dataToUnDelete.soupDict], forSoupNamed: (sobjectSpec?.soupName)!, withExternalIdPath: SObjectConstants.kSObjectIdField)
-            loadFromSmartStore()
+            loadLocalData()
         } catch let error as NSError {
             MobileSyncLogger.e(SObjectDataManager.self, message: "Undelete local data failed \(error)")
         }
@@ -344,5 +335,86 @@ class SObjectDataManager: ObservableObject {
         }
         let value =  data.fieldValue(forFieldName: kSyncTargetLocallyDeleted) as? Bool
         return value ?? false
+    }
+
+    func clearLocalData() {
+        store.clearSoup(dataSpec.soupName)
+        resetSync(kSyncDownName)
+        resetSync(kSyncUpName)
+        loadLocalData()
+    }
+
+    func stopSyncManager() {
+        syncMgr.stop()
+    }
+
+    func resumeSyncManager(_ completion: @escaping (SyncState) -> Void) throws -> Void {
+        try self.syncMgr.restart(restartStoppedSyncs:true, onUpdate:{ [weak self] (syncState) in
+            if (syncState.status == .done) {
+                self?.loadLocalData()
+            }
+            completion(syncState)
+        })
+    }
+
+    func cleanGhosts(onError: @escaping (MobileSyncError) -> (), onValue: @escaping (UInt) -> ()) {
+        syncMgr.cleanGhostsPublisher(for: kSyncDownName)
+            .receive(on: RunLoop.main)
+            .sink(receiveCompletion: { result in
+                if case .failure(let mobileSyncError) = result {
+                    onError(mobileSyncError)
+                }
+            }, receiveValue: { numRecords in
+                onValue(numRecords)
+            })
+           .store(in: &cancellableSet)
+    }
+
+    func sync(syncName: String, onError: @escaping (MobileSyncError) -> (), onValue: @escaping (SyncState) -> ()) {
+        syncMgr.publisher(for: kSyncDownName)
+            .receive(on: RunLoop.main)
+            .sink(receiveCompletion: { result in
+                if case .failure(let mobileSyncError) = result {
+                    onError(mobileSyncError)
+                }
+
+            }, receiveValue: { syncState in
+                onValue(syncState)
+            })
+            .store(in: &cancellableSet)
+    }
+
+    func getSync(_ syncName: String) -> SyncState {
+        return syncMgr.syncStatus(forName: syncName)!
+    }
+
+    func isSyncManagerStopping() -> Bool {
+        return syncMgr.isStopping()
+    }
+
+    func isSyncManagerStopped() -> Bool {
+       return syncMgr.isStopped()
+    }
+
+    func countContacts() -> Int {
+       var count = -1
+       if let querySpec = QuerySpec.buildSmartQuerySpec(smartSql: "select * from {\(dataSpec.soupName)}", pageSize: UInt.max) {
+           do {
+               count = try store.count(using:querySpec).intValue
+           } catch {
+               MobileSyncLogger.e(SObjectDataManager.self, message: "countContacts \(error)" )
+           }
+       }
+       
+       return count
+    }
+    
+    private func resetSync(_ syncName: String) {
+        let sync = syncMgr.syncStatus(forName:syncName)
+        sync?.maxTimeStamp = -1
+        sync?.progress = 0
+        sync?.status = .new
+        sync?.totalSize = -1
+        sync?.save(store)
     }
 }
