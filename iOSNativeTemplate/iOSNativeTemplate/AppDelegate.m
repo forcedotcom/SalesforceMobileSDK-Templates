@@ -22,6 +22,7 @@
  WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <UserNotifications/UserNotifications.h>
 #import "AppDelegate.h"
 #import "InitialViewController.h"
 #import "RootViewController.h"
@@ -91,7 +92,19 @@
     return YES;
 }
 - (void)registerForRemotePushNotifications {
-    [[SFPushNotificationManager sharedInstance] registerForRemoteNotifications];
+    [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge) completionHandler:^(BOOL granted, NSError * _Nullable error) {
+        if (granted) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+               [[SFPushNotificationManager sharedInstance] registerForRemoteNotifications];
+            });
+        } else {
+            [SFLogger d:[self class] format:@"Push notification authorization denied"];
+        }
+
+        if (error) {
+            [SFLogger e:[self class] format:@"Push notification authorization error: %@", error];
+        }
+    }];
 }
 
 - (void)customizeLoginView {
