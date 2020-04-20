@@ -477,3 +477,20 @@ class SObjectDataFieldSpec  {
         self.isSearchable = isSearchable
     }
 }
+
+class CodedSObjectDataSpec: SObjectDataSpec {
+    
+    convenience init(allCases: [String], name: String) {
+        var objectFieldSpecs: [SObjectDataFieldSpec] = []
+        
+        for value in allCases {
+            objectFieldSpecs.append(
+                SObjectDataFieldSpec(fieldName: value, searchable: true))
+        }
+        
+        let objectType = name
+        let soupName = name
+        let orderByFieldName: String  = allCases[0]
+        self.init(objectType: objectType, objectFieldSpecs: objectFieldSpecs, soupName: soupName, orderByFieldName: orderByFieldName)
+    }
+}

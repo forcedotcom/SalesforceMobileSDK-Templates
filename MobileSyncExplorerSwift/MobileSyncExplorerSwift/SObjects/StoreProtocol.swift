@@ -81,11 +81,15 @@ public class SFRecord {
     func nonNullFieldValue(_ fieldName: String?) -> Any? {
         return self.soupDict.nonNullObject(forKey: fieldName!)
     }
+    public var objectName: String = ""
+
     public required init() {
         soupDict = [:]
-        let spec = type(of: self).dataSpec()
-        self.initSoupValues(spec?.fieldNames)
-        updateSoup(forFieldName: "attributes", fieldValue: ["type": spec?.objectType])
+        if let spec = type(of: self).dataSpec() {
+            self.initSoupValues(spec.fieldNames)
+            self.objectName = spec.objectType
+            updateSoup(forFieldName: "attributes", fieldValue: ["type": spec.objectType])
+        }
     }
     
     public class func dataSpec() -> SObjectDataSpec? {

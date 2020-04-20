@@ -37,10 +37,13 @@ class ContactRecord: SFRecord, Identifiable, StoreProtocol {
     required init() {
         super.init()
         soupDict = [:]
-        let spec = ContactRecord.dataSpec()
-        self.initSoupValues(spec?.fieldNames)
-        updateSoup(forFieldName: "attributes", fieldValue: ["type": spec?.objectType])
+        if let spec = ContactRecord.dataSpec() {
+            self.objectName = spec.objectType
+            self.initSoupValues(spec.fieldNames)
+            updateSoup(forFieldName: "attributes", fieldValue: ["type": spec.objectType])
+        }
     }
+
     class var allFields: [String] {
         if let spec = self.dataSpec() {
             return spec.fieldNames
@@ -154,19 +157,4 @@ class ContactRecord: SFRecord, Identifiable, StoreProtocol {
     }
 }
 
-class CodedSObjectDataSpec: SObjectDataSpec {
-    
-    convenience init(allCases: [String], name: String) {
-        var objectFieldSpecs: [SObjectDataFieldSpec] = []
-        
-        for value in allCases {
-            objectFieldSpecs.append(
-                SObjectDataFieldSpec(fieldName: value, searchable: true))
-        }
-        
-        let objectType = name
-        let soupName = name
-        let orderByFieldName: String  = allCases[0]
-        self.init(objectType: objectType, objectFieldSpecs: objectFieldSpecs, soupName: soupName, orderByFieldName: orderByFieldName)
-    }
-}
+
