@@ -38,13 +38,13 @@ struct ContactListView: View {
                 VStack {
                     SearchBar(text: self.$searchTerm)
                     List {
-                        ForEach(viewModel.sObjectDataManager.items.filter { contact in
+                        ForEach(viewModel.store.items.filter { contact in
                             self.searchTerm.isEmpty ? true : self.viewModel.contactMatchesSearchTerm(contact: contact, searchTerm: self.searchTerm)
                         }) { contact in
-                            NavigationLink(destination: ContactDetailView(contact: contact, sObjectDataManager: self.viewModel.sObjectDataManager)) {
+                            NavigationLink(destination: ContactDetailView(contact: contact, store: self.viewModel.store)) {
                                 ContactCell(contact: contact)
                             }
-                            .listRowBackground(SObjectDataManager<ContactSObjectData>.dataLocallyDeleted(contact) ? Color.contactCellDeletedBackground : Color.clear)
+                            .listRowBackground(Store<ContactRecord>.dataLocallyDeleted(contact) ? Color.contactCellDeletedBackground : Color.clear)
                         }
                     }
                     .id(UUID())
@@ -147,7 +147,7 @@ struct NavBarButtons: View {
 
     var body: some View {
         HStack {
-            NavigationLink(destination: ContactDetailView(contact: nil, sObjectDataManager: self.viewModel.sObjectDataManager), isActive: $newContactPresented, label: { EmptyView() })
+            NavigationLink(destination: ContactDetailView(contact: nil, store: self.viewModel.store), isActive: $newContactPresented, label: { EmptyView() })
             Button(action: {
                 self.newContactPresented = true
             }, label: { Image("plusButton") })
@@ -196,7 +196,7 @@ struct NavBarButtons: View {
                 )])
             }.sheet(item: $modalPresented) { creationType in
                 if creationType == ModalAction.inspectDB {
-                    InspectorViewControllerWrapper(store: self.viewModel.sObjectDataManager.store)
+                    InspectorViewControllerWrapper(store: self.viewModel.store.store)
                 } else if creationType == ModalAction.switchUser {
                     SalesforceUserManagementViewControllerWrapper()
                 }
@@ -212,7 +212,7 @@ struct NavBarButtons: View {
 }
 
 struct ContactCell: View {
-    var contact: ContactSObjectData
+    var contact: ContactRecord
 
     var body: some View {
         HStack {
@@ -222,10 +222,10 @@ struct ContactCell: View {
                 Text(ContactHelper.titleStringFromContact(contact)).font(.appRegularFont(12)).foregroundColor(.secondaryLabelText)
             }
             Spacer()
-            if SObjectDataManager<ContactSObjectData>.dataLocallyUpdated(contact) {
+            if Store<ContactRecord>.dataLocallyUpdated(contact) {
                 Image(systemName: "arrow.2.circlepath").foregroundColor(.appBlue)
             }
-            if SObjectDataManager<ContactSObjectData>.dataLocallyCreated(contact) {
+            if Store<ContactRecord>.dataLocallyCreated(contact) {
                 Image(systemName: "plus").foregroundColor(.appBlue)
             }
         }

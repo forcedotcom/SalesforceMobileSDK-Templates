@@ -7,6 +7,10 @@
 //
 
 import Foundation
+import SmartStore
+import MobileSync
+import Combine
+
 public protocol StoreProtocol {
     init()
     //    init(data: [Any])
@@ -49,15 +53,65 @@ public enum SFField: String {
     static let allFields = [id.rawValue, modificationDate.rawValue]
 }
 
+public typealias SyncCompletion = ((SyncState?) -> Void)?
+
+enum SObjectConstants {
+    static let kSObjectIdField    = "Id"
+}
+
 public class SFRecord {
+    public required init(soupDict: [String: Any]?) {
+        if soupDict != nil {
+            self.updateSoup(soupDict)
+        }
+    }
+   
+    
+    func initSoupValues(_ fieldNames: [Any]?) {
+        self.soupDict.forEach { (key,value) in
+            self.soupDict[key] = nil
+        }
+    }
+    
+    func fieldValue(forFieldName fieldName: String) -> Any? {
+        return self.soupDict[fieldName]
+    }
+    
+    
+    func nonNullFieldValue(_ fieldName: String?) -> Any? {
+        return self.soupDict.nonNullObject(forKey: fieldName!)
+    }
+    public required init() {
+        soupDict = [:]
+        let spec = type(of: self).dataSpec()
+        self.initSoupValues(spec?.fieldNames)
+        updateSoup(forFieldName: "attributes", fieldValue: ["type": spec?.objectType])
+    }
+    
+    public class func dataSpec() -> SObjectDataSpec? {
+        return nil
+    }
+    
+    func updateSoup(forFieldName fieldName: String, fieldValue: Any?) {
+        self.soupDict[fieldName] = fieldValue
+    }
+    
+    func updateSoup(_ soupDict: [String: Any]?) -> Void  {
+        guard let soupDict = soupDict else {
+            return;
+        }
+        soupDict.forEach({ (key, value) in
+            self.soupDict[key] = value
+        })
+    }
+    
+    
     //    public required init(data: [Any]) {
     //        self.data = (data as! [Dictionary]).first!
+    // self.externalId = UUID().uuidString
     //    }
     
-    public required init() {
-        // self.externalId = UUID().uuidString
-    }
-    var soupDict = [String: Any]()
+    public var soupDict = [String: Any]()
     
     //  public var data: Dictionary = Dictionary<String,Any>()
     
@@ -106,28 +160,22 @@ public class SFRecord {
         
     }
     public class var indexes: [[String:String]] {
-        return [["path" : SFField.id.rawValue, "type" : "string"],
-                ["path" : SFField.modificationDate.rawValue, "type" : "integer"],
-                //                ["path" : SFField.externalId.rawValue, "type" : "string"],
-            ["path" : SFField.soupEntryId.rawValue, "type" : "string"],
-            ["path" : SFField.local.rawValue, "type" : "integer"],
-            ["path" : SFField.locallyCreated.rawValue, "type" : "integer"],
-            ["path" : SFField.locallyUpdated.rawValue, "type" : "integer"],
-            ["path" : SFField.locallyDeleted.rawValue, "type" : "integer"],
-        ]
+       let i = [["path" : SFField.id.rawValue, "type" : "string"],
+               ["path" : SFField.modificationDate.rawValue, "type" : "integer"],
+               //                ["path" : SFField.externalId.rawValue, "type" : "string"],
+           ["path" : SFField.soupEntryId.rawValue, "type" : "string"],
+           ["path" : SFField.local.rawValue, "type" : "integer"],
+           ["path" : SFField.locallyCreated.rawValue, "type" : "integer"],
+           ["path" : SFField.locallyUpdated.rawValue, "type" : "integer"],
+           ["path" : SFField.locallyDeleted.rawValue, "type" : "integer"],
+       ]
+       if let spec = self.dataSpec() {
+           let i2 = [["path" : spec.orderByFieldName, "type" : "string"]]
+           return i + i2
+       }
+       return i
     }
-    public class var readFields: [String] {
-        return SFField.allFields + [SFField.soupEntryId.rawValue]
-    }
-    public class var createFields: [String] {
-        return SFField.allFields
-    }
-    public class var updateFields: [String] {
-        return []
-    }
-    public class var orderPath: String {
-        return SFField.id.rawValue
-    }
+ 
     
 }
 

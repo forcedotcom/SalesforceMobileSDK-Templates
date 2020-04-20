@@ -17,42 +17,34 @@ extension SyncManager {
     /// - Parameter objectType: StoreProtocol.Type
     /// - Parameter completionBlock: block invoked when sync completes or fails with Result<SyncState, MobileSyncError>)
     public func upSyncWithoutUpdates(objectType: StoreProtocol.Type, _ completionBlock: @escaping (Result<SyncState, MobileSyncError>) -> Void) {
-        do {
-            let updateBlock = { (state: SyncState) in
-                switch state.status {
-                case .done: completionBlock(.success(state))
-                case .stopped: completionBlock(.failure(.stopped))
-                case .failed: completionBlock(.failure(.failed(state)))
-                default: break
-                }
+        let updateBlock = { (state: SyncState) in
+            switch state.status {
+            case .done: completionBlock(.success(state))
+            case .stopped: completionBlock(.failure(.stopped))
+            case .failed: completionBlock(.failure(.failed(state)))
+            default: break
             }
-            let options: SyncOptions = SyncOptions.newSyncOptions(forSyncUp: objectType.readFields, mergeMode: .leaveIfChanged)
-            let target = SyncUpTarget.init(createFieldlist: objectType.createFields, updateFieldlist: objectType.updateFields)
-            try self.syncUp(target: target, options: options, soupName: objectType.objectName, onUpdate: updateBlock)
-        } catch let error {
-            completionBlock(.failure(.notStarted(error)))
         }
+        let options: SyncOptions = SyncOptions.newSyncOptions(forSyncUp: objectType.readFields, mergeMode: .leaveIfChanged)
+        let target = SyncUpTarget.init(createFieldlist: objectType.createFields, updateFieldlist: objectType.updateFields)
+        self.syncUp(target: target, options: options, soupName: objectType.objectName, onUpdate: updateBlock)
     }
     
     /// Runs or reruns a sync. Does not send progress updates like reSync(named, updateBlock).
     /// - Parameter objectType: StoreProtocol.Type
     /// - Parameter completionBlock: block invoked when sync completes or fails with Result<SyncState, MobileSyncError>)
     public func downSyncWithoutUpdates(objectType: StoreProtocol.Type, sqlQueryString: String, _ completionBlock: @escaping (Result<SyncState, MobileSyncError>) -> Void) {
-        do {
-            let updateBlock = { (state: SyncState) in
-                switch state.status {
-                case .done: completionBlock(.success(state))
-                case .stopped: completionBlock(.failure(.stopped))
-                case .failed: completionBlock(.failure(.failed(state)))
-                default: break
-                }
+        let updateBlock = { (state: SyncState) in
+            switch state.status {
+            case .done: completionBlock(.success(state))
+            case .stopped: completionBlock(.failure(.stopped))
+            case .failed: completionBlock(.failure(.failed(state)))
+            default: break
             }
-            let target: SoqlSyncDownTarget = SoqlSyncDownTarget.newSyncTarget(sqlQueryString)
-            let options: SyncOptions = SyncOptions.newSyncOptions(forSyncDown: .overwrite)
-            self.syncDown(target: target, options: options, soupName: objectType.objectName, onUpdate: updateBlock)
-        } catch let error {
-            completionBlock(.failure(.notStarted(error)))
         }
+        let target: SoqlSyncDownTarget = SoqlSyncDownTarget.newSyncTarget(sqlQueryString)
+        let options: SyncOptions = SyncOptions.newSyncOptions(forSyncDown: .overwrite)
+        self.syncDown(target: target, options: options, soupName: objectType.objectName, onUpdate: updateBlock)
     }
     
 }
@@ -76,15 +68,15 @@ extension SyncManager {
     }
     
     public func publishDown(objectType: StoreProtocol.Type, sqlQueryString: String) -> Future<SyncState, MobileSyncError> {
-           Future<SyncState, MobileSyncError> { promise in
+        Future<SyncState, MobileSyncError> { promise in
             self.downSyncWithoutUpdates(objectType: objectType, sqlQueryString: sqlQueryString) { (result) in
-                   switch result {
-                   case .success(let state):
-                       promise(.success(state))
-                   case .failure(let error):
-                       promise(.failure(error))
-                   }
-               }
-           }
-       }
+                switch result {
+                case .success(let state):
+                    promise(.success(state))
+                case .failure(let error):
+                    promise(.failure(error))
+                }
+            }
+        }
+    }
 }

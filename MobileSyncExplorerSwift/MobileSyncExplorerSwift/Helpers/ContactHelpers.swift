@@ -31,7 +31,7 @@ import Foundation
 import UIKit.UIColor
 
 class ContactHelper {
-    static func nameStringFromContact(_ obj: ContactSObjectData) -> String {
+    static func nameStringFromContact(_ obj: ContactRecord) -> String {
         let firstName = obj.firstName?.trimmingCharacters(in: .whitespacesAndNewlines)
         let lastName = obj.lastName?.trimmingCharacters(in: .whitespacesAndNewlines)
         if firstName == nil && lastName == nil {
@@ -45,12 +45,12 @@ class ContactHelper {
         }
     }
     
-    static func titleStringFromContact(_ obj: ContactSObjectData) -> String {
+    static func titleStringFromContact(_ obj: ContactRecord) -> String {
         let title = obj.title?.trimmingCharacters(in: .whitespacesAndNewlines)
         return title != nil ? title! : ""
     }
     
-    static func initialsStringFromContact(_ obj: ContactSObjectData) -> String {
+    static func initialsStringFromContact(_ obj: ContactRecord) -> String {
         let firstName = obj.firstName?.trimmingCharacters(in: .whitespacesAndNewlines)
         let lastName = obj.lastName?.trimmingCharacters(in: .whitespacesAndNewlines)
         var initialsString = ""
@@ -64,7 +64,7 @@ class ContactHelper {
         return initialsString
     }
     
-    static func colorFromContact(_ obj: ContactSObjectData) -> UIColor {
+    static func colorFromContact(_ obj: ContactRecord) -> UIColor {
         guard let lastName = obj.lastName?.trimmingCharacters(in: .whitespacesAndNewlines) else {
             return UIColor.white
         }

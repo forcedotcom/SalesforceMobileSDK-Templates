@@ -28,7 +28,7 @@
 import SwiftUI
 
 struct ReadView: View {
-    var contact: ContactSObjectData
+    var contact: ContactRecord
 
     var body: some View {
         List {
@@ -87,7 +87,7 @@ struct ContactInput {
     var email: String = ""
     var department: String = ""
 
-    init(contact: ContactSObjectData?) {
+    init(contact: ContactRecord?) {
         if let firstName = contact?.firstName {
             self.firstName = firstName
         }
@@ -114,15 +114,15 @@ struct ContactInput {
 
 struct ContactDetailView: View {
     @Environment(\.presentationMode) var presentationMode
-    @State private var contact: ContactSObjectData
+    @State private var contact: ContactRecord
     @State private var contactInput: ContactInput
     @State private var isEditing: Bool = false
-    private var sObjectDataManager: SObjectDataManager<ContactSObjectData>
+    private var store: Store<ContactRecord>
     private var isNewContact: Bool = false
     private var title: String
 
-    init(contact: ContactSObjectData?, sObjectDataManager: SObjectDataManager<ContactSObjectData>) {
-        self.sObjectDataManager = sObjectDataManager
+    init(contact: ContactRecord?, store: Store<ContactRecord>) {
+        self.store = store
         if let c = contact {
             self.title = ContactHelper.nameStringFromContact(c)
             self._contact = State(initialValue: c)
@@ -130,7 +130,7 @@ struct ContactDetailView: View {
             self.title = "New Contact"
             self.isNewContact = true
             self._isEditing = State(initialValue: true)
-            self._contact = State(initialValue: ContactSObjectData())
+            self._contact = State(initialValue: ContactRecord())
         }
         self._contactInput = State(initialValue: ContactInput(contact: contact))
     }
@@ -145,13 +145,13 @@ struct ContactDetailView: View {
         contact.department = contactInput.department
 
         if self.isNewContact {
-            sObjectDataManager.createLocalData(contact)
+            store.createLocalData(contact)
         } else {
-            sObjectDataManager.updateLocalData(contact)
+            store.updateLocalData(contact)
         }
     }
     func isLocallyDeleted() -> Bool {
-        return SObjectDataManager<ContactSObjectData>.dataLocallyDeleted(contact)
+        return Store<ContactRecord>.dataLocallyDeleted(contact)
     }
 
     var body: some View {
@@ -163,7 +163,7 @@ struct ContactDetailView: View {
             }
             Spacer()
             DeleteButton(label: isLocallyDeleted() ? "Undelete Contact" : "Delete Contact", isDisabled: isNewContact) {
-                self.isLocallyDeleted() ? self.sObjectDataManager.undeleteLocalData(self.contact) : self.sObjectDataManager.deleteLocalData(self.contact)
+                self.isLocallyDeleted() ? self.store.undeleteLocalData(self.contact) : self.store.deleteLocalData(self.contact)
                 self.presentationMode.wrappedValue.dismiss()
             }
         }
