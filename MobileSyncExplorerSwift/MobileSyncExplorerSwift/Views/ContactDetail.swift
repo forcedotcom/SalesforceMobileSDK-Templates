@@ -56,24 +56,23 @@ struct ReadViewField: View {
 }
 
 struct EditView: View {
-    @Binding var contactInput: ContactRecord
-
+    @Binding var contact: ContactRecord
     var body: some View {
         Form {
-            TextField("First Name", text: $contactInput.firstName.bound)
+            TextField("First Name", text: $contact.firstName.bound)
                 .disableAutocorrection(true)
-            TextField("Last Name", text: $contactInput.lastName.bound)
+            TextField("Last Name", text: $contact.lastName.bound)
                 .disableAutocorrection(true)
-            TextField("Mobile Phone", text: $contactInput.mobilePhone.bound)
+            TextField("Mobile Phone", text: $contact.mobilePhone.bound)
                 .keyboardType(.numberPad)
-            TextField("Home Phone", text: $contactInput.homePhone.bound)
+            TextField("Home Phone", text: $contact.homePhone.bound)
                 .keyboardType(.numberPad)
-            TextField("Job Title", text: $contactInput.title.bound)
-            TextField("Email Address", text: $contactInput.email.bound)
+            TextField("Job Title", text: $contact.title.bound)
+            TextField("Email Address", text: $contact.email.bound)
                 .keyboardType(.emailAddress)
                 .disableAutocorrection(true)
                 .autocapitalization(.none)
-            TextField("Department", text: $contactInput.department.bound)
+            TextField("Department", text: $contact.department.bound)
         }
     }
 }
@@ -81,36 +80,12 @@ struct EditView: View {
 
 struct ContactDetailView: View {
     @Environment(\.presentationMode) var presentationMode
-    @State private var contact: ContactRecord
-    //@State private var contactInput: ContactInput
-    @State private var isEditing: Bool = false
-    private var store: Store<ContactRecord>
-    private var isNewContact: Bool = false
-    private var title: String
-
-    init(contact: ContactRecord?, store: Store<ContactRecord>) {
-        self.store = store
-        if let c = contact {
-            self.title = ContactHelper.nameStringFromContact(c)
-            self._contact = State(initialValue: c)
-        } else {
-            self.title = "New Contact"
-            self.isNewContact = true
-            self._isEditing = State(initialValue: true)
-            self._contact = State(initialValue: ContactRecord())
-        }
-        //self._contactInput = State(initialValue: ContactInput(contact: contact))
-    }
+    @State var contact: ContactRecord
+    @State  var isEditing: Bool = false
+    var store: Store<ContactRecord>
+    var isNewContact: Bool = false
 
     func saveInput() {
-//        contact.firstName = contactInput.firstName
-//        contact.lastName = contactInput.lastName
-//        contact.mobilePhone = contactInput.mobilePhone
-//        contact.homePhone = contactInput.homePhone
-//        contact.title = contactInput.title
-//        contact.email = contactInput.email
-//        contact.department = contactInput.department
-
         if self.isNewContact {
             store.createLocalData(contact)
         } else {
@@ -124,7 +99,7 @@ struct ContactDetailView: View {
     var body: some View {
         VStack {
             if isEditing {
-                EditView(contactInput: $contact)
+                EditView(contact: $contact)
             } else {
                 ReadView(contact: contact)
             }
@@ -134,7 +109,7 @@ struct ContactDetailView: View {
                 self.presentationMode.wrappedValue.dismiss()
             }
         }
-        .navigationBarTitle(Text(title), displayMode: .inline)
+        .navigationBarTitle(Text(ContactHelper.nameStringFromContact(contact)), displayMode: .inline)
         .navigationBarItems(leading:
             Button(action: {
                 if self.isEditing {

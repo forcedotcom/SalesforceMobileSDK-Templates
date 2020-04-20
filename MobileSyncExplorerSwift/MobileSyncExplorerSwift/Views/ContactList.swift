@@ -147,7 +147,7 @@ struct NavBarButtons: View {
 
     var body: some View {
         HStack {
-            NavigationLink(destination: ContactDetailView(contact: nil, store: self.viewModel.store), isActive: $newContactPresented, label: { EmptyView() })
+            NavigationLink(destination: ContactDetailView(contact: ContactRecord(), store: self.viewModel.store), isActive: $newContactPresented, label: { EmptyView() })
             Button(action: {
                 self.newContactPresented = true
             }, label: { Image("plusButton") })
