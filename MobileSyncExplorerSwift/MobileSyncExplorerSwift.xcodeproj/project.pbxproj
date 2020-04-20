@@ -13,6 +13,10 @@
 		69B257B1240DABAF00CBCF1A /* ContactDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B257B0240DABAF00CBCF1A /* ContactDetail.swift */; };
 		69E6BCE32409CB8700FB1FD4 /* ContactList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69E6BCE22409CB8700FB1FD4 /* ContactList.swift */; };
 		78A235BD93AB7D080D67CD51 /* Pods_MobileSyncExplorerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82A29C75280BDF73123F14B4 /* Pods_MobileSyncExplorerSwift.framework */; };
+		7B061351244D2E120035A8D0 /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B061350244D2E120035A8D0 /* Dictionary.swift */; };
+		7B061353244D2E980035A8D0 /* StoreProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B061352244D2E980035A8D0 /* StoreProtocol.swift */; };
+		7B061355244D2F080035A8D0 /* SObjectDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B061354244D2F080035A8D0 /* SObjectDataManager.swift */; };
+		7B061357244D2F4B0035A8D0 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B061356244D2F4B0035A8D0 /* SyncManager.swift */; };
 		B7168FBC1FACC6F900A48DB5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */; };
 		B767370220AB57C600F04103 /* userstore.json in Resources */ = {isa = PBXBuildFile; fileRef = B767370020AB57C600F04103 /* userstore.json */; };
 		B767370320AB57C600F04103 /* usersyncs.json in Resources */ = {isa = PBXBuildFile; fileRef = B767370120AB57C600F04103 /* usersyncs.json */; };
@@ -40,6 +44,10 @@
 		69B257B0240DABAF00CBCF1A /* ContactDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetail.swift; sourceTree = "<group>"; };
 		69E6BCE22409CB8700FB1FD4 /* ContactList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactList.swift; sourceTree = "<group>"; };
 		762732C14CFE40A989C3AD70 /* Pods-MobileSyncExplorerSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileSyncExplorerSwift.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MobileSyncExplorerSwift/Pods-MobileSyncExplorerSwift.debug.xcconfig"; sourceTree = "<group>"; };
+		7B061350244D2E120035A8D0 /* Dictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
+		7B061352244D2E980035A8D0 /* StoreProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreProtocol.swift; sourceTree = "<group>"; };
+		7B061354244D2F080035A8D0 /* SObjectDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SObjectDataManager.swift; sourceTree = "<group>"; };
+		7B061356244D2F4B0035A8D0 /* SyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncManager.swift; sourceTree = "<group>"; };
 		82A29C75280BDF73123F14B4 /* Pods_MobileSyncExplorerSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MobileSyncExplorerSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = "../mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/LaunchScreen.storyboard"; sourceTree = "<group>"; };
 		B767370020AB57C600F04103 /* userstore.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = userstore.json; sourceTree = "<group>"; };
@@ -135,6 +143,8 @@
 			children = (
 				B767370C20AB611500F04103 /* SObjects.swift */,
 				B76D65DC20B4A0C900B55764 /* Contacts.swift */,
+				7B061352244D2E980035A8D0 /* StoreProtocol.swift */,
+				7B061354244D2F080035A8D0 /* SObjectDataManager.swift */,
 			);
 			path = SObjects;
 			sourceTree = "<group>";
@@ -154,6 +164,8 @@
 				B76D656A20B3323A00B55764 /* Fonts+helper.swift */,
 				B76D656B20B3323A00B55764 /* Color+helper.swift */,
 				B76D656C20B3323A00B55764 /* ContactHelpers.swift */,
+				7B061350244D2E120035A8D0 /* Dictionary.swift */,
+				7B061356244D2F4B0035A8D0 /* SyncManager.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -321,11 +333,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				69E6BCE32409CB8700FB1FD4 /* ContactList.swift in Sources */,
+				7B061355244D2F080035A8D0 /* SObjectDataManager.swift in Sources */,
 				B76D656620B3322B00B55764 /* InitialViewController.swift in Sources */,
 				4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */,
+				7B061357244D2F4B0035A8D0 /* SyncManager.swift in Sources */,
+				7B061351244D2E120035A8D0 /* Dictionary.swift in Sources */,
 				B76D65DD20B4A0C900B55764 /* Contacts.swift in Sources */,
 				4F393A291C3C8BCD00B3EA13 /* main.swift in Sources */,
 				B767370D20AB611500F04103 /* SObjects.swift in Sources */,
+				7B061353244D2E980035A8D0 /* StoreProtocol.swift in Sources */,
 				B76D656E20B3323A00B55764 /* Fonts+helper.swift in Sources */,
 				69B257B1240DABAF00CBCF1A /* ContactDetail.swift in Sources */,
 				B76D656F20B3323A00B55764 /* Color+helper.swift in Sources */,

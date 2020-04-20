@@ -39,7 +39,12 @@ enum ContactConstants {
     static let kContactHomePhoneField    = "HomePhone"
 }
 
-class ContactSObjectData: SObjectData, Identifiable {
+
+class ContactSObjectData: SObjectData, Identifiable, StoreProtocol {
+    static var objectName: String = "Contact"
+    
+//    static var orderPath: String = ""
+    
     var firstName: String? {
         get {
             return super.nonNullFieldValue(ContactConstants.kContactFirstNameField) as? String
@@ -112,11 +117,11 @@ class ContactSObjectData: SObjectData, Identifiable {
         }
     }
     
-    override init(soupDict: [String: Any]?) {
+    required override init(soupDict: [String: Any]?) {
         super.init(soupDict: soupDict)
     }
     
-    override init() {
+    required init() {
         super.init()
     }
     
@@ -142,7 +147,7 @@ class ContactSObjectDataSpec: SObjectDataSpec {
             SObjectDataFieldSpec(fieldName: ContactConstants.kContactDepartmentField, searchable: false),
             SObjectDataFieldSpec(fieldName: ContactConstants.kContactHomePhoneField, searchable: false)
         ]
-        let soupName = "contacts"
+        let soupName = "Contact"
         let orderByFieldName: String  = ContactConstants.kContactLastNameField
         self.init(objectType: objectType, objectFieldSpecs: objectFieldSpecs, soupName: soupName, orderByFieldName: orderByFieldName)
     }

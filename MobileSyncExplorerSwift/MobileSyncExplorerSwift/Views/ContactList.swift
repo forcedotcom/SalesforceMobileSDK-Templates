@@ -38,13 +38,13 @@ struct ContactListView: View {
                 VStack {
                     SearchBar(text: self.$searchTerm)
                     List {
-                        ForEach(viewModel.sObjectDataManager.contacts.filter { contact in
+                        ForEach(viewModel.sObjectDataManager.items.filter { contact in
                             self.searchTerm.isEmpty ? true : self.viewModel.contactMatchesSearchTerm(contact: contact, searchTerm: self.searchTerm)
                         }) { contact in
                             NavigationLink(destination: ContactDetailView(contact: contact, sObjectDataManager: self.viewModel.sObjectDataManager)) {
                                 ContactCell(contact: contact)
                             }
-                            .listRowBackground(SObjectDataManager.dataLocallyDeleted(contact) ? Color.contactCellDeletedBackground : Color.clear)
+                            .listRowBackground(SObjectDataManager<ContactSObjectData>.dataLocallyDeleted(contact) ? Color.contactCellDeletedBackground : Color.clear)
                         }
                     }
                     .id(UUID())
@@ -222,10 +222,10 @@ struct ContactCell: View {
                 Text(ContactHelper.titleStringFromContact(contact)).font(.appRegularFont(12)).foregroundColor(.secondaryLabelText)
             }
             Spacer()
-            if SObjectDataManager.dataLocallyUpdated(contact) {
+            if SObjectDataManager<ContactSObjectData>.dataLocallyUpdated(contact) {
                 Image(systemName: "arrow.2.circlepath").foregroundColor(.appBlue)
             }
-            if SObjectDataManager.dataLocallyCreated(contact) {
+            if SObjectDataManager<ContactSObjectData>.dataLocallyCreated(contact) {
                 Image(systemName: "plus").foregroundColor(.appBlue)
             }
         }

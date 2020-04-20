@@ -117,11 +117,11 @@ struct ContactDetailView: View {
     @State private var contact: ContactSObjectData
     @State private var contactInput: ContactInput
     @State private var isEditing: Bool = false
-    private var sObjectDataManager: SObjectDataManager
+    private var sObjectDataManager: SObjectDataManager<ContactSObjectData>
     private var isNewContact: Bool = false
     private var title: String
 
-    init(contact: ContactSObjectData?, sObjectDataManager: SObjectDataManager) {
+    init(contact: ContactSObjectData?, sObjectDataManager: SObjectDataManager<ContactSObjectData>) {
         self.sObjectDataManager = sObjectDataManager
         if let c = contact {
             self.title = ContactHelper.nameStringFromContact(c)
@@ -151,7 +151,7 @@ struct ContactDetailView: View {
         }
     }
     func isLocallyDeleted() -> Bool {
-        return SObjectDataManager.dataLocallyDeleted(contact)
+        return SObjectDataManager<ContactSObjectData>.dataLocallyDeleted(contact)
     }
 
     var body: some View {
