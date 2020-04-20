@@ -56,66 +56,33 @@ struct ReadViewField: View {
 }
 
 struct EditView: View {
-    @Binding var contactInput: ContactInput
+    @Binding var contactInput: ContactRecord
 
     var body: some View {
         Form {
-            TextField("First Name", text: $contactInput.firstName)
+            TextField("First Name", text: $contactInput.firstName.bound)
                 .disableAutocorrection(true)
-            TextField("Last Name", text: $contactInput.lastName)
+            TextField("Last Name", text: $contactInput.lastName.bound)
                 .disableAutocorrection(true)
-            TextField("Mobile Phone", text: $contactInput.mobilePhone)
+            TextField("Mobile Phone", text: $contactInput.mobilePhone.bound)
                 .keyboardType(.numberPad)
-            TextField("Home Phone", text: $contactInput.homePhone)
+            TextField("Home Phone", text: $contactInput.homePhone.bound)
                 .keyboardType(.numberPad)
-            TextField("Job Title", text: $contactInput.title)
-            TextField("Email Address", text: $contactInput.email)
+            TextField("Job Title", text: $contactInput.title.bound)
+            TextField("Email Address", text: $contactInput.email.bound)
                 .keyboardType(.emailAddress)
                 .disableAutocorrection(true)
                 .autocapitalization(.none)
-            TextField("Department", text: $contactInput.department)
+            TextField("Department", text: $contactInput.department.bound)
         }
     }
 }
 
-struct ContactInput {
-    var firstName: String = ""
-    var lastName: String = ""
-    var mobilePhone: String = ""
-    var homePhone: String = ""
-    var title: String = ""
-    var email: String = ""
-    var department: String = ""
-
-    init(contact: ContactRecord?) {
-        if let firstName = contact?.firstName {
-            self.firstName = firstName
-        }
-        if let lastName = contact?.lastName {
-            self.lastName = lastName
-        }
-        if let mobilePhone = contact?.mobilePhone {
-            self.mobilePhone = mobilePhone
-        }
-        if let homePhone = contact?.homePhone {
-            self.homePhone = homePhone
-        }
-        if let title = contact?.title {
-            self.title = title
-        }
-        if let email = contact?.email {
-            self.email = email
-        }
-        if let department = contact?.department {
-            self.department = department
-        }
-    }
-}
 
 struct ContactDetailView: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var contact: ContactRecord
-    @State private var contactInput: ContactInput
+    //@State private var contactInput: ContactInput
     @State private var isEditing: Bool = false
     private var store: Store<ContactRecord>
     private var isNewContact: Bool = false
@@ -132,17 +99,17 @@ struct ContactDetailView: View {
             self._isEditing = State(initialValue: true)
             self._contact = State(initialValue: ContactRecord())
         }
-        self._contactInput = State(initialValue: ContactInput(contact: contact))
+        //self._contactInput = State(initialValue: ContactInput(contact: contact))
     }
 
     func saveInput() {
-        contact.firstName = contactInput.firstName
-        contact.lastName = contactInput.lastName
-        contact.mobilePhone = contactInput.mobilePhone
-        contact.homePhone = contactInput.homePhone
-        contact.title = contactInput.title
-        contact.email = contactInput.email
-        contact.department = contactInput.department
+//        contact.firstName = contactInput.firstName
+//        contact.lastName = contactInput.lastName
+//        contact.mobilePhone = contactInput.mobilePhone
+//        contact.homePhone = contactInput.homePhone
+//        contact.title = contactInput.title
+//        contact.email = contactInput.email
+//        contact.department = contactInput.department
 
         if self.isNewContact {
             store.createLocalData(contact)
@@ -157,7 +124,7 @@ struct ContactDetailView: View {
     var body: some View {
         VStack {
             if isEditing {
-                EditView(contactInput: $contactInput)
+                EditView(contactInput: $contact)
             } else {
                 ReadView(contact: contact)
             }
