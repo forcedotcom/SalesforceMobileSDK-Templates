@@ -525,7 +525,7 @@ class SObjectDataManager<objectType: StoreProtocol>: ObservableObject {
             .store(in: &cancellableSet)
     }
     
-    func sync(onError: @escaping (MobileSyncError) -> (), onValue: @escaping (SyncState) -> ()) {
+    func syncUp(onError: @escaping (MobileSyncError) -> (), onValue: @escaping (SyncState) -> ()) {
         syncMgr.publishUp(objectType: objectType.self)
             .receive(on: RunLoop.main)
             .sink(receiveCompletion: { result in
@@ -538,6 +538,21 @@ class SObjectDataManager<objectType: StoreProtocol>: ObservableObject {
             })
             .store(in: &cancellableSet)
     }
+    
+    func syncDown(onError: @escaping (MobileSyncError) -> (), onValue: @escaping (SyncState) -> ()) {
+        syncMgr.publishDown(objectType: objectType.self, sqlQueryString: sqlQueryString)
+            .receive(on: RunLoop.main)
+            .sink(receiveCompletion: { result in
+                if case .failure(let mobileSyncError) = result {
+                    onError(mobileSyncError)
+                }
+                
+            }, receiveValue: { syncState in
+                onValue(syncState)
+            })
+            .store(in: &cancellableSet)
+    }
+    
     
     func getSync(_ syncName: String) -> SyncState {
         return syncMgr.syncStatus(forName: syncName)!
