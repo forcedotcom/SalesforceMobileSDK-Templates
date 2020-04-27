@@ -269,6 +269,14 @@ class Store<objectType: StoreProtocol>: ObservableObject {
         return value ?? false
     }
     
+    func hasChanged() -> Bool {
+        var changed = false
+        for item in self.items {
+            changed = changed || item.local
+        }
+        return changed
+    }
+    
     static func dataLocallyUpdated(_ data: SFRecord?) -> Bool {
         guard let data = data else {
             return false

@@ -44,7 +44,10 @@ struct ContactListView: View {
                             NavigationLink(destination: ContactDetailView(contact: contact, store: self.viewModel.store)) {
                                 ContactCell(contact: contact)
                             }
-                            .listRowBackground(Store<ContactRecord>.dataLocallyDeleted(contact) ? Color.contactCellDeletedBackground : Color.clear)
+                            .listRowBackground(
+                                //Store<ContactRecord>.dataLocallyDeleted(contact) ? Color.contactCellDeletedBackground : Color.clear
+                                self.viewModel.store.hasChanged() ? Color.contactCellDeletedBackground : Color.clear
+                            )
                         }
                     }
                     .id(UUID())

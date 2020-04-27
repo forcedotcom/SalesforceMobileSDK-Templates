@@ -137,7 +137,12 @@ public class SFRecord {
         }
     }
     public var local: Bool {
-        get { return (soupDict[SFField.local.rawValue] as! String) == "1" }
+        get {
+            if let local = soupDict[SFField.local.rawValue] as? String {
+                return local == "1"
+            }
+            return soupDict[SFField.local.rawValue] as? Bool ?? false
+        }
         set { soupDict[SFField.local.rawValue] = newValue ? "1" : "0" }
     }
     public var locallyCreated: Bool {
