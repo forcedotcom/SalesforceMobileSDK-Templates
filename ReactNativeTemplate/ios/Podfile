@@ -30,13 +30,16 @@ pod 'React-cxxreact', :path => '../node_modules/react-native/ReactCommon/cxxreac
 pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi'
 pod 'React-jsiexecutor', :path => '../node_modules/react-native/ReactCommon/jsiexecutor'
 pod 'React-jsinspector', :path => '../node_modules/react-native/ReactCommon/jsinspector'
-pod 'ReactCommon/jscallinvoker', :path => '../node_modules/react-native/ReactCommon'
+pod 'ReactCommon/callinvoker', :path => '../node_modules/react-native/ReactCommon'
 pod 'ReactCommon/turbomodule/core', :path => '../node_modules/react-native/ReactCommon'
-pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
+pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga', :modular_headers => true
 
 pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
 pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
 pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+
+pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
+pod 'react-native-safe-area-context', :path => '../node_modules/react-native-safe-area-context'
 
 pod 'SalesforceSDKCommon', :path => '../mobile_sdk/SalesforceMobileSDK-iOS'
 pod 'SalesforceAnalytics', :path => '../mobile_sdk/SalesforceMobileSDK-iOS'
@@ -44,6 +47,8 @@ pod 'SalesforceSDKCore', :path => '../mobile_sdk/SalesforceMobileSDK-iOS'
 pod 'SmartStore', :path => '../mobile_sdk/SalesforceMobileSDK-iOS'
 pod 'MobileSync', :path => '../mobile_sdk/SalesforceMobileSDK-iOS'
 pod 'SalesforceReact', :path => '../node_modules/react-native-force'
+
+
 
 end
 
