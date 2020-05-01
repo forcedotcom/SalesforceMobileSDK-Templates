@@ -167,7 +167,7 @@ function traverseCursor(accumulatedResults, cursor, pageIndex, successCallback, 
     }
 }
 
-function searchContacts(query, successCallback, errorCallback) {
+function searchContacts(queryId, query, successCallback, errorCallback) {
     let querySpec;
     
     if (query === "") {
@@ -183,11 +183,8 @@ function searchContacts(query, successCallback, errorCallback) {
     }
     const that = this;
 
-    lastStoreQuerySent++;
-    const currentStoreQuery = lastStoreQuerySent;
-
     const querySuccessCB = (contacts) => {
-        successCallback(contacts, currentStoreQuery);
+        successCallback(contacts, queryId);
     };
 
     const queryErrorCB = (error) => {
@@ -199,14 +196,7 @@ function searchContacts(query, successCallback, errorCallback) {
                          "contacts",
                          querySpec,
                          (cursor) => {
-                             console.log(`Response for #${currentStoreQuery}`);
-                             if (currentStoreQuery > lastStoreResponseReceived) {
-                                 lastStoreResponseReceived = currentStoreQuery;
-                                 traverseCursor([], cursor, 0, querySuccessCB, queryErrorCB);
-                             }
-                             else {
-                                 console.log(`IGNORING Response for #${currentStoreQuery}`);
-                             }
+                             traverseCursor([], cursor, 0, querySuccessCB, queryErrorCB);
                          },
                          queryErrorCB);
 
