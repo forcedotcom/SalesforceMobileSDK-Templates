@@ -40,20 +40,6 @@ import ContactCell from './ContactCell';
 import storeMgr from './StoreMgr';
 
 class SearchScreen extends React.Component {
-    static navigationOptions = ({ navigation }) => {
-        const { params = {} } = navigation.state;
-        return {
-            title: 'Contacts',
-            headerRight: (
-                    <View style={styles.navButtonsGroup}>
-                    <NavImgButton icon='add' onPress={() => params.onAdd()} />
-                    <NavImgButton icon='cloud-sync' iconType='material-community' onPress={() => params.onSync()} />
-                    <NavImgButton icon='logout' iconType='material-community' onPress={() => params.onLogout()} />
-                    </View>
-            )
-        };
-    }
-
     constructor(props) {
         super(props);
         this.state = {
@@ -73,10 +59,15 @@ class SearchScreen extends React.Component {
     }
 
     componentDidMount() {
-        this.props.navigation.setParams({
-            onAdd: this.onAdd,
-            onSync: this.onSync,
-            onLogout: this.onLogout
+        this.props.navigation.setOptions({
+            title: 'Contacts',
+            headerRight: () => (
+                    <View style={styles.navButtonsGroup}>
+                    <NavImgButton icon='add' onPress={() => this.onAdd()} />
+                    <NavImgButton icon='cloud-sync' iconType='material-community' onPress={() => this.onSync()} />
+                    <NavImgButton icon='logout' iconType='material-community' onPress={() => this.onLogout()} />
+                    </View>
+            )
         });
         storeMgr.syncData();
         storeMgr.addStoreChangeListener(this.refresh);
