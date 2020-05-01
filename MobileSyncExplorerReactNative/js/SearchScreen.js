@@ -39,6 +39,9 @@ import ContactScreen from './ContactScreen';
 import ContactCell from './ContactCell';
 import storeMgr from './StoreMgr';
 
+// Global sequence number, incremented every time a query is run
+var seq = 0;
+
 class SearchScreen extends React.Component {
     constructor(props) {
         super(props);
@@ -152,14 +155,19 @@ class SearchScreen extends React.Component {
 
         const that = this;
         storeMgr.searchContacts(
+            ++seq,
             query,
-            (contacts, currentStoreQuery) => {
-                that.setState({
-                    isLoading: false,
-                    filter: query,
-                    data: contacts,
-                    queryNumber: currentStoreQuery
-                });
+            (contacts, queryId) => {
+                if (queryId < seq) {
+                    console.log(`IGNORING Response for #${queryId}`);
+                } else {
+                    that.setState({
+                        isLoading: false,
+                        filter: query,
+                        data: contacts,
+                        queryNumber: queryId,
+                    });
+                }
             },
             (error) => {
                 that.setState({
