@@ -6,12 +6,15 @@ target 'MobileSyncExplorerSwift' do
 source 'https://cdn.cocoapods.org/'
 
 use_frameworks!
+pod 'SalesforceSDKCore', :git=> 'https://github.com/siilats/SalesforceMobileSDK-iOS.git'
+pod 'MobileSync', :git=> 'https://github.com/siilats/SalesforceMobileSDK-iOS.git'
+pod 'FMDB/SQLCipher',  :git => 'https://github.com/ccgus/fmdb.git'
 
 pod 'SalesforceSDKCommon', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
 pod 'SalesforceAnalytics', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
-pod 'SalesforceSDKCore', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
+#pod 'SalesforceSDKCore', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
 pod 'SmartStore', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
-pod 'MobileSync', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
+#pod 'FMDB', :path => 'mobile_sdk/SalesforceMobileSDK-iOS'
 
 end
 
