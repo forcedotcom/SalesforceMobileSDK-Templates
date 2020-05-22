@@ -100,7 +100,7 @@ class ContactListViewModel: ObservableObject {
             + "syncDownContacts=\(infoForSyncState(sObjectDataManager.getSync("syncDownContacts")))\n"
             + "syncUpContacts=\(infoForSyncState(sObjectDataManager.getSync("syncUpContacts")))"
        
-        createAlert(title: "Sync Info", message: info, stopButton: false)
+        createAlert(title: "Sync Info", message: info, stopButton: false, okayButton: true)
     }
 
     func cleanGhosts() {
@@ -161,8 +161,8 @@ class ContactListViewModel: ObservableObject {
        })
     }
 
-    private func createAlert(title: String, message: String?, stopButton: Bool) {
-        alertContent = AlertContent(title: title, message: message, stopButton: stopButton)
+    private func createAlert(title: String, message: String?, stopButton: Bool, okayButton: Bool = false) {
+        alertContent = AlertContent(title: title, message: message, stopButton: stopButton, okayButton: okayButton)
     }
 
     private func updateAlert(info: String?, okayButton: Bool = true) {
