@@ -37,17 +37,6 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Dependencies
     var path = require('path');
 
-    // Values in template
-    var templateStartPage = 'apex/HybridRemotePage';
-
-    // Key files
-    var templateBootconfigFile = path.join('bootconfig.json');
-
-    //
-    // Replace in files
-    //
-    replaceInFiles(templateStartPage, config.startpage, [templateBootconfigFile]);
-
     //
     // Install dependencies
     //
