@@ -37,15 +37,26 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Dependencies
     var path = require('path');
 
+    // Values in template
+    var templateOrganization = 'HybridLwcTemplateOrganization';
+
+    // Key files
+    var staticResourceDir = path.join('server', 'force-app', 'main', 'default', 'staticresources')
+    var templateScratchDef = path.join('server', 'config', 'project-scratch-def.json');
+
     //
     // Install dependencies
     //
     require('./install');
 
+
+    // Replace in files
+    replaceInFiles(templateOrganization, config.organization, [templateScratchDef]);
+
     //
     // Move/remove some files
     //
-    moveFile(path.join('mobile_sdk', 'SalesforceMobileSDK-Shared', 'libs', 'force.js'), path.join('force-app', 'main', 'default', 'staticresources', 'other', 'force.js'));
+    moveFile(path.join('mobile_sdk', 'SalesforceMobileSDK-Shared', 'libs', 'force.js'), path.join(staticresourceDir, 'other', 'force.js'));
     removeFile('node_modules');
     removeFile('mobile_sdk');
     removeFile('package.json');
@@ -55,7 +66,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Remove resource meta that do not apply
     ['ios', 'android'].forEach(function(os) {
         if (config.platform.split(',').indexOf(os) === -1) {
-            removeFile(path.join('force-app', 'main', 'default', 'staticresources', 'cordova' + os + '.resource-meta.xml'))
+            removeFile(path.join(staticresourceDir, 'cordova' + os + '.resource-meta.xml'))
         }        
     });
 
