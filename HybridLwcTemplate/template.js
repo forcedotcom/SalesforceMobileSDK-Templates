@@ -52,6 +52,13 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     removeFile('template.js');
     removeFile('install.js');
 
+    // Remove resource meta that do not apply
+    ['ios', 'android'].forEach(function(os) {
+        if (config.platform.split(',').indexOf(os) === -1) {
+            removeFile(path.join('force-app', 'main', 'default', 'staticresources', 'cordova' + os + '.resource-meta.xml'))
+        }        
+    });
+
     // Return paths of workspace and file with oauth config
     return config.platform.split(',').map(platform => {
         return {
