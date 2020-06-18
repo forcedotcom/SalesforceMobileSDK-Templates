@@ -3,7 +3,7 @@
     "oauthRedirectURI": "testsfdc:///mobilesdk/detect/oauth/done",
     "oauthScopes": ["web", "api"],
     "isLocal": false,
-    "startPage": "apex/HybridRemotePage",
+    "startPage": "apex/ContactList",
     "errorPage": "error.html",
     "shouldAuthenticate": true,
     "attemptOfflineLoad": false,

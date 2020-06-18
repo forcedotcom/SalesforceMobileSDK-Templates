@@ -20,7 +20,7 @@
                             "sfaccountmanager": cordova.require("com.salesforce.plugin.sfaccountmanager"),
                             "sdkinfo": cordova.require("com.salesforce.plugin.sdkinfo"),
                             "smarstore": cordova.require("com.salesforce.plugin.smartstore.client"),
-                            "smartsync": cordova.require("com.salesforce.plugin.smartsync"),
+                            "mobilesync": cordova.require("com.salesforce.plugin.mobilesync"),
                             "network": cordova.require("com.salesforce.plugin.network")
                         };
                         
