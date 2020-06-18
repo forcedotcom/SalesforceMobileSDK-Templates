@@ -56,7 +56,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     //
     // Move/remove some files
     //
-    moveFile(path.join('mobile_sdk', 'SalesforceMobileSDK-Shared', 'libs', 'force.js'), path.join(staticresourceDir, 'other', 'force.js'));
+    moveFile(path.join('mobile_sdk', 'SalesforceMobileSDK-Shared', 'libs', 'force.js'), path.join(staticResourceDir, 'other', 'force.js'));
     removeFile('node_modules');
     removeFile('mobile_sdk');
     removeFile('package.json');
@@ -66,7 +66,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Remove resource meta that do not apply
     ['ios', 'android'].forEach(function(os) {
         if (config.platform.split(',').indexOf(os) === -1) {
-            removeFile(path.join(staticresourceDir, 'cordova' + os + '.resource-meta.xml'))
+            removeFile(path.join(staticResourceDir, 'cordova' + os + '.resource-meta.xml'))
         }        
     });
 
