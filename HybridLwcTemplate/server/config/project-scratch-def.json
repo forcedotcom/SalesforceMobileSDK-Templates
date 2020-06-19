@@ -1,11 +1,11 @@
 {
-  "orgName": "wmathurin company",
+  "orgName": "HybridLwcTemplateOrganization",
   "edition": "Developer",
   "features": [],
   "hasSampleData": "true",
   "settings": {
-    "orgPreferenceSettings": {
-      "s1DesktopEnabled": true
+        "lightningExperienceSettings": {
+            "enableS1DesktopEnabled": true
+        }
     }
-  }
 }
