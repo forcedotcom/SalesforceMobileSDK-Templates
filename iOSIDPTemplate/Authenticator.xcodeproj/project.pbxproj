@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 47;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -198,7 +198,7 @@
 				};
 			};
 			buildConfigurationList = 4FD6C46F1B754AF1002F9F90 /* Build configuration list for PBXProject "Authenticator" */;
-			compatibilityVersion = "Xcode 6.3";
+			compatibilityVersion = "Xcode 10.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -412,7 +412,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -430,7 +431,10 @@
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Authenticator/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -DSIGNPOST_ENABLED";
 				PRODUCT_BUNDLE_IDENTIFIER = com.salesforce.Authenticator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -452,7 +456,10 @@
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Authenticator/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -DSIGNPOST_ENABLED";
 				PRODUCT_BUNDLE_IDENTIFIER = com.salesforce.Authenticator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
