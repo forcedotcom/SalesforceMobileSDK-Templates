@@ -25,7 +25,7 @@
 #import <UIKit/UIKit.h>
 #import <SalesforceSDKCore/SFRestAPI.h>
 
-@interface RootViewController : UITableViewController <SFRestDelegate> {
+@interface RootViewController : UITableViewController <SFRestRequestDelegate> {
     
     NSMutableArray *dataRows;
     IBOutlet UITableView *tableView;    
