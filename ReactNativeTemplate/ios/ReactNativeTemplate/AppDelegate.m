@@ -35,6 +35,7 @@
 #import <SalesforceSDKCore/SFLoginViewController.h>
 #import <SalesforceReact/SFSDKReactLogger.h>
 #import <SalesforceSDKCore/SFSDKAuthHelper.h>
+#import <UserNotifications/UserNotifications.h>
 
 @implementation AppDelegate
 
@@ -73,8 +74,19 @@
     }];
     return YES;
 }
+
 - (void)registerForRemotePushNotifications {
-    [[SFPushNotificationManager sharedInstance] registerForRemoteNotifications];
+    [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge) completionHandler:^(BOOL granted, NSError * _Nullable error) {
+        if (granted) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[SFPushNotificationManager sharedInstance] registerForRemoteNotifications];
+             });
+        }
+
+        if (error) {
+            [SFLogger e:[self class] format:@"Push notification authorization error: %@", error];
+        }
+    }];
 }
 
 - (void)customizeLoginView {
