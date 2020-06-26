@@ -39,24 +39,34 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
 
     // Values in template
     var templateOrganization = 'HybridLwcTemplateOrganization';
+    var templateStartPage = 'apex/HybridLwcTemplate';    
+
+    // Safe app name
+    var safeName = config.appname.replace(/[^a-zA-Z0-9]*/g, '_') 
 
     // Key files
     var staticResourceDir = path.join('server', 'force-app', 'main', 'default', 'staticresources')
     var templateScratchDef = path.join('server', 'config', 'project-scratch-def.json');
+    var pagesDir = path.join('server', 'force-app', 'main', 'default', 'pages')
+    var mainPage = path.join(pagesDir, 'HybridLwcTemplate.page')
+    var mainPageMeta = path.join(pagesDir, 'HybridLwcTemplate.page-meta.xml')
+    var templateBootconfigFile = path.join('bootconfig.json');
 
     //
     // Install dependencies
     //
     require('./install');
 
-
     // Replace in files
     replaceInFiles(templateOrganization, config.organization, [templateScratchDef]);
+    replaceInFiles(templateStartPage, 'apex/' + safeName, [templateBootconfigFile]);
 
     //
     // Move/remove some files
     //
     moveFile(path.join('mobile_sdk', 'SalesforceMobileSDK-Shared', 'libs', 'force.js'), path.join(staticResourceDir, 'other', 'force.js'));
+    moveFile(mainPage, path.join(pagesDir, safeName + '.page'))
+    moveFile(mainPageMeta, path.join(pagesDir, safeName + '.page-meta.xml'))
     removeFile('node_modules');
     removeFile('mobile_sdk');
     removeFile('package.json');
