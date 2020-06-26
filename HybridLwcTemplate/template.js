@@ -42,7 +42,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var templateStartPage = 'apex/HybridLwcTemplate';    
 
     // Safe app name
-    var safeName = config.appname.replace(/[^a-zA-Z0-9]*/g, '_') 
+    var safeName = config.appname.replace(/[^a-zA-Z0-9]+/g, '_') 
 
     // Key files
     var staticResourceDir = path.join('server', 'force-app', 'main', 'default', 'staticresources')
