@@ -41,7 +41,6 @@ class Notification: Decodable {
     var seen: Bool
     var image = UIImage(named: "profileDefault")!
 
-    private var imageCancellable: AnyCancellable?
     private var cancellableSet: Set<AnyCancellable> = []
 
     private enum CodingKeys: String, CodingKey {
