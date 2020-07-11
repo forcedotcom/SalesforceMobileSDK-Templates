@@ -22,7 +22,6 @@
  WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #import "RootViewController.h"
 
 #import <SalesforceSDKCommon/SFLogger.h>
@@ -48,7 +47,6 @@
     self.dataRows = nil;
 }
 
-
 #pragma mark - View lifecycle
 - (void)viewDidLoad
 {
@@ -57,13 +55,13 @@
     
     //Here we use a query that should work on either Force.com or Database.com
     SFRestRequest *request = [[SFRestAPI sharedInstance] requestForQuery:@"SELECT Name FROM Contact LIMIT 10" apiVersion:kSFRestDefaultAPIVersion];
-    [[SFRestAPI sharedInstance] send:request delegate:self];
+    [[SFRestAPI sharedInstance] send:request requestDelegate:self];
 }
 
-#pragma mark - SFRestDelegate
+#pragma mark - SFRestRequestDelegate
 
-- (void)request:(SFRestRequest *)request didLoadResponse:(id)jsonResponse rawResponse:(NSURLResponse *)rawResponse {
-    NSArray *records = jsonResponse[@"records"];
+- (void)request:(SFRestRequest *)request didSucceed:(id)dataResponse rawResponse:(NSURLResponse *)rawResponse {
+    NSArray *records = dataResponse[@"records"];
     [SFLogger d:[self class]
          format:@"request:didLoadResponse: #records: %lu", (unsigned long)records.count];
     self.dataRows = records;
@@ -72,22 +70,10 @@
     });
 }
 
-
-- (void)request:(SFRestRequest*)request didFailLoadWithError:(NSError*)error rawResponse:(NSURLResponse *)rawResponse {
-    NSLog(@"request:didFailLoadWithError: %@", error);
+- (void)request:(SFRestRequest *)request didFail:(id)dataResponse rawResponse:(NSURLResponse *)rawResponse error:(NSError *)error {
+    NSLog(@"request:didFail: %@", error);
     // Add your failed error handling here
 }
-
-- (void)requestDidCancelLoad:(SFRestRequest *)request {
-    NSLog(@"requestDidCancelLoad: %@", request);
-    // Add your failed error handling here
-}
-
-- (void)requestDidTimeout:(SFRestRequest *)request {
-    NSLog(@"requestDidTimeout: %@", request);
-    // Add your failed error handling here
-}
-
 
 #pragma mark - Table view data source
 
