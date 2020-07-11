@@ -18,7 +18,7 @@
         "eslint": "^5.1.0",
         "react": "16.11.0",
         "react-native": "0.62.2",
-        "react-native-force": "git+https://github.com/wmathurin/SalesforceMobileSDK-ReactNative.git#dev",
+        "react-native-force": "git+https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#dev",
         "react-native-gesture-handler": "^1.6.1",
         "react-native-reanimated": "^1.8.0",
         "react-native-safe-area-context": "^0.7.3",
