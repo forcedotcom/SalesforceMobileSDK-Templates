@@ -89,9 +89,9 @@ class Notification: Decodable {
                 if case .failure(let error) = completion {
                     SalesforceLogger.e(Notification.self, message: "Error getting image: \(error)")
                 }
-            }, receiveValue: { response in
+            }, receiveValue: { [weak self] response in
                 if let image = UIImage(data: response.asData()) {
-                    self.image = image
+                    self?.image = image
                 } else {
                     SalesforceLogger.e(Notification.self, message: "Unable create UIImage from response")
                 }
@@ -135,11 +135,13 @@ class NotificationListModel: ObservableObject {
     }
 
     func markNotificationsSeen() {
+        var notificationIds = [String]()
         for index in 0 ..< notifications.count {
-            notifications[index].seen = false
+            if !notifications[index].seen {
+                notificationIds.append(notifications[index].id)
+            }
         }
 
-        let notificationIds = notifications.map({ $0.id })
         if notificationIds.count > 0 {
             let builder = UpdateNotificationsRequestBuilder()
             builder.setSeen(true)
@@ -147,12 +149,40 @@ class NotificationListModel: ObservableObject {
             let request = builder.buildUpdateNotificationsRequest(SFRestDefaultAPIVersion)
 
             RestClient.shared.publisher(for: request)
-                .sink(receiveCompletion: { completion in
-                    if case .failure(let error) = completion {
-                        SalesforceLogger.e(NotificationListModel.self, message: "Error setting notifications seen: \(error)")
+                .sink(receiveCompletion: { [weak self] completion in
+                    switch completion {
+                    case .failure(let error):
+                         SalesforceLogger.e(NotificationListModel.self, message: "Error setting notifications seen: \(error)")
+                    case .finished:
+                        self?.fetchNotifications()
                     }
-                }, receiveValue: {_ in})
+                }, receiveValue: { _ in })
                 .store(in: &cancellableSet)
         }
+    }
+
+    public func markNotificationRead(notificationId: String) {
+        let notificationIndex = notifications.firstIndex { (notification) -> Bool in
+            notification.id == notificationId
+        }
+        guard let index = notificationIndex, !notifications[index].read else {
+           return
+        }
+
+        let builder = UpdateNotificationsRequestBuilder()
+        builder.setRead(true)
+        builder.setNotificationId(notificationId)
+        let request = builder.buildUpdateNotificationsRequest(SFRestDefaultAPIVersion)
+
+        RestClient.shared.publisher(for: request)
+            .sink(receiveCompletion: { [weak self] completion in
+                switch completion {
+                case .failure(let error):
+                     SalesforceLogger.e(NotificationListModel.self, message: "Error setting notification read: \(error)")
+                case .finished:
+                    self?.fetchNotifications()
+                }
+            }, receiveValue: { _ in })
+            .store(in: &cancellableSet)
     }
 }

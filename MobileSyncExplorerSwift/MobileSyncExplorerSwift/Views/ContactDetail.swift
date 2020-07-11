@@ -82,9 +82,11 @@ struct ContactDetailView: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject private var viewModel: ContactDetailViewModel
     @State private var isEditing: Bool = false
+    private var onAppearAction: () -> Void = {}
 
-    init(contactId: String, sObjectDataManager: SObjectDataManager) {
+    init(contactId: String, sObjectDataManager: SObjectDataManager, onAppear: @escaping () -> Void) {
         self.viewModel = ContactDetailViewModel(contactId: contactId, sObjectDataManager: sObjectDataManager)
+        self.onAppearAction = onAppear
     }
 
     init(contact: ContactSObjectData?, sObjectDataManager: SObjectDataManager) {
@@ -106,6 +108,8 @@ struct ContactDetailView: View {
                 self.viewModel.deleteButtonTapped()
                 self.presentationMode.wrappedValue.dismiss()
             }
+        }.onAppear {
+            self.onAppearAction()
         }
         .navigationBarTitle(Text(viewModel.title), displayMode: .inline)
         .navigationBarItems(leading:
