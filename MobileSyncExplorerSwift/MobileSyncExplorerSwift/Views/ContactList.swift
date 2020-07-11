@@ -58,7 +58,7 @@ struct ContactListView: View {
             .navigationBarItems(trailing: NavBarButtons(viewModel: viewModel, notificationModel: notificationModel))
         }
         .navigationViewStyle(StackNavigationViewStyle())
-        .onAppear() {
+        .onAppear {
             self.notificationModel.fetchNotifications()
         }
     }

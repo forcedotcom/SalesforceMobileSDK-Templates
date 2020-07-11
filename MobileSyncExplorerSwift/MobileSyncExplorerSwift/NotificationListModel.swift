@@ -21,10 +21,10 @@ class Notification: Decodable {
     var read: Bool
     var seen: Bool
     var image = UIImage(named: "ProfileDefault")!
-    
+
     private var imageCancellable: AnyCancellable?
     private var cancellableSet: Set<AnyCancellable> = []
-    
+
     private enum CodingKeys: String, CodingKey {
         case id = "id"
         case title = "messageTitle"
@@ -35,7 +35,7 @@ class Notification: Decodable {
         case targetId = "target"
         case lastModified = "lastModified"
     }
-    
+
     private static let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
@@ -52,7 +52,7 @@ class Notification: Decodable {
         self.targetId = try container.decode(String.self, forKey: .targetId)
         self.read = try container.decode(Bool.self, forKey: .read)
         self.seen = try container.decode(Bool.self, forKey: .seen)
-        
+
         let dateString = try container.decode(String.self, forKey: .lastModified)
         if let date = FormatUtils.getDateFromIsoDateString(dateString) {
             self.prettyDate = Notification.dateFormatter.string(from: date)
@@ -89,17 +89,17 @@ class NotificationListModel: ObservableObject {
     @Published var notifications: [Notification] = []
     @Published var image: UIImage?
     private var cancellableSet: Set<AnyCancellable> = []
-    
+
     func unreadCount() -> Int {
         return notifications.filter { !$0.read }.count
     }
-    
+
     func fetchNotifications() {
         let builder = FetchNotificationsRequestBuilder.init()
         builder.setBefore(Date())
-        builder.setSize(5);
+        builder.setSize(5)
         let request = builder.buildFetchNotificationsRequest(SFRestDefaultAPIVersion)
-        
+
         RestClient.shared.publisher(for: request)
             .receive(on: RunLoop.main)
             .tryMap { $0.asData() }
@@ -119,14 +119,14 @@ class NotificationListModel: ObservableObject {
         for index in 0 ..< notifications.count {
             notifications[index].seen = false
         }
-        
+
         let notificationIds = notifications.map({ $0.id })
         if notificationIds.count > 0 {
             let builder = UpdateNotificationsRequestBuilder()
             builder.setSeen(true)
             builder.setNotificationIds(notificationIds)
             let request = builder.buildUpdateNotificationsRequest(SFRestDefaultAPIVersion)
-            
+
             RestClient.shared.publisher(for: request)
                 .sink(receiveCompletion: { completion in
                     if case .failure(let error) = completion {

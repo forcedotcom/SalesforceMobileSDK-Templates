@@ -30,7 +30,7 @@ import SwiftUI
 struct NotificationList: View {
     @ObservedObject var model: NotificationListModel
     var sObjectDataManager: SObjectDataManager
-    
+
     var body: some View {
         VStack {
             if model.notifications.count > 0 {
@@ -46,7 +46,6 @@ struct NotificationList: View {
     }
 }
 
-
 struct ListView: View {
     @ObservedObject var model: NotificationListModel
     var sObjectDataManager: SObjectDataManager
@@ -54,17 +53,31 @@ struct ListView: View {
     var body: some View {
         List {
             ForEach(model.notifications, id: \.id) { notification in
-                NavigationLink(destination: ContactDetailView(contactId: notification.targetId, sObjectDataManager: self.sObjectDataManager)) {
-                    HStack {
-                        Image(uiImage: notification.image).resizable().frame(width: 40, height: 40, alignment: .trailing)
-                        VStack(alignment: .leading){
-                            Text(notification.title).bold()
-                            Text(notification.body).lineLimit(10).fixedSize(horizontal: false, vertical: true)
-                            Text(notification.prettyDate).font(.subheadline).foregroundColor(.secondaryLabelText)
+                VStack {
+                    if notification.targetId.starts(with: "003") { // Only contacts are tappable
+                        NavigationLink(destination: ContactDetailView(contactId: notification.targetId, sObjectDataManager: self.sObjectDataManager)) {
+                            NotificationCell(notification: notification)
                         }
+                    } else {
+                        NotificationCell(notification: notification)
                     }
                 }
                 .listRowBackground(notification.read ? Color.clear : Color.unreadNotificationBackground)
+            }
+        }
+    }
+}
+
+struct NotificationCell: View {
+    var notification: Notification
+
+    var body: some View {
+        HStack {
+            Image(uiImage: notification.image).resizable().frame(width: 40, height: 40, alignment: .trailing)
+            VStack(alignment: .leading) {
+                Text(notification.title).bold()
+                Text(notification.body).lineLimit(10).fixedSize(horizontal: false, vertical: true)
+                Text(notification.prettyDate).font(.subheadline).foregroundColor(.secondaryLabelText)
             }
         }
     }

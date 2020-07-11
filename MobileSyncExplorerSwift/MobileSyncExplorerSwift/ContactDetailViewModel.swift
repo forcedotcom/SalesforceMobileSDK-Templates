@@ -32,30 +32,30 @@ class ContactDetailViewModel: ObservableObject {
     var isNewContact: Bool = false
     var title: String
     private var sObjectDataManager: SObjectDataManager
-    
+
     init(contactId: String, sObjectDataManager: SObjectDataManager) {
         self.sObjectDataManager = sObjectDataManager
         self._contact = Published(initialValue: ContactSObjectData())
         self.title = "Loading contact"
         loadContact(id: contactId)
     }
-    
+
     init(contact: ContactSObjectData?, sObjectDataManager: SObjectDataManager) {
         self.sObjectDataManager = sObjectDataManager
-        if let c = contact {
-            self.title = ContactHelper.nameStringFromContact(c)
-            self._contact = Published(initialValue: c)
+        if let contact = contact {
+            self.title = ContactHelper.nameStringFromContact(contact)
+            self._contact = Published(initialValue: contact)
         } else {
             self.title = "New Contact"
             self.isNewContact = true
             self._contact = Published(initialValue: ContactSObjectData())
         }
     }
-    
+
     func isLocallyDeleted() -> Bool {
         return SObjectDataManager.dataLocallyDeleted(contact)
     }
-    
+
     func loadContact(id: String) {
         sObjectDataManager.fetchContact(id: id) { contact in
             if let contact = contact {
@@ -66,11 +66,11 @@ class ContactDetailViewModel: ObservableObject {
             }
         }
     }
-    
+
     func deleteButtonTitle() -> String {
         return isLocallyDeleted() ? "Undelete Contact" : "Delete Contact"
     }
-    
+
     func deleteButtonTapped() {
         if isLocallyDeleted() {
             sObjectDataManager.undeleteLocalData(contact)
@@ -78,7 +78,7 @@ class ContactDetailViewModel: ObservableObject {
             sObjectDataManager.deleteLocalData(contact)
         }
     }
-    
+
     func saveButtonTapped() {
         if self.isNewContact {
             sObjectDataManager.createLocalData(contact)
