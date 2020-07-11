@@ -104,7 +104,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.salesforce.reactnativetemplate"
+        applicationId "com.salesforce.reactnativedeferredtemplate"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

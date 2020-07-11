@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.salesforce.reactnativetemplate;
+package com.salesforce.reactnativedeferredtemplate;
 
 import com.salesforce.androidsdk.reactnative.ui.SalesforceReactActivity;
 
@@ -46,7 +46,7 @@ public class MainActivity extends SalesforceReactActivity {
 	 */
 	@Override
 	protected String getMainComponentName() {
-		return "ReactNativeTemplate";
+		return "ReactNativeDeferredTemplate";
 	}
 }
 

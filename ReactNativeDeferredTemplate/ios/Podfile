@@ -2,8 +2,8 @@ platform :ios, '12.2'
 
 use_frameworks!
 
-project 'ReactNativeTemplate.xcodeproj'
-target 'ReactNativeTemplate' do
+project 'ReactNativeDeferredTemplate.xcodeproj'
+target 'ReactNativeDeferredTemplate' do
 
 source 'https://cdn.cocoapods.org/'
 

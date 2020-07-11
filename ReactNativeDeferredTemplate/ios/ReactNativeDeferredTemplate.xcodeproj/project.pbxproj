@@ -13,24 +13,24 @@
 		B7168FBE1FACC7EB00A48DB5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7168FBD1FACC7EB00A48DB5 /* LaunchScreen.storyboard */; };
 		B77BD8AF2113632C0036B284 /* bootconfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = B77BD8AE2113632C0036B284 /* bootconfig.plist */; };
 		CEA8CA061F071C3300448B51 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEA8CA051F071C3300448B51 /* Images.xcassets */; };
-		F5912893D1259DD728C3911A /* Pods_ReactNativeTemplate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8C3F430144BCD949E2D63D5 /* Pods_ReactNativeTemplate.framework */; };
+		F5912893D1259DD728C3911A /* Pods_ReactNativeDeferredTemplate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8C3F430144BCD949E2D63D5 /* Pods_ReactNativeDeferredTemplate.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
-		0D8CDE8158AC70656CC3EE20 /* Pods-ReactNativeTemplate.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeTemplate.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ReactNativeTemplate/Pods-ReactNativeTemplate.debug.xcconfig"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* ReactNativeTemplate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReactNativeTemplate.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = ReactNativeTemplate/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = ReactNativeTemplate/AppDelegate.m; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ReactNativeTemplate/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ReactNativeTemplate/main.m; sourceTree = "<group>"; };
-		4F3AFF3D1DC2C79E006FF6B0 /* InitialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InitialViewController.h; path = ReactNativeTemplate/InitialViewController.h; sourceTree = "<group>"; };
-		4F3AFF3E1DC2C79E006FF6B0 /* InitialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InitialViewController.m; path = ReactNativeTemplate/InitialViewController.m; sourceTree = "<group>"; };
-		4FF12F8E1DCA93E2004D9EF9 /* ReactNativeTemplate.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = ReactNativeTemplate.entitlements; path = ReactNativeTemplate/ReactNativeTemplate.entitlements; sourceTree = "<group>"; };
-		A8C3F430144BCD949E2D63D5 /* Pods_ReactNativeTemplate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ReactNativeTemplate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		AE79D28E6E57F5B77FA24716 /* Pods-ReactNativeTemplate.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeTemplate.release.xcconfig"; path = "Pods/Target Support Files/Pods-ReactNativeTemplate/Pods-ReactNativeTemplate.release.xcconfig"; sourceTree = "<group>"; };
+		0D8CDE8158AC70656CC3EE20 /* Pods-ReactNativeDeferredTemplate.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeDeferredTemplate.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ReactNativeDeferredTemplate/Pods-ReactNativeDeferredTemplate.debug.xcconfig"; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* ReactNativeDeferredTemplate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReactNativeDeferredTemplate.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = ReactNativeDeferredTemplate/AppDelegate.h; sourceTree = "<group>"; };
+		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = ReactNativeDeferredTemplate/AppDelegate.m; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ReactNativeDeferredTemplate/Info.plist; sourceTree = "<group>"; };
+		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ReactNativeDeferredTemplate/main.m; sourceTree = "<group>"; };
+		4F3AFF3D1DC2C79E006FF6B0 /* InitialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InitialViewController.h; path = ReactNativeDeferredTemplate/InitialViewController.h; sourceTree = "<group>"; };
+		4F3AFF3E1DC2C79E006FF6B0 /* InitialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InitialViewController.m; path = ReactNativeDeferredTemplate/InitialViewController.m; sourceTree = "<group>"; };
+		4FF12F8E1DCA93E2004D9EF9 /* ReactNativeDeferredTemplate.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = ReactNativeDeferredTemplate.entitlements; path = ReactNativeDeferredTemplate/ReactNativeDeferredTemplate.entitlements; sourceTree = "<group>"; };
+		A8C3F430144BCD949E2D63D5 /* Pods_ReactNativeDeferredTemplate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ReactNativeDeferredTemplate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AE79D28E6E57F5B77FA24716 /* Pods-ReactNativeDeferredTemplate.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeDeferredTemplate.release.xcconfig"; path = "Pods/Target Support Files/Pods-ReactNativeDeferredTemplate/Pods-ReactNativeDeferredTemplate.release.xcconfig"; sourceTree = "<group>"; };
 		B7168FBD1FACC7EB00A48DB5 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = "../mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/LaunchScreen.storyboard"; sourceTree = "<group>"; };
-		B77BD8AE2113632C0036B284 /* bootconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = bootconfig.plist; path = ReactNativeTemplate/bootconfig.plist; sourceTree = "<group>"; };
+		B77BD8AE2113632C0036B284 /* bootconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = bootconfig.plist; path = ReactNativeDeferredTemplate/bootconfig.plist; sourceTree = "<group>"; };
 		CEA8CA051F071C3300448B51 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "../mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/Images.xcassets"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -39,21 +39,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F5912893D1259DD728C3911A /* Pods_ReactNativeTemplate.framework in Frameworks */,
+				F5912893D1259DD728C3911A /* Pods_ReactNativeDeferredTemplate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13B07FAE1A68108700A75B9A /* ReactNativeTemplate */ = {
+		13B07FAE1A68108700A75B9A /* ReactNativeDeferredTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				4FF12F8E1DCA93E2004D9EF9 /* ReactNativeTemplate.entitlements */,
+				4FF12F8E1DCA93E2004D9EF9 /* ReactNativeDeferredTemplate.entitlements */,
 				4F3AFF421DC2C856006FF6B0 /* Classes */,
 				4F3AFF431DC2C869006FF6B0 /* Supporting Files */,
 			);
-			name = ReactNativeTemplate;
+			name = ReactNativeDeferredTemplate;
 			sourceTree = "<group>";
 		};
 		4F3AFF421DC2C856006FF6B0 /* Classes */ = {
@@ -83,8 +83,8 @@
 		6473DB45A273CC31E19C4F9A /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				0D8CDE8158AC70656CC3EE20 /* Pods-ReactNativeTemplate.debug.xcconfig */,
-				AE79D28E6E57F5B77FA24716 /* Pods-ReactNativeTemplate.release.xcconfig */,
+				0D8CDE8158AC70656CC3EE20 /* Pods-ReactNativeDeferredTemplate.debug.xcconfig */,
+				AE79D28E6E57F5B77FA24716 /* Pods-ReactNativeDeferredTemplate.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -92,7 +92,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* ReactNativeTemplate */,
+				13B07FAE1A68108700A75B9A /* ReactNativeDeferredTemplate */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				6473DB45A273CC31E19C4F9A /* Pods */,
 				C73512AABD4BDBC0734E686B /* Frameworks */,
@@ -104,7 +104,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* ReactNativeTemplate.app */,
+				13B07F961A680F5B00A75B9A /* ReactNativeDeferredTemplate.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -112,7 +112,7 @@
 		C73512AABD4BDBC0734E686B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A8C3F430144BCD949E2D63D5 /* Pods_ReactNativeTemplate.framework */,
+				A8C3F430144BCD949E2D63D5 /* Pods_ReactNativeDeferredTemplate.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -120,9 +120,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* ReactNativeTemplate */ = {
+		13B07F861A680F5B00A75B9A /* ReactNativeDeferredTemplate */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "ReactNativeTemplate" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "ReactNativeDeferredTemplate" */;
 			buildPhases = (
 				0D1647048E9655B7745B0762 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
@@ -135,9 +135,9 @@
 			);
 			dependencies = (
 			);
-			name = ReactNativeTemplate;
+			name = ReactNativeDeferredTemplate;
 			productName = "Hello World";
-			productReference = 13B07F961A680F5B00A75B9A /* ReactNativeTemplate.app */;
+			productReference = 13B07F961A680F5B00A75B9A /* ReactNativeDeferredTemplate.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -159,7 +159,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "ReactNativeTemplate" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "ReactNativeDeferredTemplate" */;
 			compatibilityVersion = "Xcode 10.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -172,7 +172,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* ReactNativeTemplate */,
+				13B07F861A680F5B00A75B9A /* ReactNativeDeferredTemplate */,
 			);
 		};
 /* End PBXProject section */
@@ -216,7 +216,7 @@
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-ReactNativeTemplate-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-ReactNativeDeferredTemplate-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -229,15 +229,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ReactNativeTemplate/Pods-ReactNativeTemplate-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-ReactNativeDeferredTemplate/Pods-ReactNativeDeferredTemplate-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ReactNativeTemplate/Pods-ReactNativeTemplate-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-ReactNativeDeferredTemplate/Pods-ReactNativeDeferredTemplate-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ReactNativeTemplate/Pods-ReactNativeTemplate-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ReactNativeDeferredTemplate/Pods-ReactNativeDeferredTemplate-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -258,11 +258,11 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0D8CDE8158AC70656CC3EE20 /* Pods-ReactNativeTemplate.debug.xcconfig */;
+			baseConfigurationReference = 0D8CDE8158AC70656CC3EE20 /* Pods-ReactNativeDeferredTemplate.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = ReactNativeTemplate/ReactNativeTemplate.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ReactNativeDeferredTemplate/ReactNativeDeferredTemplate.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				HEADER_SEARCH_PATHS = (
@@ -270,7 +270,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
-				INFOPLIST_FILE = ReactNativeTemplate/Info.plist;
+				INFOPLIST_FILE = ReactNativeDeferredTemplate/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -281,8 +281,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.reactnativetemplate.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = ReactNativeTemplate;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.reactnativedeferredtemplate.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = ReactNativeDeferredTemplate;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -292,18 +292,18 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AE79D28E6E57F5B77FA24716 /* Pods-ReactNativeTemplate.release.xcconfig */;
+			baseConfigurationReference = AE79D28E6E57F5B77FA24716 /* Pods-ReactNativeDeferredTemplate.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = ReactNativeTemplate/ReactNativeTemplate.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ReactNativeDeferredTemplate/ReactNativeDeferredTemplate.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
-				INFOPLIST_FILE = ReactNativeTemplate/Info.plist;
+				INFOPLIST_FILE = ReactNativeDeferredTemplate/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -314,8 +314,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.reactnativetemplate.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = ReactNativeTemplate;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.reactnativedeferredtemplate.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = ReactNativeDeferredTemplate;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -436,7 +436,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "ReactNativeTemplate" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "ReactNativeDeferredTemplate" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -445,7 +445,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "ReactNativeTemplate" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "ReactNativeDeferredTemplate" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

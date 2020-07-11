@@ -28,4 +28,4 @@ import { AppRegistry } from 'react-native';
 import { App } from './app.js';
 
 
-AppRegistry.registerComponent('ReactNativeTemplate', () => App);
+AppRegistry.registerComponent('ReactNativeDeferredTemplate', () => App);
