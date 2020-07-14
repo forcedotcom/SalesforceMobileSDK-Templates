@@ -54,6 +54,25 @@ extension Dictionary {
  
 }
 
+extension Optional where Wrapped == String {
+    var _bound: String? {
+        get {
+            return self
+        }
+        set {
+            self = newValue
+        }
+    }
+    public var bound: String {
+        get {
+            return _bound ?? ""
+        }
+        set {
+            _bound = newValue.isEmpty ? nil : newValue
+        }
+    }
+}
+
 class SObjectData  {
     
     var soupDict = [String: Any]()
@@ -241,7 +260,32 @@ class SObjectDataManager: ObservableObject {
             .store(in: &cancellableSet)
         loadLocalData()
     }
-    
+
+    func fetchContact(id: String, completion: @escaping (ContactSObjectData?) -> ()) {
+        let request = RestClient.shared.request(forQuery: "SELECT Id, FirstName, LastName, Title, MobilePhone, Email, Department, HomePhone FROM Contact WHERE Id = '\(id)'", apiVersion: nil)
+        RestClient.shared.publisher(for: request)
+            .receive(on: RunLoop.main)
+            .sink(receiveCompletion: { _ in
+            }, receiveValue: { [weak self] response in
+                do {
+                    guard let json = try response.asJson() as? [String: Any],
+                    let records = json["records"] as? [[String: Any]],
+                    records.count > 0 else {
+                        completion(nil)
+                        return
+                    }
+                    try self?.store.upsert(entries: records, forSoupNamed: "contacts", withExternalIdPath: "Id")
+                    self?.loadLocalData() // Keep list in sync
+                } catch {
+                    MobileSyncLogger.e(SObjectDataManager.self, message: "Contact error: \(error)")
+                    completion(ContactSObjectData.init(soupDict: self?.localRecord(id: id)))
+                }
+                let localRecord = ContactSObjectData.init(soupDict: self?.localRecord(id: id))
+                completion(localRecord)
+            })
+             .store(in: &cancellableSet)
+    }
+
     func loadLocalData() {
         let sobjectsQuerySpec = QuerySpec.buildAllQuerySpec(soupName: dataSpec.soupName, orderPath: dataSpec.orderByFieldName, order: .ascending, pageSize: kMaxQueryPageSize)
         store.publisher(for: sobjectsQuerySpec.smartSql)
@@ -416,5 +460,20 @@ class SObjectDataManager: ObservableObject {
         sync?.status = .new
         sync?.totalSize = -1
         sync?.save(store)
+    }
+
+    private func localRecord(id: String) -> [String: Any]? {
+        let queryResult = store.query("select {\(dataSpec.soupName):_soup} from {\(dataSpec.soupName)} where {\(dataSpec.soupName):Id} = '\(id)'")
+        switch queryResult {
+        case .success(let results):
+            guard let arr = results as? [[Any]], let soup = arr.first?.first as? [String: Any] else {
+                MobileSyncLogger.e(SObjectDataManager.self, message: "Unable to parse local record")
+                return nil
+            }
+            return soup
+        case .failure(let error):
+            MobileSyncLogger.e(SObjectDataManager.self, message: "Error getting local record: \(error)")
+            return nil
+        }
     }
 }

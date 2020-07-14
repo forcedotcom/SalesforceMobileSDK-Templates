@@ -30,6 +30,7 @@ import MobileSync
 
 struct ContactListView: View {
     @ObservedObject private var viewModel = ContactListViewModel()
+    private var notificationModel = NotificationListModel()
     @State private var searchTerm: String = ""
 
     var body: some View {
@@ -54,9 +55,12 @@ struct ContactListView: View {
                 }
             }
             .navigationBarTitle("MobileSync Explorer")
-            .navigationBarItems(trailing: NavBarButtons(viewModel: viewModel))
+            .navigationBarItems(trailing: NavBarButtons(viewModel: viewModel, notificationModel: notificationModel))
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        .onAppear {
+            self.notificationModel.fetchNotifications()
+        }
     }
 }
 
@@ -144,6 +148,7 @@ struct NavBarButtons: View {
     @State private var newContactPresented = false
     @State private var actionSheetPresented = false
     @State private var logoutAlertPresented = false
+    @ObservedObject var notificationModel: NotificationListModel
 
     var body: some View {
         HStack {
@@ -201,6 +206,7 @@ struct NavBarButtons: View {
                     SalesforceUserManagementViewControllerWrapper()
                 }
             }
+            NotificationBell(notificationModel: notificationModel, sObjectDataManager: self.viewModel.sObjectDataManager)
         }.alert(isPresented: $logoutAlertPresented, content: {
             Alert(title: Text("Are you sure you want to log out?"),
                   primaryButton: .destructive(Text("Logout"), action: {
@@ -208,6 +214,28 @@ struct NavBarButtons: View {
                   }),
                   secondaryButton: .cancel())
         })
+    }
+}
+
+struct NotificationBell: View {
+    @ObservedObject var notificationModel: NotificationListModel
+    var sObjectDataManager: SObjectDataManager
+
+    var body: some View {
+        NavigationLink(destination: NotificationList(model: notificationModel, sObjectDataManager: sObjectDataManager)) {
+            ZStack {
+                Image(systemName: "bell.fill").frame(width: 20, height: 30, alignment: .center)
+                if notificationModel.unreadCount() > 0 {
+                    ZStack {
+                        Circle().foregroundColor(.red)
+                        Text("\(notificationModel.unreadCount())").foregroundColor(.white).font(Font.system(size: 12))
+                    }
+                    .frame(width: 12, height: 12)
+                    .position(x: 15, y: 10)
+                }
+              }
+              .frame(width: 20, height: 30)
+        }
     }
 }
 
