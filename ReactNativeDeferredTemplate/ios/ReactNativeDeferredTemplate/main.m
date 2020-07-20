@@ -1,10 +1,5 @@
 /*
- UIFont+helper.swift
- MobileSyncExplorerSwift
-
- Created by Nicholas McDonald on 12/6/17.
-
- Copyright (c) 2018-present, salesforce.com, inc. All rights reserved.
+ Copyright (c) 2020-present, salesforce.com, inc. All rights reserved.
  
  Redistribution and use of this software in source and binary forms, with or without modification,
  are permitted provided that the following conditions are met:
@@ -27,18 +22,12 @@
  WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import UIKit
+#import <UIKit/UIKit.h>
 
-extension UIFont {
-    class func appRegularFont(_ size: CGFloat) -> UIFont? {
-        return UIFont.systemFont(ofSize: size, weight: .regular)
-    }
-    
-    class func appBoldFont(_ size: CGFloat) -> UIFont? {
-       return UIFont.systemFont(ofSize: size, weight: .bold)
-    }
-    
-    class func appLightFont(_ size: CGFloat) -> UIFont? {
-         return UIFont.systemFont(ofSize: size, weight: .light)
+int main(int argc, char *argv[])
+{
+    @autoreleasepool {
+        int retVal = UIApplicationMain(argc, argv, @"SFApplication", @"AppDelegate");
+        return retVal;
     }
 }

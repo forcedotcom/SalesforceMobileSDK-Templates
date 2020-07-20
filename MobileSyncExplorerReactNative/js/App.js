@@ -25,26 +25,28 @@
  */
 
 import React from 'react';
-import { createStackNavigator } from 'react-navigation';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import styles from './Styles';
 import SearchScreen from './SearchScreen';
 import ContactScreen from './ContactScreen';
 
-export default createStackNavigator(
-    {
-        Contacts: {
-            screen: SearchScreen
-        },
-        Contact: {
-            screen: ContactScreen
-        }
-    },
-    {
-        initialRouteName: 'Contacts',
-        navigationOptions: {
-            headerStyle: styles.navBar,
-            headerTitleStyle: styles.navBarTitleText,
-            tabBarVisible: false
-        }
-    }
-);
+const Stack = createStackNavigator();
+
+export default function() {
+    return (
+        <NavigationContainer>
+            <Stack.Navigator
+                initialRouteName="Contacts"
+                screenOptions={{
+                    headerStyle: styles.navBar,
+                    headerTitleStyle: styles.navBarTitleText,
+                    tabBarVisible: false
+                }}
+            >
+            <Stack.Screen name="Contacts" component={SearchScreen} />
+            <Stack.Screen name="Contact" component={ContactScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+    );
+}

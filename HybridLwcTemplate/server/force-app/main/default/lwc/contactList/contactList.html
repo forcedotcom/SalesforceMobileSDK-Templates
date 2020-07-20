@@ -1,0 +1,23 @@
+<template>
+	<lightning-card title="Contacts" icon-name="standard:contact">
+		<div class="slds-card__body_inner">
+			<!-- Start contact list -->
+			<template if:true={contacts}>
+				<ul class="slds-has-dividers_bottom-space">
+					<template for:each={contacts} for:item="contact">
+						<li class="slds-item" key={contact.Id} >
+							<c-contact-list-item contact={contact}></c-contact-list-item>
+						</li>
+					</template>	
+				</ul>
+			</template>
+			<!-- End contact list -->
+			<!-- Data failed to load -->
+			<template if:true={error}>
+				<div class="slds-text-color_error">
+					{error}
+				</div>
+			</template>
+		</div>
+	</lightning-card>
+</template>

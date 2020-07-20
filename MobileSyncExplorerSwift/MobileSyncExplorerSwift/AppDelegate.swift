@@ -25,6 +25,7 @@
 import Foundation
 import UIKit
 import MobileSync
+import SwiftUI
 
 class AppDelegate : UIResponder, UIApplicationDelegate {
     var window: UIWindow?
@@ -61,7 +62,20 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
         return true
     }
     
-    func registerForRemotePushNotifications() {        PushNotificationManager.sharedInstance().registerForRemoteNotifications();
+    func registerForRemotePushNotifications() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
+            if granted {
+                DispatchQueue.main.async {
+                    PushNotificationManager.sharedInstance().registerForRemoteNotifications()
+                }
+            } else {
+                SalesforceLogger.d(AppDelegate.self, message: "Push notification authorization denied")
+            }
+
+            if let error = error {
+                SalesforceLogger.e(AppDelegate.self, message: "Push notification authorization error: \(error)")
+            }
+        }
     }
     
     func customizeLoginView() {
@@ -107,7 +121,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
  : Any] = [:]) -> Bool {
         // Uncomment following block to enable IDP Login flow
 //        return self.enableIDPLoginFlowForURL(url, options: options)
-        return false;
+        return false
     }
     
     func enableIDPLoginFlowForURL(_ url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
@@ -128,9 +142,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
     }
     
     func setupRootViewController() {
-        let rootVC = RootViewController()
-        let navVC = UINavigationController(rootViewController: rootVC)
-        self.window?.rootViewController = navVC
+        self.window?.rootViewController = UIHostingController(rootView: ContactListView())
     }
     
     func resetViewState(_ postResetBlock: @escaping () -> ()) {

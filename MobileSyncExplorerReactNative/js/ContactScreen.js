@@ -43,27 +43,9 @@ import { Card, Button } from 'react-native-elements';
 // State: contact
 // Props: contact
 class ContactScreen extends React.Component {
-    static navigationOptions = ({ navigation }) => {
-        const { params = {} } = navigation.state;
-        var deleteUndeleteIconName = 'delete';
-        if (params.contact.__locally_deleted__) {
-            deleteUndeleteIconName = 'delete-restore';
-        } 
-        
-        return {
-            title: 'Contact',
-            headerLeft: (<NavImgButton icon='arrow-back' color='white' onPress={() => params.onBack()} />),
-            headerRight: (
-                    <View style={styles.navButtonsGroup}>
-                        <NavImgButton icon={deleteUndeleteIconName} iconType='material-community' onPress={() => params.onDeleteUndeleteContact()} />
-                    </View>
-            )
-        };
-    }
-
     constructor(props) {
         super(props);
-        this.state = { contact: this.props.navigation.getParam('contact', {}) };
+        this.state = { contact: props.route.params.contact || {} };
         this.onBack = this.onBack.bind(this);
         this.onSave = this.onSave.bind(this);
         this.onChange = this.onChange.bind(this);
@@ -71,10 +53,19 @@ class ContactScreen extends React.Component {
     }
 
     componentDidMount() {
-        this.props.navigation.setParams({
-            onBack: this.onBack,
-            onDeleteUndeleteContact: this.onDeleteUndeleteContact,
-            contact: this.state.contact
+        var deleteUndeleteIconName = 'delete';
+        if (this.state.contact.__locally_deleted__) {
+            deleteUndeleteIconName = 'delete-restore';
+        } 
+        
+        this.props.navigation.setOptions({
+            title: 'Contact',
+            headerLeft: () => (<NavImgButton icon='arrow-back' color='white' onPress={() => this.onBack()} />),
+            headerRight: () => (
+                    <View style={styles.navButtonsGroup}>
+                        <NavImgButton icon={deleteUndeleteIconName} iconType='material-community' onPress={() => this.onDeleteUndeleteContact()} />
+                    </View>
+            )
         });
     }
     

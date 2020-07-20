@@ -54,12 +54,25 @@
     },
     {
 
+        "path": "HybridLwcTemplate",
+        "description": "Basic hybrid application using Lightning Web Components",
+        "appType": "hybrid_lwc",
+        "platforms": ["android", "ios"]
+    },
+    {
+
         "path": "ReactNativeTemplate",
         "description": "Basic React Native application",
         "appType": "react_native",
         "platforms": ["android", "ios"]
     },
+    {
 
+        "path": "ReactNativeDeferredTemplate",
+        "description": "Basic React Native application that uses deferred login",
+        "appType": "react_native",
+        "platforms": ["android", "ios"]
+    },
     {
         "path": "AndroidIDPTemplate",
         "description": "Sample Kotlin Identity Provider application",

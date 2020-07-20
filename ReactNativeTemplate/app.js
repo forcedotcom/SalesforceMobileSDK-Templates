@@ -32,14 +32,11 @@ import {
     FlatList,
 } from 'react-native';
 
-import { createStackNavigator } from "react-navigation";
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import {oauth, net} from 'react-native-force';
 
 class ContactListScreen extends React.Component {
-    static navigationOptions = {
-        title: 'Mobile SDK Sample App'
-    };
-
     constructor(props) {
         super(props);
         this.state = {data: []};
@@ -59,7 +56,7 @@ class ContactListScreen extends React.Component {
 
     fetchData() {
         var that = this;
-        net.query('SELECT Id, Name FROM Contact LIMIT 10',
+        net.query('SELECT Id, Name FROM Contact LIMIT 100',
                   (response) => that.setState({data: response.records})
                  );
     }
@@ -90,8 +87,14 @@ const styles = StyleSheet.create({
     }
 });
 
-export const App = createStackNavigator({
-    Home: {
-        screen: ContactListScreen
-    }
-});
+const Stack = createStackNavigator();
+
+export const App = function() {
+    return (
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen name="Mobile SDK Sample App" component={ContactListScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+    );
+}

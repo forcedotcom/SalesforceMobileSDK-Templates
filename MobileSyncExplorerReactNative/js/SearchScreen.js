@@ -39,21 +39,10 @@ import ContactScreen from './ContactScreen';
 import ContactCell from './ContactCell';
 import storeMgr from './StoreMgr';
 
-class SearchScreen extends React.Component {
-    static navigationOptions = ({ navigation }) => {
-        const { params = {} } = navigation.state;
-        return {
-            title: 'Contacts',
-            headerRight: (
-                    <View style={styles.navButtonsGroup}>
-                    <NavImgButton icon='add' onPress={() => params.onAdd()} />
-                    <NavImgButton icon='cloud-sync' iconType='material-community' onPress={() => params.onSync()} />
-                    <NavImgButton icon='logout' iconType='material-community' onPress={() => params.onLogout()} />
-                    </View>
-            )
-        };
-    }
+// Global sequence number, incremented every time a query is run
+var seq = 0;
 
+class SearchScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -73,10 +62,15 @@ class SearchScreen extends React.Component {
     }
 
     componentDidMount() {
-        this.props.navigation.setParams({
-            onAdd: this.onAdd,
-            onSync: this.onSync,
-            onLogout: this.onLogout
+        this.props.navigation.setOptions({
+            title: 'Contacts',
+            headerRight: () => (
+                    <View style={styles.navButtonsGroup}>
+                    <NavImgButton icon='add' onPress={() => this.onAdd()} />
+                    <NavImgButton icon='cloud-sync' iconType='material-community' onPress={() => this.onSync()} />
+                    <NavImgButton icon='logout' iconType='material-community' onPress={() => this.onLogout()} />
+                    </View>
+            )
         });
         storeMgr.syncData();
         storeMgr.addStoreChangeListener(this.refresh);
@@ -161,14 +155,19 @@ class SearchScreen extends React.Component {
 
         const that = this;
         storeMgr.searchContacts(
+            ++seq,
             query,
-            (contacts, currentStoreQuery) => {
-                that.setState({
-                    isLoading: false,
-                    filter: query,
-                    data: contacts,
-                    queryNumber: currentStoreQuery
-                });
+            (contacts, queryId) => {
+                if (queryId < seq) {
+                    console.log(`IGNORING Response for #${queryId}`);
+                } else {
+                    that.setState({
+                        isLoading: false,
+                        filter: query,
+                        data: contacts,
+                        queryNumber: queryId,
+                    });
+                }
             },
             (error) => {
                 that.setState({
