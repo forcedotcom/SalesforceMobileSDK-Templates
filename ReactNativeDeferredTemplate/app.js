@@ -44,8 +44,21 @@ class ContactListScreen extends React.Component {
     }
 
     componentDidMount() {
-        console.log("componentDidMount called");
+        console.log("componentDidMount called"); 
+        this.updateLoginLogout()         
         this.fetchData();
+    }
+
+    componentDidUpdate() {
+        this.updateLoginLogout()
+    }
+
+    updateLoginLogout() {
+        this.props.navigation.setOptions({
+            headerRight: () => this.state.loggedIn 
+                ? (<Button onPress={() => this.onLogout()} title="Logout"/>)
+                : (<Button onPress={() => this.onLogin()} title="Login"/>)
+        }); 
     }
     
     fetchData() {
@@ -81,11 +94,6 @@ class ContactListScreen extends React.Component {
     }
 
     render() {
-        this.props.navigation.setOptions({
-            headerRight: () => this.state.loggedIn 
-                ? (<Button onPress={() => this.onLogout()} title="Logout"/>)
-                : (<Button onPress={() => this.onLogin()} title="Login"/>)
-        });           
         return (
             <View style={styles.container}>
               <FlatList
