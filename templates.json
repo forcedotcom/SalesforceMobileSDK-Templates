@@ -2,14 +2,7 @@
     {
 
         "path": "iOSNativeSwiftTemplate",
-        "description": "Basic Swift application",
-        "appType": "native_swift",
-        "platforms": ["ios"]
-    },
-    {
-
-        "path": "iOS13NativeSwiftTemplate",
-        "description": "iOS 13 Swift application using MobileSync, SwiftUI and Combine",
+        "description": "Swift application using MobileSync, SwiftUI and Combine",
         "appType": "native_swift",
         "platforms": ["ios"]
     },
