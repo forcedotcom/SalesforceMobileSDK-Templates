@@ -1,0 +1,24 @@
+rootProject.name = 'ReactNativeTypeScriptTemplate'
+include ':react-native-safe-area-context'
+project(':react-native-safe-area-context').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-safe-area-context/android')
+include ':react-native-gesture-handler'
+project(':react-native-gesture-handler').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-gesture-handler/android')
+apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+
+def libsRootDir = new File( settingsDir, '../mobile_sdk/SalesforceMobileSDK-Android/libs' )
+include ':app'
+
+include ':libs:SalesforceAnalytics'
+project( ':libs:SalesforceAnalytics' ).projectDir = new File( libsRootDir, 'SalesforceAnalytics' )
+
+include ':libs:SalesforceSDK'
+project( ':libs:SalesforceSDK' ).projectDir = new File( libsRootDir, 'SalesforceSDK' )
+
+include ':libs:SmartStore'
+project( ':libs:SmartStore' ).projectDir = new File( libsRootDir, 'SmartStore' )
+
+include ':libs:MobileSync'
+project( ':libs:MobileSync' ).projectDir = new File( libsRootDir, 'MobileSync' )
+
+include ':libs:SalesforceReact'
+project( ':libs:SalesforceReact' ).projectDir = new File( libsRootDir, 'SalesforceReact' )
