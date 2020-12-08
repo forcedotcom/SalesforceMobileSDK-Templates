@@ -1,12 +1,22 @@
 #!/usr/bin/env node
 
+function replaceTextInFile(fileName, textInFile, replacementText) {
+    var contents = fs.readFileSync(fileName, 'utf8');
+    var lines = contents.split(/\r*\n/);
+    var result = lines.map(function (line) {
+        return line.replace(textInFile, replacementText);
+    }).join('\n');
+
+    fs.writeFileSync(fileName, result, 'utf8');
+}
+
 var packageJson = require('./package.json')
 var execSync = require('child_process').execSync;
 var path = require('path');
 var fs = require('fs');
 
 console.log('Installing npm dependencies');
-execSync('npm install', {stdio:[0,1,2]});
+execSync('yarn install', {stdio:[0,1,2]});
 
 console.log('Installing sdk dependencies');
 var sdkDependency = 'SalesforceMobileSDK-iOS';
@@ -20,4 +30,6 @@ if (fs.existsSync(targetDir)) {
 }
 
 console.log('Installing pod dependencies');
+// XXX remove following line once RNVectorIcons.podspec is fixed
+replaceTextInFile('./node_modules/react-native-vector-icons/RNVectorIcons.podspec', "s.dependency 'React'", "s.dependency 'React-Core'")
 execSync('pod update', {stdio:[0,1,2], cwd:'ios'});
