@@ -12,34 +12,34 @@
     },
     "dependencies": {
         "@react-native-community/masked-view": "^0.1.10",
-        "@react-navigation/native": "^5.2.1",
-        "@react-navigation/stack": "^5.2.16",
+        "@react-navigation/native": "^5.2.0",
+        "@react-navigation/stack": "^5.2.15",
         "react": "16.13.1",
         "react-native": "0.63.3",
         "react-native-force": "git+https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#dev",
-        "typescript": "^3.9.3",
         "react-native-elements": "^0.19.1",
         "react-native-gesture-handler": "^1.6.1",
         "react-native-reanimated": "^1.8.0",
-        "react-native-safe-area-context": "^0.7.3",
+        "react-native-safe-area-context": "^3.1.8",
         "react-native-screens": "^2.7.0",
         "react-native-vector-icons": "^4.2.0",
         "create-react-class": "^15.6.3"
     },
     "devDependencies": {
-        "rimraf": "2.6.2",
         "@babel/core": "^7.11.1",
         "@babel/runtime": "^7.11.2",
         "@react-native-community/eslint-config": "^1.1.0",
         "@types/jest": "^26.0.15",
         "@types/react": "^17.0.0",
         "@types/react-native": "^0.63.37",
-        "@types/react-test-renderer": "^17.0.0",        
+        "@types/react-test-renderer": "^17.0.0",
         "babel-jest": "^25.1.0",
         "eslint": "^6.5.1",
         "jest": "^25.1.0",
         "metro-react-native-babel-preset": "^0.59.0",
-        "react-test-renderer": "16.13.1"
+        "react-test-renderer": "16.13.1",
+        "rimraf": "2.6.2",
+        "typescript": "^3.9.7"
     },
     "jest": {
         "preset": "react-native"
