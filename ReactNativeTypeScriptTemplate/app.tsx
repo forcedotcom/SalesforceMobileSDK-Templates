@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-present, salesforce.com, inc.
+ * Copyright (c) 2020-present, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -34,10 +34,26 @@ import {
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import {oauth, net} from 'react-native-force';
+import { oauth, net } from 'react-native-force';
 
-class ContactListScreen extends React.Component {
-    constructor(props) {
+interface Response {
+    records: Record[]
+}
+
+interface Record {
+    Id: String,
+    Name: String
+}
+
+interface Props {
+}
+  
+interface State {
+    data : Record[] 
+}
+
+class ContactListScreen extends React.Component<Props, State> {
+    constructor(props:Props) {
         super(props);
         this.state = {data: []};
     }
@@ -57,7 +73,8 @@ class ContactListScreen extends React.Component {
     fetchData() {
         var that = this;
         net.query('SELECT Id, Name FROM Contact LIMIT 100',
-                  (response) => that.setState({data: response.records})
+                  (response:Response) => that.setState({data: response.records}),
+                  (error) => console.log('Failed to querry:' + error)
                  );
     }
 
