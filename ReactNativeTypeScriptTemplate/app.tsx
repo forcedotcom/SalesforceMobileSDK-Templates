@@ -74,7 +74,7 @@ class ContactListScreen extends React.Component<Props, State> {
         var that = this;
         net.query('SELECT Id, Name FROM Contact LIMIT 100',
                   (response:Response) => that.setState({data: response.records}),
-                  (error) => console.log('Failed to querry:' + error)
+                  (error) => console.log('Failed to query:' + error)
                  );
     }
 
