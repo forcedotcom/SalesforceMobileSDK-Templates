@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-present, salesforce.com, inc.
+ * Copyright (c) 2020-present, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -24,35 +24,28 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.salesforce.androidnativetemplate;
+package com.salesforce.ReactNativeTypeScriptTemplate;
 
-import android.app.Application;
+import com.salesforce.androidsdk.reactnative.ui.SalesforceReactActivity;
 
-import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager;
+public class MainActivity extends SalesforceReactActivity {
 
-/**
- * Application class for our application.
- */
-public class MainApplication extends Application {
-
+    /**
+     *
+     * @return true if you want login to happen when application launches
+     *         false otherwise
+     */
 	@Override
-	public void onCreate() {
-		super.onCreate();
-		MobileSyncSDKManager.initNative(getApplicationContext(), MainActivity.class);
+	public boolean shouldAuthenticate() {
+		return true;
+	}
 
-        /*
-         * Uncomment the following line to enable IDP login flow. This will allow the user to
-         * either authenticate using the current app or use a designated IDP app for login.
-         * Replace 'idpAppURIScheme' with the URI scheme of the IDP app meant to be used.
-         */
-		// MobileSyncSDKManager.getInstance().setIDPAppURIScheme(idpAppURIScheme);
-
-		/*
-		 * Un-comment the line below to enable push notifications in this app.
-		 * Replace 'pnInterface' with your implementation of 'PushNotificationInterface'.
-		 * Add your Google package ID in 'bootconfig.xml', as the value
-		 * for the key 'androidPushNotificationClientId'.
-		 */
-		// MobileSyncSDKManager.getInstance().setPushNotificationReceiver(pnInterface);
+	/**
+	 * Returns the name of the main component registered from JavaScript.
+	 * This is used to schedule rendering of the component.
+	 */
+	@Override
+	protected String getMainComponentName() {
+		return "ReactNativeTypeScriptTemplate";
 	}
 }

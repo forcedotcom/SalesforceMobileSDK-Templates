@@ -67,6 +67,13 @@
         "platforms": ["android", "ios"]
     },
     {
+
+        "path": "ReactNativeTypeScriptTemplate",
+        "description": "Basic React Native application written in TypeScript",
+        "appType": "react_native",
+        "platforms": ["android", "ios"]
+    },
+    {
         "path": "AndroidIDPTemplate",
         "description": "Sample Kotlin Identity Provider application",
         "appType": "native_kotlin",
