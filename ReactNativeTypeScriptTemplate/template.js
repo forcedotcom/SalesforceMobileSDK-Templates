@@ -43,7 +43,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
 
         // Values in template
         var templateAppName = 'ReactNativeTypeScriptTemplate';
-        var templatePackageName = 'com.salesforce.ReactNativeTypeScriptTemplate';
+        var templatePackageName = 'com.salesforce.reactnativetypescripttemplate';
         var templateOrganization = 'ReactNativeTypeScriptTemplateOrganizationName';
 
         // Key files
@@ -102,7 +102,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
 
         // Values in template
         var templateAppName = 'ReactNativeTypeScriptTemplate';
-        var templatePackageName = 'com.salesforce.ReactNativeTypeScriptTemplate';
+        var templatePackageName = 'com.salesforce.reactnativetypescripttemplate';
 
         // Key files
         var templatePackageJsonFile = 'package.json';
