@@ -113,8 +113,8 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         var templateAppBuildGradleFile = path.join('android', 'app', 'build.gradle');
         var templateStringsXmlFile = path.join('android', 'app', 'src', 'main', 'res', 'values', 'strings.xml');
         var templateBootconfigFile = path.join('android', 'app', 'src', 'main', 'res', 'values', 'bootconfig.xml');
-        var templateMainActivityFile = path.join('android', 'app', 'src', 'main', 'java', 'com', 'salesforce', 'ReactNativeTypeScriptTemplate', 'MainActivity.java');
-        var templateMainApplicationFile = path.join('android', 'app', 'src', 'main', 'java', 'com', 'salesforce', 'ReactNativeTypeScriptTemplate', 'MainApplication.java');
+        var templateMainActivityFile = path.join('android', 'app', 'src', 'main', 'java', 'com', 'salesforce', 'reactnativetypescripttemplate', 'MainActivity.java');
+        var templateMainApplicationFile = path.join('android', 'app', 'src', 'main', 'java', 'com', 'salesforce', 'reactnativetypescripttemplate', 'MainApplication.java');
 
         //
         // Replace in files
