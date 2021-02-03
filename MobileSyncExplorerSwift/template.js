@@ -77,7 +77,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Return paths of workspace and file with oauth config
     return {
         workspacePath: config.appname + ".xcworkspace",
-        bootconfigFile: path.join(config.appname, 'AppDelegate.swift')
+        bootconfigFile: path.join(config.appname, 'bootconfig.plist')
     };
 }
 
