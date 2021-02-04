@@ -5,9 +5,9 @@ platform :ios, '13.0'
 project 'Authenticator.xcodeproj'
 target 'Authenticator' do
   source 'https://cdn.cocoapods.org/'
-
   use_frameworks!
   use_mobile_sdk!
+  pod 'SwipeCellKit', '2.7.1'
 end
 
 # Comment the following if you do not want the SDK to emit signpost events for instrumentation. Signposts are  enabled for non release version of the app.
