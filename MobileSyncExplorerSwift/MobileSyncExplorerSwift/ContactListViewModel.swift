@@ -39,6 +39,10 @@ struct AlertContent: Identifiable {
     var okayButton = false
 }
 
+let openDetailActivityType = "com.salesforce.explorer.openDetail"
+let openDetailPath = "openDetail"
+let openDetailRecordIdKey = "recordId"
+
 class ContactListViewModel: ObservableObject {
     @Published var alertContent: AlertContent?
     @ObservedObject var sObjectDataManager: SObjectDataManager = SObjectDataManager(dataSpec: ContactSObjectData.dataSpec()!)
@@ -147,6 +151,15 @@ class ContactListViewModel: ObservableObject {
     func stopAction() {
         sObjectDataManager.stopSyncManager()
         updateAlert(info: "\nRequesting sync manager stop")
+    }
+    
+    func itemProvider(contact: ContactSObjectData) -> NSItemProvider {
+        let userActivity = NSUserActivity(activityType: openDetailActivityType)
+        userActivity.title = openDetailPath
+        userActivity.userInfo = [openDetailRecordIdKey: contact.id]
+        let itemProvider = NSItemProvider(object:contact.id as NSString)
+        itemProvider.registerObject(userActivity, visibility: .all)
+        return itemProvider
     }
 
     // MARK: Private

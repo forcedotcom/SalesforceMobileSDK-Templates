@@ -112,6 +112,10 @@ class ContactSObjectData: SObjectData, Identifiable {
         }
     }
     
+    var id: String {
+        return super.nonNullFieldValue(kId) as! String
+    }
+    
     override init(soupDict: [String: Any]?) {
         super.init(soupDict: soupDict)
     }

@@ -28,25 +28,14 @@ import MobileSync
 import SwiftUI
 
 class AppDelegate : UIResponder, UIApplicationDelegate {
-    var window: UIWindow?
     
     override init() {
         super.init()
         MobileSyncSDKManager.initializeSDK()
-        
-        AuthHelper.registerBlock(forCurrentUserChangeNotifications: {
-            self.resetViewState {
-                self.setupRootViewController()
-            }
-        })
-        
     }
     
     // MARK: - App delegate lifecycle
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        self.initializeAppViewState()
-        
         // If you wish to register for push notifications, uncomment the line below.  Note that,
         // if you want to receive push notifications from Salesforce, you will also need to
         // implement the application(application, didRegisterForRemoteNotificationsWithDeviceToken) method (below).
@@ -54,11 +43,8 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
 
         //Uncomment the code below to see how you can customize the color, textcolor,
         //font and fontsize of the navigation bar
-//        self.customizeLoginView()
-        AuthHelper.loginIfRequired {
-            self.setupRootViewController()
-        }
-        
+        //self.customizeLoginView()
+
         return true
     }
     
@@ -112,7 +98,6 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
         }
     }
     
-    
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error ) {
         // Respond to any push notification registration errors here.
     }
@@ -123,37 +108,4 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
 //        return self.enableIDPLoginFlowForURL(url, options: options)
         return false
     }
-    
-    func enableIDPLoginFlowForURL(_ url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        return  UserAccountManager.shared.handleIdentityProviderResponse(from: url, with: options)
-    }
-    
-    // MARK: - Private methods
-    func initializeAppViewState() {
-        if (!Thread.isMainThread) {
-            DispatchQueue.main.async {
-                self.initializeAppViewState()
-            }
-            return
-        }
-        
-        self.window?.rootViewController = InitialViewController(nibName: nil, bundle: nil)
-        self.window?.makeKeyAndVisible()
-    }
-    
-    func setupRootViewController() {
-        self.window?.rootViewController = UIHostingController(rootView: ContactListView())
-    }
-    
-    func resetViewState(_ postResetBlock: @escaping () -> ()) {
-        if let rootViewController = self.window?.rootViewController {
-            if let _ = rootViewController.presentedViewController {
-                rootViewController.dismiss(animated: false, completion: postResetBlock)
-                return
-            }
-        }
-        postResetBlock()
-    }
-    
-    
 }
