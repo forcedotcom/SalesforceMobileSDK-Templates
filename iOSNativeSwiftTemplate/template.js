@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-present, salesforce.com, inc.
+ * Copyright (c) 2019-present, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -77,7 +77,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Return paths of workspace and file with oauth config
     return {
         workspacePath: config.appname + ".xcworkspace",
-        bootconfigFile: path.join(config.appname, 'AppDelegate.swift')
+        bootconfigFile: path.join(config.appname, 'bootconfig.plist')
     };
 
 }

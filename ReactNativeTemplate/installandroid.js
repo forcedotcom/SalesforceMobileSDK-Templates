@@ -6,7 +6,7 @@ var path = require('path');
 var fs = require('fs');
 
 console.log('Installing npm dependencies');
-execSync('npm install', {stdio:[0,1,2]});
+execSync('yarn install', {stdio:[0,1,2]});
 
 var rimraf = require('rimraf');
 

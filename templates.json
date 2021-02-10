@@ -2,14 +2,7 @@
     {
 
         "path": "iOSNativeSwiftTemplate",
-        "description": "Basic Swift application",
-        "appType": "native_swift",
-        "platforms": ["ios"]
-    },
-    {
-
-        "path": "iOS13NativeSwiftTemplate",
-        "description": "iOS 13 Swift application using MobileSync, SwiftUI and Combine",
+        "description": "Swift application using MobileSync, SwiftUI and Combine",
         "appType": "native_swift",
         "platforms": ["ios"]
     },
@@ -70,6 +63,13 @@
 
         "path": "ReactNativeDeferredTemplate",
         "description": "Basic React Native application that uses deferred login",
+        "appType": "react_native",
+        "platforms": ["android", "ios"]
+    },
+    {
+
+        "path": "ReactNativeTypeScriptTemplate",
+        "description": "Basic React Native application written in TypeScript",
         "appType": "react_native",
         "platforms": ["android", "ios"]
     },

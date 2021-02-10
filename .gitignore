@@ -22,3 +22,5 @@ mobile_sdk/
 proguard-project.txt
 xcuserdata
 package-lock.json
+yarn.lock
+yarn-error.log
