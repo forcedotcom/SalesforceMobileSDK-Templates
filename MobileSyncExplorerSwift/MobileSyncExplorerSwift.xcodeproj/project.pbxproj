@@ -479,6 +479,7 @@
 				OTHER_SWIFT_FLAGS = "-DSIGNPOST_ENABLED";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.mobilesdk.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "MobileSyncExplorerSwift/Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
@@ -498,6 +499,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.mobilesdk.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "MobileSyncExplorerSwift/Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
