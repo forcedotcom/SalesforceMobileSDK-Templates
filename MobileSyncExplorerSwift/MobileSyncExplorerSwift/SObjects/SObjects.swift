@@ -216,6 +216,7 @@ class SObjectDataFieldSpec  {
 }
 
 class SObjectDataManager: ObservableObject {
+    static let shared = SObjectDataManager(dataSpec: ContactSObjectData.dataSpec()!)
     @Published var contacts: [ContactSObjectData] = []
     private var cancellableSet: Set<AnyCancellable> = []
 
@@ -428,8 +429,8 @@ class SObjectDataManager: ObservableObject {
             .store(in: &cancellableSet)
     }
 
-    func getSync(_ syncName: String) -> SyncState {
-        return syncMgr.syncStatus(forName: syncName)!
+    func getSync(_ syncName: String) -> SyncState? {
+        return syncMgr.syncStatus(forName: syncName)
     }
 
     func isSyncManagerStopping() -> Bool {

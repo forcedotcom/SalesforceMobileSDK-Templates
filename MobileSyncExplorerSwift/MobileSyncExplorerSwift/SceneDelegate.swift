@@ -28,6 +28,7 @@
 import UIKit
 import SwiftUI
 import SalesforceSDKCore
+import MobileSync
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     public var window: UIWindow?
@@ -84,6 +85,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func resetViewState(_ postResetBlock: @escaping () -> ()) {
+        self.window?.rootViewController = nil
         if let rootViewController = self.window?.rootViewController {
             if let _ = rootViewController.presentedViewController {
                 rootViewController.dismiss(animated: false, completion: postResetBlock)

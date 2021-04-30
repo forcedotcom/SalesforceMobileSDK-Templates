@@ -45,7 +45,7 @@ let openDetailRecordIdKey = "recordId"
 
 class ContactListViewModel: ObservableObject {
     @Published var alertContent: AlertContent?
-    @ObservedObject var sObjectDataManager: SObjectDataManager = SObjectDataManager(dataSpec: ContactSObjectData.dataSpec()!)
+    @ObservedObject var sObjectDataManager: SObjectDataManager = SObjectDataManager.shared
     var anyCancellable: AnyCancellable?
 
     init() {
@@ -56,6 +56,9 @@ class ContactListViewModel: ObservableObject {
     }
 
     func syncUpDown() {
+        if let syncUp = sObjectDataManager.getSync(sObjectDataManager.kSyncUpName), syncUp.isRunning() {
+            return
+        }
         createAlert(title: "Syncing with Salesforce", message: nil, stopButton: false)
         sObjectDataManager.syncUpDown(completion: { [weak self] success in
             if success {
@@ -156,8 +159,9 @@ class ContactListViewModel: ObservableObject {
     func itemProvider(contact: ContactSObjectData) -> NSItemProvider {
         let userActivity = NSUserActivity(activityType: openDetailActivityType)
         userActivity.title = openDetailPath
-        userActivity.userInfo = [openDetailRecordIdKey: contact.id]
-        let itemProvider = NSItemProvider(object:contact.id as NSString)
+        let contactId = contact.id.stringValue
+        userActivity.userInfo = [openDetailRecordIdKey: contactId]
+        let itemProvider = NSItemProvider(object: contactId as NSString)
         itemProvider.registerObject(userActivity, visibility: .all)
         return itemProvider
     }
@@ -185,7 +189,10 @@ class ContactListViewModel: ObservableObject {
         }
     }
 
-    private func infoForSyncState(_ syncState:SyncState) -> String {
-        return "\(syncState.progress)% \(SyncState.syncStatus(toString:syncState.status)) totalSize:\(syncState.totalSize) maxTs:\(syncState.maxTimeStamp)"
+    private func infoForSyncState(_ syncState: SyncState?) -> String {
+        guard let syncState = syncState else {
+            return "No sync provided"
+        }
+        return "\(syncState.progress)% \(SyncState.syncStatus(toString:syncState.status)) totalSize: \(syncState.totalSize) maxTs: \(syncState.maxTimeStamp)"
     }
 }
