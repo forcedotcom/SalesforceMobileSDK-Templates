@@ -1,22 +1,22 @@
 apply plugin: 'com.android.application'
 
 dependencies {
-  api project(':libs:MobileSync') // From node_modules
+  implementation project(':libs:MobileSync')
 }
 
 android {
-    compileSdkVersion 30
+  compileSdkVersion 30
 
-    defaultConfig {
-        targetSdkVersion 30
-        minSdkVersion 23
-    }
-  
+  defaultConfig {
+    targetSdkVersion 30
+    minSdkVersion 23
+  }
+
   buildTypes {
-      debug {
-         testCoverageEnabled = true
-      }
-   }
+    debug {
+      testCoverageEnabled = true
+    }
+  }
 
   sourceSets {
 
