@@ -16,7 +16,19 @@ target 'ReactNativeTemplate' do
   pod 'SalesforceReact', :path => '../node_modules/react-native-force'
 end
 
+# To avoid Xcode 12 compilation errors in RNScreens and RNCMaskedView
+pre_install do |installer|
+  installer.pod_targets.each do |pod|
+    if pod.name.eql?('RNScreens') || pod.name.eql?('RNCMaskedView')
+      def pod.build_type
+        Pod::BuildType.static_library
+      end
+    end
+  end
+end
+
 # Comment the following if you do not want the SDK to emit signpost events for instrumentation. Signposts are  enabled for non release version of the app.
 post_install do |installer|
   signposts_post_install(installer)
 end
+
