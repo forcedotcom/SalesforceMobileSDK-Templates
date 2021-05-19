@@ -216,7 +216,8 @@ class SObjectDataFieldSpec  {
 }
 
 class SObjectDataManager: ObservableObject {
-    static let shared = SObjectDataManager(dataSpec: ContactSObjectData.dataSpec()!)
+    static private var managers = SafeMutableDictionary<NSString, SObjectDataManager>()
+
     @Published var contacts: [ContactSObjectData] = []
     private var cancellableSet: Set<AnyCancellable> = []
 
@@ -225,21 +226,34 @@ class SObjectDataManager: ObservableObject {
     let kSyncUpName = "syncUpContacts"
     private let kMaxQueryPageSize: UInt = 1000
     
+    var store: SmartStore
     var syncMgr: SyncManager
     var dataSpec: SObjectDataSpec
-    
-    var store: SmartStore {
-        get {
-            return SmartStore.shared(withName: SmartStore.defaultStoreName)!
-        }
-    }
 
-    init(dataSpec: SObjectDataSpec) {
-        syncMgr = SyncManager.sharedInstance(forUserAccount: UserAccountManager.shared.currentUserAccount!)
+    init(dataSpec: SObjectDataSpec, userAccount: UserAccount) {
+        syncMgr = SyncManager.sharedInstance(forUserAccount: userAccount)
+        store = SmartStore.shared(withName: SmartStore.defaultStoreName, forUserAccount: userAccount)!
         self.dataSpec = dataSpec
         // Setup store and syncs if needed
         MobileSyncSDKManager.shared.setupUserStoreFromDefaultConfig()
         MobileSyncSDKManager.shared.setupUserSyncsFromDefaultConfig()
+        
+        NotificationCenter.default.addObserver(forName: UserAccountManager.didLogoutUser, object: nil, queue: nil) { _ in
+            let key = NSString(string: SFKeyForUserAndScope(userAccount, UserAccount.AccountScope.community)!)
+            SObjectDataManager.managers[key] = nil
+        }
+    }
+    
+    static func sharedInstance(for userAccount: UserAccount) -> SObjectDataManager {
+        let key = NSString(string: SFKeyForUserAndScope(userAccount, UserAccount.AccountScope.community)!)
+       
+        if let manager = managers[key] {
+            return manager
+        } else {
+            let newManager = SObjectDataManager(dataSpec: ContactSObjectData.dataSpec()!, userAccount: userAccount)
+            managers[key] = newManager
+            return newManager
+        }
     }
 
     func syncUpDown(completion: @escaping (Bool) -> ()) {
@@ -476,5 +490,9 @@ class SObjectDataManager: ObservableObject {
             MobileSyncLogger.e(SObjectDataManager.self, message: "Error getting local record: \(error)")
             return nil
         }
+    }
+    
+    deinit {
+        cancellableSet.forEach { $0.cancel() }
     }
 }

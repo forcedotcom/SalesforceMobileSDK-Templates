@@ -29,13 +29,14 @@ import SwiftUI
 import MobileSync
 
 struct ContactListView: View {
-    @ObservedObject private var viewModel = ContactListViewModel()
+    @ObservedObject private var viewModel: ContactListViewModel
     private var notificationModel = NotificationListModel()
     @State private var searchTerm: String = ""
     @State var selectedRecord: String? = nil
     
-    init(selectedRecord: String?) {
+    init(selectedRecord: String?, sObjectDataManager: SObjectDataManager) {
         self._selectedRecord = State(initialValue: selectedRecord)
+        self.viewModel = ContactListViewModel(sObjectDataManager: sObjectDataManager)
     }
 
     var body: some View {
