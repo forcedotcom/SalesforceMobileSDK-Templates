@@ -45,18 +45,23 @@ let openDetailRecordIdKey = "recordId"
 
 class ContactListViewModel: ObservableObject {
     @Published var alertContent: AlertContent?
-    @ObservedObject var sObjectDataManager: SObjectDataManager = SObjectDataManager.shared
+    @ObservedObject var sObjectDataManager: SObjectDataManager
     var anyCancellable: AnyCancellable?
 
-    init() {
-        anyCancellable = sObjectDataManager.objectWillChange.sink { _ in
-            self.objectWillChange.send()
+    init(sObjectDataManager: SObjectDataManager) {
+        self.sObjectDataManager = sObjectDataManager
+        anyCancellable = sObjectDataManager.objectWillChange.sink { [weak self] in
+            self?.objectWillChange.send()
         }
         self.syncUpDown()
     }
+    
+    deinit {
+        anyCancellable?.cancel()
+    }
 
     func syncUpDown() {
-        if let syncUp = sObjectDataManager.getSync(sObjectDataManager.kSyncUpName), syncUp.isRunning() {
+        if let syncUp = sObjectDataManager.getSync(sObjectDataManager.kSyncUpName), let syncDown = sObjectDataManager.getSync(sObjectDataManager.kSyncDownName), syncUp.isRunning() || syncDown.isRunning() {
             return
         }
         createAlert(title: "Syncing with Salesforce", message: nil, stopButton: false)

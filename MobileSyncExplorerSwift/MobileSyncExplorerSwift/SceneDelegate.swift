@@ -69,18 +69,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
            }
            return
        }
-       
+
        self.window?.rootViewController = InitialViewController(nibName: nil, bundle: nil)
        self.window?.makeKeyAndVisible()
    }
    
     func setupRootViewController(userActivity: NSUserActivity?) {
+        let sObjectManager = SObjectDataManager.sharedInstance(for: UserAccountManager.shared.currentUserAccount!)
+        
         if let userActivity = userActivity, userActivity.title == openDetailPath,
            let selectionId = userActivity.userInfo?[openDetailRecordIdKey] as? String {
-                let list = ContactListView(selectedRecord: selectionId)
-                self.window?.rootViewController = UIHostingController(rootView: list)
+            let list = ContactListView(selectedRecord: selectionId, sObjectDataManager: sObjectManager)
+            self.window?.rootViewController = UIHostingController(rootView: list)
         } else {
-            self.window?.rootViewController = UIHostingController(rootView: ContactListView(selectedRecord: nil))
+            self.window?.rootViewController = UIHostingController(rootView: ContactListView(selectedRecord: nil, sObjectDataManager: sObjectManager))
         }
     }
 
