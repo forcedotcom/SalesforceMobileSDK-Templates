@@ -14,6 +14,7 @@
 		6967D6ED24806EBB001B0046 /* NotificationListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6967D6EC24806EBB001B0046 /* NotificationListModel.swift */; };
 		69B257B1240DABAF00CBCF1A /* ContactDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B257B0240DABAF00CBCF1A /* ContactDetail.swift */; };
 		69BC2FF024B4437E0091658C /* NotificationList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69BC2FEF24B4437E0091658C /* NotificationList.swift */; };
+		69CDE97325CE6B510025C3FC /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69CDE97225CE6B510025C3FC /* SceneDelegate.swift */; };
 		69E6BCE32409CB8700FB1FD4 /* ContactList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69E6BCE22409CB8700FB1FD4 /* ContactList.swift */; };
 		78A235BD93AB7D080D67CD51 /* Pods_MobileSyncExplorerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82A29C75280BDF73123F14B4 /* Pods_MobileSyncExplorerSwift.framework */; };
 		B7168FBC1FACC6F900A48DB5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */; };
@@ -44,6 +45,7 @@
 		6967D6EC24806EBB001B0046 /* NotificationListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationListModel.swift; sourceTree = "<group>"; };
 		69B257B0240DABAF00CBCF1A /* ContactDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetail.swift; sourceTree = "<group>"; };
 		69BC2FEF24B4437E0091658C /* NotificationList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationList.swift; sourceTree = "<group>"; };
+		69CDE97225CE6B510025C3FC /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		69E6BCE22409CB8700FB1FD4 /* ContactList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactList.swift; sourceTree = "<group>"; };
 		762732C14CFE40A989C3AD70 /* Pods-MobileSyncExplorerSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileSyncExplorerSwift.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MobileSyncExplorerSwift/Pods-MobileSyncExplorerSwift.debug.xcconfig"; sourceTree = "<group>"; };
 		82A29C75280BDF73123F14B4 /* Pods_MobileSyncExplorerSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MobileSyncExplorerSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -126,6 +128,7 @@
 				6900D7F72438103000888336 /* ContactListViewModel.swift */,
 				6900B64224B79DD200500923 /* ContactDetailViewModel.swift */,
 				6967D6EC24806EBB001B0046 /* NotificationListModel.swift */,
+				69CDE97225CE6B510025C3FC /* SceneDelegate.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -336,6 +339,7 @@
 				4F393A291C3C8BCD00B3EA13 /* main.swift in Sources */,
 				B767370D20AB611500F04103 /* SObjects.swift in Sources */,
 				69BC2FF024B4437E0091658C /* NotificationList.swift in Sources */,
+				69CDE97325CE6B510025C3FC /* SceneDelegate.swift in Sources */,
 				B76D656E20B3323A00B55764 /* Fonts+helper.swift in Sources */,
 				69B257B1240DABAF00CBCF1A /* ContactDetail.swift in Sources */,
 				B76D656F20B3323A00B55764 /* Color+helper.swift in Sources */,
@@ -475,6 +479,7 @@
 				OTHER_SWIFT_FLAGS = "-DSIGNPOST_ENABLED";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.mobilesdk.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "MobileSyncExplorerSwift/Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
@@ -494,6 +499,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.mobilesdk.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "MobileSyncExplorerSwift/Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};

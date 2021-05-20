@@ -39,19 +39,31 @@ struct AlertContent: Identifiable {
     var okayButton = false
 }
 
+let openDetailActivityType = "com.salesforce.explorer.openDetail"
+let openDetailPath = "openDetail"
+let openDetailRecordIdKey = "recordId"
+
 class ContactListViewModel: ObservableObject {
     @Published var alertContent: AlertContent?
-    @ObservedObject var sObjectDataManager: SObjectDataManager = SObjectDataManager(dataSpec: ContactSObjectData.dataSpec()!)
+    @ObservedObject var sObjectDataManager: SObjectDataManager
     var anyCancellable: AnyCancellable?
 
-    init() {
-        anyCancellable = sObjectDataManager.objectWillChange.sink { _ in
-            self.objectWillChange.send()
+    init(sObjectDataManager: SObjectDataManager) {
+        self.sObjectDataManager = sObjectDataManager
+        anyCancellable = sObjectDataManager.objectWillChange.sink { [weak self] in
+            self?.objectWillChange.send()
         }
         self.syncUpDown()
     }
+    
+    deinit {
+        anyCancellable?.cancel()
+    }
 
     func syncUpDown() {
+        if let syncUp = sObjectDataManager.getSync(sObjectDataManager.kSyncUpName), let syncDown = sObjectDataManager.getSync(sObjectDataManager.kSyncDownName), syncUp.isRunning() || syncDown.isRunning() {
+            return
+        }
         createAlert(title: "Syncing with Salesforce", message: nil, stopButton: false)
         sObjectDataManager.syncUpDown(completion: { [weak self] success in
             if success {
@@ -148,6 +160,16 @@ class ContactListViewModel: ObservableObject {
         sObjectDataManager.stopSyncManager()
         updateAlert(info: "\nRequesting sync manager stop")
     }
+    
+    func itemProvider(contact: ContactSObjectData) -> NSItemProvider {
+        let userActivity = NSUserActivity(activityType: openDetailActivityType)
+        userActivity.title = openDetailPath
+        let contactId = contact.id.stringValue
+        userActivity.userInfo = [openDetailRecordIdKey: contactId]
+        let itemProvider = NSItemProvider(object: contactId as NSString)
+        itemProvider.registerObject(userActivity, visibility: .all)
+        return itemProvider
+    }
 
     // MARK: Private
     private func sync(syncName: String) {
@@ -172,7 +194,10 @@ class ContactListViewModel: ObservableObject {
         }
     }
 
-    private func infoForSyncState(_ syncState:SyncState) -> String {
-        return "\(syncState.progress)% \(SyncState.syncStatus(toString:syncState.status)) totalSize:\(syncState.totalSize) maxTs:\(syncState.maxTimeStamp)"
+    private func infoForSyncState(_ syncState: SyncState?) -> String {
+        guard let syncState = syncState else {
+            return "No sync provided"
+        }
+        return "\(syncState.progress)% \(SyncState.syncStatus(toString:syncState.status)) totalSize: \(syncState.totalSize) maxTs: \(syncState.maxTimeStamp)"
     }
 }

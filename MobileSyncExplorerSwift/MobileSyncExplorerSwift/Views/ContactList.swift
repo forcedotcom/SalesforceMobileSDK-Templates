@@ -29,9 +29,15 @@ import SwiftUI
 import MobileSync
 
 struct ContactListView: View {
-    @ObservedObject private var viewModel = ContactListViewModel()
+    @ObservedObject private var viewModel: ContactListViewModel
     private var notificationModel = NotificationListModel()
     @State private var searchTerm: String = ""
+    @State var selectedRecord: String? = nil
+    
+    init(selectedRecord: String?, sObjectDataManager: SObjectDataManager) {
+        self._selectedRecord = State(initialValue: selectedRecord)
+        self.viewModel = ContactListViewModel(sObjectDataManager: sObjectDataManager)
+    }
 
     var body: some View {
         NavigationView {
@@ -42,8 +48,13 @@ struct ContactListView: View {
                         ForEach(viewModel.sObjectDataManager.contacts.filter { contact in
                             self.searchTerm.isEmpty ? true : self.viewModel.contactMatchesSearchTerm(contact: contact, searchTerm: self.searchTerm)
                         }) { contact in
-                            NavigationLink(destination: ContactDetailView(contact: contact, sObjectDataManager: self.viewModel.sObjectDataManager)) {
-                                ContactCell(contact: contact)
+                            NavigationLink(destination: ContactDetailView(contact: contact, sObjectDataManager: self.viewModel.sObjectDataManager, dismiss: { self.selectedRecord = nil }), tag: contact.id.stringValue, selection: $selectedRecord) {
+                                if #available(iOS 14.0, *) {
+                                    ContactCell(contact: contact)
+                                        .onDrag { return viewModel.itemProvider(contact: contact) }
+                                } else {
+                                    ContactCell(contact: contact)
+                                }
                             }
                             .listRowBackground(SObjectDataManager.dataLocallyDeleted(contact) ? Color.contactCellDeletedBackground : Color.clear)
                         }
@@ -155,13 +166,13 @@ struct NavBarButtons: View {
             NavigationLink(destination: ContactDetailView(contact: nil, sObjectDataManager: self.viewModel.sObjectDataManager), isActive: $newContactPresented, label: { EmptyView() })
             Button(action: {
                 self.newContactPresented = true
-            }, label: { Image("plusButton") })
+            }, label: { Image("plusButton").renderingMode(.template) })
             Button(action: {
                 self.viewModel.syncUpDown()
-            }, label: { Image("sync") })
+            }, label: { Image("sync").renderingMode(.template) })
             Button(action: {
                 self.actionSheetPresented = true
-            }, label: { Image("setting") })
+            }, label: { Image("setting").renderingMode(.template) })
                 .actionSheet(isPresented: $actionSheetPresented) {
                  ActionSheet(title: Text("Additional Actions"), buttons: [
                     .default(Text("Show Info"), action: {
