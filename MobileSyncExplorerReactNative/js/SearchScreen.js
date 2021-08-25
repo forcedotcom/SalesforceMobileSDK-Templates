@@ -61,14 +61,15 @@ class SearchScreen extends React.Component {
         this.refresh = this.refresh.bind(this);
     }
 
+
     componentDidMount() {
         this.props.navigation.setOptions({
             title: 'Contacts',
             headerRight: () => (
                     <View style={styles.navButtonsGroup}>
-                    <NavImgButton icon='add' onPress={() => this.onAdd()} />
-                    <NavImgButton icon='cloud-sync' iconType='material-community' onPress={() => this.onSync()} />
-                    <NavImgButton icon='logout' iconType='material-community' onPress={() => this.onLogout()} />
+                      <NavImgButton icon='add' onPress={() => this.onAdd()} />
+                      <NavImgButton icon='cloud-sync' iconType='material-community' onPress={() => this.onSync()} />
+                      <NavImgButton icon='logout' iconType='material-community' onPress={() => this.onLogout()} />
                     </View>
             )
         });
