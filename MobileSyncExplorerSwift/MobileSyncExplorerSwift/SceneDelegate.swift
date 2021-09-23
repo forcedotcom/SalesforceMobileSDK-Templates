@@ -87,12 +87,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func resetViewState(_ postResetBlock: @escaping () -> ()) {
-        self.window?.rootViewController = nil
         if let rootViewController = self.window?.rootViewController {
             if let _ = rootViewController.presentedViewController {
                 rootViewController.dismiss(animated: false, completion: postResetBlock)
                 return
             }
+            self.window?.rootViewController = nil
         }
         postResetBlock()
     }
