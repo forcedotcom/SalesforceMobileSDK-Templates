@@ -107,11 +107,11 @@ class ContactScreen extends React.Component {
         var errorMessage = null;
         const lastError = this.state.contact.__last_error__;
         if (lastError) {
-            try {
+            try {                
                 if (Platform.OS == 'ios') {
-                    errorMessage = new RegExp('.*message = "([^"]*)".*', 'm').exec(lastError)[1];
-                } else {
                     errorMessage = JSON.parse(lastError)[0].message;
+                } else {
+                    errorMessage = JSON.parse(lastError).body[0].message;
                 }
             }
             catch (e) {

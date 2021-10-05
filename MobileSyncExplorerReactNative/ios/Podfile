@@ -27,7 +27,19 @@ pre_install do |installer|
   end
 end
 
-# Comment the following if you do not want the SDK to emit signpost events for instrumentation. Signposts are  enabled for non release version of the app.
 post_install do |installer|
+  # Comment the following if you do not want the SDK to emit signpost events for instrumentation. Signposts are  enabled for non release version of the app.
   signposts_post_install(installer)
+  
+  # Cocoapods workaround for M1 machines
+  __apply_Xcode_12_5_M1_post_install_workaround(installer)
+  
+  # Keeping Mobile SDK iOS deployment target at 13 (__apply_Xcode_12_5_M1_post_install_workaround changed it to 11)
+  installer.pods_project.targets.each do |target|
+    if ['SalesforceAnalytics', 'SalesforceSDKCommon', 'SalesforceSDKCore', 'SmartStore', 'MobileSync', 'SalesforceReact'].include?(target.name)
+      target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+      end
+    end
+  end
 end

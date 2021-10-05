@@ -26,18 +26,17 @@
 
 import React from 'react';
 import { View } from 'react-native';
-import {
-    FormLabel,
-    FormInput
-} from 'react-native-elements';
+import { Text,Input } from 'react-native-elements';
 
 // Props: fieldLabel, fieldValue
 class Field extends React.Component {
     render() {
-        return (<View key={this.props.fieldLabel} >
-                  <FormLabel>{this.props.fieldLabel}</FormLabel>
-                  <FormInput onChangeText={this.props.onChange} value={this.props.fieldValue}/>                
-                </View>
+        return (<Input 
+                    key={this.props.fieldLabel} 
+                    label={this.props.fieldLabel} 
+                    onChangeText={this.props.onChange} 
+                    value={this.props.fieldValue}
+                />                
                );
     }
 }
