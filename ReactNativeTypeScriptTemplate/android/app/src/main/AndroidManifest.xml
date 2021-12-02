@@ -15,7 +15,8 @@
 		<!-- Launcher screen -->
 		<activity android:name=".MainActivity"
 		    android:label="@string/app_name"
-			android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+			android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:exported="true">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
@@ -44,7 +45,8 @@
         <!--
         <activity android:name="com.salesforce.androidsdk.ui.LoginActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:launchMode="singleInstance">
+            android:launchMode="singleInstance"
+            android:exported="true">
 
             <intent-filter>
                 <data android:scheme="testsfdc"
@@ -72,7 +74,8 @@
 		<!--
         <activity android:name="com.salesforce.androidsdk.auth.idp.IDPAccountPickerActivity"
             android:excludeFromRecents="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:exported="true">
 
 
             <intent-filter>
@@ -85,7 +88,7 @@
         </activity>
         -->
 
-        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="true" />
 	</application>
 
     <!--
