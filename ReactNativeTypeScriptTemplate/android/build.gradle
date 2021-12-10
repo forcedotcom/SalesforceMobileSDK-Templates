@@ -1,8 +1,8 @@
 buildscript {
   ext {
     minSdkVersion = 24
-    compileSdkVersion = 31
-    targetSdkVersion = 31
+    compileSdkVersion = 32
+    targetSdkVersion = 32
   }
 
   repositories {
@@ -11,7 +11,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:7.0.3'
+    classpath 'com.android.tools.build:gradle:7.0.4'
   }
 }
 
