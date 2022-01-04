@@ -3,7 +3,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 require_relative '../mobile_sdk/SalesforceMobileSDK-iOS/mobilesdk_pods'
 
 
-platform :ios, '13.0'
+platform :ios, '14.0'
 
 use_frameworks!
 
@@ -38,7 +38,7 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     if ['SalesforceAnalytics', 'SalesforceSDKCommon', 'SalesforceSDKCore', 'SmartStore', 'MobileSync', 'SalesforceReact'].include?(target.name)
       target.build_configurations.each do |config|
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
       end
     end
   end

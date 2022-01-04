@@ -1,6 +1,6 @@
 require_relative './mobile_sdk/SalesforceMobileSDK-iOS/mobilesdk_pods'
 
-platform :ios, '13.0'
+platform :ios, '14.0'
 
 project 'iOSNativeTemplate.xcodeproj'
 target 'iOSNativeTemplate' do
