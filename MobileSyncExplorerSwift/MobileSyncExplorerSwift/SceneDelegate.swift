@@ -59,7 +59,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             return
         }
         let sObjectManager = SObjectDataManager.sharedInstance(for: userAccount)
-        if url.absoluteString.contains("newContact") {
+        if url.absoluteString.contains("contact/new") {
             self.window?.rootViewController = UIHostingController(rootView: ContactListView(sObjectDataManager: sObjectManager, newContact: true))
         } else if let contactRange = url.absoluteString.range(of: "contact/") {
             let id = String(url.absoluteString[contactRange.upperBound...])
