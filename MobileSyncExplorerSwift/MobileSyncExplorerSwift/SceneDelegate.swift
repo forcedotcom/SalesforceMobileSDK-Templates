@@ -55,6 +55,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //            self.enableIDPLoginFlowForURLContext(urlContext, scene: scene)
 //
 //        }
+        guard let url = URLContexts.first?.url, let userAccount = UserAccountManager.shared.currentUserAccount else {
+            return
+        }
+        let sObjectManager = SObjectDataManager.sharedInstance(for: userAccount)
+        if url.absoluteString.contains("newContact") {
+            self.window?.rootViewController = UIHostingController(rootView: ContactListView(sObjectDataManager: sObjectManager, newContact: true))
+        } else if let contactRange = url.absoluteString.range(of: "contact/") {
+            let id = String(url.absoluteString[contactRange.upperBound...])
+            self.window?.rootViewController = UIHostingController(rootView: ContactListView(sObjectDataManager: sObjectManager, selectedRecord: id))
+        }
     }
     
     func enableIDPLoginFlowForURLContext(_ urlContext: UIOpenURLContext, scene: UIScene) -> Bool {
@@ -79,10 +89,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         if let userActivity = userActivity, userActivity.title == openDetailPath,
            let selectionId = userActivity.userInfo?[openDetailRecordIdKey] as? String {
-            let list = ContactListView(selectedRecord: selectionId, sObjectDataManager: sObjectManager)
+            let list = ContactListView(sObjectDataManager: sObjectManager, selectedRecord: selectionId)
             self.window?.rootViewController = UIHostingController(rootView: list)
         } else {
-            self.window?.rootViewController = UIHostingController(rootView: ContactListView(selectedRecord: nil, sObjectDataManager: sObjectManager))
+            self.window?.rootViewController = UIHostingController(rootView: ContactListView(sObjectDataManager: sObjectManager))
         }
     }
 

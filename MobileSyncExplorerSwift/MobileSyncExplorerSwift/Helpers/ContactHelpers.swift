@@ -31,9 +31,9 @@ import Foundation
 import UIKit.UIColor
 
 class ContactHelper {
-    static func nameStringFromContact(_ obj: ContactSObjectData) -> String {
-        let firstName = obj.firstName?.trimmingCharacters(in: .whitespacesAndNewlines)
-        let lastName = obj.lastName?.trimmingCharacters(in: .whitespacesAndNewlines)
+    static func nameStringFromContact(firstName: String?, lastName: String?) -> String {
+        let firstName = firstName?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let lastName = lastName?.trimmingCharacters(in: .whitespacesAndNewlines)
         if firstName == nil && lastName == nil {
             return ""
         } else if firstName == nil && lastName != nil {
@@ -45,14 +45,14 @@ class ContactHelper {
         }
     }
     
-    static func titleStringFromContact(_ obj: ContactSObjectData) -> String {
-        let title = obj.title?.trimmingCharacters(in: .whitespacesAndNewlines)
-        return title != nil ? title! : ""
+    static func titleStringFromContact(title: String?) -> String {
+        let title = title?.trimmingCharacters(in: .whitespacesAndNewlines)
+        return title ?? ""
     }
     
-    static func initialsStringFromContact(_ obj: ContactSObjectData) -> String {
-        let firstName = obj.firstName?.trimmingCharacters(in: .whitespacesAndNewlines)
-        let lastName = obj.lastName?.trimmingCharacters(in: .whitespacesAndNewlines)
+    static func initialsStringFromContact(firstName: String?, lastName: String?) -> String {
+        let firstName = firstName?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let lastName = lastName?.trimmingCharacters(in: .whitespacesAndNewlines)
         var initialsString = ""
         if let first = firstName, first.count > 0, let firstChar = first.first {
             initialsString.append(firstChar)
@@ -64,8 +64,8 @@ class ContactHelper {
         return initialsString
     }
     
-    static func colorFromContact(_ obj: ContactSObjectData) -> UIColor {
-        guard let lastName = obj.lastName?.trimmingCharacters(in: .whitespacesAndNewlines) else {
+    static func colorFromContact(lastName: String?) -> UIColor {
+        guard let lastName = lastName?.trimmingCharacters(in: .whitespacesAndNewlines) else {
             return UIColor.white
         }
         var codeSeedFromName:UInt32 = 0

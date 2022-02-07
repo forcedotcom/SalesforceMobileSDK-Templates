@@ -31,8 +31,7 @@ import SwiftUI
 import Combine
 
 struct AlertContent: Identifiable {
-     var id = UUID()
-    
+    var id = UUID()
     var title: String?
     var message: String?
     var stopButton = false
@@ -46,10 +45,16 @@ let openDetailRecordIdKey = "recordId"
 class ContactListViewModel: ObservableObject {
     @Published var alertContent: AlertContent?
     @ObservedObject var sObjectDataManager: SObjectDataManager
+    @Published var selectedRecord: String?
+    @Published var showContactDetail: Bool = false
     var anyCancellable: AnyCancellable?
 
-    init(sObjectDataManager: SObjectDataManager) {
+    init(sObjectDataManager: SObjectDataManager, presentNewContact: Bool, selectedRecord: String? = nil) {
         self.sObjectDataManager = sObjectDataManager
+        if presentNewContact || selectedRecord != nil {
+            self.showContactDetail = true
+        }
+        self.selectedRecord = selectedRecord
         anyCancellable = sObjectDataManager.objectWillChange.sink { [weak self] in
             self?.objectWillChange.send()
         }
@@ -58,6 +63,23 @@ class ContactListViewModel: ObservableObject {
     
     deinit {
         anyCancellable?.cancel()
+    }
+    
+    func newContactToggled() {
+        showContactDetail = true
+        selectedRecord = nil
+    }
+    
+    func contactSelected(id: ContactSObjectData) {
+        showContactDetail = true
+        selectedRecord = id.id.stringValue
+        let widgetContact = ContactSummary(id: id.id.stringValue, firstName: id.firstName, lastName: id.lastName)
+        RecentContacts.shared.addContact(widgetContact)
+    }
+    
+    func dismissDetail() {
+        showContactDetail = false
+        selectedRecord = nil
     }
 
     func syncUpDown() {
