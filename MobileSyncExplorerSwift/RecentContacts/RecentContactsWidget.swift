@@ -18,7 +18,7 @@ struct Provider: TimelineProvider {
     }
     
     func currentEntry(context: Context) -> ContactsEntry {
-        guard let contacts = RecentContacts.shared.persistedContacts() else {
+        guard let contacts = RecentContacts.persistedContacts() else {
             return placeholder(in: context)
         }
 
@@ -30,7 +30,7 @@ struct Provider: TimelineProvider {
     }
     
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        let entry = ContactsEntry(date: Date(), contacts: RecentContacts.shared.persistedContacts())
+        let entry = ContactsEntry(date: Date(), contacts: RecentContacts.persistedContacts())
         completion(Timeline(entries: [entry], policy: .never))
     }
 }

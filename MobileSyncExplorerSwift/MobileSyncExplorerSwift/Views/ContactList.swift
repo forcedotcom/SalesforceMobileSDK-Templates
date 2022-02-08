@@ -48,7 +48,7 @@ struct ContactListView: View {
                             self.searchTerm.isEmpty ? true : self.viewModel.contactMatchesSearchTerm(contact: contact, searchTerm: self.searchTerm)
                         }) { contact in
                             Button {
-                                viewModel.contactSelected(id: contact)
+                                viewModel.contactSelected(contact)
                             } label: {
                                 ContactCell(contact: contact)
                                     .onDrag { return viewModel.itemProvider(contact: contact) }

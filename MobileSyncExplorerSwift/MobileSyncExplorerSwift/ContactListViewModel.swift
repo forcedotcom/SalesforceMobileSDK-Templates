@@ -48,6 +48,7 @@ class ContactListViewModel: ObservableObject {
     @Published var selectedRecord: String?
     @Published var showContactDetail: Bool = false
     var anyCancellable: AnyCancellable?
+    private var contacts: Queue<ContactSummary>
 
     init(sObjectDataManager: SObjectDataManager, presentNewContact: Bool, selectedRecord: String? = nil) {
         self.sObjectDataManager = sObjectDataManager
@@ -55,9 +56,11 @@ class ContactListViewModel: ObservableObject {
             self.showContactDetail = true
         }
         self.selectedRecord = selectedRecord
+        contacts = Queue(contentsOf: RecentContacts.persistedContacts(), maxSize: 3)
         anyCancellable = sObjectDataManager.objectWillChange.sink { [weak self] in
             self?.objectWillChange.send()
         }
+        NotificationCenter.default.addObserver(self, selector: #selector(persistContacts), name: UIScene.willDeactivateNotification, object: nil)
         self.syncUpDown()
     }
     
@@ -70,11 +73,10 @@ class ContactListViewModel: ObservableObject {
         selectedRecord = nil
     }
     
-    func contactSelected(id: ContactSObjectData) {
+    func contactSelected(_ contact: ContactSObjectData) {
         showContactDetail = true
-        selectedRecord = id.id.stringValue
-        let widgetContact = ContactSummary(id: id.id.stringValue, firstName: id.firstName, lastName: id.lastName)
-        RecentContacts.shared.addContact(widgetContact)
+        selectedRecord = contact.id.stringValue
+        contacts.append(ContactSummary(id: contact.id.stringValue, firstName: contact.firstName, lastName: contact.lastName))
     }
     
     func dismissDetail() {
@@ -221,5 +223,9 @@ class ContactListViewModel: ObservableObject {
             return "No sync provided"
         }
         return "\(syncState.progress)% \(SyncState.syncStatus(toString:syncState.status)) totalSize: \(syncState.totalSize) maxTs: \(syncState.maxTimeStamp)"
+    }
+    
+    @objc private func persistContacts() {
+        RecentContacts.persistContacts(contacts.array)
     }
 }

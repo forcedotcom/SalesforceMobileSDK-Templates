@@ -20,8 +20,9 @@ struct Queue<Element: Codable> {
     private let maxSize: Int
     private(set) var array = [Element]()
     
-    init(maxSize: Int) {
+    init(contentsOf array: [Element]?, maxSize: Int) {
         self.maxSize = maxSize
+        self.append(contentsOf: array)
     }
 
     mutating func append(_ item: Element) {
@@ -41,26 +42,20 @@ struct Queue<Element: Codable> {
     }
 }
 
+struct ContactSummary: Codable, Hashable {
+    let id: String
+    let firstName: String?
+    let lastName: String?
+}
+
 class RecentContacts {
-    static let shared = RecentContacts()
-    let encryptionKeyLabel = "com.salesforce.mobilesyncexplorer.recentcontacts.encryptionkey"
-    let fileName = "recentContacts.json"
-    let groupIdentifier = "group.com.salesforce.mobilesyncexplorer"
-    private var contacts: Queue<ContactSummary>
+    static let encryptionKeyLabel = "com.salesforce.mobilesyncexplorer.recentcontacts.encryptionkey"
+    static let fileName = "recentContacts.json"
+    static let groupIdentifier = "group.com.salesforce.mobilesyncexplorer"
     
-    private init() {
-        contacts = Queue(maxSize: 3)
-        contacts.append(contentsOf: persistedContacts())
-        NotificationCenter.default.addObserver(self, selector: #selector(persistContacts), name: UIScene.willDeactivateNotification, object: nil)
-    }
-   
-    func addContact(_ contact: ContactSummary) {
-        contacts.append(contact)
-    }
-    
-    func persistedContacts() -> [ContactSummary]? {
+    static func persistedContacts() -> [ContactSummary]? {
         let decoder = JSONDecoder()
-        let container = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupIdentifier)
+        let container = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: RecentContacts.groupIdentifier)
         
         if let url = container?.appendingPathComponent(fileName), let encryptedData = try? Data(contentsOf: url) {
             do {
@@ -75,13 +70,13 @@ class RecentContacts {
         return nil
     }
     
-    @objc func persistContacts() {
+    static func persistContacts(_ contacts: [ContactSummary]) {
         guard !contacts.isEmpty, let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupIdentifier)?.appendingPathComponent(fileName) else {
             return
         }
     
         let encoder = JSONEncoder()
-        if let encodedData = try? encoder.encode(contacts.array) {
+        if let encodedData = try? encoder.encode(contacts) {
             do {
                 let encryptionKey = try KeyGenerator.encryptionKey(for: encryptionKeyLabel)
                 let encryptedData = try Encryptor.encrypt(data: encodedData, using: encryptionKey)
@@ -92,10 +87,4 @@ class RecentContacts {
             }
         }
     }
-}
-
-struct ContactSummary: Codable, Hashable {
-    let id: String
-    let firstName: String?
-    let lastName: String?
 }
