@@ -11,6 +11,7 @@ end
 
 target 'RecentContactsExtension' do
   use_frameworks!
+  pod 'SalesforceSDKCommon', :path => "./mobile_sdk/SalesforceMobileSDK-iOS"
   pod 'SalesforceSDKCore', :path => "./mobile_sdk/SalesforceMobileSDK-iOS"
 end
 

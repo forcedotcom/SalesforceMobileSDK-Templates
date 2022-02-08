@@ -8,8 +8,14 @@
 
 import WidgetKit
 import SwiftUI
+import SalesforceSDKCommon.SFSDKDatasharingHelper
 
 struct Provider: TimelineProvider {
+    init() {
+        DataSharingHelper.shared.appGroupName = "group.com.salesforce.mobilesyncexplorer"
+        DataSharingHelper.shared.isAppGroupEnabled = true
+    }
+    
     func placeholder(in context: Context) -> ContactsEntry {
         let contacts = [ContactSummary(id: "1", firstName: "Michelle", lastName: "Kim"),
                         ContactSummary(id: "2", firstName: "Jon", lastName: "Amos"),

@@ -51,17 +51,18 @@ struct ContactSummary: Codable, Hashable {
 class RecentContacts {
     static let encryptionKeyLabel = "com.salesforce.mobilesyncexplorer.recentcontacts.encryptionkey"
     static let fileName = "recentContacts.json"
-    static let groupIdentifier = "group.com.salesforce.mobilesyncexplorer"
-    
+
     static func persistedContacts() -> [ContactSummary]? {
-        let decoder = JSONDecoder()
-        let container = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: RecentContacts.groupIdentifier)
-        
-        if let url = container?.appendingPathComponent(fileName), let encryptedData = try? Data(contentsOf: url) {
+        guard let path = SFDirectoryManager.shared().directoryOfCurrentUser(forType: .libraryDirectory, components: [fileName]) else {
+            return nil
+        }
+       
+        let url = URL(fileURLWithPath: path)
+        if let encryptedData = try? Data(contentsOf: url) {
             do {
                 let encryptionKey = try KeyGenerator.encryptionKey(for: encryptionKeyLabel)
                 let decryptedData = try Encryptor.decrypt(data: encryptedData, using: encryptionKey)
-                let contacts = try decoder.decode([ContactSummary].self, from: decryptedData)
+                let contacts = try JSONDecoder().decode([ContactSummary].self, from: decryptedData)
                 return contacts
             } catch {
                 SalesforceLogger.e(RecentContacts.self, message: "Error reading persisted contacts: \(error)")
@@ -71,20 +72,20 @@ class RecentContacts {
     }
     
     static func persistContacts(_ contacts: [ContactSummary]) {
-        guard !contacts.isEmpty, let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupIdentifier)?.appendingPathComponent(fileName) else {
+        guard !contacts.isEmpty,
+              let path = SFDirectoryManager.shared().directoryOfCurrentUser(forType: .libraryDirectory, components: [fileName]) else {
             return
         }
-    
-        let encoder = JSONEncoder()
-        if let encodedData = try? encoder.encode(contacts) {
-            do {
-                let encryptionKey = try KeyGenerator.encryptionKey(for: encryptionKeyLabel)
-                let encryptedData = try Encryptor.encrypt(data: encodedData, using: encryptionKey)
-                try encryptedData.write(to: url)
-                WidgetCenter.shared.reloadAllTimelines()
-            } catch {
-                SalesforceLogger.e(RecentContacts.self, message: "Error persisting contacts: \(error)")
-            }
+        
+        do {
+            let url = URL(fileURLWithPath: path)
+            let encodedData = try JSONEncoder().encode(contacts)
+            let encryptionKey = try KeyGenerator.encryptionKey(for: encryptionKeyLabel)
+            let encryptedData = try Encryptor.encrypt(data: encodedData, using: encryptionKey)
+            try encryptedData.write(to: url)
+            WidgetCenter.shared.reloadAllTimelines()
+        } catch {
+            SalesforceLogger.e(RecentContacts.self, message: "Error persisting contacts: \(error)")
         }
     }
 }
