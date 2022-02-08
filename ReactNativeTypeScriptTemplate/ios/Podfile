@@ -29,7 +29,10 @@ end
 post_install do |installer|
   # Comment the following if you do not want the SDK to emit signpost events for instrumentation. Signposts are  enabled for non release version of the app.
   signposts_post_install(installer)
-  
+
+  # React native post install
+  react_native_post_install(installer)
+
   # Cocoapods workaround for M1 machines
   __apply_Xcode_12_5_M1_post_install_workaround(installer)
   
