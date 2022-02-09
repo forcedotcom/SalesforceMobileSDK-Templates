@@ -32,35 +32,35 @@ struct ContactListView: View {
     @ObservedObject private var viewModel: ContactListViewModel
     private var notificationModel = NotificationListModel()
     @State private var searchTerm: String = ""
-    @State var selectedRecord: String? = nil
     
-    init(selectedRecord: String?, sObjectDataManager: SObjectDataManager) {
-        self._selectedRecord = State(initialValue: selectedRecord)
-        self.viewModel = ContactListViewModel(sObjectDataManager: sObjectDataManager)
+    init(sObjectDataManager: SObjectDataManager, selectedRecord: String? = nil, newContact: Bool = false, searchFocused: Bool = false) {
+        self.viewModel = ContactListViewModel(sObjectDataManager: sObjectDataManager, presentNewContact: newContact, selectedRecord: selectedRecord)
     }
-
+    
     var body: some View {
         NavigationView {
             ZStack {
                 VStack {
                     SearchBar(text: self.$searchTerm)
+
                     List {
                         ForEach(viewModel.sObjectDataManager.contacts.filter { contact in
                             self.searchTerm.isEmpty ? true : self.viewModel.contactMatchesSearchTerm(contact: contact, searchTerm: self.searchTerm)
                         }) { contact in
-                            NavigationLink(destination: ContactDetailView(contact: contact, sObjectDataManager: self.viewModel.sObjectDataManager, dismiss: { self.selectedRecord = nil }), tag: contact.id.stringValue, selection: $selectedRecord) {
-                                if #available(iOS 14.0, *) {
-                                    ContactCell(contact: contact)
-                                        .onDrag { return viewModel.itemProvider(contact: contact) }
-                                } else {
-                                    ContactCell(contact: contact)
-                                }
+                            Button {
+                                viewModel.contactSelected(contact)
+                            } label: {
+                                ContactCell(contact: contact)
+                                    .onDrag { return viewModel.itemProvider(contact: contact) }
                             }
-                            .listRowBackground(SObjectDataManager.dataLocallyDeleted(contact) ? Color.contactCellDeletedBackground : Color.clear)
+                            .listRowBackground(SObjectDataManager.dataLocallyDeleted(contact) ? Color.contactCellDeletedBackground : .clear)
                         }
                     }
                     .id(UUID())
                 }
+                    
+                NavigationLink(destination: ContactDetailView(localId: viewModel.selectedRecord, sObjectDataManager: self.viewModel.sObjectDataManager, dismiss: { self.viewModel.dismissDetail()}), isActive: $viewModel.showContactDetail) { EmptyView() }
+                
                 if viewModel.alertContent != nil {
                     StatusAlert(viewModel: viewModel)
                 }
@@ -154,18 +154,16 @@ enum ModalAction: Identifiable {
 }
 
 struct NavBarButtons: View {
-    var viewModel: ContactListViewModel
+    @ObservedObject var viewModel: ContactListViewModel
+    @ObservedObject var notificationModel: NotificationListModel
     @State private var modalPresented: ModalAction?
-    @State private var newContactPresented = false
     @State private var actionSheetPresented = false
     @State private var logoutAlertPresented = false
-    @ObservedObject var notificationModel: NotificationListModel
 
     var body: some View {
         HStack {
-            NavigationLink(destination: ContactDetailView(contact: nil, sObjectDataManager: self.viewModel.sObjectDataManager), isActive: $newContactPresented, label: { EmptyView() })
             Button(action: {
-                self.newContactPresented = true
+                viewModel.newContactToggled()
             }, label: { Image("plusButton").renderingMode(.template) })
             Button(action: {
                 self.viewModel.syncUpDown()
@@ -255,10 +253,10 @@ struct ContactCell: View {
 
     var body: some View {
         HStack {
-            Image(uiImage: ContactHelper.initialsImage(ContactHelper.colorFromContact(contact), initials: ContactHelper.initialsStringFromContact(contact))!)
+            Image(uiImage: ContactHelper.initialsImage(ContactHelper.colorFromContact(lastName: contact.lastName), initials: ContactHelper.initialsStringFromContact(firstName: contact.firstName, lastName: contact.lastName))!)
             VStack(alignment: .leading) {
-                Text(ContactHelper.nameStringFromContact(contact)).font(.appRegularFont(16))
-                Text(ContactHelper.titleStringFromContact(contact)).font(.appRegularFont(12)).foregroundColor(.secondaryLabelText)
+                Text(ContactHelper.nameStringFromContact(firstName: contact.firstName, lastName: contact.lastName)).font(.appRegularFont(16)).foregroundColor(Color(UIColor.label))
+                Text(ContactHelper.titleStringFromContact(title: contact.title)).font(.appRegularFont(12)).foregroundColor(.secondaryLabelText)
             }
             Spacer()
             if SObjectDataManager.dataLocallyUpdated(contact) {

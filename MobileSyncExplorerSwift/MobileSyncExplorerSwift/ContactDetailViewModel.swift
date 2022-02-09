@@ -33,22 +33,23 @@ class ContactDetailViewModel: ObservableObject {
     var title: String
     private var sObjectDataManager: SObjectDataManager
 
-    init(contactId: String, sObjectDataManager: SObjectDataManager) {
+    init(id: String, sObjectDataManager: SObjectDataManager) {
         self.sObjectDataManager = sObjectDataManager
         self._contact = Published(initialValue: ContactSObjectData())
         self.title = "Loading contact"
-        loadContact(id: contactId)
+        fetchContact(id: id)
     }
-
-    init(contact: ContactSObjectData?, sObjectDataManager: SObjectDataManager) {
+    
+    init(localId: String?, sObjectDataManager: SObjectDataManager) {
         self.sObjectDataManager = sObjectDataManager
-        if let contact = contact {
-            self.title = ContactHelper.nameStringFromContact(contact)
-            self._contact = Published(initialValue: contact)
+        self._contact = Published(initialValue: ContactSObjectData())
+
+        if let localId = localId {
+            self.title = "Loading contact"
+            loadContact(id: localId)
         } else {
             self.title = "New Contact"
             self.isNewContact = true
-            self._contact = Published(initialValue: ContactSObjectData())
         }
     }
 
@@ -56,17 +57,26 @@ class ContactDetailViewModel: ObservableObject {
         return SObjectDataManager.dataLocallyDeleted(contact)
     }
 
-    func loadContact(id: String) {
+    func fetchContact(id: String) {
         sObjectDataManager.fetchContact(id: id) { contact in
             if let contact = contact {
                 self.contact = contact
-                self.title = ContactHelper.nameStringFromContact(contact)
+                self.title = ContactHelper.nameStringFromContact(firstName: contact.firstName, lastName: contact.lastName)
             } else {
                 self.title = "Unable to load contact"
             }
         }
     }
 
+    func loadContact(id: String) {
+        if let contact = sObjectDataManager.localRecord(soupID: id) {
+            self.contact = contact
+            self.title = ContactHelper.nameStringFromContact(firstName: contact.firstName, lastName: contact.lastName)
+        } else {
+            self.title = "Unable to load contact"
+        }
+    }
+    
     func deleteButtonTitle() -> String {
         return isLocallyDeleted() ? "Undelete Contact" : "Delete Contact"
     }

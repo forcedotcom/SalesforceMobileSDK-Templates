@@ -31,8 +31,7 @@ import SwiftUI
 import Combine
 
 struct AlertContent: Identifiable {
-     var id = UUID()
-    
+    var id = UUID()
     var title: String?
     var message: String?
     var stopButton = false
@@ -46,18 +45,43 @@ let openDetailRecordIdKey = "recordId"
 class ContactListViewModel: ObservableObject {
     @Published var alertContent: AlertContent?
     @ObservedObject var sObjectDataManager: SObjectDataManager
+    @Published var selectedRecord: String?
+    @Published var showContactDetail: Bool = false
     var anyCancellable: AnyCancellable?
+    private var contacts: Queue<ContactSummary>
 
-    init(sObjectDataManager: SObjectDataManager) {
+    init(sObjectDataManager: SObjectDataManager, presentNewContact: Bool, selectedRecord: String? = nil) {
         self.sObjectDataManager = sObjectDataManager
+        if presentNewContact || selectedRecord != nil {
+            self.showContactDetail = true
+        }
+        self.selectedRecord = selectedRecord
+        contacts = Queue(contentsOf: RecentContacts.persistedContacts(), maxSize: 3)
         anyCancellable = sObjectDataManager.objectWillChange.sink { [weak self] in
             self?.objectWillChange.send()
         }
+        NotificationCenter.default.addObserver(self, selector: #selector(persistContacts), name: UIScene.willDeactivateNotification, object: nil)
         self.syncUpDown()
     }
     
     deinit {
         anyCancellable?.cancel()
+    }
+    
+    func newContactToggled() {
+        showContactDetail = true
+        selectedRecord = nil
+    }
+    
+    func contactSelected(_ contact: ContactSObjectData) {
+        showContactDetail = true
+        selectedRecord = contact.id.stringValue
+        contacts.append(ContactSummary(id: contact.id.stringValue, firstName: contact.firstName, lastName: contact.lastName))
+    }
+    
+    func dismissDetail() {
+        showContactDetail = false
+        selectedRecord = nil
     }
 
     func syncUpDown() {
@@ -199,5 +223,9 @@ class ContactListViewModel: ObservableObject {
             return "No sync provided"
         }
         return "\(syncState.progress)% \(SyncState.syncStatus(toString:syncState.status)) totalSize: \(syncState.totalSize) maxTs: \(syncState.maxTimeStamp)"
+    }
+    
+    @objc private func persistContacts() {
+        RecentContacts.persistContacts(contacts.array)
     }
 }
