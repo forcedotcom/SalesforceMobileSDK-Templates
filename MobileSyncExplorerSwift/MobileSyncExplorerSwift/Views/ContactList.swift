@@ -255,7 +255,7 @@ struct ContactCell: View {
         HStack {
             Image(uiImage: ContactHelper.initialsImage(ContactHelper.colorFromContact(lastName: contact.lastName), initials: ContactHelper.initialsStringFromContact(firstName: contact.firstName, lastName: contact.lastName))!)
             VStack(alignment: .leading) {
-                Text(ContactHelper.nameStringFromContact(firstName: contact.firstName, lastName: contact.lastName)).font(.appRegularFont(16))
+                Text(ContactHelper.nameStringFromContact(firstName: contact.firstName, lastName: contact.lastName)).font(.appRegularFont(16)).foregroundColor(Color(UIColor.label))
                 Text(ContactHelper.titleStringFromContact(title: contact.title)).font(.appRegularFont(12)).foregroundColor(.secondaryLabelText)
             }
             Spacer()
