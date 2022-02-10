@@ -492,6 +492,21 @@ class SObjectDataManager: ObservableObject {
         }
     }
     
+    func localRecord(soupID: String) -> ContactSObjectData? {
+        let queryResult = store.query("select {\(dataSpec.soupName):_soup} from {\(dataSpec.soupName)} where {\(dataSpec.soupName):_soupEntryId} = '\(soupID)'")
+        switch queryResult {
+        case .success(let results):
+            guard let arr = results as? [[Any]], let soup = arr.first?.first as? [String: Any] else {
+                MobileSyncLogger.e(SObjectDataManager.self, message: "Unable to parse local record")
+                return nil
+            }
+            return ContactSObjectData.init(soupDict: soup)
+        case .failure(let error):
+            MobileSyncLogger.e(SObjectDataManager.self, message: "Error getting local record: \(error)")
+            return nil
+        }
+    }
+    
     deinit {
         cancellableSet.forEach { $0.cancel() }
     }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F4E95837DFFDF35B73400D1 /* Pods_RecentContactsExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D180E6A4280B9088A154A9A6 /* Pods_RecentContactsExtension.framework */; };
 		4F393A291C3C8BCD00B3EA13 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F393A281C3C8BCD00B3EA13 /* main.swift */; };
 		4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */; };
 		6900B64324B79DD200500923 /* ContactDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6900B64224B79DD200500923 /* ContactDetailViewModel.swift */; };
@@ -14,9 +15,18 @@
 		6967D6ED24806EBB001B0046 /* NotificationListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6967D6EC24806EBB001B0046 /* NotificationListModel.swift */; };
 		69B257B1240DABAF00CBCF1A /* ContactDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B257B0240DABAF00CBCF1A /* ContactDetail.swift */; };
 		69BC2FF024B4437E0091658C /* NotificationList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69BC2FEF24B4437E0091658C /* NotificationList.swift */; };
+		69C5451727ACF67700864C01 /* ContactHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76D656C20B3323A00B55764 /* ContactHelpers.swift */; };
+		69C5451827ACF68C00864C01 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76D656920B3323A00B55764 /* Constants.swift */; };
+		69C5451927ACF69E00864C01 /* Fonts+helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76D656A20B3323A00B55764 /* Fonts+helper.swift */; };
 		69CDE97325CE6B510025C3FC /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69CDE97225CE6B510025C3FC /* SceneDelegate.swift */; };
+		69D6B29727AA5E3A008902E0 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69D6B29627AA5E3A008902E0 /* WidgetKit.framework */; };
+		69D6B29927AA5E3A008902E0 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69D6B29827AA5E3A008902E0 /* SwiftUI.framework */; };
+		69D6B29C27AA5E3A008902E0 /* RecentContactsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D6B29B27AA5E3A008902E0 /* RecentContactsWidget.swift */; };
+		69D6B29E27AA5E3C008902E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 69D6B29D27AA5E3C008902E0 /* Assets.xcassets */; };
+		69D6B2A227AA5E3C008902E0 /* RecentContactsExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 69D6B29527AA5E3A008902E0 /* RecentContactsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		69D6B2AD27AA6030008902E0 /* RecentContacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D6B2AC27AA6030008902E0 /* RecentContacts.swift */; };
+		69D6B2AE27AA606E008902E0 /* RecentContacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D6B2AC27AA6030008902E0 /* RecentContacts.swift */; };
 		69E6BCE32409CB8700FB1FD4 /* ContactList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69E6BCE22409CB8700FB1FD4 /* ContactList.swift */; };
-		78A235BD93AB7D080D67CD51 /* Pods_MobileSyncExplorerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82A29C75280BDF73123F14B4 /* Pods_MobileSyncExplorerSwift.framework */; };
 		B7168FBC1FACC6F900A48DB5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */; };
 		B767370220AB57C600F04103 /* userstore.json in Resources */ = {isa = PBXBuildFile; fileRef = B767370020AB57C600F04103 /* userstore.json */; };
 		B767370320AB57C600F04103 /* usersyncs.json in Resources */ = {isa = PBXBuildFile; fileRef = B767370120AB57C600F04103 /* usersyncs.json */; };
@@ -30,7 +40,32 @@
 		B76D65DD20B4A0C900B55764 /* Contacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76D65DC20B4A0C900B55764 /* Contacts.swift */; };
 		B77BD8A7211354D00036B284 /* bootconfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = B77BD8A6211354D00036B284 /* bootconfig.plist */; };
 		CEA8CA041F071B2300448B51 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEA8CA031F071B2300448B51 /* Images.xcassets */; };
+		F6A2681CF28CE6BFDB2A5763 /* Pods_MobileSyncExplorerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C05354ED5BE0D1ECB0BBCF88 /* Pods_MobileSyncExplorerSwift.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		69D6B2A027AA5E3C008902E0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4FD6C46C1B754AF1002F9F90 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 69D6B29427AA5E3A008902E0;
+			remoteInfo = RecentContactsExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		69D6B2A427AA5E3C008902E0 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				69D6B2A227AA5E3C008902E0 /* RecentContactsExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		045D1C5BC2F1EADFDFB3671E /* Pods-MobileSyncExplorerSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileSyncExplorerSwift.release.xcconfig"; path = "Pods/Target Support Files/Pods-MobileSyncExplorerSwift/Pods-MobileSyncExplorerSwift.release.xcconfig"; sourceTree = "<group>"; };
@@ -46,9 +81,17 @@
 		69B257B0240DABAF00CBCF1A /* ContactDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetail.swift; sourceTree = "<group>"; };
 		69BC2FEF24B4437E0091658C /* NotificationList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationList.swift; sourceTree = "<group>"; };
 		69CDE97225CE6B510025C3FC /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		69D6B29527AA5E3A008902E0 /* RecentContactsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RecentContactsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		69D6B29627AA5E3A008902E0 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		69D6B29827AA5E3A008902E0 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		69D6B29B27AA5E3A008902E0 /* RecentContactsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentContactsWidget.swift; sourceTree = "<group>"; };
+		69D6B29D27AA5E3C008902E0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		69D6B29F27AA5E3C008902E0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		69D6B2A327AA5E3C008902E0 /* RecentContactsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RecentContactsExtension.entitlements; sourceTree = "<group>"; };
+		69D6B2AC27AA6030008902E0 /* RecentContacts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentContacts.swift; sourceTree = "<group>"; };
 		69E6BCE22409CB8700FB1FD4 /* ContactList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactList.swift; sourceTree = "<group>"; };
 		762732C14CFE40A989C3AD70 /* Pods-MobileSyncExplorerSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileSyncExplorerSwift.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MobileSyncExplorerSwift/Pods-MobileSyncExplorerSwift.debug.xcconfig"; sourceTree = "<group>"; };
-		82A29C75280BDF73123F14B4 /* Pods_MobileSyncExplorerSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MobileSyncExplorerSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9BD0FF8D621A3B2DE0299394 /* Pods-RecentContactsExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RecentContactsExtension.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RecentContactsExtension/Pods-RecentContactsExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = "../mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/LaunchScreen.storyboard"; sourceTree = "<group>"; };
 		B767370020AB57C600F04103 /* userstore.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = userstore.json; sourceTree = "<group>"; };
 		B767370120AB57C600F04103 /* usersyncs.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = usersyncs.json; sourceTree = "<group>"; };
@@ -61,7 +104,10 @@
 		B76D656C20B3323A00B55764 /* ContactHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactHelpers.swift; sourceTree = "<group>"; };
 		B76D65DC20B4A0C900B55764 /* Contacts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contacts.swift; sourceTree = "<group>"; };
 		B77BD8A6211354D00036B284 /* bootconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = bootconfig.plist; sourceTree = "<group>"; };
+		C05354ED5BE0D1ECB0BBCF88 /* Pods_MobileSyncExplorerSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MobileSyncExplorerSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEA8CA031F071B2300448B51 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/Images.xcassets"; sourceTree = SOURCE_ROOT; };
+		D180E6A4280B9088A154A9A6 /* Pods_RecentContactsExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RecentContactsExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF05074568A9062E28CE3724 /* Pods-RecentContactsExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RecentContactsExtension.release.xcconfig"; path = "Pods/Target Support Files/Pods-RecentContactsExtension/Pods-RecentContactsExtension.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,7 +115,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				78A235BD93AB7D080D67CD51 /* Pods_MobileSyncExplorerSwift.framework in Frameworks */,
+				F6A2681CF28CE6BFDB2A5763 /* Pods_MobileSyncExplorerSwift.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		69D6B29227AA5E3A008902E0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				69D6B29927AA5E3A008902E0 /* SwiftUI.framework in Frameworks */,
+				69D6B29727AA5E3A008902E0 /* WidgetKit.framework in Frameworks */,
+				1F4E95837DFFDF35B73400D1 /* Pods_RecentContactsExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,7 +135,9 @@
 		4FD6C46B1B754AF1002F9F90 = {
 			isa = PBXGroup;
 			children = (
+				69D6B2A327AA5E3C008902E0 /* RecentContactsExtension.entitlements */,
 				4FD6C4761B754AF1002F9F90 /* MobileSyncExplorerSwift */,
+				69D6B29A27AA5E3A008902E0 /* RecentContacts */,
 				4FD6C4751B754AF1002F9F90 /* Products */,
 				DDFDDF0A29E4BDD114B51BBC /* Pods */,
 				6B868AEB1ACA7FCA4636C7F7 /* Frameworks */,
@@ -90,6 +148,7 @@
 			isa = PBXGroup;
 			children = (
 				4FD6C4741B754AF1002F9F90 /* MobileSyncExplorerSwift.app */,
+				69D6B29527AA5E3A008902E0 /* RecentContactsExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -133,10 +192,24 @@
 			name = Classes;
 			sourceTree = "<group>";
 		};
+		69D6B29A27AA5E3A008902E0 /* RecentContacts */ = {
+			isa = PBXGroup;
+			children = (
+				69D6B29B27AA5E3A008902E0 /* RecentContactsWidget.swift */,
+				69D6B29D27AA5E3C008902E0 /* Assets.xcassets */,
+				69D6B29F27AA5E3C008902E0 /* Info.plist */,
+				69D6B2AC27AA6030008902E0 /* RecentContacts.swift */,
+			);
+			path = RecentContacts;
+			sourceTree = "<group>";
+		};
 		6B868AEB1ACA7FCA4636C7F7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				82A29C75280BDF73123F14B4 /* Pods_MobileSyncExplorerSwift.framework */,
+				69D6B29627AA5E3A008902E0 /* WidgetKit.framework */,
+				69D6B29827AA5E3A008902E0 /* SwiftUI.framework */,
+				C05354ED5BE0D1ECB0BBCF88 /* Pods_MobileSyncExplorerSwift.framework */,
+				D180E6A4280B9088A154A9A6 /* Pods_RecentContactsExtension.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -195,6 +268,8 @@
 			children = (
 				762732C14CFE40A989C3AD70 /* Pods-MobileSyncExplorerSwift.debug.xcconfig */,
 				045D1C5BC2F1EADFDFB3671E /* Pods-MobileSyncExplorerSwift.release.xcconfig */,
+				9BD0FF8D621A3B2DE0299394 /* Pods-RecentContactsExtension.debug.xcconfig */,
+				DF05074568A9062E28CE3724 /* Pods-RecentContactsExtension.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -211,15 +286,35 @@
 				4FD6C4711B754AF1002F9F90 /* Frameworks */,
 				4FD6C4721B754AF1002F9F90 /* Resources */,
 				7056FC8D1D194E5113988767 /* [CP] Embed Pods Frameworks */,
+				69D6B2A427AA5E3C008902E0 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				69D6B2A127AA5E3C008902E0 /* PBXTargetDependency */,
 			);
 			name = MobileSyncExplorerSwift;
 			productName = MobileSyncExplorerSwift;
 			productReference = 4FD6C4741B754AF1002F9F90 /* MobileSyncExplorerSwift.app */;
 			productType = "com.apple.product-type.application";
+		};
+		69D6B29427AA5E3A008902E0 /* RecentContactsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 69D6B2A727AA5E3C008902E0 /* Build configuration list for PBXNativeTarget "RecentContactsExtension" */;
+			buildPhases = (
+				191626EE23CEE68DEAC3FF70 /* [CP] Check Pods Manifest.lock */,
+				69D6B29127AA5E3A008902E0 /* Sources */,
+				69D6B29227AA5E3A008902E0 /* Frameworks */,
+				69D6B29327AA5E3A008902E0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RecentContactsExtension;
+			productName = RecentContactsExtension;
+			productReference = 69D6B29527AA5E3A008902E0 /* RecentContactsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -227,7 +322,7 @@
 		4FD6C46C1B754AF1002F9F90 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0710;
+				LastSwiftUpdateCheck = 1320;
 				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = MobileSyncExplorerSwiftOrganizationName;
 				TargetAttributes = {
@@ -239,6 +334,9 @@
 								enabled = 1;
 							};
 						};
+					};
+					69D6B29427AA5E3A008902E0 = {
+						CreatedOnToolsVersion = 13.2.1;
 					};
 				};
 			};
@@ -256,6 +354,7 @@
 			projectRoot = "";
 			targets = (
 				4FD6C4731B754AF1002F9F90 /* MobileSyncExplorerSwift */,
+				69D6B29427AA5E3A008902E0 /* RecentContactsExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -274,33 +373,50 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		69D6B29327AA5E3A008902E0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				69D6B29E27AA5E3C008902E0 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		191626EE23CEE68DEAC3FF70 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-RecentContactsExtension-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		7056FC8D1D194E5113988767 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MobileSyncExplorerSwift/Pods-MobileSyncExplorerSwift-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/FMDB/FMDB.framework",
-				"${BUILT_PRODUCTS_DIR}/MobileSync/MobileSync.framework",
-				"${BUILT_PRODUCTS_DIR}/SQLCipher/SQLCipher.framework",
-				"${BUILT_PRODUCTS_DIR}/SalesforceAnalytics/SalesforceAnalytics.framework",
-				"${BUILT_PRODUCTS_DIR}/SalesforceSDKCommon/SalesforceSDKCommon.framework",
-				"${BUILT_PRODUCTS_DIR}/SalesforceSDKCore/SalesforceSDKCore.framework",
-				"${BUILT_PRODUCTS_DIR}/SmartStore/SmartStore.framework",
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MobileSyncExplorerSwift/Pods-MobileSyncExplorerSwift-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FMDB.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MobileSync.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SQLCipher.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SalesforceAnalytics.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SalesforceSDKCommon.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SalesforceSDKCore.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SmartStore.framework",
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MobileSyncExplorerSwift/Pods-MobileSyncExplorerSwift-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -342,6 +458,7 @@
 				69CDE97325CE6B510025C3FC /* SceneDelegate.swift in Sources */,
 				B76D656E20B3323A00B55764 /* Fonts+helper.swift in Sources */,
 				69B257B1240DABAF00CBCF1A /* ContactDetail.swift in Sources */,
+				69D6B2AD27AA6030008902E0 /* RecentContacts.swift in Sources */,
 				B76D656F20B3323A00B55764 /* Color+helper.swift in Sources */,
 				6900D7F82438103000888336 /* ContactListViewModel.swift in Sources */,
 				6967D6ED24806EBB001B0046 /* NotificationListModel.swift in Sources */,
@@ -351,7 +468,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		69D6B29127AA5E3A008902E0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				69D6B2AE27AA606E008902E0 /* RecentContacts.swift in Sources */,
+				69C5451727ACF67700864C01 /* ContactHelpers.swift in Sources */,
+				69D6B29C27AA5E3A008902E0 /* RecentContactsWidget.swift in Sources */,
+				69C5451827ACF68C00864C01 /* Constants.swift in Sources */,
+				69C5451927ACF69E00864C01 /* Fonts+helper.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		69D6B2A127AA5E3C008902E0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 69D6B29427AA5E3A008902E0 /* RecentContactsExtension */;
+			targetProxy = 69D6B2A027AA5E3C008902E0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		4FD6C4911B754AF1002F9F90 /* Debug */ = {
@@ -402,7 +539,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -453,7 +590,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -468,16 +605,20 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 762732C14CFE40A989C3AD70 /* Pods-MobileSyncExplorerSwift.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = MobileSyncExplorerSwift/MobileSyncExplorerSwift.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = MobileSyncExplorerSwift/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				OTHER_SWIFT_FLAGS = "-DSIGNPOST_ENABLED";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.mobilesdk.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = com.salesforce.mobilesdk.MobileSyncExplorerSwift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "MobileSyncExplorerSwift/Bridging-Header.h";
@@ -489,19 +630,106 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 045D1C5BC2F1EADFDFB3671E /* Pods-MobileSyncExplorerSwift.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = MobileSyncExplorerSwift/MobileSyncExplorerSwift.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = MobileSyncExplorerSwift/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.mobilesdk.${PRODUCT_NAME:rfc1034identifier}";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.salesforce.mobilesdk.MobileSyncExplorerSwift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "MobileSyncExplorerSwift/Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		69D6B2A527AA5E3C008902E0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9BD0FF8D621A3B2DE0299394 /* Pods-RecentContactsExtension.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = RecentContactsExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RecentContacts/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RecentContacts;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 MobileSyncExplorerSwiftOrganizationName. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.salesforce.mobilesdk.MobileSyncExplorerSwift.RecentContacts;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		69D6B2A627AA5E3C008902E0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DF05074568A9062E28CE3724 /* Pods-RecentContactsExtension.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = RecentContactsExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RecentContacts/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RecentContacts;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 MobileSyncExplorerSwiftOrganizationName. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.salesforce.mobilesdk.MobileSyncExplorerSwift.RecentContacts;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -522,6 +750,15 @@
 			buildConfigurations = (
 				4FD6C4941B754AF1002F9F90 /* Debug */,
 				4FD6C4951B754AF1002F9F90 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		69D6B2A727AA5E3C008902E0 /* Build configuration list for PBXNativeTarget "RecentContactsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				69D6B2A527AA5E3C008902E0 /* Debug */,
+				69D6B2A627AA5E3C008902E0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
