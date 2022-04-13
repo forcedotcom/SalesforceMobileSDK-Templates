@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-present, salesforce.com, inc.
+ * Copyright (c) 2022-present, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -35,39 +35,42 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
 
     var path = require('path');
 
-    // Values in template
-    var templateAppName = 'AndroidNativeKotlinTemplate';
-    var templatePackageName = 'com.salesforce.androidnativekotlintemplate';
-
-    // Key files
-    var templatePackageJsonFile = 'package.json';
-    var templateSettingsGradle = 'settings.gradle';
-    var templateAndroidManifestFile = path.join('app', 'AndroidManifest.xml');
-    var templateStringsXmlFile = path.join('app', 'res', 'values', 'strings.xml');
-    var templateBootconfigFile = path.join('app', 'res', 'values', 'bootconfig.xml');
-    var templateMainActivityFile = path.join('app', 'src', 'com', 'salesforce', 'androidnativekotlintemplate', 'MainActivity.kt');
-    var templateMainApplicationFile = path.join('app', 'src', 'com', 'salesforce', 'androidnativekotlintemplate', 'MainApplication.kt');
-
     //
-    // Replace in files
+    // FIXME - move source files according to user provided app package
     //
 
-    // app name
-    replaceInFiles(templateAppName, config.appname, [templatePackageJsonFile, templateSettingsGradle, templateStringsXmlFile]);
+    // // Values in template
+    // var templateAppName = 'Mobile Sync Compose';
+    // var templatePackageName = 'com.salesforce.samples.mobilesynccompose';
+    // // Key files
+    // var templatePackageJsonFile = 'package.json';
+    // var templateSettingsGradle = 'settings.gradle';
+    // var templateAndroidManifestFile = path.join('app', 'AndroidManifest.xml');
+    // var templateStringsXmlFile = path.join('app', 'src', 'res', 'values', 'strings.xml');
+    // var templateBootconfigFile = path.join('app', 'src', 'res', 'values', 'bootconfig.xml');
+    // var templateMainActivityFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'samples', 'mobilesynccompose', 'contacts', 'activity', 'ContactsActivity.kt');
+    // var templateMainApplicationFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'samples', 'mobilesynccompose', 'app', 'MobileSyncComposeApp.kt');
 
-    // package name
-    replaceInFiles(templatePackageName, config.packagename, [templateAndroidManifestFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile]);
+    // //
+    // // Replace in files
+    // //
+
+    // // app name
+    // replaceInFiles(templateAppName, config.appname, [templatePackageJsonFile, templateSettingsGradle, templateStringsXmlFile]);
+
+    // // package name
+    // replaceInFiles(templatePackageName, config.packagename, [templateAndroidManifestFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile]);
     
-    //
-    // Rename/move files
-    //
-    var tmpPathActivityFile = path.join('app', 'src', 'MainActivity.kt');
-    var tmpPathApplicationFile = path.join('app', 'src', 'MainApplication.kt');
-    moveFile(templateMainActivityFile, tmpPathActivityFile);
-    moveFile(templateMainApplicationFile, tmpPathApplicationFile);
-    removeFile(path.join('app', 'src', 'com'));
-    moveFile(tmpPathActivityFile, path.join.apply(null, ['app', 'src'].concat(config.packagename.split('.')).concat(['MainActivity.kt'])));
-    moveFile(tmpPathApplicationFile, path.join.apply(null, ['app', 'src'].concat(config.packagename.split('.')).concat(['MainApplication.kt'])));
+    // //
+    // // Rename/move files
+    // //
+    // var tmpPathActivityFile = path.join('app', 'src', 'MainActivity.kt');
+    // var tmpPathApplicationFile = path.join('app', 'src', 'MainApplication.kt');
+    // moveFile(templateMainActivityFile, tmpPathActivityFile);
+    // moveFile(templateMainApplicationFile, tmpPathApplicationFile);
+    // removeFile(path.join('app', 'src', 'com'));
+    // moveFile(tmpPathActivityFile, path.join.apply(null, ['app', 'src'].concat(config.packagename.split('.')).concat(['MainActivity.kt'])));
+    // moveFile(tmpPathApplicationFile, path.join.apply(null, ['app', 'src'].concat(config.packagename.split('.')).concat(['MainApplication.kt'])));
 
     //
     // Run install.js
@@ -78,7 +81,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Return paths of workspace and file with oauth config
     return {
         workspacePath: '',
-        bootconfigFile: path.join('app', 'res', 'values', 'bootconfig.xml')
+        bootconfigFile: path.join('app', 'src', 'main', 'res', 'values', 'bootconfig.xml')
     };
 }
 

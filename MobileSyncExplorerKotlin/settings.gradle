@@ -1,4 +1,4 @@
-rootProject.name = 'AndroidNativeKotlinTemplate'
+rootProject.name = 'MobileSyncCompose'
 
 def libsRootDir = new File( settingsDir, 'mobile_sdk/SalesforceMobileSDK-Android/libs' )
 include ':app'
