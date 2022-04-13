@@ -99,5 +99,12 @@
         "description": "Sample application using MobileSync data framework",
         "appType": "react_native",
         "platforms": ["android", "ios"]
-    }
+    },
+    {
+
+        "path": "MobileSyncExplorerKotlin",
+        "description": "Sample Kotlin application using MobileSync data framework",
+        "appType": "native_swift",
+        "platforms": ["android"]
+    }    
 ]
