@@ -4,6 +4,7 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.requireIs
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.withLockDebug
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.repos.RepoOperationException
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.repos.SObjectSyncableRepo
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.repos.usecases.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.isLocallyDeleted
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.*
@@ -475,6 +476,9 @@ class DefaultContactDetailsViewModel(
     }
 
     private inner class DataOperationDelegate {
+        private val deleteUseCase = DeleteUseCase(repo = contactsRepo)
+        private val undeleteUseCase = UndeleteUseCase(repo = contactsRepo)
+        private val upsertUseCase = UpsertUseCase(repo = contactsRepo)
         private val mutDataOperationIsActive = AtomicBoolean(false)
         val dataOperationIsActive: Boolean get() = mutDataOperationIsActive.get()
 
@@ -493,71 +497,95 @@ class DefaultContactDetailsViewModel(
         }
 
         private fun launchDelete(forId: String) = parentScope.launch {
-            val updatedRecord = try {
-                contactsRepo.locallyDelete(id = forId)
-            } catch (ex: RepoOperationException) {
-                throw ex // WIP crash the app with full exception for now
-            }
+            deleteUseCase(id = forId).collect { response ->
+                when (response) {
+                    is DeleteResponse.Started -> stateMutex.withLockDebug {
+                        mutUiState.value = uiState.value.copy(dataOperationIsActive = true)
+                    }
 
-            mutDataOperationIsActive.set(false)
+                    is DeleteResponse.DeleteSuccess -> {
+                        stateMutex.withLockDebug {
+                            mutUiState.value = response.record?.sObject?.buildViewingContactUiState(
+                                uiSyncState = SObjectUiSyncState.Deleted,
+                                isEditingEnabled = false,
+                                shouldScrollToErrorField = false
+                            ) ?: ContactDetailsUiState.NoContactSelected(
+                                dataOperationIsActive = false,
+                                curDialogUiState = uiState.value.curDialogUiState
+                            )
+                        }
+                    }
 
-            stateMutex.withLockDebug {
-                mutUiState.value = updatedRecord?.sObject?.buildViewingContactUiState(
-                    uiSyncState = SObjectUiSyncState.Deleted,
-                    isEditingEnabled = false,
-                    shouldScrollToErrorField = false
-                ) ?: ContactDetailsUiState.NoContactSelected(
-                    dataOperationIsActive = false,
-                    curDialogUiState = uiState.value.curDialogUiState
-                )
+                    is DeleteResponse.Finished -> {
+                        stateMutex.withLockDebug {
+                            mutUiState.value = uiState.value.copy(dataOperationIsActive = false)
+                        }
+
+                        mutDataOperationIsActive.set(false)
+
+                        response.exception?.also { throw it } // WIP crash the app with full exception for now
+                    }
+                }
             }
         }
 
         private fun launchUndelete(forId: String) = parentScope.launch {
-            val updatedRecord = try {
-                contactsRepo.locallyUndelete(id = forId)
-            } catch (ex: RepoOperationException) {
-                throw ex // WIP crash the app with full exception for now
-            }
+            undeleteUseCase(id = forId).collect { response ->
+                when (response) {
+                    is UndeleteResponse.Started -> stateMutex.withLockDebug {
+                        mutUiState.value = uiState.value.copy(dataOperationIsActive = true)
+                    }
 
-            mutDataOperationIsActive.set(false)
+                    is UndeleteResponse.UndeleteSuccess -> stateMutex.withLockDebug {
+                        mutUiState.value = response.record.sObject.buildViewingContactUiState(
+                            uiSyncState = response.record.localStatus.toUiSyncState(),
+                            isEditingEnabled = false,
+                            shouldScrollToErrorField = false
+                        )
+                    }
 
-            stateMutex.withLockDebug {
-                mutUiState.value = updatedRecord.sObject.buildViewingContactUiState(
-                    uiSyncState = updatedRecord.localStatus.toUiSyncState(),
-                    isEditingEnabled = false,
-                    shouldScrollToErrorField = false
-                )
+                    is UndeleteResponse.Finished -> {
+                        stateMutex.withLockDebug {
+                            mutUiState.value = uiState.value.copy(dataOperationIsActive = false)
+                        }
+
+                        mutDataOperationIsActive.set(false)
+
+                        response.exception?.also { throw it } // WIP crash the app with full exception for now
+                    }
+                }
             }
         }
 
         private fun launchSave(forId: String?, so: ContactObject) = parentScope.launch {
-            stateMutex.withLockDebug {
-                mutUiState.value = uiState.value.copy(dataOperationIsActive = true)
-            }
+            upsertUseCase(id = forId, so = so).collect { response ->
+                when (response) {
+                    is UpsertResponse.Started -> stateMutex.withLockDebug {
+                        mutUiState.value = uiState.value.copy(dataOperationIsActive = true)
+                    }
 
-            val record = try {
-                if (forId == null) {
-                    contactsRepo.locallyCreate(so = so)
-                } else {
-                    contactsRepo.locallyUpdate(id = forId, so = so)
+                    is UpsertResponse.UpsertSuccess -> {
+                        // This clobbers the UI regardless of what state it is in b/c we are assuming that no
+                        // changes to the VM can happen while this data operation is running.
+                        stateMutex.withLockDebug {
+                            curRecordId = response.record.id
+
+                            mutUiState.value = response.record.sObject.buildViewingContactUiState(
+                                uiSyncState = response.record.localStatus.toUiSyncState(),
+                                isEditingEnabled = false,
+                                shouldScrollToErrorField = false,
+                            )
+                        }
+                    }
+
+                    is UpsertResponse.Finished -> {
+                        stateMutex.withLockDebug {
+                            mutUiState.value = uiState.value.copy(dataOperationIsActive = false)
+                        }
+                        mutDataOperationIsActive.set(false)
+                        response.exception?.also { throw it } // WIP crash the app with full exception for now
+                    }
                 }
-            } catch (ex: RepoOperationException) {
-                throw ex // WIP crash the app with full exception for now
-            }
-
-            mutDataOperationIsActive.set(false)
-
-            // This clobbers the UI regardless of what state it is in b/c we are assuming that no
-            // changes to the VM can happen while this data operation is running.
-            stateMutex.withLockDebug {
-                curRecordId = record.id
-
-                mutUiState.value = record.sObject.buildViewingContactUiState(
-                    uiSyncState = record.localStatus.toUiSyncState(),
-                    isEditingEnabled = false,
-                    shouldScrollToErrorField = false,
-                )
             }
         }
     }
