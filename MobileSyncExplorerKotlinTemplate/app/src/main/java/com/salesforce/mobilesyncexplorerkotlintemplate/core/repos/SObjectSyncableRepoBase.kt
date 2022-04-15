@@ -4,8 +4,7 @@ import com.salesforce.androidsdk.accounts.UserAccount
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.androidsdk.mobilesync.manager.SyncManager
 import com.salesforce.androidsdk.mobilesync.target.SyncTarget
-import com.salesforce.androidsdk.mobilesync.target.SyncTarget.LOCAL
-import com.salesforce.androidsdk.mobilesync.target.SyncTarget.LOCALLY_DELETED
+import com.salesforce.androidsdk.mobilesync.target.SyncTarget.*
 import com.salesforce.androidsdk.mobilesync.util.Constants
 import com.salesforce.androidsdk.mobilesync.util.SyncState
 import com.salesforce.androidsdk.smartstore.store.QuerySpec
@@ -159,14 +158,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
     @Throws(RepoOperationException::class)
     override suspend fun locallyUpdate(id: String, so: T) =
         withContext(ioDispatcher + NonCancellable) {
-            val updateResult = try {
-                doUpdateBlocking(id = id, so = so)
-            } catch (ex: Exception) {
-                throw RepoOperationException.SmartStoreOperationFailed(
-                    message = "Failed to update the object in SmartStore.",
-                    cause = ex
-                )
-            }
+            val updateResult = doUpdateBlocking(id = id, so = so)
 
             val result = updateResult.coerceUpdatedObjToModelOrCleanupAndThrow()
             updateStateWithObject(result)
@@ -178,19 +170,29 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
         store.beginTransaction()
 
         try {
-            val elt = with(so) {
-                retrieveByIdOrThrowOperationException(id = id)
-                    .elt
+            val retrievedElt = retrieveByIdOrThrowOperationException(id = id).elt
+            val retrievedAsRecord = deserializer.coerceFromJsonOrThrow(retrievedElt)
+
+            if (retrievedAsRecord.sObject == so) {
+                return@synchronized retrievedElt
+            }
+
+            with(so) {
+                retrievedElt
                     .applyObjProperties()
+                    .apply {
+                        put(LOCALLY_UPDATED, true)
+                        put(LOCAL, true)
+                    }
             }
 
             val result = try {
-                store.upsert(soupName, elt)
+                store.upsert(soupName, retrievedElt)
             } catch (ex: Exception) {
-               throw RepoOperationException.SmartStoreOperationFailed(
-                   message = "Failed to update the object in SmartStore.",
-                   cause = ex
-               )
+                throw RepoOperationException.SmartStoreOperationFailed(
+                    message = "Failed to update the object in SmartStore.",
+                    cause = ex
+                )
             }
 
             store.setTransactionSuccessful()
@@ -343,11 +345,12 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
         setRecordsList(parseSuccesses)
     }
 
-    protected suspend fun setRecordsList(records: List<SObjectRecord<T>>) = listMutex.withLockDebug {
-        mutRecordsById.clear()
-        records.associateByTo(mutRecordsById) { it.id }
-        mutState.emit(mutRecordsById.toMap())
-    }
+    protected suspend fun setRecordsList(records: List<SObjectRecord<T>>) =
+        listMutex.withLockDebug {
+            mutRecordsById.clear()
+            records.associateByTo(mutRecordsById) { it.id }
+            mutState.emit(mutRecordsById.toMap())
+        }
 
     @Throws(RepoOperationException::class)
     protected suspend fun runFetchAllQuery(): ResultPartition<SObjectRecord<T>> =
