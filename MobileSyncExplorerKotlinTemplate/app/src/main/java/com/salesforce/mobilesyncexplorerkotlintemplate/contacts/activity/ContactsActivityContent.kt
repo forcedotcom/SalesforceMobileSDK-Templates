@@ -52,8 +52,8 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ui.ContactDetailsContentSinglePane
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ui.ContactDetailsTopBarContentExpanded
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ui.toPreviewViewingContactDetails
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListDataOpHandler
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListItemClickHandler
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListDataActionClickHandler
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiState
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListViewModel
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ui.ContactsListContent
@@ -84,8 +84,8 @@ fun ContactsActivityContent(
             detailsUiState = detailsUiState,
             detailsUiEventHandler = activityVm.detailsVm,
             listUiState = listUiState,
-            listItemClickHandler = activityVm.listVm,
-            listDataOpHandler = activityVm.listVm,
+            listUiClickHandler = activityVm.listVm,
+            listDataActionClickHandler = activityVm.listVm,
             onSearchTermUpdated = activityVm.listVm::onSearchTermUpdated,
             menuHandler = menuHandler
         )
@@ -93,8 +93,8 @@ fun ContactsActivityContent(
             detailsUiState = detailsUiState,
             detailsUiEventHandler = activityVm.detailsVm,
             listUiState = listUiState,
-            listItemClickHandler = activityVm.listVm,
-            listDataOpHandler = activityVm.listVm,
+            listUiClickHandler = activityVm.listVm,
+            listDataActionClickHandler = activityVm.listVm,
             onSearchTermUpdated = activityVm.listVm::onSearchTermUpdated,
             menuHandler = menuHandler,
             windowSizeClasses = windowSizeClasses
@@ -109,8 +109,8 @@ private fun SinglePane(
     detailsUiState: ContactDetailsUiState,
     detailsUiEventHandler: ContactDetailsUiEventHandler,
     listUiState: ContactsListUiState,
-    listItemClickHandler: ContactsListItemClickHandler,
-    listDataOpHandler: ContactsListDataOpHandler,
+    listUiClickHandler: ContactsListUiClickHandler,
+    listDataActionClickHandler: ContactsListDataActionClickHandler,
     onSearchTermUpdated: (newSearchTerm: String) -> Unit,
     menuHandler: ContactsActivityMenuHandler,
 ) {
@@ -124,8 +124,8 @@ private fun SinglePane(
         )
         else -> ContactsListSinglePaneComponent(
             uiState = listUiState,
-            listItemClickHandler = listItemClickHandler,
-            dataOpHandler = listDataOpHandler,
+            listUiClickHandler = listUiClickHandler,
+            dataActionClickHandler = listDataActionClickHandler,
             onSearchTermUpdated = onSearchTermUpdated,
             menuHandler = menuHandler
         )
@@ -137,8 +137,8 @@ private fun ListDetail(
     detailsUiState: ContactDetailsUiState,
     detailsUiEventHandler: ContactDetailsUiEventHandler,
     listUiState: ContactsListUiState,
-    listItemClickHandler: ContactsListItemClickHandler,
-    listDataOpHandler: ContactsListDataOpHandler,
+    listUiClickHandler: ContactsListUiClickHandler,
+    listDataActionClickHandler: ContactsListDataActionClickHandler,
     onSearchTermUpdated: (newSearchTerm: String) -> Unit,
     menuHandler: ContactsActivityMenuHandler,
     windowSizeClasses: WindowSizeClasses
@@ -197,8 +197,8 @@ private fun ListDetail(
                 ContactsListContent(
                     modifier = Modifier.fillMaxSize(),
                     uiState = listUiState,
-                    listItemClickHandler = listItemClickHandler,
-                    dataOpHandler = listDataOpHandler,
+                    listUiClickHandler = listUiClickHandler,
+                    dataActionClickHandler = listDataActionClickHandler,
                     onSearchTermUpdated = onSearchTermUpdated
                 )
             }
@@ -355,6 +355,8 @@ private fun SinglePaneListPreview() {
             contacts = contacts,
             curSelectedContactId = null,
             isDoingInitialLoad = false,
+            isDoingDataAction = false,
+            isSearchJobRunning = false
         )
     )
 
@@ -407,7 +409,9 @@ private fun SinglePaneDetailsPreview() {
         uiState = ContactsListUiState(
             contacts = contacts,
             curSelectedContactId = selectedContact.id,
-            isDoingInitialLoad = false
+            isDoingInitialLoad = false,
+            isDoingDataAction = false,
+            isSearchJobRunning = false
         )
     )
 
@@ -464,7 +468,9 @@ private fun ListDetailMediumPreview() {
         uiState = ContactsListUiState(
             contacts = contacts,
             curSelectedContactId = selectedContact.id,
-            isDoingInitialLoad = false
+            isDoingInitialLoad = false,
+            isDoingDataAction = false,
+            isSearchJobRunning = false
         )
     )
     SalesforceMobileSDKAndroidTheme {
@@ -473,8 +479,8 @@ private fun ListDetailMediumPreview() {
                 detailsUiState = detailsVm.uiStateValue,
                 detailsUiEventHandler = detailsVm,
                 listUiState = listVm.uiStateValue,
-                listItemClickHandler = listVm,
-                listDataOpHandler = listVm,
+                listUiClickHandler = listVm,
+                listDataActionClickHandler = listVm,
                 onSearchTermUpdated = listVm::onSearchTermUpdated,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
                 WindowSizeClasses(horiz = WindowSizeClass.Medium, vert = WindowSizeClass.Expanded)
@@ -514,7 +520,9 @@ private fun ListDetailEditingPreview() {
         uiState = ContactsListUiState(
             contacts = contacts,
             curSelectedContactId = selectedContact.id,
-            isDoingInitialLoad = false
+            isDoingInitialLoad = false,
+            isDoingDataAction = false,
+            isSearchJobRunning = false
         )
     )
     SalesforceMobileSDKAndroidTheme {
@@ -523,8 +531,8 @@ private fun ListDetailEditingPreview() {
                 detailsUiState = detailsVm.uiStateValue,
                 detailsUiEventHandler = detailsVm,
                 listUiState = listVm.uiStateValue,
-                listItemClickHandler = listVm,
-                listDataOpHandler = listVm,
+                listUiClickHandler = listVm,
+                listDataActionClickHandler = listVm,
                 onSearchTermUpdated = listVm::onSearchTermUpdated,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
                 WindowSizeClasses(horiz = WindowSizeClass.Medium, vert = WindowSizeClass.Expanded)
@@ -566,6 +574,8 @@ private fun ListDetailNoContactPreview() {
             contacts = contacts,
             curSelectedContactId = null,
             isDoingInitialLoad = false,
+            isDoingDataAction = false,
+            isSearchJobRunning = false,
             curSearchTerm = curSearchTerm
         )
     )
@@ -575,8 +585,8 @@ private fun ListDetailNoContactPreview() {
                 detailsUiState = detailsVm.uiStateValue,
                 detailsUiEventHandler = detailsVm,
                 listUiState = listVm.uiStateValue,
-                listItemClickHandler = listVm,
-                listDataOpHandler = listVm,
+                listUiClickHandler = listVm,
+                listDataActionClickHandler = listVm,
                 onSearchTermUpdated = listVm::onSearchTermUpdated,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
                 WindowSizeClasses(horiz = WindowSizeClass.Medium, vert = WindowSizeClass.Expanded)
@@ -621,7 +631,9 @@ private fun ListDetailExpandedPreview() {
         uiState = ContactsListUiState(
             contacts = contacts,
             curSelectedContactId = selectedContact.id,
-            isDoingInitialLoad = false
+            isDoingInitialLoad = false,
+            isDoingDataAction = false,
+            isSearchJobRunning = false
         )
     )
     SalesforceMobileSDKAndroidTheme {
@@ -630,8 +642,8 @@ private fun ListDetailExpandedPreview() {
                 detailsUiState = detailsVm.uiStateValue,
                 detailsUiEventHandler = detailsVm,
                 listUiState = listVm.uiStateValue,
-                listItemClickHandler = listVm,
-                listDataOpHandler = listVm,
+                listUiClickHandler = listVm,
+                listDataActionClickHandler = listVm,
                 onSearchTermUpdated = listVm::onSearchTermUpdated,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
                 WindowSizeClasses(horiz = WindowSizeClass.Expanded, vert = WindowSizeClass.Expanded)

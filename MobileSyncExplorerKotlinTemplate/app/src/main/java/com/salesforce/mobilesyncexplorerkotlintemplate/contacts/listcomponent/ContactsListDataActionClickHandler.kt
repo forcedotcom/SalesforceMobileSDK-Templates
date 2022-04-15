@@ -1,6 +1,6 @@
 package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent
 
-interface ContactsListDataOpHandler {
+interface ContactsListDataActionClickHandler {
     fun deleteClick(contactId: String)
     fun undeleteClick(contactId: String)
 }

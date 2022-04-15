@@ -11,22 +11,26 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.content_desc_cancel_search
 import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.cta_search
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.PreviewListVm
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListDataOpHandler
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListItemClickHandler
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListDataActionClickHandler
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.LocalStatus
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.FloatingTextEntryBar
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.LoadingOverlay
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.rememberSimpleSpinAnimation
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.toUiSyncState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
@@ -35,13 +39,14 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObj
 fun ContactsListContent(
     modifier: Modifier = Modifier,
     uiState: ContactsListUiState,
-    listItemClickHandler: ContactsListItemClickHandler,
-    dataOpHandler: ContactsListDataOpHandler,
+    listUiClickHandler: ContactsListUiClickHandler,
+    dataActionClickHandler: ContactsListDataActionClickHandler,
     onSearchTermUpdated: (newSearchTerm: String) -> Unit
 ) {
     LazyColumn(modifier = modifier) {
         item {
             val searchTerm = uiState.curSearchTerm
+            val isSearchActive = uiState.isSearchJobRunning
             FloatingTextEntryBar(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -50,10 +55,19 @@ fun ContactsListContent(
                 onValueChange = onSearchTermUpdated,
                 placeholder = { Text(stringResource(id = cta_search)) },
                 leadingIcon = {
-                    Icon(
-                        Icons.Default.Search,
-                        contentDescription = stringResource(id = cta_search)
-                    )
+                    if (isSearchActive) {
+                        val angle: Float by rememberSimpleSpinAnimation(hertz = 1f)
+                        Icon(
+                            Icons.Default.Refresh,
+                            contentDescription = stringResource(id = cta_search),
+                            modifier = Modifier.graphicsLayer { rotationZ = angle }
+                        )
+                    } else {
+                        Icon(
+                            Icons.Default.Search,
+                            contentDescription = stringResource(id = cta_search)
+                        )
+                    }
                 },
                 trailingIcon = {
                     if (searchTerm.isNotBlank()) {
@@ -74,15 +88,15 @@ fun ContactsListContent(
                 startExpanded = false,
                 model = record.sObject,
                 syncState = record.localStatus.toUiSyncState(),
-                onCardClick = { listItemClickHandler.contactClick(record.id) },
-                onDeleteClick = { dataOpHandler.deleteClick(record.id) },
-                onUndeleteClick = { dataOpHandler.undeleteClick(record.id) },
-                onEditClick = { listItemClickHandler.editClick(record.id) },
+                onCardClick = { listUiClickHandler.contactClick(record.id) },
+                onDeleteClick = { dataActionClickHandler.deleteClick(record.id) },
+                onUndeleteClick = { dataActionClickHandler.undeleteClick(record.id) },
+                onEditClick = { listUiClickHandler.editClick(record.id) },
             )
         }
     }
 
-    if (uiState.isDoingInitialLoad) {
+    if (uiState.isDoingInitialLoad || uiState.isDoingDataAction) {
         LoadingOverlay()
     }
 }
@@ -110,6 +124,8 @@ private fun ContactsListContentPreview(searchTerm: String = "9") {
         contacts = contacts,
         curSelectedContactId = contacts.first().id,
         isDoingInitialLoad = false,
+        isDoingDataAction = false,
+        isSearchJobRunning = false,
         curSearchTerm = searchTerm
     )
 
@@ -119,8 +135,8 @@ private fun ContactsListContentPreview(searchTerm: String = "9") {
         Surface {
             ContactsListContent(
                 uiState = vm.uiStateValue,
-                listItemClickHandler = vm,
-                dataOpHandler = vm,
+                listUiClickHandler = vm,
+                dataActionClickHandler = vm,
                 onSearchTermUpdated = vm::onSearchTermUpdated
             )
         }

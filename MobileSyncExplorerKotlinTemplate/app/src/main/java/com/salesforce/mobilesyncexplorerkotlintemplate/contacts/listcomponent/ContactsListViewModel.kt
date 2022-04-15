@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.sync.Mutex
 
-interface ContactsListViewModel : ContactsListItemClickHandler, ContactsListDataOpHandler {
+interface ContactsListViewModel : ContactsListUiClickHandler, ContactsListDataActionClickHandler {
     val uiState: StateFlow<ContactsListUiState>
 
     fun setSelectedContact(id: String?)
@@ -23,8 +23,8 @@ interface ContactsListViewModel : ContactsListItemClickHandler, ContactsListData
 class DefaultContactsListViewModel(
     private val contactsRepo: ContactsRepo,
     private val parentScope: CoroutineScope,
-    private val itemClickDelegate: ContactsListItemClickHandler?,
-    private val dataOpDelegate: ContactsListDataOpHandler?,
+    private val itemClickDelegate: ContactsListUiClickHandler?,
+    private val dataActionClickDelegate: ContactsListDataActionClickHandler?,
     private val searchTermUpdatedDelegate: ((newSearchTerm: String) -> Unit)?
 ) : ContactsListViewModel {
     private val stateMutex = Mutex()
@@ -34,6 +34,8 @@ class DefaultContactsListViewModel(
             contacts = emptyList(),
             curSelectedContactId = null,
             isDoingInitialLoad = true,
+            isDoingDataAction = false,
+            isSearchJobRunning = false
         )
     )
     override val uiState: StateFlow<ContactsListUiState> get() = mutUiState
@@ -58,7 +60,7 @@ class DefaultContactsListViewModel(
             curRecords = newRecords
 
             // always launch the search with new records and only update the ui list with the search results
-            runSearch(searchTerm = uiState.value.curSearchTerm) { filteredList ->
+            restartSearch(searchTerm = uiState.value.curSearchTerm) { filteredList ->
                 stateMutex.withLockDebug {
                     mutUiState.value = uiState.value.copy(
                         contacts = filteredList,
@@ -78,8 +80,8 @@ class DefaultContactsListViewModel(
     }
 
     override fun deleteClick(contactId: String) {
-        if (dataOpDelegate != null) {
-            dataOpDelegate.deleteClick(contactId = contactId)
+        if (dataActionClickDelegate != null) {
+            dataActionClickDelegate.deleteClick(contactId = contactId)
             return
         }
         TODO("Not yet implemented")
@@ -90,8 +92,8 @@ class DefaultContactsListViewModel(
     }
 
     override fun undeleteClick(contactId: String) {
-        if (dataOpDelegate != null) {
-            dataOpDelegate.undeleteClick(contactId = contactId)
+        if (dataActionClickDelegate != null) {
+            dataActionClickDelegate.undeleteClick(contactId = contactId)
             return
         }
         TODO("Not yet implemented")
@@ -100,7 +102,7 @@ class DefaultContactsListViewModel(
     override fun setSearchTerm(newSearchTerm: String) = launchWithStateMutex {
         mutUiState.value = uiState.value.copy(curSearchTerm = newSearchTerm)
 
-        runSearch(searchTerm = newSearchTerm) { filteredList ->
+        restartSearch(searchTerm = newSearchTerm) { filteredList ->
             stateMutex.withLockDebug {
                 mutUiState.value = uiState.value.copy(contacts = filteredList)
             }
@@ -119,7 +121,7 @@ class DefaultContactsListViewModel(
     @Volatile
     private var curSearchJob: Job? = null
 
-    private suspend fun runSearch(
+    private suspend fun restartSearch(
         searchTerm: String,
         block: suspend (filteredList: List<ContactRecord>) -> Unit
     ) {
@@ -130,19 +132,31 @@ class DefaultContactsListViewModel(
 
         curSearchJob?.cancel()
         curSearchJob = parentScope.launch(Dispatchers.Default) {
-            val filteredResults =
-                if (searchTerm.isEmpty()) {
-                    contacts
-                } else {
-                    contacts.filter {
-                        ensureActive()
-                        it.sObject.fullName.contains(searchTerm, ignoreCase = true)
-                    }
+            try {
+                stateMutex.withLockDebug {
+                    mutUiState.value = uiState.value.copy(isSearchJobRunning = true)
                 }
 
-            ensureActive()
+                val filteredResults =
+                    if (searchTerm.isEmpty()) {
+                        contacts
+                    } else {
+                        contacts.filter {
+                            ensureActive()
+                            it.sObject.fullName.contains(searchTerm, ignoreCase = true)
+                        }
+                    }
 
-            block(filteredResults)
+                ensureActive()
+
+                block(filteredResults)
+            } finally {
+                withContext(NonCancellable) {
+                    stateMutex.withLockDebug {
+                        mutUiState.value = uiState.value.copy(isSearchJobRunning = false)
+                    }
+                }
+            }
         }
     }
 

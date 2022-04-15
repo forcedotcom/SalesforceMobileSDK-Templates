@@ -7,5 +7,7 @@ data class ContactsListUiState(
     val contacts: List<SObjectRecord<ContactObject>>,
     val curSelectedContactId: String?,
     val isDoingInitialLoad: Boolean,
+    val isDoingDataAction: Boolean,
+    val isSearchJobRunning: Boolean,
     val curSearchTerm: String = ""
 )

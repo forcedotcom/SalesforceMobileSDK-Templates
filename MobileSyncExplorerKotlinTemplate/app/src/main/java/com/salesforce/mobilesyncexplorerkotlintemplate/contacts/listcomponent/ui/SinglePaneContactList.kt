@@ -42,8 +42,8 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.ContactsActivityMenuButton
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.ContactsActivityMenuHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListDataOpHandler
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListItemClickHandler
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListDataActionClickHandler
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.LocalStatus
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord
@@ -56,8 +56,8 @@ fun ContactsListSinglePaneComponent(
     modifier: Modifier = Modifier,
     contentModifier: Modifier = Modifier,
     uiState: ContactsListUiState,
-    listItemClickHandler: ContactsListItemClickHandler,
-    dataOpHandler: ContactsListDataOpHandler,
+    listUiClickHandler: ContactsListUiClickHandler,
+    dataActionClickHandler: ContactsListDataActionClickHandler,
     onSearchTermUpdated: (newSearchTerm: String) -> Unit,
     menuHandler: ContactsActivityMenuHandler
 ) {
@@ -74,7 +74,7 @@ fun ContactsListSinglePaneComponent(
                 cutoutShape = MaterialTheme.shapes.small.copy(all = CornerSize(percent = 50))
             ) {}
         },
-        floatingActionButton = { ContactsListFabSinglePane(listCreateClick = listItemClickHandler::createClick) },
+        floatingActionButton = { ContactsListFabSinglePane(listCreateClick = listUiClickHandler::createClick) },
         floatingActionButtonPosition = FabPosition.Center,
         isFloatingActionButtonDocked = true,
     ) {
@@ -83,8 +83,8 @@ fun ContactsListSinglePaneComponent(
                 .padding(it)
                 .then(contentModifier),
             uiState = uiState,
-            listItemClickHandler = listItemClickHandler,
-            dataOpHandler = dataOpHandler,
+            listUiClickHandler = listUiClickHandler,
+            dataActionClickHandler = dataActionClickHandler,
             onSearchTermUpdated = onSearchTermUpdated
         )
     }
@@ -135,9 +135,11 @@ private fun ContactsListSinglePaneComponentPreview() {
                     contacts = contacts,
                     curSelectedContactId = null,
                     isDoingInitialLoad = false,
+                    isDoingDataAction = false,
+                    isSearchJobRunning = false
                 ),
-                listItemClickHandler = PREVIEW_LIST_ITEM_CLICK_HANDLER,
-                dataOpHandler = PREVIEW_LIST_DATA_OP_HANDLER,
+                listUiClickHandler = PREVIEW_LIST_ITEM_CLICK_HANDLER,
+                dataActionClickHandler = PREVIEW_LIST_DATA_OP_HANDLER,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
                 onSearchTermUpdated = {}
             )
@@ -175,10 +177,12 @@ private fun ContactListSyncingAndSearchingPreview() {
                     contacts = contacts,
                     curSelectedContactId = null,
                     isDoingInitialLoad = false,
+                    isDoingDataAction = false,
+                    isSearchJobRunning = false,
                     curSearchTerm = curSearchTerm
                 ),
-                listItemClickHandler = PREVIEW_LIST_ITEM_CLICK_HANDLER,
-                dataOpHandler = PREVIEW_LIST_DATA_OP_HANDLER,
+                listUiClickHandler = PREVIEW_LIST_ITEM_CLICK_HANDLER,
+                dataActionClickHandler = PREVIEW_LIST_DATA_OP_HANDLER,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
                 onSearchTermUpdated = {}
             )
@@ -199,9 +203,11 @@ private fun ContactListLoadingPreview() {
                     contacts = contacts,
                     curSelectedContactId = null,
                     isDoingInitialLoad = true,
+                    isDoingDataAction = false,
+                    isSearchJobRunning = false
                 ),
-                listItemClickHandler = PREVIEW_LIST_ITEM_CLICK_HANDLER,
-                dataOpHandler = PREVIEW_LIST_DATA_OP_HANDLER,
+                listUiClickHandler = PREVIEW_LIST_ITEM_CLICK_HANDLER,
+                dataActionClickHandler = PREVIEW_LIST_DATA_OP_HANDLER,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
                 onSearchTermUpdated = {}
             )
@@ -209,13 +215,13 @@ private fun ContactListLoadingPreview() {
     }
 }
 
-private val PREVIEW_LIST_ITEM_CLICK_HANDLER = object : ContactsListItemClickHandler {
+private val PREVIEW_LIST_ITEM_CLICK_HANDLER = object : ContactsListUiClickHandler {
     override fun contactClick(contactId: String) {}
     override fun createClick() {}
     override fun editClick(contactId: String) {}
 }
 
-private val PREVIEW_LIST_DATA_OP_HANDLER = object : ContactsListDataOpHandler {
+private val PREVIEW_LIST_DATA_OP_HANDLER = object : ContactsListDataActionClickHandler {
     override fun deleteClick(contactId: String) {}
     override fun undeleteClick(contactId: String) {}
 }

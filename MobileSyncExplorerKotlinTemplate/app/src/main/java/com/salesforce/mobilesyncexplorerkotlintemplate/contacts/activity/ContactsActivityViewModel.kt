@@ -29,8 +29,8 @@ package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.*
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListDataOpHandler
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListItemClickHandler
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListDataActionClickHandler
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListViewModel
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.DefaultContactsListViewModel
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.requireIsLocked
@@ -67,7 +67,7 @@ class DefaultContactsActivityViewModel(
             parentScope = viewModelScope,
             contactsRepo = contactsRepo,
             itemClickDelegate = ListClickDelegate(),
-            dataOpDelegate = ListDataOpDelegate(),
+            dataActionClickDelegate = ListDataOpDelegate(),
             searchTermUpdatedDelegate = null
         )
     }
@@ -106,7 +106,7 @@ class DefaultContactsActivityViewModel(
      * that component cooperates with the setter until they are allowed to take another action.
      *
      * In almost all cases, this will not even be an issue. */
-    private inner class ListClickDelegate : ContactsListItemClickHandler {
+    private inner class ListClickDelegate : ContactsListUiClickHandler {
         override fun contactClick(contactId: String) = launchWithStateLock {
             try {
                 detailsVm.setContactOrThrow(recordId = contactId, isEditing = false)
@@ -183,7 +183,7 @@ class DefaultContactsActivityViewModel(
         }
     }
 
-    private inner class ListDataOpDelegate : ContactsListDataOpHandler {
+    private inner class ListDataOpDelegate : ContactsListDataActionClickHandler {
         override fun deleteClick(contactId: String) {
             TODO("Not yet implemented")
         }
