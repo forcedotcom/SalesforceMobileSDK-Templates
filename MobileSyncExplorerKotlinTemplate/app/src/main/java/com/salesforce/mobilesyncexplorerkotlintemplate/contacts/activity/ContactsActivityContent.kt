@@ -148,7 +148,10 @@ private fun ListDetail(
             TopAppBar {
                 when (detailsUiState) {
                     is ContactDetailsUiState.NoContactSelected -> Text(stringResource(id = label_contacts))
-                    is ContactDetailsUiState.ViewingContactDetails -> Text(detailsUiState.fullName)
+                    is ContactDetailsUiState.ViewingContactDetails -> {
+                        SyncImage(uiState = detailsUiState.uiSyncState)
+                        Text(detailsUiState.fullName)
+                    }
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
