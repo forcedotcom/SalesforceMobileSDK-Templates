@@ -1,6 +1,7 @@
 package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent
 
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.requireIsLocked
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.withLockDebug
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactRecord
@@ -10,7 +11,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 
 interface ContactsListViewModel : ContactsListItemClickHandler, ContactsListDataOpHandler {
     val uiState: StateFlow<ContactsListUiState>
@@ -59,7 +59,7 @@ class DefaultContactsListViewModel(
 
             // always launch the search with new records and only update the ui list with the search results
             runSearch(searchTerm = uiState.value.curSearchTerm) { filteredList ->
-                stateMutex.withLock {
+                stateMutex.withLockDebug {
                     mutUiState.value = uiState.value.copy(
                         contacts = filteredList,
                         isDoingInitialLoad = false
@@ -101,7 +101,7 @@ class DefaultContactsListViewModel(
         mutUiState.value = uiState.value.copy(curSearchTerm = newSearchTerm)
 
         runSearch(searchTerm = newSearchTerm) { filteredList ->
-            stateMutex.withLock {
+            stateMutex.withLockDebug {
                 mutUiState.value = uiState.value.copy(contacts = filteredList)
             }
         }
@@ -148,7 +148,7 @@ class DefaultContactsListViewModel(
 
     private fun launchWithStateMutex(block: suspend CoroutineScope.() -> Unit) {
         parentScope.launch {
-            stateMutex.withLock { this.block() }
+            stateMutex.withLockDebug { this.block() }
         }
     }
 }

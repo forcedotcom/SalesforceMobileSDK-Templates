@@ -1,6 +1,7 @@
 package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent
 
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.requireIsLocked
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.withLockDebug
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.repos.RepoOperationException
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.repos.SObjectSyncableRepo
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord
@@ -15,7 +16,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import java.util.concurrent.atomic.AtomicBoolean
 
 interface ContactDetailsViewModel : ContactDetailsFieldChangeHandler, ContactDetailsUiEventHandler {
@@ -60,10 +60,10 @@ class DefaultContactDetailsViewModel(
 
     private suspend fun onNewRecords(
         newRecords: Map<String, SObjectRecord<ContactObject>>
-    ) = stateMutex.withLock {
+    ) = stateMutex.withLockDebug {
         upstreamRecords = newRecords
 
-        val curId = curRecordId ?: return@withLock
+        val curId = curRecordId ?: return@withLockDebug
         val matchingRecord = newRecords[curId]
 
         // TODO This whole onNewRecords is buggy. I think a refactor is necessary, maybe having an internal state which includes the corresponding UI state so that the [curRecordId] doesn't get out of sync with the ui state?
@@ -72,7 +72,7 @@ class DefaultContactDetailsViewModel(
                 dataOperationIsActive = dataOpDelegate.dataOperationIsActive,
                 curDialogUiState = uiState.value.curDialogUiState
             )
-            return@withLock
+            return@withLockDebug
         }
 
         mutUiState.value = when (val curState = uiState.value) {
@@ -126,7 +126,7 @@ class DefaultContactDetailsViewModel(
         recordId: String?,
         isEditing: Boolean,
         forceDiscardChanges: Boolean
-    ) = stateMutex.withLock {
+    ) = stateMutex.withLockDebug {
 
         if (!this@DefaultContactDetailsViewModel::upstreamRecords.isInitialized || dataOpDelegate.dataOperationIsActive) {
             throw DataOperationActiveException(
@@ -466,7 +466,7 @@ class DefaultContactDetailsViewModel(
 
     private fun launchWithStateLock(block: suspend CoroutineScope.() -> Unit) {
         parentScope.launch {
-            stateMutex.withLock { this.block() }
+            stateMutex.withLockDebug { this.block() }
         }
     }
 
@@ -501,7 +501,7 @@ class DefaultContactDetailsViewModel(
 
             mutDataOperationIsActive.set(false)
 
-            stateMutex.withLock {
+            stateMutex.withLockDebug {
                 mutUiState.value = updatedRecord?.sObject?.buildViewingContactUiState(
                     uiSyncState = SObjectUiSyncState.Deleted,
                     isEditingEnabled = false,
@@ -522,7 +522,7 @@ class DefaultContactDetailsViewModel(
 
             mutDataOperationIsActive.set(false)
 
-            stateMutex.withLock {
+            stateMutex.withLockDebug {
                 mutUiState.value = updatedRecord.sObject.buildViewingContactUiState(
                     uiSyncState = updatedRecord.localStatus.toUiSyncState(),
                     isEditingEnabled = false,
@@ -532,7 +532,7 @@ class DefaultContactDetailsViewModel(
         }
 
         private fun launchSave(forId: String?, so: ContactObject) = parentScope.launch {
-            stateMutex.withLock {
+            stateMutex.withLockDebug {
                 mutUiState.value = uiState.value.copy(dataOperationIsActive = true)
             }
 
@@ -550,7 +550,7 @@ class DefaultContactDetailsViewModel(
 
             // This clobbers the UI regardless of what state it is in b/c we are assuming that no
             // changes to the VM can happen while this data operation is running.
-            stateMutex.withLock {
+            stateMutex.withLockDebug {
                 curRecordId = record.id
 
                 mutUiState.value = record.sObject.buildViewingContactUiState(

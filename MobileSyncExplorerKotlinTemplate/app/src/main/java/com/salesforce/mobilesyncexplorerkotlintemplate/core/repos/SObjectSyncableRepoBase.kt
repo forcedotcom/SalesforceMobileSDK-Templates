@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import org.json.JSONObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -60,7 +59,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
 
     @Throws(RepoSyncException::class, RepoOperationException::class)
     override suspend fun syncUpAndDown() = withContext(ioDispatcher) {
-        syncMutex.withLock {
+        syncMutex.withLockDebug {
             doSyncUp()
             ensureActive() // cooperative cancellation before doing sync down
             doSyncDown()
@@ -72,7 +71,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
 
     @Throws(RepoSyncException.SyncDownException::class, RepoOperationException::class)
     override suspend fun syncDownOnly() = withContext(ioDispatcher) {
-        syncMutex.withLock { doSyncDown() }
+        syncMutex.withLockDebug { doSyncDown() }
 
         // don't cooperate with cancel at this point because we need to emit the new list of objects
         withContext(NonCancellable) { refreshRecordsList() }
@@ -80,7 +79,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
 
     @Throws(RepoSyncException.SyncUpException::class, RepoOperationException::class)
     override suspend fun syncUpOnly() = withContext(ioDispatcher) {
-        syncMutex.withLock { doSyncUp() }
+        syncMutex.withLockDebug { doSyncUp() }
         Unit
     }
 
@@ -344,7 +343,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
         setRecordsList(parseSuccesses)
     }
 
-    protected suspend fun setRecordsList(records: List<SObjectRecord<T>>) = listMutex.withLock {
+    protected suspend fun setRecordsList(records: List<SObjectRecord<T>>) = listMutex.withLockDebug {
         mutRecordsById.clear()
         records.associateByTo(mutRecordsById) { it.id }
         mutState.emit(mutRecordsById.toMap())
@@ -387,7 +386,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
      * list. Also eliminates the need for subclasses to handle Mutexes themselves.
      */
     protected suspend fun updateStateWithObject(obj: SObjectRecord<T>): Unit =
-        listMutex.withLock {
+        listMutex.withLockDebug {
             mutRecordsById[obj.id] = obj
             mutState.emit(mutRecordsById.toMap())
         }
@@ -397,7 +396,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
      * list. Also eliminates the need for subclasses to handle Mutexes themselves.
      */
     protected suspend fun removeAllFromObjectList(ids: List<String>) {
-        listMutex.withLock {
+        listMutex.withLockDebug {
             for (id in ids) {
                 mutRecordsById.remove(id)
             }

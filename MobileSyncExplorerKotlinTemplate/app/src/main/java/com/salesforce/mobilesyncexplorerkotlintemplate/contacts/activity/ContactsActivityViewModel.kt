@@ -34,13 +34,14 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.Co
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListViewModel
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.DefaultContactsListViewModel
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.requireIsLocked
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.withLockDebug
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.DiscardChangesDialogUiState
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactsRepo
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 
 interface ContactsActivityViewModel {
     val uiState: StateFlow<ContactsActivityUiState>
@@ -80,13 +81,13 @@ class DefaultContactsActivityViewModel(
 
     override fun sync(syncDownOnly: Boolean) {
         viewModelScope.launch {
-            stateMutex.withLock { mutUiState.value = uiState.value.copy(isSyncing = true) }
+            stateMutex.withLockDebug { mutUiState.value = uiState.value.copy(isSyncing = true) }
             if (syncDownOnly) {
                 contactsRepo.syncDownOnly()
             } else {
                 contactsRepo.syncUpAndDown()
             }
-            stateMutex.withLock { mutUiState.value = uiState.value.copy(isSyncing = false) }
+            stateMutex.withLockDebug { mutUiState.value = uiState.value.copy(isSyncing = false) }
         }
     }
 
@@ -142,7 +143,7 @@ class DefaultContactsActivityViewModel(
                 detailsVm.setContactOrThrow(recordId = null, isEditing = true)
                 listVm.setSelectedContact(id = null)
             } catch (ex: ContactDetailsException) {
-                stateMutex.withLock {
+                stateMutex.withLockDebug {
                     mutUiState.value = when (ex) {
                         is DataOperationActiveException -> TODO("data op active in createClick()")
                         is HasUnsavedChangesException -> uiState.value.copy(
@@ -164,7 +165,7 @@ class DefaultContactsActivityViewModel(
                 detailsVm.setContactOrThrow(recordId = contactId, isEditing = true)
                 listVm.setSelectedContact(id = contactId)
             } catch (ex: ContactDetailsException) {
-                stateMutex.withLock {
+                stateMutex.withLockDebug {
                     mutUiState.value = when (ex) {
                         is DataOperationActiveException -> TODO("data op active in editClick()")
                         is HasUnsavedChangesException -> uiState.value.copy(
@@ -207,7 +208,7 @@ class DefaultContactsActivityViewModel(
      * has the event lock.
      */
     private fun launchWithStateLock(block: suspend CoroutineScope.() -> Unit) {
-        viewModelScope.launch { stateMutex.withLock { block() } }
+        viewModelScope.launch { stateMutex.withLockDebug { block() } }
     }
 
     private fun dismissCurDialog() {
