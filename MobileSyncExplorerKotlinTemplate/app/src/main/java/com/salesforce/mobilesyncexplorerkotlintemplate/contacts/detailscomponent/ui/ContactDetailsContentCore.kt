@@ -53,7 +53,7 @@ private fun ContactDetailsViewingContact(
         details.departmentField.OutlinedTextFieldWithHelp(isEditingEnabled = details.isEditingEnabled)
     }
 
-    if (details.dataOperationIsActive) {
+    if (details.dataOperationIsActive || details.doingInitialLoad) {
         LoadingOverlay()
     }
 

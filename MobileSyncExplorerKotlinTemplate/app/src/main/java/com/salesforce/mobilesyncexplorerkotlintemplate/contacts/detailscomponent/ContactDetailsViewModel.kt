@@ -41,6 +41,7 @@ class DefaultContactDetailsViewModel(
     private val mutUiState: MutableStateFlow<ContactDetailsUiState> = MutableStateFlow(
         ContactDetailsUiState.NoContactSelected(
             dataOperationIsActive = false,
+            doingInitialLoad = true,
             curDialogUiState = null
         )
     )
@@ -62,6 +63,10 @@ class DefaultContactDetailsViewModel(
     private suspend fun onNewRecords(
         newRecords: Map<String, SObjectRecord<ContactObject>>
     ) = stateMutex.withLockDebug {
+        if (uiState.value.doingInitialLoad) {
+            mutUiState.value = uiState.value.copy(doingInitialLoad = false)
+        }
+
         upstreamRecords = newRecords
 
         val curId = curRecordId ?: return@withLockDebug

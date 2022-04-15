@@ -7,6 +7,7 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObj
 sealed interface ContactDetailsUiState {
     val curDialogUiState: DialogUiState?
     val dataOperationIsActive: Boolean // TODO it may be a good idea to break this up into discrete flags for the different types of data operations, and then the UI just shows the spinner if any of the flags are true.
+    val doingInitialLoad: Boolean
 
     data class ViewingContactDetails(
         val firstNameField: ContactDetailsField.FirstName,
@@ -15,11 +16,12 @@ sealed interface ContactDetailsUiState {
         val departmentField: ContactDetailsField.Department,
 
         val uiSyncState: SObjectUiSyncState,
-
         val isEditingEnabled: Boolean,
-        override val dataOperationIsActive: Boolean,
         val shouldScrollToErrorField: Boolean,
-        override val curDialogUiState: DialogUiState?
+
+        override val curDialogUiState: DialogUiState?,
+        override val dataOperationIsActive: Boolean,
+        override val doingInitialLoad: Boolean = false
     ) : ContactDetailsUiState {
         val fullName = ContactObject.formatFullName(
             firstName = firstNameField.fieldValue,
@@ -28,21 +30,25 @@ sealed interface ContactDetailsUiState {
     }
 
     data class NoContactSelected(
+        override val curDialogUiState: DialogUiState?,
         override val dataOperationIsActive: Boolean,
-        override val curDialogUiState: DialogUiState?
+        override val doingInitialLoad: Boolean = false
     ) : ContactDetailsUiState
 }
 
 fun ContactDetailsUiState.copy(
+    curDialogUiState: DialogUiState? = this.curDialogUiState,
     dataOperationIsActive: Boolean = this.dataOperationIsActive,
-    curDialogUiState: DialogUiState? = this.curDialogUiState
+    doingInitialLoad: Boolean = this.doingInitialLoad,
 ) = when (this) {
-        is ContactDetailsUiState.NoContactSelected -> this.copy(
-            dataOperationIsActive = dataOperationIsActive,
-            curDialogUiState = curDialogUiState
-        )
-        is ContactDetailsUiState.ViewingContactDetails -> this.copy(
-            dataOperationIsActive = dataOperationIsActive,
-            curDialogUiState = curDialogUiState
-        )
-    }
+    is ContactDetailsUiState.NoContactSelected -> this.copy(
+        curDialogUiState = curDialogUiState,
+        dataOperationIsActive = dataOperationIsActive,
+        doingInitialLoad = doingInitialLoad,
+    )
+    is ContactDetailsUiState.ViewingContactDetails -> this.copy(
+        curDialogUiState = curDialogUiState,
+        dataOperationIsActive = dataOperationIsActive,
+        doingInitialLoad = doingInitialLoad,
+    )
+}
