@@ -826,6 +826,10 @@ class DefaultContactsActivityViewModel(
         }
     }
 
+    private interface InnerListViewModel {
+        fun onRecordsEmitted(records: Map<String, ContactRecord>)
+    }
+
     private inner class DefaultContactsListViewModel :
         ContactsListUiClickHandler,
         ContactsListDataActionClickHandler {
