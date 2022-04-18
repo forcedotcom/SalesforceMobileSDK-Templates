@@ -228,8 +228,19 @@ class DefaultContactsActivityViewModel(
      * List data action delegate back to activity vm
      * Delegate list click events to activity vm
      * Everything having the same state mutex is okay?
-     * Activity VM data action lock or data action locks per component?
+     * Activity VM data action lock or data action locks per component? (see note in ContactActivityUiState)
+     * Does each VM need its own contacts collector?
+     *     Probably not, but delegating updating UI state on new emission is necessary I think
      */
+
+    private interface InnerDetailsViewModel {
+        val uiState: StateFlow<ContactDetailsUiState>
+        val curRecordId: String?
+        val hasUnsavedChanges: Boolean
+
+        fun clobberRecord(record: ContactRecord)
+        fun onRecordsEmitted(records: Map<String, ContactRecord>)
+    }
 
     private inner class DefaultContactDetailsViewModel : ContactDetailsFieldChangeHandler,
         ContactDetailsUiEventHandler {
