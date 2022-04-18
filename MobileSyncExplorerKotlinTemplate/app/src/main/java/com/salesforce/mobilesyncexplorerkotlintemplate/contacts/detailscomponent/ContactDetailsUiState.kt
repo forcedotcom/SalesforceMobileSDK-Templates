@@ -1,11 +1,9 @@
 package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent
 
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.DialogUiState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.SObjectUiSyncState
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
 
 sealed interface ContactDetailsUiState {
-    val dataOperationIsActive: Boolean // TODO it may be a good idea to break this up into discrete flags for the different types of data operations, and then the UI just shows the spinner if any of the flags are true.
     val doingInitialLoad: Boolean
 
     data class ViewingContactDetails(
@@ -18,7 +16,6 @@ sealed interface ContactDetailsUiState {
         val isEditingEnabled: Boolean,
         val shouldScrollToErrorField: Boolean,
 
-        override val dataOperationIsActive: Boolean,
         override val doingInitialLoad: Boolean = false
     ) : ContactDetailsUiState {
         val fullName = ContactObject.formatFullName(
@@ -28,21 +25,17 @@ sealed interface ContactDetailsUiState {
     }
 
     data class NoContactSelected(
-        override val dataOperationIsActive: Boolean,
         override val doingInitialLoad: Boolean = false
     ) : ContactDetailsUiState
 }
 
 fun ContactDetailsUiState.copy(
-    dataOperationIsActive: Boolean = this.dataOperationIsActive,
     doingInitialLoad: Boolean = this.doingInitialLoad,
 ) = when (this) {
     is ContactDetailsUiState.NoContactSelected -> this.copy(
-        dataOperationIsActive = dataOperationIsActive,
         doingInitialLoad = doingInitialLoad,
     )
     is ContactDetailsUiState.ViewingContactDetails -> this.copy(
-        dataOperationIsActive = dataOperationIsActive,
         doingInitialLoad = doingInitialLoad,
     )
 }

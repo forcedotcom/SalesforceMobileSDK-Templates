@@ -80,7 +80,7 @@ fun ContactDetailsContentSinglePane(
                     if (contactDetailsUi?.isEditingEnabled == true)
                         componentUiEventHandler::exitEditClick
                     else
-                        componentUiEventHandler::deselectContact
+                        componentUiEventHandler::deselectContactClick
                 )
 
                 ContactsActivityMenuButton(menuHandler = menuHandler)
@@ -264,7 +264,7 @@ val PREVIEW_CONTACT_DETAILS_UI_HANDLER = object : ContactDetailsUiEventHandler {
     override fun createClick() {}
     override fun deleteClick() {}
     override fun undeleteClick() {}
-    override fun deselectContact() {}
+    override fun deselectContactClick() {}
     override fun editClick() {}
     override fun exitEditClick() {}
     override fun saveClick() {}

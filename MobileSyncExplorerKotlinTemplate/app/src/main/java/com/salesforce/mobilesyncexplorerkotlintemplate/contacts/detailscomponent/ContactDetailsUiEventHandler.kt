@@ -4,7 +4,7 @@ interface ContactDetailsUiEventHandler {
     fun createClick()
     fun deleteClick()
     fun undeleteClick()
-    fun deselectContact()
+    fun deselectContactClick()
     fun editClick()
     fun exitEditClick()
     fun saveClick()
