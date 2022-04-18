@@ -77,7 +77,7 @@ fun ContactsActivityContent(
 ) {
     val detailsUiState by activityVm.detailsVm.uiState.collectAsState()
     val listUiState by activityVm.listVm.uiState.collectAsState()
-    val activityUiState by activityVm.uiState.collectAsState()
+    val activityUiState by activityVm.activityUiState.collectAsState()
 
     when (windowSizeClasses.toContactsActivityContentLayout()) {
         ContactsActivityContentLayout.SinglePane -> SinglePane(
@@ -696,8 +696,8 @@ class PreviewActivityVm(
     detailsState: ContactDetailsUiState,
     listState: ContactsListUiState
 ) : ContactsActivityViewModel {
-    override val uiState: StateFlow<ContactsActivityUiState> = MutableStateFlow(activityState)
-    val uiStateValue get() = uiState.value
+    override val activityUiState: StateFlow<ContactsActivityUiState> = MutableStateFlow(activityState)
+    val uiStateValue get() = activityUiState.value
     override val detailsVm: ContactDetailsViewModel = PreviewDetailsVm(detailsState)
     override val listVm: ContactsListViewModel = PreviewListVm(listState)
 

@@ -10,30 +10,22 @@ import kotlinx.coroutines.flow.flow
 sealed interface UpsertResponse<T : SObject> {
     class Started<T : SObject> : UpsertResponse<T>
     data class UpsertSuccess<T : SObject>(val record: SObjectRecord<T>) : UpsertResponse<T>
-    data class Finished<T : SObject>(val exception: RepoOperationException? = null) :
-        UpsertResponse<T>
 }
 
 class UpsertUseCase<T : SObject>(private val repo: SObjectSyncableRepo<T>) {
+    @Throws(RepoOperationException::class)
     operator fun invoke(id: String?, so: T): Flow<UpsertResponse<T>> = runUpsert(id = id, so = so)
 
+    @Throws(RepoOperationException::class)
     private fun runUpsert(id: String?, so: T): Flow<UpsertResponse<T>> = flow {
-        var exception: RepoOperationException? = null
-        try {
-            emit(UpsertResponse.Started())
+        emit(UpsertResponse.Started())
 
-            val record = if (id == null) {
-                repo.locallyCreate(so = so)
-            } else {
-                repo.locallyUpdate(id = id, so = so)
-            }
-
-            emit(UpsertResponse.UpsertSuccess(record))
-
-        } catch (ex: RepoOperationException) {
-            exception = ex
-        } finally {
-            emit(UpsertResponse.Finished(exception = exception))
+        val record = if (id == null) {
+            repo.locallyCreate(so = so)
+        } else {
+            repo.locallyUpdate(id = id, so = so)
         }
+
+        emit(UpsertResponse.UpsertSuccess(record))
     }
 }
