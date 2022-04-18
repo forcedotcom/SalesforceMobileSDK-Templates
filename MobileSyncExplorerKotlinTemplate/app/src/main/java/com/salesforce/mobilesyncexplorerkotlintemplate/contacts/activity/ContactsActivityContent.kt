@@ -392,7 +392,7 @@ private fun SinglePaneDetailsPreview() {
     val selectedContact = contacts[3]
 
     val detailsVm = PreviewDetailsVm(
-        uiState = selectedContact.sObject.toPreviewViewingContactDetails()
+        uiState = selectedContact.toPreviewViewingContactDetails()
     )
 
     val listVm = PreviewListVm(
@@ -452,7 +452,7 @@ private fun ListDetailMediumPreview() {
     val selectedContact = contacts[3]
 
     val detailsVm = PreviewDetailsVm(
-        uiState = selectedContact.sObject.toPreviewViewingContactDetails()
+        uiState = selectedContact.toPreviewViewingContactDetails()
     )
 
     val listVm = PreviewListVm(
@@ -503,7 +503,7 @@ private fun ListDetailEditingPreview() {
     val selectedContact = contacts[3]
 
     val detailsVm = PreviewDetailsVm(
-        uiState = selectedContact.sObject.toPreviewViewingContactDetails(isEditingEnabled = true)
+        uiState = selectedContact.toPreviewViewingContactDetails(isEditingEnabled = true)
     )
 
     val listVm = PreviewListVm(
@@ -609,7 +609,7 @@ private fun ListDetailExpandedPreview() {
     val selectedContact = contacts[3]
 
     val detailsVm = PreviewDetailsVm(
-        uiState = selectedContact.sObject.toPreviewViewingContactDetails()
+        uiState = selectedContact.toPreviewViewingContactDetails()
     )
 
     val listVm = PreviewListVm(

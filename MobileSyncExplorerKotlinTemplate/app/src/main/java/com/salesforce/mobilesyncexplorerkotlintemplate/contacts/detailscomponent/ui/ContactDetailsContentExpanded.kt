@@ -19,16 +19,19 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.R.drawable.ic_undo
 import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsUiState
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.LocalStatus
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.SObjectUiSyncState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.WINDOW_SIZE_MEDIUM_CUTOFF_DP
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
+import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactRecord
 
 @Composable
 fun RowScope.ContactDetailsTopBarContentExpanded(
     detailsUiState: ContactDetailsUiState,
     eventHandler: ContactDetailsClickHandler
 ) {
+    Spacer(modifier = Modifier.weight(1f))
     when (detailsUiState) {
         is ContactDetailsUiState.NoContactSelected -> {}
         is ContactDetailsUiState.ViewingContactDetails -> {
@@ -73,27 +76,31 @@ fun RowScope.ContactDetailsTopBarContentExpanded(
 @Preview(showBackground = true, widthDp = WINDOW_SIZE_MEDIUM_CUTOFF_DP)
 @Composable
 private fun ContactDetailsTopBarExpandedPreview() {
-    val mockContact = ContactObject(
-        firstName = "First",
-        lastName = "Last",
-        title = null,
-        department = null
+    val mockContact = ContactRecord(
+        id = "1",
+        localStatus = LocalStatus.MatchesUpstream,
+        sObject = ContactObject(
+            firstName = "First",
+            lastName = "Last",
+            title = null,
+            department = null
+        )
     )
     SalesforceMobileSDKAndroidTheme {
         Surface {
             Column {
+                Text("Viewing Mode:", modifier = Modifier.padding(top = 8.dp))
                 TopAppBar(modifier = Modifier.padding(8.dp)) {
-                    Text(mockContact.fullName)
-                    Spacer(modifier = Modifier.weight(1f))
+                    Text("Other Top App Bar Content")
                     ContactDetailsTopBarContentExpanded(
                         detailsUiState = mockContact.toPreviewViewingContactDetails(),
                         eventHandler = PREVIEW_CONTACT_DETAILS_UI_HANDLER
                     )
                 }
 
+                Text("Editing Mode:", modifier = Modifier.padding(top = 8.dp))
                 TopAppBar(modifier = Modifier.padding(8.dp)) {
-                    Text(mockContact.fullName)
-                    Spacer(modifier = Modifier.weight(1f))
+                    Text("Other Top App Bar Content")
                     ContactDetailsTopBarContentExpanded(
                         detailsUiState = mockContact.toPreviewViewingContactDetails(
                             isEditingEnabled = true
@@ -102,9 +109,9 @@ private fun ContactDetailsTopBarExpandedPreview() {
                     )
                 }
 
+                Text("Locally Deleted:", modifier = Modifier.padding(top = 8.dp))
                 TopAppBar(modifier = Modifier.padding(8.dp)) {
-                    Text(mockContact.fullName)
-                    Spacer(modifier = Modifier.weight(1f))
+                    Text("Other Top App Bar Content")
                     ContactDetailsTopBarContentExpanded(
                         detailsUiState = mockContact.toPreviewViewingContactDetails(
                             uiSyncState = SObjectUiSyncState.Deleted
@@ -113,9 +120,9 @@ private fun ContactDetailsTopBarExpandedPreview() {
                     )
                 }
 
+                Text("No Contact Selected:", modifier = Modifier.padding(top = 8.dp))
                 TopAppBar(modifier = Modifier.padding(8.dp)) {
-                    Text(stringResource(id = label_contacts))
-                    Spacer(modifier = Modifier.weight(1f))
+                    Text("Other Top App Bar Content")
                     ContactDetailsTopBarContentExpanded(
                         detailsUiState = ContactDetailsUiState.NoContactSelected(),
                         eventHandler = PREVIEW_CONTACT_DETAILS_UI_HANDLER

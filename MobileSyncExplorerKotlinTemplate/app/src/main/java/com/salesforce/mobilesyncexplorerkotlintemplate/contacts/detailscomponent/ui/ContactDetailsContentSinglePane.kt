@@ -47,12 +47,14 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.Contact
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.ContactsActivityMenuHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.SyncImage
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsField
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsClickHandler
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsField
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsUiState
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.LocalStatus
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.SObjectUiSyncState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
+import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactRecord
 import org.jetbrains.annotations.TestOnly
 
 @Composable
@@ -210,11 +212,15 @@ private fun ContactDetailsFab(
 @Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 private fun ContactDetailViewModePreview() {
-    val contact = ContactObject(
-        firstName = "FirstFirstFirstFirstFirstFirstFirstFirstFirstFirst",
-        lastName = "LastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLast",
-        title = "Titletitletitletitletitletitletitletitletitletitletitletitletitletitle",
-        department = "DepartmentDepartmentDepartmentDepartmentDepartmentDepartmentDepartmentDepartmentDepartmentDepartment"
+    val contact = ContactRecord(
+        id = "1",
+        localStatus = LocalStatus.MatchesUpstream,
+        sObject = ContactObject(
+            firstName = "FirstFirstFirstFirstFirstFirstFirstFirstFirstFirst",
+            lastName = "LastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLast",
+            title = "Titletitletitletitletitletitletitletitletitletitletitletitletitletitle",
+            department = "DepartmentDepartmentDepartmentDepartmentDepartmentDepartmentDepartmentDepartmentDepartmentDepartment"
+        )
     )
 
     SalesforceMobileSDKAndroidTheme {
@@ -229,25 +235,26 @@ private fun ContactDetailViewModePreview() {
 }
 
 @TestOnly
-fun ContactObject.toPreviewViewingContactDetails(
+fun ContactRecord.toPreviewViewingContactDetails(
     uiSyncState: SObjectUiSyncState = SObjectUiSyncState.Updated,
     isEditingEnabled: Boolean = false,
     shouldScrollToErrorField: Boolean = false,
 ) = ContactDetailsUiState.ViewingContactDetails(
+    recordId = id,
     firstNameField = ContactDetailsField.FirstName(
-        fieldValue = firstName,
+        fieldValue = sObject.firstName,
         onValueChange = {}
     ),
     lastNameField = ContactDetailsField.LastName(
-        fieldValue = lastName,
+        fieldValue = sObject.lastName,
         onValueChange = {}
     ),
     titleField = ContactDetailsField.Title(
-        fieldValue = title,
+        fieldValue = sObject.title,
         onValueChange = {}
     ),
     departmentField = ContactDetailsField.Department(
-        fieldValue = department,
+        fieldValue = sObject.department,
         onValueChange = {}
     ),
     uiSyncState = uiSyncState,

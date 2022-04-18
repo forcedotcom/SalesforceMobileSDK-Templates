@@ -5,8 +5,10 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObj
 
 sealed interface ContactDetailsUiState {
     val doingInitialLoad: Boolean
+    val recordId: String?
 
     data class ViewingContactDetails(
+        override val recordId: String?,
         val firstNameField: ContactDetailsField.FirstName,
         val lastNameField: ContactDetailsField.LastName,
         val titleField: ContactDetailsField.Title,
@@ -26,7 +28,9 @@ sealed interface ContactDetailsUiState {
 
     data class NoContactSelected(
         override val doingInitialLoad: Boolean = false
-    ) : ContactDetailsUiState
+    ) : ContactDetailsUiState {
+        override val recordId: String? = null
+    }
 }
 
 fun ContactDetailsUiState.copy(
