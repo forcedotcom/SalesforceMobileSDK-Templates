@@ -30,7 +30,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListClickHandler
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListDataActionClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.requireIsLocked
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.withLockDebug
@@ -74,9 +73,6 @@ class DefaultContactsActivityViewModel(
     override val listClickHandler: ContactsListClickHandler get() = listVm
     override val searchTermUpdatedHandler: (newSearchTerm: String) -> Unit get() = listVm::onSearchTermUpdated
 
-    private lateinit var detailsVmInt: InnerDetailsViewModel
-    private lateinit var listVmInt: InnerListViewModel
-
     private val stateMutex = Mutex()
     private val mutActivityUiState = MutableStateFlow(
         ContactsActivityUiState(isSyncing = false, dataOpIsActive = false, dialogUiState = null)
@@ -92,8 +88,8 @@ class DefaultContactsActivityViewModel(
             contactsRepo.recordsById.collect { records ->
                 stateMutex.withLockDebug {
                     curRecordsByIds = records
-                    detailsVmInt.onRecordsEmitted(records)
-                    listVmInt.onRecordsEmitted(records)
+                    detailsVm.onRecordsEmitted(records)
+                    listVm.onRecordsEmitted(records)
                 }
             }
         }
@@ -151,14 +147,14 @@ class DefaultContactsActivityViewModel(
 
         override fun createClick() = launchWithStateLock {
             // TODO check for data operations
-            if (!detailsVmInt.hasUnsavedChanges) {
-                detailsVmInt.clobberRecord(record = null, editing = true)
-                listVmInt.setSelectedContact(null)
+            if (!detailsVm.hasUnsavedChanges) {
+                detailsVm.clobberRecord(record = null, editing = true)
+                listVm.setSelectedContact(null)
             } else {
                 val discardChangesDialog = DiscardChangesDialogUiState(
                     onDiscardChanges = {
                         launchWithStateLock {
-                            detailsVmInt.clobberRecord(record = null, editing = true)
+                            detailsVm.clobberRecord(record = null, editing = true)
                             dismissCurDialog()
                         }
                     },
@@ -173,15 +169,16 @@ class DefaultContactsActivityViewModel(
         private fun doSetContact(contactId: String, editing: Boolean) = launchWithStateLock {
             // TODO check for data operations
             val record = curRecordsByIds[contactId] ?: return@launchWithStateLock
-            if (!detailsVmInt.hasUnsavedChanges) {
-                detailsVmInt.clobberRecord(record = record, editing = editing)
-                listVmInt.setSelectedContact(id = contactId)
+            if (!detailsVm.hasUnsavedChanges) {
+                detailsVm.clobberRecord(record = record, editing = editing)
+                listVm.setSelectedContact(id = contactId)
             } else {
                 val discardChangesDialog = DiscardChangesDialogUiState(
                     onDiscardChanges = {
                         launchWithStateLock inner@{
                             val futureRecord = curRecordsByIds[contactId] ?: return@inner
-                            detailsVmInt.clobberRecord(record = futureRecord, editing = editing)
+                            detailsVm.clobberRecord(record = futureRecord, editing = editing)
+                            listVm.setSelectedContact(id = contactId)
                             dismissCurDialog()
                         }
                     },
@@ -199,8 +196,8 @@ class DefaultContactsActivityViewModel(
             try {
                 val updatedRecord = contactsRepo.locallyUpdate(id = idToUpdate, so = so)
                 stateMutex.withLockDebug {
-                    if (detailsVmInt.curRecordId == idToUpdate) {
-                        detailsVmInt.clobberRecord(record = updatedRecord, editing = false)
+                    if (detailsVm.curRecordId == idToUpdate) {
+                        detailsVm.clobberRecord(record = updatedRecord, editing = false)
                     }
                 }
             } catch (ex: RepoOperationException) {
@@ -213,8 +210,8 @@ class DefaultContactsActivityViewModel(
             try {
                 val newRecord = contactsRepo.locallyCreate(so = so)
                 stateMutex.withLockDebug {
-                    if (detailsVmInt.curRecordId == null && detailsVmInt.uiState.value !is ContactDetailsUiState.NoContactSelected) {
-                        detailsVmInt.clobberRecord(record = newRecord, editing = false)
+                    if (detailsVm.curRecordId == null && detailsVm.uiState.value !is ContactDetailsUiState.NoContactSelected) {
+                        detailsVm.clobberRecord(record = newRecord, editing = false)
                     }
                 }
             } catch (ex: RepoOperationException) {
@@ -227,8 +224,8 @@ class DefaultContactsActivityViewModel(
             try {
                 val updatedRecord = contactsRepo.locallyDelete(id = idToDelete)
                 stateMutex.withLockDebug {
-                    if (detailsVmInt.curRecordId == idToDelete) {
-                        detailsVmInt.clobberRecord(record = updatedRecord, editing = false)
+                    if (detailsVm.curRecordId == idToDelete) {
+                        detailsVm.clobberRecord(record = updatedRecord, editing = false)
                     }
                 }
             } catch (ex: RepoOperationException) {
@@ -238,12 +235,15 @@ class DefaultContactsActivityViewModel(
 
         val deleteDialog = DeleteConfirmationDialogUiState(
             objIdToDelete = idToDelete,
-            objName = when (val detailsState = detailsVmInt.uiState.value) {
+            objName = when (val detailsState = detailsVm.uiState.value) {
                 is ContactDetailsUiState.NoContactSelected -> null
                 is ContactDetailsUiState.ViewingContactDetails -> detailsState.fullName
             },
             onCancelDelete = { launchWithStateLock { dismissCurDialog() } },
-            onDeleteConfirm = { launchWithinDataOperationActiveState { doDelete() } }
+            onDeleteConfirm = {
+                launchWithStateLock { dismissCurDialog() }
+                launchWithinDataOperationActiveState { doDelete() }
+            }
         )
 
         mutActivityUiState.value = activityUiState.value.copy(dialogUiState = deleteDialog)
@@ -254,8 +254,8 @@ class DefaultContactsActivityViewModel(
             try {
                 val updatedRecord = contactsRepo.locallyUndelete(id = idToUndelete)
                 stateMutex.withLockDebug {
-                    if (detailsVmInt.curRecordId == idToUndelete) {
-                        detailsVmInt.clobberRecord(record = updatedRecord, editing = false)
+                    if (detailsVm.curRecordId == idToUndelete) {
+                        detailsVm.clobberRecord(record = updatedRecord, editing = false)
                     }
                 }
             } catch (ex: RepoOperationException) {
@@ -265,12 +265,15 @@ class DefaultContactsActivityViewModel(
 
         val undeleteDialog = UndeleteConfirmationDialogUiState(
             objIdToUndelete = idToUndelete,
-            objName = when (val detailsState = detailsVmInt.uiState.value) {
+            objName = when (val detailsState = detailsVm.uiState.value) {
                 is ContactDetailsUiState.NoContactSelected -> null
                 is ContactDetailsUiState.ViewingContactDetails -> detailsState.fullName
             },
             onCancelUndelete = { launchWithStateLock { dismissCurDialog() } },
-            onUndeleteConfirm = { launchWithinDataOperationActiveState { doUndelete() } }
+            onUndeleteConfirm = {
+                launchWithStateLock { dismissCurDialog() }
+                launchWithinDataOperationActiveState { doUndelete() }
+            }
         )
 
         mutActivityUiState.value = activityUiState.value.copy(dialogUiState = undeleteDialog)
@@ -330,39 +333,18 @@ class DefaultContactsActivityViewModel(
     // endregion
 
 
-    /* WIP steps to migrate VMs to inner classes:
-     *
-     * Dialogs need to go through activity vm
-     * List data action delegate back to activity vm
-     * Delegate list click events to activity vm
-     * Everything having the same state mutex is okay?
-     * Activity VM data action lock or data action locks per component? (see note in ContactActivityUiState)
-     * Does each VM need its own contacts collector?
-     *     Probably not, but delegating updating UI state on new emission is necessary I think
-     */
-
-    private interface InnerDetailsViewModel {
-        val uiState: StateFlow<ContactDetailsUiState>
-        val curRecordId: String?
-        val hasUnsavedChanges: Boolean
-
-        suspend fun clobberRecord(record: ContactRecord?, editing: Boolean)
-        suspend fun onRecordsEmitted(records: Map<String, ContactRecord>)
-    }
-
     private inner class DefaultContactDetailsViewModel
         : ContactDetailsFieldChangeHandler,
-        ContactDetailsClickHandler,
-        InnerDetailsViewModel {
+        ContactDetailsClickHandler {
 
         private val mutDetailsUiState: MutableStateFlow<ContactDetailsUiState> = MutableStateFlow(
             ContactDetailsUiState.NoContactSelected(doingInitialLoad = true)
         )
 
-        override val uiState: StateFlow<ContactDetailsUiState> get() = mutDetailsUiState
+        val uiState: StateFlow<ContactDetailsUiState> get() = mutDetailsUiState
 
         @Volatile
-        override var curRecordId: String? = null
+        var curRecordId: String? = null
             get() {
                 stateMutex.requireIsLocked()
                 return field
@@ -372,7 +354,7 @@ class DefaultContactsActivityViewModel(
                 field = value
             }
 
-        override suspend fun onRecordsEmitted(records: Map<String, ContactRecord>) {
+        suspend fun onRecordsEmitted(records: Map<String, ContactRecord>) {
             stateMutex.requireIsLocked()
 
             if (uiState.value.doingInitialLoad) {
@@ -421,7 +403,7 @@ class DefaultContactsActivityViewModel(
             }
         }
 
-        override suspend fun clobberRecord(record: ContactRecord?, editing: Boolean) {
+        fun clobberRecord(record: ContactRecord?, editing: Boolean) {
             stateMutex.requireIsLocked()
 
             curRecordId = record?.id
@@ -444,14 +426,15 @@ class DefaultContactsActivityViewModel(
                         lastNameField = record.sObject.buildLastNameField(),
                         titleField = record.sObject.buildTitleField(),
                         departmentField = record.sObject.buildDepartmentField(),
+                        uiSyncState = record.localStatus.toUiSyncState(),
                         isEditingEnabled = editing,
-                        shouldScrollToErrorField = false
+                        shouldScrollToErrorField = false,
                     )
                 }
             }
         }
 
-        override val hasUnsavedChanges: Boolean
+        val hasUnsavedChanges: Boolean
             get() {
                 stateMutex.requireIsLocked()
                 return when (val curState = uiState.value) {
@@ -694,15 +677,7 @@ class DefaultContactsActivityViewModel(
         )
     }
 
-    private interface InnerListViewModel {
-        suspend fun onRecordsEmitted(records: Map<String, ContactRecord>)
-        suspend fun setSelectedContact(id: String?)
-    }
-
-    private inner class DefaultContactsListViewModel :
-        ContactsListClickHandler,
-        ContactsListDataActionClickHandler,
-        InnerListViewModel {
+    private inner class DefaultContactsListViewModel : ContactsListClickHandler {
 
         private val mutListUiState = MutableStateFlow(
             ContactsListUiState(
@@ -715,7 +690,7 @@ class DefaultContactsActivityViewModel(
         )
         val uiState: StateFlow<ContactsListUiState> get() = mutListUiState
 
-        override suspend fun onRecordsEmitted(records: Map<String, ContactRecord>) {
+        suspend fun onRecordsEmitted(records: Map<String, ContactRecord>) {
             launchWithStateLock {
                 // always launch the search with new records and only update the ui list with the search results
                 restartSearch(searchTerm = uiState.value.curSearchTerm) { filteredList ->
@@ -730,7 +705,7 @@ class DefaultContactsActivityViewModel(
             }
         }
 
-        override suspend fun setSelectedContact(id: String?) {
+        fun setSelectedContact(id: String?) {
             stateMutex.requireIsLocked()
             mutListUiState.value = uiState.value.copy(curSelectedContactId = id)
         }
