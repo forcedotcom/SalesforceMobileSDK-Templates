@@ -45,17 +45,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.salesforce.mobilesyncexplorerkotlintemplate.R
 import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.*
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsUiEventHandler
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsClickHandler
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsFieldChangeHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsUiState
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsViewModel
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ui.ContactDetailsContent
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ui.ContactDetailsContentSinglePane
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ui.ContactDetailsTopBarContentExpanded
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ui.toPreviewViewingContactDetails
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListDataActionClickHandler
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiClickHandler
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiState
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListViewModel
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ui.ContactsListContent
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ui.ContactsListSinglePaneComponent
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.LocalStatus
@@ -75,27 +73,25 @@ fun ContactsActivityContent(
     menuHandler: ContactsActivityMenuHandler,
     windowSizeClasses: WindowSizeClasses
 ) {
-    val detailsUiState by activityVm.detailsVm.uiState.collectAsState()
-    val listUiState by activityVm.listVm.uiState.collectAsState()
+    val detailsUiState by activityVm.detailsUiState.collectAsState()
+    val listUiState by activityVm.listUiState.collectAsState()
     val activityUiState by activityVm.activityUiState.collectAsState()
 
     when (windowSizeClasses.toContactsActivityContentLayout()) {
         ContactsActivityContentLayout.SinglePane -> SinglePane(
             detailsUiState = detailsUiState,
-            detailsUiEventHandler = activityVm.detailsVm,
+            detailsClickHandler = activityVm.detailsClickHandler,
             listUiState = listUiState,
-            listUiClickHandler = activityVm.listVm,
-            listDataActionClickHandler = activityVm.listVm,
-            onSearchTermUpdated = activityVm.listVm::onSearchTermUpdated,
+            listClickHandler = activityVm.listClickHandler,
+            onSearchTermUpdated = activityVm.searchTermUpdatedHandler,
             menuHandler = menuHandler
         )
         ContactsActivityContentLayout.ListDetail -> ListDetail(
             detailsUiState = detailsUiState,
-            detailsUiEventHandler = activityVm.detailsVm,
+            detailsClickHandler = activityVm.detailsClickHandler,
             listUiState = listUiState,
-            listUiClickHandler = activityVm.listVm,
-            listDataActionClickHandler = activityVm.listVm,
-            onSearchTermUpdated = activityVm.listVm::onSearchTermUpdated,
+            listClickHandler = activityVm.listClickHandler,
+            onSearchTermUpdated = activityVm.searchTermUpdatedHandler,
             menuHandler = menuHandler,
             windowSizeClasses = windowSizeClasses
         )
@@ -107,10 +103,9 @@ fun ContactsActivityContent(
 @Composable
 private fun SinglePane(
     detailsUiState: ContactDetailsUiState,
-    detailsUiEventHandler: ContactDetailsUiEventHandler,
+    detailsClickHandler: ContactDetailsClickHandler,
     listUiState: ContactsListUiState,
-    listUiClickHandler: ContactsListUiClickHandler,
-    listDataActionClickHandler: ContactsListDataActionClickHandler,
+    listClickHandler: ContactsListClickHandler,
     onSearchTermUpdated: (newSearchTerm: String) -> Unit,
     menuHandler: ContactsActivityMenuHandler,
 ) {
@@ -119,13 +114,12 @@ private fun SinglePane(
     when (detailsUiState) {
         is ContactDetailsUiState.ViewingContactDetails -> ContactDetailsContentSinglePane(
             details = detailsUiState,
-            componentUiEventHandler = detailsUiEventHandler,
+            componentClickHandler = detailsClickHandler,
             menuHandler = menuHandler
         )
         else -> ContactsListSinglePaneComponent(
             uiState = listUiState,
-            listUiClickHandler = listUiClickHandler,
-            dataActionClickHandler = listDataActionClickHandler,
+            listClickHandler = listClickHandler,
             onSearchTermUpdated = onSearchTermUpdated,
             menuHandler = menuHandler
         )
@@ -135,10 +129,9 @@ private fun SinglePane(
 @Composable
 private fun ListDetail(
     detailsUiState: ContactDetailsUiState,
-    detailsUiEventHandler: ContactDetailsUiEventHandler,
+    detailsClickHandler: ContactDetailsClickHandler,
     listUiState: ContactsListUiState,
-    listUiClickHandler: ContactsListUiClickHandler,
-    listDataActionClickHandler: ContactsListDataActionClickHandler,
+    listClickHandler: ContactsListClickHandler,
     onSearchTermUpdated: (newSearchTerm: String) -> Unit,
     menuHandler: ContactsActivityMenuHandler,
     windowSizeClasses: WindowSizeClasses
@@ -158,7 +151,7 @@ private fun ListDetail(
 
                 ContactDetailsTopBarContentExpanded(
                     detailsUiState = detailsUiState,
-                    eventHandler = detailsUiEventHandler
+                    eventHandler = detailsClickHandler
                 )
             }
         },
@@ -169,7 +162,7 @@ private fun ListDetail(
             }
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = detailsUiEventHandler::createClick) {
+            FloatingActionButton(onClick = detailsClickHandler::createClick) {
                 Icon(
                     Icons.Default.Add,
                     contentDescription = stringResource(id = content_desc_add_contact)
@@ -197,8 +190,7 @@ private fun ListDetail(
                 ContactsListContent(
                     modifier = Modifier.fillMaxSize(),
                     uiState = listUiState,
-                    listUiClickHandler = listUiClickHandler,
-                    dataActionClickHandler = listDataActionClickHandler,
+                    listClickHandler = listClickHandler,
                     onSearchTermUpdated = onSearchTermUpdated
                 )
             }
@@ -206,7 +198,7 @@ private fun ListDetail(
             Column(modifier = detailModifier) {
                 ListDetailContactDetailsContent(
                     detailsUiState = detailsUiState,
-                    onExitClick = detailsUiEventHandler::exitEditClick
+                    onExitClick = detailsClickHandler::exitEditClick
                 )
             }
         }
@@ -344,10 +336,7 @@ private fun SinglePaneListPreview() {
     }
 
     val detailsVm = PreviewDetailsVm(
-        uiState = ContactDetailsUiState.NoContactSelected(
-            dataOperationIsActive = false,
-            curDialogUiState = null
-        )
+        uiState = ContactDetailsUiState.NoContactSelected()
     )
 
     val listVm = PreviewListVm(
@@ -363,7 +352,8 @@ private fun SinglePaneListPreview() {
     val vm = PreviewActivityVm(
         activityState = ContactsActivityUiState(
             isSyncing = false,
-            dialogUiState = null
+            dialogUiState = null,
+            dataOpIsActive = false
         ),
         detailsState = detailsVm.uiStateValue,
         listState = listVm.uiStateValue
@@ -418,7 +408,8 @@ private fun SinglePaneDetailsPreview() {
     val vm = PreviewActivityVm(
         activityState = ContactsActivityUiState(
             isSyncing = false,
-            dialogUiState = null
+            dialogUiState = null,
+            dataOpIsActive = false
         ),
         detailsState = detailsVm.uiStateValue,
         listState = listVm.uiStateValue
@@ -477,10 +468,9 @@ private fun ListDetailMediumPreview() {
         Surface {
             ListDetail(
                 detailsUiState = detailsVm.uiStateValue,
-                detailsUiEventHandler = detailsVm,
+                detailsClickHandler = detailsVm,
                 listUiState = listVm.uiStateValue,
-                listUiClickHandler = listVm,
-                listDataActionClickHandler = listVm,
+                listClickHandler = listVm,
                 onSearchTermUpdated = listVm::onSearchTermUpdated,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
                 WindowSizeClasses(horiz = WindowSizeClass.Medium, vert = WindowSizeClass.Expanded)
@@ -529,10 +519,9 @@ private fun ListDetailEditingPreview() {
         Surface {
             ListDetail(
                 detailsUiState = detailsVm.uiStateValue,
-                detailsUiEventHandler = detailsVm,
+                detailsClickHandler = detailsVm,
                 listUiState = listVm.uiStateValue,
-                listUiClickHandler = listVm,
-                listDataActionClickHandler = listVm,
+                listClickHandler = listVm,
                 onSearchTermUpdated = listVm::onSearchTermUpdated,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
                 WindowSizeClasses(horiz = WindowSizeClass.Medium, vert = WindowSizeClass.Expanded)
@@ -563,10 +552,7 @@ private fun ListDetailNoContactPreview() {
     }.filter { it.sObject.fullName.contains(curSearchTerm) }
 
     val detailsVm = PreviewDetailsVm(
-        uiState = ContactDetailsUiState.NoContactSelected(
-            dataOperationIsActive = false,
-            curDialogUiState = null
-        )
+        uiState = ContactDetailsUiState.NoContactSelected()
     )
 
     val listVm = PreviewListVm(
@@ -583,10 +569,9 @@ private fun ListDetailNoContactPreview() {
         Surface {
             ListDetail(
                 detailsUiState = detailsVm.uiStateValue,
-                detailsUiEventHandler = detailsVm,
+                detailsClickHandler = detailsVm,
                 listUiState = listVm.uiStateValue,
-                listUiClickHandler = listVm,
-                listDataActionClickHandler = listVm,
+                listClickHandler = listVm,
                 onSearchTermUpdated = listVm::onSearchTermUpdated,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
                 WindowSizeClasses(horiz = WindowSizeClass.Medium, vert = WindowSizeClass.Expanded)
@@ -640,10 +625,9 @@ private fun ListDetailExpandedPreview() {
         Surface {
             ListDetail(
                 detailsUiState = detailsVm.uiStateValue,
-                detailsUiEventHandler = detailsVm,
+                detailsClickHandler = detailsVm,
                 listUiState = listVm.uiStateValue,
-                listUiClickHandler = listVm,
-                listDataActionClickHandler = listVm,
+                listClickHandler = listVm,
                 onSearchTermUpdated = listVm::onSearchTermUpdated,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
                 WindowSizeClasses(horiz = WindowSizeClass.Expanded, vert = WindowSizeClass.Expanded)
@@ -652,15 +636,10 @@ private fun ListDetailExpandedPreview() {
     }
 }
 
-class PreviewDetailsVm(uiState: ContactDetailsUiState) : ContactDetailsViewModel {
-    override val uiState: StateFlow<ContactDetailsUiState> = MutableStateFlow(uiState)
-    override suspend fun setContactOrThrow(recordId: String?, isEditing: Boolean) {}
-    override suspend fun discardChangesAndSetContactOrThrow(
-        recordId: String?,
-        isEditing: Boolean
-    ) {
-    }
+class PreviewDetailsVm(uiState: ContactDetailsUiState) : ContactDetailsClickHandler,
+    ContactDetailsFieldChangeHandler {
 
+    val uiState: StateFlow<ContactDetailsUiState> = MutableStateFlow(uiState)
     val uiStateValue get() = this.uiState.value
 
     override fun onFirstNameChange(newFirstName: String) {}
@@ -670,14 +649,14 @@ class PreviewDetailsVm(uiState: ContactDetailsUiState) : ContactDetailsViewModel
     override fun createClick() {}
     override fun deleteClick() {}
     override fun undeleteClick() {}
-    override fun deselectContact() {}
+    override fun deselectContactClick() {}
     override fun editClick() {}
     override fun exitEditClick() {}
     override fun saveClick() {}
 }
 
-class PreviewListVm(uiState: ContactsListUiState) : ContactsListViewModel {
-    override val uiState: StateFlow<ContactsListUiState> = MutableStateFlow(uiState)
+class PreviewListVm(uiState: ContactsListUiState) : ContactsListClickHandler {
+    val uiState: StateFlow<ContactsListUiState> = MutableStateFlow(uiState)
     val uiStateValue get() = this.uiState.value
 
     override fun contactClick(contactId: String) {}
@@ -685,10 +664,7 @@ class PreviewListVm(uiState: ContactsListUiState) : ContactsListViewModel {
     override fun deleteClick(contactId: String) {}
     override fun editClick(contactId: String) {}
     override fun undeleteClick(contactId: String) {}
-    override fun onSearchTermUpdated(newSearchTerm: String) {}
-
-    override fun setSelectedContact(id: String?) {}
-    override fun setSearchTerm(newSearchTerm: String) {}
+    fun onSearchTermUpdated(newSearchTerm: String) {}
 }
 
 class PreviewActivityVm(
@@ -696,10 +672,21 @@ class PreviewActivityVm(
     detailsState: ContactDetailsUiState,
     listState: ContactsListUiState
 ) : ContactsActivityViewModel {
-    override val activityUiState: StateFlow<ContactsActivityUiState> = MutableStateFlow(activityState)
+    override val activityUiState: StateFlow<ContactsActivityUiState> =
+        MutableStateFlow(activityState)
     val uiStateValue get() = activityUiState.value
-    override val detailsVm: ContactDetailsViewModel = PreviewDetailsVm(detailsState)
-    override val listVm: ContactsListViewModel = PreviewListVm(listState)
+
+    private val detailsVm = PreviewDetailsVm(detailsState)
+    private val listVm = PreviewListVm(listState)
+
+    override val detailsUiState: StateFlow<ContactDetailsUiState> get() = detailsVm.uiState
+    override val listUiState: StateFlow<ContactsListUiState> get() = listVm.uiState
+
+    override val detailsClickHandler: ContactDetailsClickHandler get() = detailsVm
+    override val detailsFieldChangeHandler: ContactDetailsFieldChangeHandler get() = detailsVm
+    override val listClickHandler: ContactsListClickHandler get() = listVm
+    override val searchTermUpdatedHandler: (newSearchTerm: String) -> Unit get() =
+        listVm::onSearchTermUpdated
 
     override fun sync(syncDownOnly: Boolean) {}
 }

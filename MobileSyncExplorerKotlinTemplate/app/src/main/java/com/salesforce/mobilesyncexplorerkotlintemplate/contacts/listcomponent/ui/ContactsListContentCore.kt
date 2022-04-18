@@ -23,8 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.content_desc_cancel_search
 import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.cta_search
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.PreviewListVm
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListDataActionClickHandler
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiClickHandler
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.LocalStatus
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord
@@ -39,8 +38,7 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObj
 fun ContactsListContent(
     modifier: Modifier = Modifier,
     uiState: ContactsListUiState,
-    listUiClickHandler: ContactsListUiClickHandler,
-    dataActionClickHandler: ContactsListDataActionClickHandler,
+    listClickHandler: ContactsListClickHandler,
     onSearchTermUpdated: (newSearchTerm: String) -> Unit
 ) {
     LazyColumn(modifier = modifier) {
@@ -88,10 +86,10 @@ fun ContactsListContent(
                 startExpanded = false,
                 model = record.sObject,
                 syncState = record.localStatus.toUiSyncState(),
-                onCardClick = { listUiClickHandler.contactClick(record.id) },
-                onDeleteClick = { dataActionClickHandler.deleteClick(record.id) },
-                onUndeleteClick = { dataActionClickHandler.undeleteClick(record.id) },
-                onEditClick = { listUiClickHandler.editClick(record.id) },
+                onCardClick = { listClickHandler.contactClick(record.id) },
+                onDeleteClick = { listClickHandler.deleteClick(record.id) },
+                onUndeleteClick = { listClickHandler.undeleteClick(record.id) },
+                onEditClick = { listClickHandler.editClick(record.id) },
             )
         }
     }
@@ -135,8 +133,7 @@ private fun ContactsListContentPreview(searchTerm: String = "9") {
         Surface {
             ContactsListContent(
                 uiState = vm.uiStateValue,
-                listUiClickHandler = vm,
-                dataActionClickHandler = vm,
+                listClickHandler = vm,
                 onSearchTermUpdated = vm::onSearchTermUpdated
             )
         }

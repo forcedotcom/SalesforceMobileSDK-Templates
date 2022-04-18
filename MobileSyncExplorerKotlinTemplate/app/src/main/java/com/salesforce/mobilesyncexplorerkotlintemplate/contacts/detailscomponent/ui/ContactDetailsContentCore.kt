@@ -26,7 +26,7 @@ fun ContactDetailsContent(
     when (details) {
         is ContactDetailsUiState.ViewingContactDetails -> ContactDetailsViewingContact(
             modifier = modifier,
-            details = details
+            details = details,
         )
         is ContactDetailsUiState.NoContactSelected -> ContactDetailsNoContactSelected()
     }
@@ -35,7 +35,7 @@ fun ContactDetailsContent(
 @Composable
 private fun ContactDetailsViewingContact(
     modifier: Modifier = Modifier,
-    details: ContactDetailsUiState.ViewingContactDetails
+    details: ContactDetailsUiState.ViewingContactDetails,
 ) {
     val scrollState = rememberScrollState()
     Column(
@@ -53,11 +53,9 @@ private fun ContactDetailsViewingContact(
         details.departmentField.OutlinedTextFieldWithHelp(isEditingEnabled = details.isEditingEnabled)
     }
 
-    if (details.dataOperationIsActive || details.doingInitialLoad) {
+    if (details.doingInitialLoad) {
         LoadingOverlay()
     }
-
-    details.curDialogUiState?.RenderDialog(modifier = Modifier)
 }
 
 @Composable

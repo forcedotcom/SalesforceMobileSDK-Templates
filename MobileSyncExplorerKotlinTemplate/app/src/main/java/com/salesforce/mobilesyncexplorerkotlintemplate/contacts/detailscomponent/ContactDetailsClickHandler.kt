@@ -1,6 +1,6 @@
 package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent
 
-interface ContactDetailsUiEventHandler {
+interface ContactDetailsClickHandler {
     fun createClick()
     fun deleteClick()
     fun undeleteClick()

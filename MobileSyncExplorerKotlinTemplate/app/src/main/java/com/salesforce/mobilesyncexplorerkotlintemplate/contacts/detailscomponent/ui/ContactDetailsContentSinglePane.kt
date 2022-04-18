@@ -48,9 +48,8 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.Contact
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.SyncImage
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsField
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsUiEventHandler
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsUiState
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.DialogUiState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.SObjectUiSyncState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
@@ -59,7 +58,7 @@ import org.jetbrains.annotations.TestOnly
 @Composable
 fun ContactDetailsContentSinglePane(
     details: ContactDetailsUiState,
-    componentUiEventHandler: ContactDetailsUiEventHandler,
+    componentClickHandler: ContactDetailsClickHandler,
     menuHandler: ContactsActivityMenuHandler,
     modifier: Modifier = Modifier,
     contentModifier: Modifier = Modifier
@@ -78,9 +77,9 @@ fun ContactDetailsContentSinglePane(
                     },
                     onUpClick =
                     if (contactDetailsUi?.isEditingEnabled == true)
-                        componentUiEventHandler::exitEditClick
+                        componentClickHandler::exitEditClick
                     else
-                        componentUiEventHandler::deselectContactClick
+                        componentClickHandler::deselectContactClick
                 )
 
                 ContactsActivityMenuButton(menuHandler = menuHandler)
@@ -92,14 +91,14 @@ fun ContactDetailsContentSinglePane(
                 if (contactDetailsUi != null) {
                     ContactDetailsBottomAppBarSinglePane(
                         showDelete = contactDetailsUi.uiSyncState != SObjectUiSyncState.Deleted,
-                        detailsDeleteClick = componentUiEventHandler::deleteClick
+                        detailsDeleteClick = componentClickHandler::deleteClick
                     )
                 }
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            ContactDetailsFab(uiState = details, handler = componentUiEventHandler)
+            ContactDetailsFab(uiState = details, handler = componentClickHandler)
         },
         isFloatingActionButtonDocked = true
     ) { paddingValues ->
@@ -156,7 +155,7 @@ private fun RowScope.ContactDetailsBottomAppBarSinglePane(
 private fun ContactDetailsFab(
     modifier: Modifier = Modifier,
     uiState: ContactDetailsUiState,
-    handler: ContactDetailsUiEventHandler
+    handler: ContactDetailsClickHandler
 ) {
     when (uiState) {
         is ContactDetailsUiState.ViewingContactDetails -> {
@@ -222,7 +221,7 @@ private fun ContactDetailViewModePreview() {
         Surface(modifier = Modifier.fillMaxSize()) {
             ContactDetailsContentSinglePane(
                 details = contact.toPreviewViewingContactDetails(),
-                componentUiEventHandler = PREVIEW_CONTACT_DETAILS_UI_HANDLER,
+                componentClickHandler = PREVIEW_CONTACT_DETAILS_UI_HANDLER,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
             )
         }
@@ -233,9 +232,7 @@ private fun ContactDetailViewModePreview() {
 fun ContactObject.toPreviewViewingContactDetails(
     uiSyncState: SObjectUiSyncState = SObjectUiSyncState.Updated,
     isEditingEnabled: Boolean = false,
-    dataOperationIsActive: Boolean = false,
     shouldScrollToErrorField: Boolean = false,
-    curDialogUiState: DialogUiState? = null
 ) = ContactDetailsUiState.ViewingContactDetails(
     firstNameField = ContactDetailsField.FirstName(
         fieldValue = firstName,
@@ -255,12 +252,10 @@ fun ContactObject.toPreviewViewingContactDetails(
     ),
     uiSyncState = uiSyncState,
     isEditingEnabled = isEditingEnabled,
-    dataOperationIsActive = dataOperationIsActive,
     shouldScrollToErrorField = shouldScrollToErrorField,
-    curDialogUiState = curDialogUiState
 )
 
-val PREVIEW_CONTACT_DETAILS_UI_HANDLER = object : ContactDetailsUiEventHandler {
+val PREVIEW_CONTACT_DETAILS_UI_HANDLER = object : ContactDetailsClickHandler {
     override fun createClick() {}
     override fun deleteClick() {}
     override fun undeleteClick() {}

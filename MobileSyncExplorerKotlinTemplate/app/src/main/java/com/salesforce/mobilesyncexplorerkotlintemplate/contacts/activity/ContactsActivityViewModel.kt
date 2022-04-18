@@ -29,8 +29,8 @@ package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.*
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListDataActionClickHandler
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.requireIsLocked
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.withLockDebug
@@ -52,6 +52,11 @@ interface ContactsActivityViewModel {
     val detailsUiState: StateFlow<ContactDetailsUiState>
     val listUiState: StateFlow<ContactsListUiState>
 
+    val detailsFieldChangeHandler: ContactDetailsFieldChangeHandler
+    val detailsClickHandler: ContactDetailsClickHandler
+    val listClickHandler: ContactsListClickHandler
+    val searchTermUpdatedHandler: (newSearchTerm: String) -> Unit
+
     fun sync(syncDownOnly: Boolean = false)
 }
 
@@ -61,8 +66,13 @@ class DefaultContactsActivityViewModel(
 
     private val detailsVm by lazy { DefaultContactDetailsViewModel() }
     private val listVm by lazy { DefaultContactsListViewModel() }
+
     override val detailsUiState: StateFlow<ContactDetailsUiState> get() = detailsVm.uiState
     override val listUiState: StateFlow<ContactsListUiState> get() = listVm.uiState
+    override val detailsClickHandler: ContactDetailsClickHandler get() = detailsVm
+    override val detailsFieldChangeHandler: ContactDetailsFieldChangeHandler get() = detailsVm
+    override val listClickHandler: ContactsListClickHandler get() = listVm
+    override val searchTermUpdatedHandler: (newSearchTerm: String) -> Unit get() = listVm::onSearchTermUpdated
 
     private lateinit var detailsVmInt: InnerDetailsViewModel
     private lateinit var listVmInt: InnerListViewModel
@@ -122,13 +132,21 @@ class DefaultContactsActivityViewModel(
      * In almost all cases, this will not even be an issue. */
     private val listClickDelegate = ListClickDelegate()
 
-    private inner class ListClickDelegate : ContactsListUiClickHandler {
+    private inner class ListClickDelegate : ContactsListClickHandler {
         override fun contactClick(contactId: String) {
             doSetContact(contactId = contactId, editing = false)
         }
 
         override fun editClick(contactId: String) {
             doSetContact(contactId = contactId, editing = true)
+        }
+
+        override fun deleteClick(contactId: String) {
+            launchDeleteOpWithConfirmation(idToDelete = contactId)
+        }
+
+        override fun undeleteClick(contactId: String) {
+            launchUndeleteOpWithConfirmation(idToUndelete = contactId)
         }
 
         override fun createClick() = launchWithStateLock {
@@ -334,7 +352,7 @@ class DefaultContactsActivityViewModel(
 
     private inner class DefaultContactDetailsViewModel
         : ContactDetailsFieldChangeHandler,
-        ContactDetailsUiEventHandler,
+        ContactDetailsClickHandler,
         InnerDetailsViewModel {
 
         private val mutDetailsUiState: MutableStateFlow<ContactDetailsUiState> = MutableStateFlow(
@@ -682,7 +700,7 @@ class DefaultContactsActivityViewModel(
     }
 
     private inner class DefaultContactsListViewModel :
-        ContactsListUiClickHandler,
+        ContactsListClickHandler,
         ContactsListDataActionClickHandler,
         InnerListViewModel {
 
@@ -726,7 +744,7 @@ class DefaultContactsActivityViewModel(
         }
 
         override fun deleteClick(contactId: String) {
-            launchDeleteOpWithConfirmation(idToDelete = contactId)
+            listClickDelegate.deleteClick(contactId = contactId)
         }
 
         override fun editClick(contactId: String) {
@@ -734,10 +752,10 @@ class DefaultContactsActivityViewModel(
         }
 
         override fun undeleteClick(contactId: String) {
-            launchUndeleteOpWithConfirmation(idToUndelete = contactId)
+            listClickDelegate.undeleteClick(contactId = contactId)
         }
 
-        override fun setSearchTerm(newSearchTerm: String) = launchWithStateLock {
+        fun onSearchTermUpdated(newSearchTerm: String) = launchWithStateLock {
             mutListUiState.value = uiState.value.copy(curSearchTerm = newSearchTerm)
 
             restartSearch(searchTerm = newSearchTerm) { filteredList ->
@@ -745,15 +763,6 @@ class DefaultContactsActivityViewModel(
                     mutListUiState.value = uiState.value.copy(contacts = filteredList)
                 }
             }
-        }
-
-        override fun onSearchTermUpdated(newSearchTerm: String) {
-//            if (searchTermUpdatedDelegate != null) {
-//                searchTermUpdatedDelegate.invoke(newSearchTerm)
-//                return
-//            }
-
-            setSearchTerm(newSearchTerm = newSearchTerm)
         }
 
         @Volatile

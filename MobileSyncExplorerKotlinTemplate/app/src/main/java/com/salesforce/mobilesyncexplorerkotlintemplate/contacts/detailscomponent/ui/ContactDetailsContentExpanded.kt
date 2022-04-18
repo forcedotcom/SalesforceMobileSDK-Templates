@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.salesforce.mobilesyncexplorerkotlintemplate.R.drawable.ic_undo
 import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.*
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsUiEventHandler
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsUiState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.SObjectUiSyncState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.WINDOW_SIZE_MEDIUM_CUTOFF_DP
@@ -27,7 +27,7 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObj
 @Composable
 fun RowScope.ContactDetailsTopBarContentExpanded(
     detailsUiState: ContactDetailsUiState,
-    eventHandler: ContactDetailsUiEventHandler
+    eventHandler: ContactDetailsClickHandler
 ) {
     when (detailsUiState) {
         is ContactDetailsUiState.NoContactSelected -> {}
@@ -117,10 +117,7 @@ private fun ContactDetailsTopBarExpandedPreview() {
                     Text(stringResource(id = label_contacts))
                     Spacer(modifier = Modifier.weight(1f))
                     ContactDetailsTopBarContentExpanded(
-                        detailsUiState = ContactDetailsUiState.NoContactSelected(
-                            dataOperationIsActive = false,
-                            curDialogUiState = null
-                        ),
+                        detailsUiState = ContactDetailsUiState.NoContactSelected(),
                         eventHandler = PREVIEW_CONTACT_DETAILS_UI_HANDLER
                     )
                 }
