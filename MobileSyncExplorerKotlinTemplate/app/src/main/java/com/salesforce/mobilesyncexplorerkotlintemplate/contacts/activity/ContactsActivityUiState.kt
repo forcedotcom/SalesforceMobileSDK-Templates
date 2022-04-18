@@ -29,8 +29,8 @@ package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.DialogUiState
 
 data class ContactsActivityUiState(
-    // WIP Maybe have a map of IDs to flags for which SOs have data operations active?  It could enable consolidating data operations into the activity VM
     val isSyncing: Boolean,
+    val dataOpIsActive: Boolean,
     val dialogUiState: DialogUiState?,
 )
 

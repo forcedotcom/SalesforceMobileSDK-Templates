@@ -34,12 +34,11 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.Co
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.requireIsLocked
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.withLockDebug
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.repos.RepoOperationException
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.repos.usecases.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.isLocallyDeleted
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.DiscardChangesDialogUiState
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.SObjectUiSyncState
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.toUiSyncState
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactRecord
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactValidationException
@@ -47,7 +46,6 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactsRe
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
-import java.util.concurrent.atomic.AtomicBoolean
 
 interface ContactsActivityViewModel {
     val activityUiState: StateFlow<ContactsActivityUiState>
@@ -71,7 +69,7 @@ class DefaultContactsActivityViewModel(
 
     private val stateMutex = Mutex()
     private val mutUiState = MutableStateFlow(
-        ContactsActivityUiState(isSyncing = false, dialogUiState = null)
+        ContactsActivityUiState(isSyncing = false, dataOpIsActive = false, dialogUiState = null)
     )
 
     override val activityUiState: StateFlow<ContactsActivityUiState> get() = mutUiState
@@ -106,10 +104,6 @@ class DefaultContactsActivityViewModel(
             }
         }
     }
-
-    private val deleteUseCase = DeleteUseCase(repo = contactsRepo)
-    private val undeleteUseCase = UndeleteUseCase(repo = contactsRepo)
-    private val upsertUseCase = UpsertUseCase(repo = contactsRepo)
 
     /* If you look closely, you will see that this class' click handlers are running suspending setter
      * methods _within_ the state locks. This should be alarming because this can lead to unresponsive
@@ -180,6 +174,102 @@ class DefaultContactsActivityViewModel(
         }
     }
 
+    private fun launchUpdate(idToUpdate: String, so: ContactObject) =
+        launchWithinDataOperationActiveState {
+            try {
+                val updatedRecord = contactsRepo.locallyUpdate(id = idToUpdate, so = so)
+                if (detailsVmInt.curRecordId == idToUpdate) {
+                    detailsVmInt.clobberRecord(record = updatedRecord, editing = false)
+                }
+            } catch (ex: RepoOperationException) {
+                throw ex
+            }
+        }
+
+    private fun launchCreate(so: ContactObject) =
+        launchWithinDataOperationActiveState {
+            try {
+                val newRecord = contactsRepo.locallyCreate(so = so)
+                if (detailsVmInt.curRecordId == null && detailsVmInt.uiState.value !is ContactDetailsUiState.NoContactSelected) {
+                    detailsVmInt.clobberRecord(record = newRecord, editing = false)
+                }
+            } catch (ex: RepoOperationException) {
+                throw ex
+            }
+        }
+
+    private fun launchDeleteWithConfirmation(idToDelete: String) = launchWithStateLock {
+        suspend fun doDelete() {
+            try {
+                val updatedRecord = contactsRepo.locallyDelete(id = idToDelete)
+                if (detailsVmInt.curRecordId == idToDelete) {
+                    detailsVmInt.clobberRecord(record = updatedRecord, editing = false)
+                }
+            } catch (ex: RepoOperationException) {
+                throw ex
+            }
+        }
+
+        val deleteDialog = DeleteConfirmationDialogUiState(
+            objIdToDelete = idToDelete,
+            objName = when (val detailsState = detailsVmInt.uiState.value) {
+                is ContactDetailsUiState.NoContactSelected -> null
+                is ContactDetailsUiState.ViewingContactDetails -> detailsState.fullName
+            },
+            onCancelDelete = { TODO() },
+            onDeleteConfirm = { launchWithinDataOperationActiveState { doDelete() } }
+        )
+
+        mutUiState.value = activityUiState.value.copy(dialogUiState = deleteDialog)
+    }
+
+    private fun launchUndeleteWithConfirmation(idToUndelete: String) = viewModelScope.launch {
+        suspend fun doUndelete() {
+            try {
+                val updatedRecord = contactsRepo.locallyUndelete(id = idToUndelete)
+                if (detailsVmInt.curRecordId == idToUndelete) {
+                    detailsVmInt.clobberRecord(record = updatedRecord, editing = false)
+                }
+            } catch (ex: RepoOperationException) {
+                throw ex
+            }
+        }
+
+        val undeleteDialog = UndeleteConfirmationDialogUiState(
+            objIdToUndelete = idToUndelete,
+            objName = when (val detailsState = detailsVmInt.uiState.value) {
+                is ContactDetailsUiState.NoContactSelected -> null
+                is ContactDetailsUiState.ViewingContactDetails -> detailsState.fullName
+            },
+            onCancelUndelete = { TODO() },
+            onUndeleteConfirm = { launchWithinDataOperationActiveState { doUndelete() } }
+        )
+
+        mutUiState.value = activityUiState.value.copy(dialogUiState = undeleteDialog)
+    }
+
+    private fun launchWithinDataOperationActiveState(block: suspend () -> Unit) =
+        viewModelScope.launch {
+            stateMutex.withLockDebug {
+                if (activityUiState.value.dataOpIsActive) {
+                    // TODO toast to user that the data operation couldn't be done b/c there is another already active
+                    return@launch
+                } else {
+                    mutUiState.value = activityUiState.value.copy(dataOpIsActive = true)
+                }
+            }
+
+            try {
+                block()
+            } finally {
+                withContext(NonCancellable) {
+                    stateMutex.withLockDebug {
+                        mutUiState.value = activityUiState.value.copy(dataOpIsActive = false)
+                    }
+                }
+            }
+        }
+
     private inner class ListDataOpDelegate : ContactsListDataActionClickHandler {
         override fun deleteClick(contactId: String) {
             TODO("Not yet implemented")
@@ -237,14 +327,13 @@ class DefaultContactsActivityViewModel(
         val curRecordId: String?
         val hasUnsavedChanges: Boolean
 
-        fun clobberRecord(record: ContactRecord?, editing: Boolean)
-        fun onRecordsEmitted(records: Map<String, ContactRecord>)
+        suspend fun clobberRecord(record: ContactRecord?, editing: Boolean)
+        suspend fun onRecordsEmitted(records: Map<String, ContactRecord>)
     }
 
-    private inner class DefaultContactDetailsViewModel : ContactDetailsFieldChangeHandler,
+    private inner class DefaultContactDetailsViewModel
+        : ContactDetailsFieldChangeHandler,
         ContactDetailsUiEventHandler {
-        private val dataOpDelegate = DataOperationDelegate()
-        val dataOperationIsActive: Boolean get() = dataOpDelegate.dataOperationIsActive
 
         private val mutDetailsUiState: MutableStateFlow<ContactDetailsUiState> = MutableStateFlow(
             ContactDetailsUiState.NoContactSelected(
@@ -472,36 +561,12 @@ class DefaultContactsActivityViewModel(
 
         override fun deleteClick() = launchWithStateLock {
             val targetRecordId = curRecordId ?: return@launchWithStateLock // no id => nothing to do
-
-            mutDetailsUiState.value = uiState.value.copy(
-                TODO()
-//                curDialogUiState = DeleteConfirmationDialogUiState(
-//                    objIdToDelete = targetRecordId,
-//                    objName = upstreamRecords[targetRecordId]?.sObject?.fullName,
-//                    onCancelDelete = { launchWithStateLock { dismissCurDialog() } },
-//                    onDeleteConfirm = {
-//                        dataOpDelegate.handleDataEvent(event = DetailsDataEvent.Delete(it))
-//                        launchWithStateLock { dismissCurDialog() }
-//                    }
-//                )
-            )
+            launchDeleteWithConfirmation(idToDelete = targetRecordId)
         }
 
         override fun undeleteClick() = launchWithStateLock {
             val targetRecordId = curRecordId ?: return@launchWithStateLock // no id => nothing to do
-
-            mutDetailsUiState.value = uiState.value.copy(
-                TODO()
-//                curDialogUiState = UndeleteConfirmationDialogUiState(
-//                    objIdToUndelete = targetRecordId,
-//                    objName = upstreamRecords[targetRecordId]?.sObject?.fullName,
-//                    onCancelUndelete = { launchWithStateLock { dismissCurDialog() } },
-//                    onUndeleteConfirm = {
-//                        dataOpDelegate.handleDataEvent(event = DetailsDataEvent.Undelete(it))
-//                        launchWithStateLock { dismissCurDialog() }
-//                    },
-//                )
-            )
+            launchUndeleteWithConfirmation(idToUndelete = targetRecordId)
         }
 
         override fun editClick() = launchWithStateLock {
@@ -598,10 +663,12 @@ class DefaultContactsActivityViewModel(
                 return@launchWithStateLock
             }
 
-            val eventHandled = dataOpDelegate.tryUpsert(id = curRecordId, so = so)
-
-            if (!eventHandled) {
-                // TODO should there be any prompt to the user for when a data op is already active?
+            curRecordId.also {
+                if (it == null) {
+                    launchCreate(so = so)
+                } else {
+                    launchUpdate(idToUpdate = it, so = so)
+                }
             }
         }
 
@@ -687,142 +754,6 @@ class DefaultContactsActivityViewModel(
             fieldValue = department,
             onValueChange = this@DefaultContactDetailsViewModel::onDepartmentChange
         )
-
-        private inner class DataOperationDelegate {
-            private val mutDataOperationIsActive = AtomicBoolean(false)
-            val dataOperationIsActive: Boolean get() = mutDataOperationIsActive.get()
-
-            fun tryUpsert(id: String?, so: ContactObject): Boolean {
-                val handlingEvent = mutDataOperationIsActive.compareAndSet(false, true)
-
-                if (handlingEvent) {
-                    launchUpsert(forId = id, so = so)
-                }
-
-                return handlingEvent
-            }
-
-            fun tryDelete(id: String): Boolean {
-                val handlingEvent = mutDataOperationIsActive.compareAndSet(false, true)
-
-                if (handlingEvent) {
-                    launchDelete(forId = id)
-                }
-
-                return handlingEvent
-            }
-
-            fun tryUndelete(id: String): Boolean {
-                val handlingEvent = mutDataOperationIsActive.compareAndSet(false, true)
-
-                if (handlingEvent) {
-                    launchUndelete(forId = id)
-                }
-
-                return handlingEvent
-            }
-
-            private fun launchDelete(forId: String) = viewModelScope.launch {
-                deleteUseCase(id = forId)
-                    .catch { throw it } // WIP crash app for now
-                    .onCompletion {
-                        mutDataOperationIsActive.set(false)
-
-                        stateMutex.withLockDebug {
-                            mutDetailsUiState.value =
-                                uiState.value.copy(dataOperationIsActive = false)
-                        }
-                    }
-                    .collect { response ->
-                        when (response) {
-                            is DeleteResponse.Started -> stateMutex.withLockDebug {
-                                mutDetailsUiState.value =
-                                    uiState.value.copy(dataOperationIsActive = true)
-                            }
-
-                            is DeleteResponse.DeleteSuccess -> {
-                                stateMutex.withLockDebug {
-                                    mutDetailsUiState.value =
-                                        response.record?.let {
-                                            it.sObject.buildViewingContactUiState(
-                                                uiSyncState = it.localStatus.toUiSyncState(),
-                                                isEditingEnabled = false,
-                                                shouldScrollToErrorField = false
-                                            )
-                                        } ?: ContactDetailsUiState.NoContactSelected(
-                                            dataOperationIsActive = true
-                                        )
-                                }
-                            }
-                        }
-                    }
-            }
-
-            private fun launchUndelete(forId: String) = viewModelScope.launch {
-                undeleteUseCase(id = forId)
-                    .catch { throw it }
-                    .onCompletion {
-                        stateMutex.withLockDebug {
-                            mutDetailsUiState.value =
-                                uiState.value.copy(dataOperationIsActive = false)
-                        }
-
-                        mutDataOperationIsActive.set(false)
-                    }
-                    .collect { response ->
-                        when (response) {
-                            is UndeleteResponse.Started -> stateMutex.withLockDebug {
-                                mutDetailsUiState.value =
-                                    uiState.value.copy(dataOperationIsActive = true)
-                            }
-
-                            is UndeleteResponse.UndeleteSuccess -> stateMutex.withLockDebug {
-                                mutDetailsUiState.value =
-                                    response.record.sObject.buildViewingContactUiState(
-                                        uiSyncState = response.record.localStatus.toUiSyncState(),
-                                        isEditingEnabled = false,
-                                        shouldScrollToErrorField = false
-                                    )
-                            }
-                        }
-                    }
-            }
-
-            private fun launchUpsert(forId: String?, so: ContactObject) = viewModelScope.launch {
-                upsertUseCase(id = forId, so = so)
-                    .catch { throw it }
-                    .onCompletion {
-                        stateMutex.withLockDebug {
-                            mutDetailsUiState.value =
-                                uiState.value.copy(dataOperationIsActive = false)
-                        }
-                        mutDataOperationIsActive.set(false)
-                    }
-                    .collect { response ->
-                        when (response) {
-                            is UpsertResponse.Started -> stateMutex.withLockDebug {
-                                mutDetailsUiState.value =
-                                    uiState.value.copy(dataOperationIsActive = true)
-                            }
-
-                            is UpsertResponse.UpsertSuccess -> {
-                                // This clobbers the UI regardless of what state it is in b/c we are assuming that no
-                                // changes to the VM can happen while this data operation is running.
-                                stateMutex.withLockDebug {
-                                    curRecordId = response.record.id
-
-                                    mutDetailsUiState.value =
-                                        response.record.sObject.buildViewingContactUiState(
-                                            uiSyncState = response.record.localStatus.toUiSyncState(),
-                                            isEditingEnabled = false,
-                                            shouldScrollToErrorField = false,
-                                        )
-                                }
-                            }
-                        }
-                    }
-            }
-        }
     }
 
     private interface InnerListViewModel {
