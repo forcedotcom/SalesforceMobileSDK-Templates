@@ -174,36 +174,42 @@ class DefaultContactsActivityViewModel(
         }
     }
 
-    private fun launchUpdate(idToUpdate: String, so: ContactObject) =
+    private fun launchUpdateOp(idToUpdate: String, so: ContactObject) =
         launchWithinDataOperationActiveState {
             try {
                 val updatedRecord = contactsRepo.locallyUpdate(id = idToUpdate, so = so)
-                if (detailsVmInt.curRecordId == idToUpdate) {
-                    detailsVmInt.clobberRecord(record = updatedRecord, editing = false)
+                stateMutex.withLockDebug {
+                    if (detailsVmInt.curRecordId == idToUpdate) {
+                        detailsVmInt.clobberRecord(record = updatedRecord, editing = false)
+                    }
                 }
             } catch (ex: RepoOperationException) {
                 throw ex
             }
         }
 
-    private fun launchCreate(so: ContactObject) =
+    private fun launchCreateOp(so: ContactObject) =
         launchWithinDataOperationActiveState {
             try {
                 val newRecord = contactsRepo.locallyCreate(so = so)
-                if (detailsVmInt.curRecordId == null && detailsVmInt.uiState.value !is ContactDetailsUiState.NoContactSelected) {
-                    detailsVmInt.clobberRecord(record = newRecord, editing = false)
+                stateMutex.withLockDebug {
+                    if (detailsVmInt.curRecordId == null && detailsVmInt.uiState.value !is ContactDetailsUiState.NoContactSelected) {
+                        detailsVmInt.clobberRecord(record = newRecord, editing = false)
+                    }
                 }
             } catch (ex: RepoOperationException) {
                 throw ex
             }
         }
 
-    private fun launchDeleteWithConfirmation(idToDelete: String) = launchWithStateLock {
+    private fun launchDeleteOpWithConfirmation(idToDelete: String) = launchWithStateLock {
         suspend fun doDelete() {
             try {
                 val updatedRecord = contactsRepo.locallyDelete(id = idToDelete)
-                if (detailsVmInt.curRecordId == idToDelete) {
-                    detailsVmInt.clobberRecord(record = updatedRecord, editing = false)
+                stateMutex.withLockDebug {
+                    if (detailsVmInt.curRecordId == idToDelete) {
+                        detailsVmInt.clobberRecord(record = updatedRecord, editing = false)
+                    }
                 }
             } catch (ex: RepoOperationException) {
                 throw ex
@@ -216,19 +222,21 @@ class DefaultContactsActivityViewModel(
                 is ContactDetailsUiState.NoContactSelected -> null
                 is ContactDetailsUiState.ViewingContactDetails -> detailsState.fullName
             },
-            onCancelDelete = { TODO() },
+            onCancelDelete = { launchWithStateLock { dismissCurDialog() } },
             onDeleteConfirm = { launchWithinDataOperationActiveState { doDelete() } }
         )
 
         mutUiState.value = activityUiState.value.copy(dialogUiState = deleteDialog)
     }
 
-    private fun launchUndeleteWithConfirmation(idToUndelete: String) = viewModelScope.launch {
+    private fun launchUndeleteOpWithConfirmation(idToUndelete: String) = viewModelScope.launch {
         suspend fun doUndelete() {
             try {
                 val updatedRecord = contactsRepo.locallyUndelete(id = idToUndelete)
-                if (detailsVmInt.curRecordId == idToUndelete) {
-                    detailsVmInt.clobberRecord(record = updatedRecord, editing = false)
+                stateMutex.withLockDebug {
+                    if (detailsVmInt.curRecordId == idToUndelete) {
+                        detailsVmInt.clobberRecord(record = updatedRecord, editing = false)
+                    }
                 }
             } catch (ex: RepoOperationException) {
                 throw ex
@@ -241,7 +249,7 @@ class DefaultContactsActivityViewModel(
                 is ContactDetailsUiState.NoContactSelected -> null
                 is ContactDetailsUiState.ViewingContactDetails -> detailsState.fullName
             },
-            onCancelUndelete = { TODO() },
+            onCancelUndelete = { launchWithStateLock { dismissCurDialog() } },
             onUndeleteConfirm = { launchWithinDataOperationActiveState { doUndelete() } }
         )
 
@@ -269,16 +277,6 @@ class DefaultContactsActivityViewModel(
                 }
             }
         }
-
-    private inner class ListDataOpDelegate : ContactsListDataActionClickHandler {
-        override fun deleteClick(contactId: String) {
-            TODO("Not yet implemented")
-        }
-
-        override fun undeleteClick(contactId: String) {
-            TODO("Not yet implemented")
-        }
-    }
 
 
     // region Utilities
@@ -561,12 +559,12 @@ class DefaultContactsActivityViewModel(
 
         override fun deleteClick() = launchWithStateLock {
             val targetRecordId = curRecordId ?: return@launchWithStateLock // no id => nothing to do
-            launchDeleteWithConfirmation(idToDelete = targetRecordId)
+            launchDeleteOpWithConfirmation(idToDelete = targetRecordId)
         }
 
         override fun undeleteClick() = launchWithStateLock {
             val targetRecordId = curRecordId ?: return@launchWithStateLock // no id => nothing to do
-            launchUndeleteWithConfirmation(idToUndelete = targetRecordId)
+            launchUndeleteOpWithConfirmation(idToUndelete = targetRecordId)
         }
 
         override fun editClick() = launchWithStateLock {
@@ -665,9 +663,9 @@ class DefaultContactsActivityViewModel(
 
             curRecordId.also {
                 if (it == null) {
-                    launchCreate(so = so)
+                    launchCreateOp(so = so)
                 } else {
-                    launchUpdate(idToUpdate = it, so = so)
+                    launchUpdateOp(idToUpdate = it, so = so)
                 }
             }
         }
