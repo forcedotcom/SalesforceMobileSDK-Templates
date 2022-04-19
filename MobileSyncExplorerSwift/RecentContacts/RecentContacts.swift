@@ -73,12 +73,13 @@ class RecentContacts {
     
     static func persistContacts(_ contacts: [ContactSummary]) {
         guard !contacts.isEmpty,
-              let path = SFDirectoryManager.shared().directoryOfCurrentUser(forType: .libraryDirectory, components: [fileName]) else {
+              let directory = SFDirectoryManager.shared().directoryOfCurrentUser(forType: .libraryDirectory, components: nil) else {
             return
         }
         
         do {
-            let url = URL(fileURLWithPath: path)
+            try SFDirectoryManager.ensureDirectoryExists(directory)
+            let url = URL(fileURLWithPath: directory).appendingPathComponent(fileName)
             let encodedData = try JSONEncoder().encode(contacts)
             let encryptionKey = try KeyGenerator.encryptionKey(for: encryptionKeyLabel)
             let encryptedData = try Encryptor.encrypt(data: encodedData, using: encryptionKey)

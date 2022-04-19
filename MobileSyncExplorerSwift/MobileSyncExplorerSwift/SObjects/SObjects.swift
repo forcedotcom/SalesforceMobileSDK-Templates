@@ -261,6 +261,9 @@ class SObjectDataManager: ObservableObject {
             .flatMap { _ in
                 self.syncMgr.publisher(for: self.kSyncDownName)
             }
+            .flatMap { _ in
+                self.syncMgr.cleanGhostsPublisher(for: self.kSyncDownName)
+            }
             .receive(on: RunLoop.main)
             .sink(receiveCompletion: { [weak self] result in
                 switch result {
