@@ -51,6 +51,7 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsField
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsUiState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.LocalStatus
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.LoadingOverlay
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.SObjectUiSyncState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
@@ -60,6 +61,7 @@ import org.jetbrains.annotations.TestOnly
 @Composable
 fun ContactDetailsContentSinglePane(
     details: ContactDetailsUiState,
+    showLoadingOverlay: Boolean,
     componentClickHandler: ContactDetailsClickHandler,
     menuHandler: ContactsActivityMenuHandler,
     modifier: Modifier = Modifier,
@@ -110,6 +112,10 @@ fun ContactDetailsContentSinglePane(
                 .then(contentModifier),
             details = details
         )
+
+        if (showLoadingOverlay) {
+            LoadingOverlay()
+        }
     }
 }
 
@@ -227,6 +233,7 @@ private fun ContactDetailViewModePreview() {
         Surface(modifier = Modifier.fillMaxSize()) {
             ContactDetailsContentSinglePane(
                 details = contact.toPreviewViewingContactDetails(),
+                showLoadingOverlay = false,
                 componentClickHandler = PREVIEW_CONTACT_DETAILS_UI_HANDLER,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
             )

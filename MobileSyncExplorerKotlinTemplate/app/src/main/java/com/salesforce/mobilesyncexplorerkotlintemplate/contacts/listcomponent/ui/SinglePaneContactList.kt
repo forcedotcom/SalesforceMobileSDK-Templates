@@ -46,6 +46,7 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.Co
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.LocalStatus
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.LoadingOverlay
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactRecord
@@ -55,6 +56,7 @@ fun ContactsListSinglePaneComponent(
     modifier: Modifier = Modifier,
     contentModifier: Modifier = Modifier,
     uiState: ContactsListUiState,
+    showLoading: Boolean,
     listClickHandler: ContactsListClickHandler,
     onSearchTermUpdated: (newSearchTerm: String) -> Unit,
     menuHandler: ContactsActivityMenuHandler
@@ -84,6 +86,10 @@ fun ContactsListSinglePaneComponent(
             listClickHandler = listClickHandler,
             onSearchTermUpdated = onSearchTermUpdated
         )
+
+        if (showLoading) {
+            LoadingOverlay()
+        }
     }
 }
 
@@ -135,6 +141,7 @@ private fun ContactsListSinglePaneComponentPreview() {
                     isDoingDataAction = false,
                     isSearchJobRunning = false
                 ),
+                showLoading = false,
                 listClickHandler = PREVIEW_LIST_ITEM_CLICK_HANDLER,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
                 onSearchTermUpdated = {}
@@ -177,6 +184,7 @@ private fun ContactListSyncingAndSearchingPreview() {
                     isSearchJobRunning = false,
                     curSearchTerm = curSearchTerm
                 ),
+                showLoading = false,
                 listClickHandler = PREVIEW_LIST_ITEM_CLICK_HANDLER,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
                 onSearchTermUpdated = {}
@@ -201,6 +209,7 @@ private fun ContactListLoadingPreview() {
                     isDoingDataAction = false,
                     isSearchJobRunning = false
                 ),
+                showLoading = true,
                 listClickHandler = PREVIEW_LIST_ITEM_CLICK_HANDLER,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
                 onSearchTermUpdated = {}

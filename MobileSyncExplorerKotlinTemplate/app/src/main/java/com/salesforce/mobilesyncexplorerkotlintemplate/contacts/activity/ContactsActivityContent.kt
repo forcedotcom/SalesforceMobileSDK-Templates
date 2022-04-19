@@ -80,6 +80,7 @@ fun ContactsActivityContent(
 
     when (windowSizeClasses.toContactsActivityContentLayout()) {
         ContactsActivityContentLayout.SinglePane -> SinglePane(
+            activityUiState = activityUiState,
             detailsUiState = detailsUiState,
             detailsClickHandler = activityVm.detailsClickHandler,
             listUiState = listUiState,
@@ -88,6 +89,7 @@ fun ContactsActivityContent(
             menuHandler = menuHandler
         )
         ContactsActivityContentLayout.ListDetail -> ListDetail(
+            activityUiState = activityUiState,
             detailsUiState = detailsUiState,
             detailsClickHandler = activityVm.detailsClickHandler,
             listUiState = listUiState,
@@ -98,15 +100,12 @@ fun ContactsActivityContent(
         )
     }
 
-    if (activityUiState.dataOpIsActive || activityUiState.isSyncing) {
-        LoadingOverlay()
-    }
-
     activityUiState.dialogUiState?.RenderDialog(modifier = Modifier)
 }
 
 @Composable
 private fun SinglePane(
+    activityUiState: ContactsActivityUiState,
     detailsUiState: ContactDetailsUiState,
     detailsClickHandler: ContactDetailsClickHandler,
     listUiState: ContactsListUiState,
@@ -114,16 +113,19 @@ private fun SinglePane(
     onSearchTermUpdated: (newSearchTerm: String) -> Unit,
     menuHandler: ContactsActivityMenuHandler,
 ) {
+    val showLoading = activityUiState.dataOpIsActive || activityUiState.isSyncing
     // In single pane mode, if the user is viewing contact details then only show the details component;
     // else show the list component
     when (detailsUiState) {
         is ContactDetailsUiState.ViewingContactDetails -> ContactDetailsContentSinglePane(
             details = detailsUiState,
+            showLoadingOverlay = showLoading,
             componentClickHandler = detailsClickHandler,
             menuHandler = menuHandler
         )
         else -> ContactsListSinglePaneComponent(
             uiState = listUiState,
+            showLoading = showLoading,
             listClickHandler = listClickHandler,
             onSearchTermUpdated = onSearchTermUpdated,
             menuHandler = menuHandler
@@ -133,6 +135,7 @@ private fun SinglePane(
 
 @Composable
 private fun ListDetail(
+    activityUiState: ContactsActivityUiState,
     detailsUiState: ContactDetailsUiState,
     detailsClickHandler: ContactDetailsClickHandler,
     listUiState: ContactsListUiState,
@@ -206,6 +209,10 @@ private fun ListDetail(
                     onExitClick = detailsClickHandler::exitEditClick
                 )
             }
+        }
+
+        if (activityUiState.dataOpIsActive || activityUiState.isSyncing) {
+            LoadingOverlay()
         }
     }
 }
@@ -469,9 +476,17 @@ private fun ListDetailMediumPreview() {
             isSearchJobRunning = false
         )
     )
+
+    val activityState = ContactsActivityUiState(
+        isSyncing = false,
+        dataOpIsActive = false,
+        dialogUiState = null
+    )
+
     SalesforceMobileSDKAndroidTheme {
         Surface {
             ListDetail(
+                activityUiState = activityState,
                 detailsUiState = detailsVm.uiStateValue,
                 detailsClickHandler = detailsVm,
                 listUiState = listVm.uiStateValue,
@@ -520,9 +535,17 @@ private fun ListDetailEditingPreview() {
             isSearchJobRunning = false
         )
     )
+
+    val activityState = ContactsActivityUiState(
+        isSyncing = false,
+        dataOpIsActive = false,
+        dialogUiState = null
+    )
+
     SalesforceMobileSDKAndroidTheme {
         Surface {
             ListDetail(
+                activityUiState = activityState,
                 detailsUiState = detailsVm.uiStateValue,
                 detailsClickHandler = detailsVm,
                 listUiState = listVm.uiStateValue,
@@ -570,9 +593,17 @@ private fun ListDetailNoContactPreview() {
             curSearchTerm = curSearchTerm
         )
     )
+
+    val activityState = ContactsActivityUiState(
+        isSyncing = false,
+        dataOpIsActive = false,
+        dialogUiState = null
+    )
+
     SalesforceMobileSDKAndroidTheme {
         Surface {
             ListDetail(
+                activityUiState = activityState,
                 detailsUiState = detailsVm.uiStateValue,
                 detailsClickHandler = detailsVm,
                 listUiState = listVm.uiStateValue,
@@ -626,9 +657,17 @@ private fun ListDetailExpandedPreview() {
             isSearchJobRunning = false
         )
     )
+
+    val activityState = ContactsActivityUiState(
+        isSyncing = false,
+        dataOpIsActive = false,
+        dialogUiState = null
+    )
+
     SalesforceMobileSDKAndroidTheme {
         Surface {
             ListDetail(
+                activityUiState = activityState,
                 detailsUiState = detailsVm.uiStateValue,
                 detailsClickHandler = detailsVm,
                 listUiState = listVm.uiStateValue,
@@ -690,8 +729,9 @@ class PreviewActivityVm(
     override val detailsClickHandler: ContactDetailsClickHandler get() = detailsVm
     override val detailsFieldChangeHandler: ContactDetailsFieldChangeHandler get() = detailsVm
     override val listClickHandler: ContactsListClickHandler get() = listVm
-    override val searchTermUpdatedHandler: (newSearchTerm: String) -> Unit get() =
-        listVm::onSearchTermUpdated
+    override val searchTermUpdatedHandler: (newSearchTerm: String) -> Unit
+        get() =
+            listVm::onSearchTermUpdated
 
     override fun fullSync() {}
 }
