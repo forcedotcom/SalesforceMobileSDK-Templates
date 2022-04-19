@@ -9,15 +9,20 @@ import com.salesforce.androidsdk.mobilesync.util.Constants
 import com.salesforce.androidsdk.mobilesync.util.SyncState
 import com.salesforce.androidsdk.smartstore.store.QuerySpec
 import com.salesforce.androidsdk.smartstore.store.SmartStore
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.CleanResyncGhostsException
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord.Companion.KEY_LOCAL_ID
-import kotlinx.coroutines.*
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.suspendCleanResyncGhosts
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -49,35 +54,34 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
     protected abstract val syncDownName: String
     protected abstract val syncUpName: String
     protected abstract val deserializer: SObjectDeserializer<T>
-    protected abstract val TAG: String
 
 
     // endregion
     // region Public Sync Implementation
 
 
-    @Throws(RepoSyncException::class, RepoOperationException::class)
-    override suspend fun syncUpAndDown() = withContext(ioDispatcher) {
+    // TODO revisit what it means to cancel a sync down. E.g. does cancel stop the refreshing of the
+    //  records list? Is Sync Down + Refresh an atomic, uncancellable operation? Individual Sync
+    //  operations cannot be cancelled by themselves...
+    @Throws(
+        SyncDownException::class,
+        RepoOperationException::class,
+    )
+    override suspend fun syncDown() = withContext(ioDispatcher) {
         syncMutex.withLockDebug {
-            doSyncUp()
-            ensureActive() // cooperative cancellation before doing sync down
             doSyncDown()
+            try {
+                syncManager.suspendCleanResyncGhosts(syncName = syncDownName)
+            } catch (ex: CleanResyncGhostsException) {
+                throw SyncDownException.CleaningUpstreamRecordsFailed(cause = ex)
+            }
         }
 
-        // don't cooperate with cancel at this point because we need to emit the new list of objects
         withContext(NonCancellable) { refreshRecordsList() }
     }
 
-    @Throws(RepoSyncException.SyncDownException::class, RepoOperationException::class)
-    override suspend fun syncDownOnly() = withContext(ioDispatcher) {
-        syncMutex.withLockDebug { doSyncDown() }
-
-        // don't cooperate with cancel at this point because we need to emit the new list of objects
-        withContext(NonCancellable) { refreshRecordsList() }
-    }
-
-    @Throws(RepoSyncException.SyncUpException::class, RepoOperationException::class)
-    override suspend fun syncUpOnly() = withContext(ioDispatcher) {
+    @Throws(SyncUpException::class)
+    override suspend fun syncUp() = withContext(ioDispatcher) {
         syncMutex.withLockDebug { doSyncUp() }
         Unit
     }
@@ -87,66 +91,66 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
     // region Private Sync Implementation
 
 
-    @Throws(RepoSyncException.SyncDownException::class)
-    private suspend fun doSyncDown(): SyncState = suspendCoroutine { cont ->
-        // TODO: will MobileSync use the same instance of the callback (this coroutine block) in the STOPPED -> RUNNING -> DONE flow?
-        val callback: (SyncState) -> Unit = {
-            when (it.status) {
-                // terminal states
-                SyncState.Status.DONE -> cont.resume(it)
-                SyncState.Status.FAILED,
-                SyncState.Status.STOPPED -> cont.resumeWithException(
-                    RepoSyncException.SyncDownException(finalSyncState = it)
-                )
+    @Throws(SyncDownException::class)
+    private suspend fun doSyncDown(): SyncState = withContext(NonCancellable) {
+        suspendCoroutine { cont ->
+            // TODO: will MobileSync use the same instance of the callback (this coroutine block) in the STOPPED -> RUNNING -> DONE flow?
+            val callback: (SyncState) -> Unit = {
+                when (it.status) {
+                    // terminal states
+                    SyncState.Status.DONE -> cont.resume(it)
+                    SyncState.Status.FAILED,
+                    SyncState.Status.STOPPED -> cont.resumeWithException(
+                        SyncDownException.FailedToFinish(
+                            message = "Sync Down operation failed with terminal Sync State = $it"
+                        )
+                    )
 
-                // TODO are these strictly transient states for as long as this coroutine is running?
-                SyncState.Status.NEW,
-                SyncState.Status.RUNNING,
-                null -> {
-                    /* no-op; suspending for terminal state */
+                    // TODO are these strictly transient states for as long as this coroutine is running?
+                    SyncState.Status.NEW,
+                    SyncState.Status.RUNNING,
+                    null -> {
+                        /* no-op; suspending for terminal state */
+                    }
                 }
             }
-        }
 
-        try {
-            syncManager.reSync(syncDownName, callback)
-        } catch (ex: CancellationException) {
-            // make this coroutine non-cancellable since individual syncs cannot be cancelled
-        } catch (ex: Exception) {
-            cont.resumeWithException(
-                RepoSyncException.SyncDownException(finalSyncState = null, cause = ex)
-            )
+            try {
+                syncManager.reSync(syncDownName, callback)
+            } catch (ex: Exception) {
+                cont.resumeWithException(SyncDownException.FailedToStart(cause = ex))
+            }
         }
     }
 
-    @Throws(RepoSyncException.SyncUpException::class)
-    private suspend fun doSyncUp(): SyncState = suspendCoroutine { cont ->
-        val callback: (SyncState) -> Unit = {
-            when (it.status) {
-                // terminal states
-                SyncState.Status.DONE -> cont.resume(it)
+    @Throws(SyncUpException::class)
+    private suspend fun doSyncUp(): SyncState = withContext(NonCancellable) {
+        suspendCoroutine { cont ->
+            val callback: (SyncState) -> Unit = {
+                when (it.status) {
+                    // terminal states
+                    SyncState.Status.DONE -> cont.resume(it)
 
-                SyncState.Status.FAILED,
-                SyncState.Status.STOPPED -> cont.resumeWithException(
-                    RepoSyncException.SyncUpException(finalSyncState = it)
-                )
+                    SyncState.Status.FAILED,
+                    SyncState.Status.STOPPED -> cont.resumeWithException(
+                        SyncUpException.FailedToFinish(
+                            message = "Sync Up operation failed with terminal Sync State = $it"
+                        )
+                    )
 
-                SyncState.Status.NEW,
-                SyncState.Status.RUNNING,
-                null -> {
-                    /* no-op; suspending for terminal state */
+                    SyncState.Status.NEW,
+                    SyncState.Status.RUNNING,
+                    null -> {
+                        /* no-op; suspending for terminal state */
+                    }
                 }
             }
-        }
 
-        try {
-            syncManager.reSync(syncUpName, callback)
-        } catch (ex: CancellationException) {
-            // make this coroutine non-cancellable since individual syncs cannot be cancelled
-        } catch (ex: Exception) {
-            cont.resumeWithException(
-                RepoSyncException.SyncUpException(finalSyncState = null, cause = ex)
-            )
+            try {
+                syncManager.reSync(syncUpName, callback)
+            } catch (ex: Exception) {
+                cont.resumeWithException(SyncUpException.FailedToStart(cause = ex))
+            }
         }
     }
 

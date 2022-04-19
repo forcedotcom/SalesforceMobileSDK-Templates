@@ -33,6 +33,8 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.Co
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.withLockDebug
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.repos.RepoOperationException
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.repos.SyncDownException
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.repos.SyncUpException
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.isLocallyDeleted
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
@@ -57,7 +59,7 @@ interface ContactsActivityViewModel {
     val listClickHandler: ContactsListClickHandler
     val searchTermUpdatedHandler: (newSearchTerm: String) -> Unit
 
-    fun sync(syncDownOnly: Boolean = false)
+    fun fullSync()
 }
 
 class DefaultContactsActivityViewModel(
@@ -103,16 +105,26 @@ class DefaultContactsActivityViewModel(
         }
     }
 
-    override fun sync(syncDownOnly: Boolean) {
+    override fun fullSync() {
         viewModelScope.launch {
             eventMutex.withLockDebug {
                 mutActivityUiState.value = activityUiState.value.copy(isSyncing = true)
             }
-            if (syncDownOnly) {
-                contactsRepo.syncDownOnly()
-            } else {
-                contactsRepo.syncUpAndDown()
+
+            try {
+                contactsRepo.syncUp()
+            } catch (ex: SyncUpException) {
+                TODO("syncUp() - ex = $ex")
             }
+
+            try {
+                contactsRepo.syncDown()
+            } catch (ex: SyncDownException) {
+                TODO("syncDown() - ex = $ex")
+            } catch (ex: RepoOperationException) {
+                TODO("syncDown() - ex = $ex")
+            }
+
             eventMutex.withLockDebug {
                 mutActivityUiState.value = activityUiState.value.copy(isSyncing = false)
             }

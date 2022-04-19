@@ -58,6 +58,7 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ui
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ui.ContactsListSinglePaneComponent
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.LocalStatus
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.LoadingOverlay
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
@@ -95,6 +96,10 @@ fun ContactsActivityContent(
             menuHandler = menuHandler,
             windowSizeClasses = windowSizeClasses
         )
+    }
+
+    if (activityUiState.dataOpIsActive || activityUiState.isSyncing) {
+        LoadingOverlay()
     }
 
     activityUiState.dialogUiState?.RenderDialog(modifier = Modifier)
@@ -688,7 +693,7 @@ class PreviewActivityVm(
     override val searchTermUpdatedHandler: (newSearchTerm: String) -> Unit get() =
         listVm::onSearchTermUpdated
 
-    override fun sync(syncDownOnly: Boolean) {}
+    override fun fullSync() {}
 }
 
 val PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER = object : ContactsActivityMenuHandler {

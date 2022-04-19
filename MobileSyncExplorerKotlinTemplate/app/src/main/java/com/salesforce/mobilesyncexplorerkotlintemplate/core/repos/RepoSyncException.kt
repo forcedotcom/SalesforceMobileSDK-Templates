@@ -1,28 +1,33 @@
 package com.salesforce.mobilesyncexplorerkotlintemplate.core.repos
 
-import com.salesforce.androidsdk.mobilesync.util.SyncState
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.CleanResyncGhostsException
 
-sealed class RepoSyncException : Exception() {
-    /**
-     * The final state of the sync operation when it failed, or null if the sync made no progress.
-     */
-    abstract val finalSyncState: SyncState?
-
-    data class SyncDownException(
-        override val finalSyncState: SyncState?,
+sealed class SyncDownException : Exception() {
+    data class FailedToFinish(
         override val cause: Throwable? = null,
         override val message: String? = null,
-    ) : RepoSyncException()
+    ) : SyncDownException()
 
-    data class SyncUpException(
-        override val finalSyncState: SyncState?,
+    data class FailedToStart(
+        override val cause: Throwable? = null,
+        override val message: String? = null,
+    ) : SyncDownException()
+
+    data class CleaningUpstreamRecordsFailed(
+        override val cause: CleanResyncGhostsException?
+    ) : SyncDownException() {
+        override val message: String = "The incremental Sync Down operation succeeded, but some ghost records may still exist on the device"
+    }
+}
+
+sealed class SyncUpException : Exception() {
+    data class FailedToFinish(
+        override val message: String? = null,
+        override val cause: Throwable? = null
+    ) : SyncUpException()
+
+    data class FailedToStart(
         override val cause: Throwable? = null,
         override val message: String? = null
-    ) : RepoSyncException()
-
-    data class RefreshListException(
-        override val finalSyncState: SyncState?,
-        override val cause: Throwable? = null,
-        override val message: String? = null
-    ) : RepoSyncException()
+    ) : SyncUpException()
 }

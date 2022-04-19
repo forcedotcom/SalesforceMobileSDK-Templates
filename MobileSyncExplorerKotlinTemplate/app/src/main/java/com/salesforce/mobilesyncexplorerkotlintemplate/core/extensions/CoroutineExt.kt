@@ -6,10 +6,6 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-fun Mutex.requireIsLocked() {
-    require(isLocked) { "This operation is only permitted while this mutex is locked." }
-}
-
 /**
  * Convenience method for providing this coroutine context's [Job] as the default owner to the
  * [withLock] invocation if [BuildConfig.DEBUG] is `true`.

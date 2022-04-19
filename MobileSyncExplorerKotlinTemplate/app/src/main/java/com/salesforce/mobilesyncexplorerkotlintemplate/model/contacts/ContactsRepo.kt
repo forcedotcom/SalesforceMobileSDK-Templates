@@ -43,7 +43,6 @@ class DefaultContactsRepo(
     ioDispatcher = ioDispatcher
 ) {
 
-    override val TAG: String = "DefaultContactsRepo"
     override val deserializer: SObjectDeserializer<ContactObject> = ContactObject.Companion
     override val soupName: String = CONTACTS_SOUP_NAME
     override val syncDownName: String = SYNC_DOWN_CONTACTS

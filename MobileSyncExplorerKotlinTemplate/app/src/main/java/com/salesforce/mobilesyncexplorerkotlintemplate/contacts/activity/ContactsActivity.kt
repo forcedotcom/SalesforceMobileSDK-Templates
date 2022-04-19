@@ -114,7 +114,7 @@ class ContactsActivity
     }
 
     override fun onResume(client: RestClient?) {
-        vm.sync(syncDownOnly = true)
+        vm.fullSync()
     }
 
     override fun onLogoutComplete() {
@@ -148,6 +148,6 @@ class ContactsActivity
     }
 
     override fun onSyncClick() {
-        vm.sync()
+        vm.fullSync()
     }
 }

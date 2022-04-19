@@ -1,6 +1,8 @@
 package com.salesforce.mobilesyncexplorerkotlintemplate.core.repos
 
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.*
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.CleanResyncGhostsException
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObject
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -12,14 +14,14 @@ import kotlinx.coroutines.flow.Flow
 interface SObjectSyncableRepo<T : SObject> {
     val recordsById: Flow<Map<String, SObjectRecord<T>>>
 
-    @Throws(RepoSyncException.SyncDownException::class)
-    suspend fun syncDownOnly()
+    @Throws(
+        SyncDownException::class,
+        RepoOperationException::class,
+    )
+    suspend fun syncDown()
 
-    @Throws(RepoSyncException::class)
-    suspend fun syncUpAndDown()
-
-    @Throws(RepoSyncException.SyncUpException::class)
-    suspend fun syncUpOnly()
+    @Throws(SyncUpException::class)
+    suspend fun syncUp()
 
     @Throws(RepoOperationException::class)
     suspend fun locallyUpdate(id: String, so: T): SObjectRecord<T>
