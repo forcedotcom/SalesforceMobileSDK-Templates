@@ -27,7 +27,6 @@
 package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateIntAsState
@@ -63,8 +62,10 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.Loadin
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.emptyFlow
 
 /**
  * The main entry point for all Contacts Activity UI.
@@ -732,6 +733,8 @@ class PreviewActivityVm(
     override val listClickHandler: ContactsListClickHandler get() = listVm
     override val searchTermUpdatedHandler: (newSearchTerm: String) -> Unit
         get() = listVm::onSearchTermUpdated
+    override val messages: Flow<ContactsActivityMessages>
+        get() = emptyFlow()
 }
 
 val PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER = object : ContactsActivityMenuHandler {

@@ -16,7 +16,7 @@ interface SObjectSyncableRepo<T : SObject> {
 
     @Throws(
         SyncDownException::class,
-        RepoOperationException::class,
+        RepoOperationException.SmartStoreOperationFailed::class,
     )
     suspend fun syncDown()
 

@@ -29,15 +29,15 @@ package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.toComposeRect
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.*
 import androidx.window.layout.WindowMetricsCalculator
 import com.salesforce.androidsdk.app.SalesforceSDKManager
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
@@ -47,6 +47,7 @@ import com.salesforce.androidsdk.ui.SalesforceActivityDelegate
 import com.salesforce.androidsdk.ui.SalesforceActivityInterface
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.toWindowSizeClasses
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class ContactsActivity
@@ -91,6 +92,15 @@ class ContactsActivity
                     menuHandler = this,
                     windowSizeClasses = windowSizeClasses
                 )
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
+                vm.messages.collect {
+                    Toast.makeText(this@ContactsActivity, it.stringRes, LENGTH_SHORT)
+                        .show()
+                }
             }
         }
     }
@@ -150,6 +160,7 @@ class ContactsActivity
         vm.fullSync()
     }
 
+    // TODO this may cause multiple back presses to fire rapidly if they queue up waiting for the VM to respond. It may be a better user experience to only allow one back handler to run at one time
     override fun onBackPressed() {
         lifecycleScope.launch {
             if (!vm.onBackPressed()) {

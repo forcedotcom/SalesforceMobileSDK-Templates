@@ -36,6 +36,17 @@
     <string name="label_locally_deleted">Locally Deleted</string>
     <string name="label_undelete_confirm">Confirm Undelete?</string>
 
+    <string name="message_clean_ghosts_failed">Sync error; stale records may be present</string>
+    <string name="message_delete_failed">Failed to delete object</string>
+    <string name="message_repo_refresh_failed">SmartStore error; current records list may be inaccurate</string>
+    <string name="message_sync_down_finish_failed">Sync down failed</string>
+    <string name="message_sync_down_start_failed">Error starting sync down</string>
+    <string name="message_sync_up_finish_failed">Sync up failed</string>
+    <string name="message_sync_up_start_failed">Error starting sync up</string>
+    <string name="message_undelete_failed">Failed to undelete object</string>
+    <string name="message_update_failed">Failed to save object</string>
+    <string name="message_wait_for_data_op">Please wait for the operation to finish</string>
+
     <string name="help_cannot_be_blank">This field cannot be left blank</string>
 
     <string name="content_desc_add_contact">Create New Contact</string>

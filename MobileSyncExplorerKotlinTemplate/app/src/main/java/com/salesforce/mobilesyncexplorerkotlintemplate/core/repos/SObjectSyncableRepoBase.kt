@@ -72,7 +72,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
     //  operations cannot be cancelled by themselves...
     @Throws(
         SyncDownException::class,
-        RepoOperationException::class,
+        RepoOperationException.SmartStoreOperationFailed::class,
     )
     override suspend fun syncDown() = withContext(ioDispatcher) {
         syncMutex.withLockDebug {
@@ -350,7 +350,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
     // region Protected Store Operations
 
 
-    @Throws(RepoOperationException::class)
+    @Throws(RepoOperationException.SmartStoreOperationFailed::class)
     protected suspend fun refreshRecordsList(): Unit = withContext(ioDispatcher) {
         val (parseSuccesses, parseFailures) = runFetchAllQuery()
         setRecordsList(parseSuccesses)
@@ -363,7 +363,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
             mutState.emit(mutRecordsById.toMap())
         }
 
-    @Throws(RepoOperationException::class)
+    @Throws(RepoOperationException.SmartStoreOperationFailed::class)
     protected suspend fun runFetchAllQuery(): ResultPartition<SObjectRecord<T>> =
         withContext(ioDispatcher) {
             val queryResults = try {

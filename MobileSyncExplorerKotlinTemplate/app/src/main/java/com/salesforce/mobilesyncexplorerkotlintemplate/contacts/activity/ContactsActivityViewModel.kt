@@ -26,9 +26,11 @@
  */
 package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.salesforce.androidsdk.accounts.UserAccount
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.ContactsActivityMessages.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiState
@@ -40,9 +42,8 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.isL
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -51,6 +52,8 @@ interface ContactsActivityUiInteractor {
     val activityUiState: StateFlow<ContactsActivityUiState>
     val detailsUiState: StateFlow<ContactDetailsUiState>
     val listUiState: StateFlow<ContactsListUiState>
+
+    val messages: Flow<ContactsActivityMessages>
 
     val detailsFieldChangeHandler: ContactDetailsFieldChangeHandler
     val detailsClickHandler: ContactDetailsClickHandler
@@ -87,8 +90,13 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
     private val mutActivityUiState = MutableStateFlow(
         ContactsActivityUiState(isSyncing = false, dataOpIsActive = false, dialogUiState = null)
     )
-
     override val activityUiState: StateFlow<ContactsActivityUiState> get() = mutActivityUiState
+
+    private val mutMessages = MutableSharedFlow<ContactsActivityMessages>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    override val messages: Flow<ContactsActivityMessages> get() = mutMessages
 
     @Volatile
     private var curRecordsByIds: Map<String, ContactRecord> = emptyMap()
@@ -137,15 +145,31 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
             try {
                 contactsRepo.syncUp()
             } catch (ex: SyncUpException) {
-                TODO("syncUp() - ex = $ex")
+                Log.e(TAG, ex.toString())
+
+                when (ex) {
+                    is SyncUpException.FailedToFinish -> SyncUpFinishFailed
+                    is SyncUpException.FailedToStart -> SyncUpStartFailed
+                }.also {
+                    mutMessages.tryEmit(it)
+                }
             }
 
             try {
                 contactsRepo.syncDown()
             } catch (ex: SyncDownException) {
-                TODO("syncDown() - ex = $ex")
-            } catch (ex: RepoOperationException) {
-                TODO("syncDown() - ex = $ex")
+                Log.e(TAG, ex.toString())
+
+                when (ex) {
+                    is SyncDownException.CleaningUpstreamRecordsFailed -> CleanGhostsFailed
+                    is SyncDownException.FailedToFinish -> SyncDownFinishFailed
+                    is SyncDownException.FailedToStart -> SyncDownStartFailed
+                }.also {
+                    mutMessages.tryEmit(it)
+                }
+            } catch (ex: RepoOperationException.SmartStoreOperationFailed) {
+                Log.e(TAG, ex.toString())
+                mutMessages.tryEmit(RepoRefreshFailed)
             }
 
             eventMutex.withLockDebug {
@@ -159,7 +183,11 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
     }
 
     private suspend fun setContactWithConfirmation(contactId: String?, editing: Boolean) {
-        // TODO check for data operations
+        if (activityUiState.value.dataOpIsActive) {
+            mutMessages.tryEmit(WaitForDataOpToFinish)
+            return
+        }
+
         val record = contactId?.let { curRecordsByIds[contactId] }
 
         val mayContinue = !detailsVm.hasUnsavedChanges || suspendCoroutine { cont ->
@@ -182,9 +210,10 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
     }
 
     private suspend fun runUpdateOp(idToUpdate: String, so: ContactObject) {
-        // TODO toast to user that the data operation couldn't be done b/c there is another already active
-        if (activityUiState.value.dataOpIsActive)
+        if (activityUiState.value.dataOpIsActive) {
+            mutMessages.tryEmit(WaitForDataOpToFinish)
             return
+        }
 
         withDataOpActiveUiState {
             try {
@@ -193,15 +222,24 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
                     detailsVm.clobberRecord(record = updatedRecord, editing = false)
                 }
             } catch (ex: RepoOperationException) {
-                throw ex
+                Log.e(TAG, ex.toString())
+
+                when (ex) {
+                    is RepoOperationException.InvalidResultObject,
+                    is RepoOperationException.RecordNotFound,
+                    is RepoOperationException.SmartStoreOperationFailed -> UpdateOperationFailed
+                }.also {
+                    mutMessages.tryEmit(it)
+                }
             }
         }
     }
 
     private suspend fun runCreateOp(so: ContactObject) {
-        // TODO toast to user that the data operation couldn't be done b/c there is another already active
-        if (activityUiState.value.dataOpIsActive)
+        if (activityUiState.value.dataOpIsActive) {
+            mutMessages.tryEmit(WaitForDataOpToFinish)
             return
+        }
 
         withDataOpActiveUiState {
             try {
@@ -210,15 +248,24 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
                     detailsVm.clobberRecord(record = newRecord, editing = false)
                 }
             } catch (ex: RepoOperationException) {
-                throw ex
+                Log.e(TAG, ex.toString())
+
+                when (ex) {
+                    is RepoOperationException.InvalidResultObject,
+                    is RepoOperationException.RecordNotFound,
+                    is RepoOperationException.SmartStoreOperationFailed -> UpdateOperationFailed
+                }.also {
+                    mutMessages.tryEmit(it)
+                }
             }
         }
     }
 
     private suspend fun runDeleteOpWithConfirmation(idToDelete: String) {
-        // TODO toast to user that the data operation couldn't be done b/c there is another already active
-        if (activityUiState.value.dataOpIsActive)
+        if (activityUiState.value.dataOpIsActive) {
+            mutMessages.tryEmit(WaitForDataOpToFinish)
             return
+        }
 
         val confirmed = suspendCoroutine<Boolean> { cont ->
             val deleteDialog = DeleteConfirmationDialogUiState(
@@ -241,16 +288,25 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
                         detailsVm.clobberRecord(record = updatedRecord, editing = false)
                     }
                 } catch (ex: RepoOperationException) {
-                    throw ex
+                    Log.e(TAG, ex.toString())
+
+                    when (ex) {
+                        is RepoOperationException.InvalidResultObject,
+                        is RepoOperationException.RecordNotFound,
+                        is RepoOperationException.SmartStoreOperationFailed -> DeleteOperationFailed
+                    }.also {
+                        mutMessages.tryEmit(it)
+                    }
                 }
             }
         }
     }
 
     private suspend fun runUndeleteOpWithConfirmation(idToUndelete: String) {
-        // TODO toast to user that the data operation couldn't be done b/c there is another already active
-        if (activityUiState.value.dataOpIsActive)
+        if (activityUiState.value.dataOpIsActive) {
+            mutMessages.tryEmit(WaitForDataOpToFinish)
             return
+        }
 
         val confirmed = suspendCoroutine<Boolean> { cont ->
             val undeleteDialog = UndeleteConfirmationDialogUiState(
@@ -273,7 +329,15 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
                         editing = false
                     )
                 } catch (ex: RepoOperationException) {
-                    throw ex
+                    Log.e(TAG, ex.toString())
+
+                    when (ex) {
+                        is RepoOperationException.InvalidResultObject,
+                        is RepoOperationException.RecordNotFound,
+                        is RepoOperationException.SmartStoreOperationFailed -> UndeleteOperationFailed
+                    }.also {
+                        mutMessages.tryEmit(it)
+                    }
                 }
             }
         }
