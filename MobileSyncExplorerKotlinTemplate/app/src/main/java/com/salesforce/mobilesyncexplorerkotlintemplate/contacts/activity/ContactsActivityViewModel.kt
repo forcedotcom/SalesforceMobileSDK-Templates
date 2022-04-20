@@ -61,6 +61,7 @@ interface ContactsActivityUiInteractor {
 interface ContactsActivityViewModel : ContactsActivityUiInteractor {
     fun switchUser(newUser: UserAccount)
     fun fullSync()
+    suspend fun onBackPressed(): Boolean
 }
 
 class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel {
@@ -151,6 +152,10 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
                 mutActivityUiState.value = activityUiState.value.copy(isSyncing = false)
             }
         }
+    }
+
+    override suspend fun onBackPressed(): Boolean = eventMutex.withLockDebug {
+        detailsVm.onBackPressed() || listVm.onBackPressed()
     }
 
     private suspend fun setContactWithConfirmation(contactId: String?, editing: Boolean) {
@@ -376,6 +381,19 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
             }
         }
 
+        fun onBackPressed(): Boolean {
+            val curState = uiState.value as? ContactDetailsUiState.ViewingContactDetails
+                ?: return false
+
+            if (curState.isEditingEnabled) {
+                exitEditClick()
+            } else {
+                deselectContactClick()
+            }
+
+            return true
+        }
+
         fun clobberRecord(record: ContactRecord?, editing: Boolean) {
             if (record == null) {
                 if (editing) {
@@ -588,6 +606,8 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
             }
             // TODO handle when selected contact is no longer in the records list
         }
+
+        fun onBackPressed(): Boolean = false // this component does not handle back press
 
         fun setSelectedContact(id: String?) {
             mutListUiState.value = uiState.value.copy(curSelectedContactId = id)

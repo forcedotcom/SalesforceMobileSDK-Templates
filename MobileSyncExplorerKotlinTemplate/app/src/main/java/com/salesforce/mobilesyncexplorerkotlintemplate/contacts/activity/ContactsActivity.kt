@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.window.layout.WindowMetricsCalculator
 import com.salesforce.androidsdk.app.SalesforceSDKManager
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
@@ -46,6 +47,7 @@ import com.salesforce.androidsdk.ui.SalesforceActivityDelegate
 import com.salesforce.androidsdk.ui.SalesforceActivityInterface
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.toWindowSizeClasses
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
+import kotlinx.coroutines.launch
 
 class ContactsActivity
     : ComponentActivity(),
@@ -146,5 +148,13 @@ class ContactsActivity
 
     override fun onSyncClick() {
         vm.fullSync()
+    }
+
+    override fun onBackPressed() {
+        lifecycleScope.launch {
+            if (!vm.onBackPressed()) {
+                super.onBackPressed()
+            }
+        }
     }
 }

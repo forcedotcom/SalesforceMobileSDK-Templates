@@ -27,6 +27,7 @@
 package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateIntAsState
