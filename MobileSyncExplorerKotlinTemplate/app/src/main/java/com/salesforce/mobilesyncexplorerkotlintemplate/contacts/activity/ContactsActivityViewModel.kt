@@ -714,7 +714,6 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
             searchTerm: String,
             block: suspend (filteredList: List<ContactRecord>) -> Unit
         ) {
-            // TODO this is not optimized. it would be cool to successively refine the search, but for now just search the entire list every time
             val contacts = curRecordsByIds.values.toList()
 
             curSearchJob?.cancel()

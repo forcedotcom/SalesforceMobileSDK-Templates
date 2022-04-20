@@ -335,7 +335,6 @@ private fun WindowSizeClasses.toContactsActivityContentLayout() = when (horiz) {
 @Preview(showBackground = true)
 @Composable
 private fun SinglePaneListPreview() {
-    // TODO these previews have a lot of duplicated code and could probably be simplified a lot
     val contacts = (1..100).map { it.toString() }.map {
         SObjectRecord(
             id = it,

@@ -101,7 +101,6 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
     @Throws(SyncDownException::class)
     private suspend fun doSyncDown(): SyncState = withContext(NonCancellable) {
         suspendCoroutine { cont ->
-            // TODO: will MobileSync use the same instance of the callback (this coroutine block) in the STOPPED -> RUNNING -> DONE flow?
             val callback: (SyncState) -> Unit = {
                 when (it.status) {
                     // terminal states
@@ -113,7 +112,6 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
                         )
                     )
 
-                    // TODO are these strictly transient states for as long as this coroutine is running?
                     SyncState.Status.NEW,
                     SyncState.Status.RUNNING,
                     null -> {
@@ -367,7 +365,6 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
     protected suspend fun runFetchAllQuery(): ResultPartition<SObjectRecord<T>> =
         withContext(ioDispatcher) {
             val queryResults = try {
-                // TODO we may need to page this to support arbitrary lists greater than 10k
                 store.query(
                     QuerySpec.buildAllQuerySpec(
                         soupName,
