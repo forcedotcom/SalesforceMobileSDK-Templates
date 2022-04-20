@@ -28,7 +28,7 @@ suspend fun SyncManager.suspendCleanResyncGhosts(syncName: String) = withContext
         try {
             cleanResyncGhosts(syncName, callback)
         } catch (ex: Exception) {
-            CleanResyncGhostsException.FailedToStart(
+            throw CleanResyncGhostsException.FailedToStart(
                 message = "Clean Resync Ghosts operation failed to start",
                 cause = ex
             )
