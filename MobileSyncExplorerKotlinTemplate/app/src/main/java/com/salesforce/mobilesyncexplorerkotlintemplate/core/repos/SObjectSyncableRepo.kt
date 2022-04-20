@@ -34,4 +34,7 @@ interface SObjectSyncableRepo<T : SObject> {
 
     @Throws(RepoOperationException::class)
     suspend fun locallyUndelete(id: String): SObjectRecord<T>
+
+    @Throws(RepoOperationException.SmartStoreOperationFailed::class)
+    suspend fun refreshRecordsListFromSmartStore()
 }

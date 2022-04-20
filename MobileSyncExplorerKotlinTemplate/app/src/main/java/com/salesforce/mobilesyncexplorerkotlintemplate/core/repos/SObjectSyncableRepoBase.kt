@@ -3,7 +3,6 @@ package com.salesforce.mobilesyncexplorerkotlintemplate.core.repos
 import com.salesforce.androidsdk.accounts.UserAccount
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.androidsdk.mobilesync.manager.SyncManager
-import com.salesforce.androidsdk.mobilesync.target.SyncTarget
 import com.salesforce.androidsdk.mobilesync.target.SyncTarget.*
 import com.salesforce.androidsdk.mobilesync.util.Constants
 import com.salesforce.androidsdk.mobilesync.util.SyncState
@@ -12,7 +11,6 @@ import com.salesforce.androidsdk.smartstore.store.SmartStore
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.CleanResyncGhostsException
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.*
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord.Companion.KEY_LOCAL_ID
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.suspendCleanResyncGhosts
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -84,7 +82,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
             }
         }
 
-        withContext(NonCancellable) { refreshRecordsList() }
+        withContext(NonCancellable) { refreshRecordsListFromSmartStore() }
     }
 
     @Throws(SyncUpException::class)
@@ -349,7 +347,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
 
 
     @Throws(RepoOperationException.SmartStoreOperationFailed::class)
-    protected suspend fun refreshRecordsList(): Unit = withContext(ioDispatcher) {
+    override suspend fun refreshRecordsListFromSmartStore(): Unit = withContext(ioDispatcher) {
         val (parseSuccesses, parseFailures) = runFetchAllQuery()
         setRecordsList(parseSuccesses)
     }
@@ -426,7 +424,6 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
     } catch (ex: Exception) {
         val ids = mutableListOf<String>()
         this.optStringOrNull(Constants.ID)?.also { ids.add(it) }
-        this.optStringOrNull(KEY_LOCAL_ID)?.also { ids.add(it) }
 
         removeAllFromObjectList(ids)
 
@@ -442,11 +439,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
      */
     @Throws(RepoOperationException.RecordNotFound::class)
     protected fun retrieveByIdOrThrowOperationException(id: String) = try {
-        if (SyncTarget.isLocalId(id)) {
-            store.retrieveSingleById(soupName = soupName, idColName = KEY_LOCAL_ID, id = id)
-        } else {
-            store.retrieveSingleById(soupName = soupName, idColName = Constants.ID, id = id)
-        }
+        store.retrieveSingleById(soupName = soupName, idColName = Constants.ID, id = id)
     } catch (ex: NoSuchElementException) {
         throw RepoOperationException.RecordNotFound(id = id, soupName = soupName, cause = ex)
     }

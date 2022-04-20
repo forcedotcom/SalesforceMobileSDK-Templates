@@ -30,6 +30,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.salesforce.androidsdk.accounts.UserAccount
+import com.salesforce.androidsdk.mobilesync.target.SyncTarget
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.ContactsActivityMessages.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListClickHandler
@@ -93,7 +94,7 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
     override val activityUiState: StateFlow<ContactsActivityUiState> get() = mutActivityUiState
 
     private val mutMessages = MutableSharedFlow<ContactsActivityMessages>(
-        replay = 1,
+        extraBufferCapacity = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
     override val messages: Flow<ContactsActivityMessages> get() = mutMessages
@@ -107,17 +108,26 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
     @Volatile
     private lateinit var contactsRepo: ContactsRepo
 
+    @Volatile
+    private var curUser: UserAccount? = null
+
     private var repoCollectorJob: Job? = null
 
     override fun switchUser(newUser: UserAccount) {
         viewModelScope.launch {
             eventMutex.withLockDebug {
+                if (curUser == newUser)
+                    return@launch
+
                 repoCollectorJob?.cancelAndJoin()
 
+                curUser = newUser
                 contactsRepo = DefaultContactsRepo(account = newUser)
 
                 detailsVm.reset()
                 listVm.reset()
+
+                contactsRepo.refreshRecordsListFromSmartStore()
 
                 repoCollectorJob = viewModelScope.launch {
                     contactsRepo.recordsById.collect { records ->
@@ -142,8 +152,9 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
                 mutActivityUiState.value = activityUiState.value.copy(isSyncing = true)
             }
 
-            try {
+            val syncUpSuccess = try {
                 contactsRepo.syncUp()
+                true
             } catch (ex: SyncUpException) {
                 Log.e(TAG, ex.toString())
 
@@ -153,23 +164,27 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
                 }.also {
                     mutMessages.tryEmit(it)
                 }
+
+                false
             }
 
-            try {
-                contactsRepo.syncDown()
-            } catch (ex: SyncDownException) {
-                Log.e(TAG, ex.toString())
+            if (syncUpSuccess) {
+                try {
+                    contactsRepo.syncDown()
+                } catch (ex: SyncDownException) {
+                    Log.e(TAG, ex.toString())
 
-                when (ex) {
-                    is SyncDownException.CleaningUpstreamRecordsFailed -> CleanGhostsFailed
-                    is SyncDownException.FailedToFinish -> SyncDownFinishFailed
-                    is SyncDownException.FailedToStart -> SyncDownStartFailed
-                }.also {
-                    mutMessages.tryEmit(it)
+                    when (ex) {
+                        is SyncDownException.CleaningUpstreamRecordsFailed -> CleanGhostsFailed
+                        is SyncDownException.FailedToFinish -> SyncDownFinishFailed
+                        is SyncDownException.FailedToStart -> SyncDownStartFailed
+                    }.also {
+                        mutMessages.tryEmit(it)
+                    }
+                } catch (ex: RepoOperationException.SmartStoreOperationFailed) {
+                    Log.e(TAG, ex.toString())
+                    mutMessages.tryEmit(RepoRefreshFailed)
                 }
-            } catch (ex: RepoOperationException.SmartStoreOperationFailed) {
-                Log.e(TAG, ex.toString())
-                mutMessages.tryEmit(RepoRefreshFailed)
             }
 
             eventMutex.withLockDebug {
@@ -403,46 +418,22 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
                 mutDetailsUiState.value = uiState.value.copy(doingInitialLoad = false)
             }
 
-            val curId = uiState.value.recordId ?: return
-            val matchingRecord = curRecordsByIds[curId]
+            val viewingState = uiState.value as? ContactDetailsUiState.ViewingContactDetails
+                ?: return
 
-            // TODO This whole onNewRecords is buggy. I think a refactor is necessary, maybe having an internal state which includes the corresponding UI state so that the [curRecordId] doesn't get out of sync with the ui state?
-            if (matchingRecord == null) {
-                mutDetailsUiState.value = ContactDetailsUiState.NoContactSelected()
+            if (viewingState.recordId == null && viewingState.isEditingEnabled) {
+                // creating new contact
                 return
             }
 
-            mutDetailsUiState.value = when (val curState = uiState.value) {
-                is ContactDetailsUiState.NoContactSelected -> {
-                    matchingRecord.buildViewingContactUiState(
-                        uiSyncState = matchingRecord.localStatus.toUiSyncState(),
-                        isEditingEnabled = false,
-                        shouldScrollToErrorField = false,
-                    )
-                }
-
-                is ContactDetailsUiState.ViewingContactDetails -> {
-                    when {
-                        // not editing, so simply update all fields to match upstream emission:
-                        !curState.isEditingEnabled -> curState.copy(
-                            firstNameField = matchingRecord.sObject.buildFirstNameField(),
-                            lastNameField = matchingRecord.sObject.buildLastNameField(),
-                            titleField = matchingRecord.sObject.buildTitleField(),
-                            departmentField = matchingRecord.sObject.buildDepartmentField(),
-                        )
-
-                        /* TODO figure out how to reconcile when upstream was locally deleted but the user has
-                            unsaved changes. Also applies to if upstream is permanently deleted. Reminder,
-                            showing dialogs from data events is not allowed.
-                            Idea: create a "snapshot" of the SO as soon as they begin editing, and only
-                            prompt for choice upon clicking save. */
-                        matchingRecord.localStatus.isLocallyDeleted && hasUnsavedChanges -> TODO()
-
-                        // user is editing and there is no incompatible state, so no changes to state:
-                        else -> curState
-                    }
-                }
+            if (!viewingState.isEditingEnabled) {
+                clobberRecord(record = curRecordsByIds[viewingState.recordId], editing = false)
             }
+
+            // if editing, let the user keep their changes
+
+            // TODO Corner case: If user is editing a contact and the upstream gets modified/deleted
+            // TODO Actually figure out how we want to reconcile locally-created contacts after sync with its ID changing
         }
 
         fun onBackPressed(): Boolean {
@@ -596,6 +587,7 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
             )
         }
 
+        @Throws(ContactValidationException::class)
         private fun ContactDetailsUiState.ViewingContactDetails.toSObjectOrThrow() = ContactObject(
             firstName = firstNameField.fieldValue,
             lastName = lastNameField.fieldValue ?: "",

@@ -34,9 +34,6 @@ import org.json.JSONObject
 /**
  * An abstraction and runtime data model of a Contact Salesforce Standard Object.
  *
- * This is not represented as a data class because there is business logic that needs to be applied
- * to copy and de/serialization operations that do not work with data class semantics.
- *
  * Note how this is not a [SalesforceObject]. [SalesforceObject]s are _mutable_ which goes against
  * Jetpack Compose guidelines to make state objects immutable.
  */

@@ -20,7 +20,8 @@
         "createFieldlist": [
           "FirstName",
           "LastName",
-          "Title"
+          "Title",
+          "Department"
         ]
       },
       "options": {
@@ -28,7 +29,8 @@
           "Id",
           "FirstName",
           "LastName",
-          "Title"
+          "Title",
+          "Department"
         ],
         "mergeMode": "LEAVE_IF_CHANGED"
       }

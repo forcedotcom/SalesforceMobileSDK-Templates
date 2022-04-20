@@ -121,7 +121,10 @@ class ContactsActivity
 
     override fun onResume(client: RestClient?) {
         val userAccount = MobileSyncSDKManager.getInstance().userAccountManager.currentUser
-            ?: return
+            ?: run {
+                MobileSyncSDKManager.getInstance().logout(this)
+                return
+            }
 
         vm.switchUser(newUser = userAccount)
     }

@@ -2,7 +2,6 @@ package com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject
 
 import com.salesforce.androidsdk.mobilesync.target.SyncTarget
 import com.salesforce.androidsdk.mobilesync.util.Constants
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord.Companion.KEY_LOCAL_ID
 import org.json.JSONObject
 import java.util.*
 
@@ -41,7 +40,6 @@ fun createNewSoupEltBase(forObjType: String): JSONObject {
 
     return JSONObject().apply {
         put(Constants.ID, id)
-        put(KEY_LOCAL_ID, id)
         put(Constants.ATTRIBUTES, attributes)
         put(SyncTarget.LOCALLY_CREATED, true)
         put(SyncTarget.LOCALLY_DELETED, false)
