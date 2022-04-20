@@ -29,7 +29,7 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 abstract class SObjectSyncableRepoBase<T : SObject>(
-    account: UserAccount?,// TODO this shouldn't be nullable. The logic whether to instantiate this object should be moved higher up, but this is a quick fix to get things testable
+    account: UserAccount,
     protected val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : SObjectSyncableRepo<T> {
 
@@ -49,6 +49,13 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
 
     protected val store: SmartStore = MobileSyncSDKManager.getInstance().getSmartStore(account)
     protected val syncManager: SyncManager = SyncManager.getInstance(account)
+
+    init {
+        MobileSyncSDKManager.getInstance().apply {
+            setupUserStoreFromDefaultConfig()
+            setupUserSyncsFromDefaultConfig()
+        }
+    }
 
     protected abstract val soupName: String
     protected abstract val syncDownName: String

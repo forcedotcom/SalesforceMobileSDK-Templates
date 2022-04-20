@@ -28,6 +28,7 @@ package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.salesforce.androidsdk.accounts.UserAccount
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiState
@@ -37,10 +38,7 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.core.repos.SyncDownExcept
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.repos.SyncUpException
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.isLocallyDeleted
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.*
-import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
-import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactRecord
-import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactValidationException
-import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactsRepo
+import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -49,7 +47,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-interface ContactsActivityViewModel {
+interface ContactsActivityUiInteractor {
     val activityUiState: StateFlow<ContactsActivityUiState>
     val detailsUiState: StateFlow<ContactDetailsUiState>
     val listUiState: StateFlow<ContactsListUiState>
@@ -58,13 +56,14 @@ interface ContactsActivityViewModel {
     val detailsClickHandler: ContactDetailsClickHandler
     val listClickHandler: ContactsListClickHandler
     val searchTermUpdatedHandler: (newSearchTerm: String) -> Unit
+}
 
+interface ContactsActivityViewModel : ContactsActivityUiInteractor {
+    fun switchUser(newUser: UserAccount)
     fun fullSync()
 }
 
-class DefaultContactsActivityViewModel(
-    private val contactsRepo: ContactsRepo
-) : ViewModel(), ContactsActivityViewModel {
+class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel {
 
     private val detailsVm by lazy { DefaultContactDetailsViewModel() }
     private val listVm by lazy { DefaultContactsListViewModel() }
@@ -93,14 +92,37 @@ class DefaultContactsActivityViewModel(
     @Volatile
     private var curRecordsByIds: Map<String, ContactRecord> = emptyMap()
 
-    init {
+    @Volatile
+    private var hasInitialAccount = false
+
+    @Volatile
+    private lateinit var contactsRepo: ContactsRepo
+
+    private var repoCollectorJob: Job? = null
+
+    override fun switchUser(newUser: UserAccount) {
         viewModelScope.launch {
-            contactsRepo.recordsById.collect { records ->
-                eventMutex.withLockDebug {
-                    curRecordsByIds = records
-                    detailsVm.onRecordsEmitted()
-                    listVm.onRecordsEmitted()
+            eventMutex.withLockDebug {
+                repoCollectorJob?.cancelAndJoin()
+
+                contactsRepo = DefaultContactsRepo(account = newUser)
+
+                detailsVm.reset()
+                listVm.reset()
+
+                repoCollectorJob = viewModelScope.launch {
+                    contactsRepo.recordsById.collect { records ->
+                        eventMutex.withLockDebug {
+                            curRecordsByIds = records
+                            detailsVm.onRecordsEmitted()
+                            listVm.onRecordsEmitted()
+                        }
+                    }
                 }
+
+                hasInitialAccount = true
+
+                fullSync()
             }
         }
     }
@@ -271,8 +293,13 @@ class DefaultContactsActivityViewModel(
      * Convenience method to wrap a method body in a coroutine which acquires the event mutex lock
      * before executing the [block].
      */
-    private fun launchWithEventLock(block: suspend CoroutineScope.() -> Unit) {
-        viewModelScope.launch { eventMutex.withLockDebug { block() } }
+    private fun safeHandleUiEvent(block: suspend CoroutineScope.() -> Unit) {
+        viewModelScope.launch {
+            eventMutex.withLockDebug {
+                if (!hasInitialAccount) return@withLockDebug
+                block()
+            }
+        }
     }
 
     private fun dismissCurDialog() {
@@ -291,11 +318,16 @@ class DefaultContactsActivityViewModel(
         : ContactDetailsFieldChangeHandler,
         ContactDetailsClickHandler {
 
-        private val mutDetailsUiState: MutableStateFlow<ContactDetailsUiState> = MutableStateFlow(
-            ContactDetailsUiState.NoContactSelected(doingInitialLoad = true)
-        )
+        private val initialState: ContactDetailsUiState
+            get() = ContactDetailsUiState.NoContactSelected(doingInitialLoad = true)
+
+        private val mutDetailsUiState = MutableStateFlow(initialState)
 
         val uiState: StateFlow<ContactDetailsUiState> get() = mutDetailsUiState
+
+        fun reset() {
+            mutDetailsUiState.value = initialState
+        }
 
         fun onRecordsEmitted() {
             if (uiState.value.doingInitialLoad) {
@@ -399,42 +431,42 @@ class DefaultContactsActivityViewModel(
                 }
             }
 
-        override fun createClick() = launchWithEventLock {
+        override fun createClick() = safeHandleUiEvent {
             setContactWithConfirmation(contactId = null, editing = true)
         }
 
-        override fun deleteClick() = launchWithEventLock {
-            val targetRecordId = uiState.value.recordId ?: return@launchWithEventLock
+        override fun deleteClick() = safeHandleUiEvent {
+            val targetRecordId = uiState.value.recordId ?: return@safeHandleUiEvent
             runDeleteOpWithConfirmation(idToDelete = targetRecordId)
         }
 
-        override fun undeleteClick() = launchWithEventLock {
-            val targetRecordId = uiState.value.recordId ?: return@launchWithEventLock
+        override fun undeleteClick() = safeHandleUiEvent {
+            val targetRecordId = uiState.value.recordId ?: return@safeHandleUiEvent
             runUndeleteOpWithConfirmation(idToUndelete = targetRecordId)
         }
 
-        override fun editClick() = launchWithEventLock {
+        override fun editClick() = safeHandleUiEvent {
             setContactWithConfirmation(contactId = uiState.value.recordId, editing = true)
         }
 
-        override fun deselectContactClick() = launchWithEventLock {
+        override fun deselectContactClick() = safeHandleUiEvent {
             setContactWithConfirmation(contactId = null, editing = false)
         }
 
-        override fun exitEditClick() = launchWithEventLock {
+        override fun exitEditClick() = safeHandleUiEvent {
             setContactWithConfirmation(contactId = uiState.value.recordId, editing = false)
         }
 
-        override fun saveClick() = launchWithEventLock {
+        override fun saveClick() = safeHandleUiEvent {
             // If not viewing details, we cannot build the SObject, so there is nothing to do
             val curState = uiState.value as? ContactDetailsUiState.ViewingContactDetails
-                ?: return@launchWithEventLock
+                ?: return@safeHandleUiEvent
 
             val so = try {
                 curState.toSObjectOrThrow()
             } catch (ex: Exception) {
                 mutDetailsUiState.value = curState.copy(shouldScrollToErrorField = true)
-                return@launchWithEventLock
+                return@safeHandleUiEvent
             }
 
             curState.recordId.also {
@@ -446,36 +478,36 @@ class DefaultContactsActivityViewModel(
             }
         }
 
-        override fun onFirstNameChange(newFirstName: String) = launchWithEventLock {
+        override fun onFirstNameChange(newFirstName: String) = safeHandleUiEvent {
             val curState = uiState.value as? ContactDetailsUiState.ViewingContactDetails
-                ?: return@launchWithEventLock
+                ?: return@safeHandleUiEvent
 
             mutDetailsUiState.value = curState.copy(
                 firstNameField = curState.firstNameField.copy(fieldValue = newFirstName)
             )
         }
 
-        override fun onLastNameChange(newLastName: String) = launchWithEventLock {
+        override fun onLastNameChange(newLastName: String) = safeHandleUiEvent {
             val curState = uiState.value as? ContactDetailsUiState.ViewingContactDetails
-                ?: return@launchWithEventLock
+                ?: return@safeHandleUiEvent
 
             mutDetailsUiState.value = curState.copy(
                 lastNameField = curState.lastNameField.copy(fieldValue = newLastName)
             )
         }
 
-        override fun onTitleChange(newTitle: String) = launchWithEventLock {
+        override fun onTitleChange(newTitle: String) = safeHandleUiEvent {
             val curState = uiState.value as? ContactDetailsUiState.ViewingContactDetails
-                ?: return@launchWithEventLock
+                ?: return@safeHandleUiEvent
 
             mutDetailsUiState.value = curState.copy(
                 titleField = curState.titleField.copy(fieldValue = newTitle)
             )
         }
 
-        override fun onDepartmentChange(newDepartment: String) = launchWithEventLock {
+        override fun onDepartmentChange(newDepartment: String) = safeHandleUiEvent {
             val curState = uiState.value as? ContactDetailsUiState.ViewingContactDetails
-                ?: return@launchWithEventLock
+                ?: return@safeHandleUiEvent
 
             mutDetailsUiState.value = curState.copy(
                 departmentField = curState.departmentField.copy(fieldValue = newDepartment)
@@ -529,16 +561,22 @@ class DefaultContactsActivityViewModel(
 
     private inner class DefaultContactsListViewModel : ContactsListClickHandler {
 
-        private val mutListUiState = MutableStateFlow(
-            ContactsListUiState(
+        private val initialState: ContactsListUiState
+            get() = ContactsListUiState(
                 contacts = emptyList(),
                 curSelectedContactId = null,
                 isDoingInitialLoad = true,
                 isDoingDataAction = false,
                 isSearchJobRunning = false
             )
-        )
+
+        private val mutListUiState = MutableStateFlow(initialState)
         val uiState: StateFlow<ContactsListUiState> get() = mutListUiState
+
+        fun reset() {
+            curSearchJob?.cancel()
+            mutListUiState.value = initialState
+        }
 
         fun onRecordsEmitted() {
             if (uiState.value.isDoingInitialLoad) {
@@ -555,27 +593,27 @@ class DefaultContactsActivityViewModel(
             mutListUiState.value = uiState.value.copy(curSelectedContactId = id)
         }
 
-        override fun contactClick(contactId: String) = launchWithEventLock {
+        override fun contactClick(contactId: String) = safeHandleUiEvent {
             setContactWithConfirmation(contactId = contactId, editing = false)
         }
 
-        override fun createClick() = launchWithEventLock {
+        override fun createClick() = safeHandleUiEvent {
             setContactWithConfirmation(contactId = null, editing = true)
         }
 
-        override fun deleteClick(contactId: String) = launchWithEventLock {
+        override fun deleteClick(contactId: String) = safeHandleUiEvent {
             runDeleteOpWithConfirmation(idToDelete = contactId)
         }
 
-        override fun editClick(contactId: String) = launchWithEventLock {
+        override fun editClick(contactId: String) = safeHandleUiEvent {
             setContactWithConfirmation(contactId = contactId, editing = true)
         }
 
-        override fun undeleteClick(contactId: String) = launchWithEventLock {
+        override fun undeleteClick(contactId: String) = safeHandleUiEvent {
             runUndeleteOpWithConfirmation(idToUndelete = contactId)
         }
 
-        fun onSearchTermUpdated(newSearchTerm: String) = launchWithEventLock {
+        fun onSearchTermUpdated(newSearchTerm: String) = safeHandleUiEvent {
             mutListUiState.value = uiState.value.copy(curSearchTerm = newSearchTerm)
 
             restartSearch(searchTerm = newSearchTerm) { filteredList ->

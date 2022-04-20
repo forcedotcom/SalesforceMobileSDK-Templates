@@ -36,7 +36,7 @@ import kotlinx.coroutines.*
  * The default implementation of the [ContactsRepo].
  */
 class DefaultContactsRepo(
-    account: UserAccount?, // TODO this shouldn't be nullable. The logic whether to instantiate this object should be moved higher up, but this is a quick fix to get things testable
+    account: UserAccount,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : SObjectSyncableRepoBase<ContactObject>(
     account = account,

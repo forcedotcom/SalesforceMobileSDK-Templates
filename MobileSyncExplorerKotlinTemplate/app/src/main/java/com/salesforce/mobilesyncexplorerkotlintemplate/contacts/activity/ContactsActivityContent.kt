@@ -70,31 +70,31 @@ import kotlinx.coroutines.flow.StateFlow
  */
 @Composable
 fun ContactsActivityContent(
-    activityVm: ContactsActivityViewModel,
+    activityUiInteractor: ContactsActivityUiInteractor,
     menuHandler: ContactsActivityMenuHandler,
     windowSizeClasses: WindowSizeClasses
 ) {
-    val detailsUiState by activityVm.detailsUiState.collectAsState()
-    val listUiState by activityVm.listUiState.collectAsState()
-    val activityUiState by activityVm.activityUiState.collectAsState()
+    val detailsUiState by activityUiInteractor.detailsUiState.collectAsState()
+    val listUiState by activityUiInteractor.listUiState.collectAsState()
+    val activityUiState by activityUiInteractor.activityUiState.collectAsState()
 
     when (windowSizeClasses.toContactsActivityContentLayout()) {
         ContactsActivityContentLayout.SinglePane -> SinglePane(
             activityUiState = activityUiState,
             detailsUiState = detailsUiState,
-            detailsClickHandler = activityVm.detailsClickHandler,
+            detailsClickHandler = activityUiInteractor.detailsClickHandler,
             listUiState = listUiState,
-            listClickHandler = activityVm.listClickHandler,
-            onSearchTermUpdated = activityVm.searchTermUpdatedHandler,
+            listClickHandler = activityUiInteractor.listClickHandler,
+            onSearchTermUpdated = activityUiInteractor.searchTermUpdatedHandler,
             menuHandler = menuHandler
         )
         ContactsActivityContentLayout.ListDetail -> ListDetail(
             activityUiState = activityUiState,
             detailsUiState = detailsUiState,
-            detailsClickHandler = activityVm.detailsClickHandler,
+            detailsClickHandler = activityUiInteractor.detailsClickHandler,
             listUiState = listUiState,
-            listClickHandler = activityVm.listClickHandler,
-            onSearchTermUpdated = activityVm.searchTermUpdatedHandler,
+            listClickHandler = activityUiInteractor.listClickHandler,
+            onSearchTermUpdated = activityUiInteractor.searchTermUpdatedHandler,
             menuHandler = menuHandler,
             windowSizeClasses = windowSizeClasses
         )
@@ -374,7 +374,7 @@ private fun SinglePaneListPreview() {
     SalesforceMobileSDKAndroidTheme {
         Surface {
             ContactsActivityContent(
-                activityVm = vm,
+                activityUiInteractor = vm,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
                 windowSizeClasses = WindowSizeClasses(
                     horiz = WindowSizeClass.Compact,
@@ -430,7 +430,7 @@ private fun SinglePaneDetailsPreview() {
     SalesforceMobileSDKAndroidTheme {
         Surface {
             ContactsActivityContent(
-                activityVm = vm,
+                activityUiInteractor = vm,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
                 windowSizeClasses = WindowSizeClasses(
                     horiz = WindowSizeClass.Compact,
@@ -715,7 +715,7 @@ class PreviewActivityVm(
     activityState: ContactsActivityUiState,
     detailsState: ContactDetailsUiState,
     listState: ContactsListUiState
-) : ContactsActivityViewModel {
+) : ContactsActivityUiInteractor {
     override val activityUiState: StateFlow<ContactsActivityUiState> =
         MutableStateFlow(activityState)
     val uiStateValue get() = activityUiState.value
@@ -730,10 +730,7 @@ class PreviewActivityVm(
     override val detailsFieldChangeHandler: ContactDetailsFieldChangeHandler get() = detailsVm
     override val listClickHandler: ContactsListClickHandler get() = listVm
     override val searchTermUpdatedHandler: (newSearchTerm: String) -> Unit
-        get() =
-            listVm::onSearchTermUpdated
-
-    override fun fullSync() {}
+        get() = listVm::onSearchTermUpdated
 }
 
 val PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER = object : ContactsActivityMenuHandler {

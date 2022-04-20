@@ -46,7 +46,6 @@ import com.salesforce.androidsdk.ui.SalesforceActivityDelegate
 import com.salesforce.androidsdk.ui.SalesforceActivityInterface
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.toWindowSizeClasses
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
-import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.DefaultContactsRepo
 
 class ContactsActivity
     : ComponentActivity(),
@@ -59,12 +58,7 @@ class ContactsActivity
     @Suppress("UNCHECKED_CAST")
     private val vmFactory = object : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            // TODO Use Hilt to inject this
-            return DefaultContactsActivityViewModel(
-                DefaultContactsRepo(
-                    MobileSyncSDKManager.getInstance().userAccountManager.currentUser
-                )
-            ) as T
+            return DefaultContactsActivityViewModel() as T
         }
     }
 
@@ -91,7 +85,7 @@ class ContactsActivity
 
             SalesforceMobileSDKAndroidTheme {
                 ContactsActivityContent(
-                    activityVm = vm,
+                    activityUiInteractor = vm,
                     menuHandler = this,
                     windowSizeClasses = windowSizeClasses
                 )
@@ -114,7 +108,10 @@ class ContactsActivity
     }
 
     override fun onResume(client: RestClient?) {
-        vm.fullSync()
+        val userAccount = MobileSyncSDKManager.getInstance().userAccountManager.currentUser
+            ?: return
+
+        vm.switchUser(newUser = userAccount)
     }
 
     override fun onLogoutComplete() {
