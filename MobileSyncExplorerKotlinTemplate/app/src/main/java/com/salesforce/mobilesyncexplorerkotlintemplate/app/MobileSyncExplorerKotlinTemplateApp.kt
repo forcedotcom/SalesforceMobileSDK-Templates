@@ -30,7 +30,7 @@ import android.app.Application
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.ContactsActivity
 
-class MobileSyncComposeApp : Application() {
+class MobileSyncExplorerKotlinTemplateApp : Application() {
     override fun onCreate() {
         super.onCreate()
         MobileSyncSDKManager.initNative(this, ContactsActivity::class.java)

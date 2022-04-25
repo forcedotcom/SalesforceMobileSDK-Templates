@@ -40,7 +40,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     //
 
     // // Values in template
-    // var templateAppName = 'Mobile Sync Compose';
+    // var templateAppName = 'Mobile Sync Explorer Kotlin Template';
     // var templatePackageName = 'com.salesforce.mobilesyncexplorerkotlintemplate';
     // // Key files
     // var templatePackageJsonFile = 'package.json';
@@ -48,8 +48,8 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // var templateAndroidManifestFile = path.join('app', 'AndroidManifest.xml');
     // var templateStringsXmlFile = path.join('app', 'src', 'res', 'values', 'strings.xml');
     // var templateBootconfigFile = path.join('app', 'src', 'res', 'values', 'bootconfig.xml');
-    // var templateMainActivityFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'samples', 'mobilesynccompose', 'contacts', 'activity', 'ContactsActivity.kt');
-    // var templateMainApplicationFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'samples', 'mobilesynccompose', 'app', 'MobileSyncComposeApp.kt');
+    // var templateMainActivityFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'samples', 'mobilesyncexplorerkotlintemplate', 'contacts', 'activity', 'ContactsActivity.kt');
+    // var templateMainApplicationFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'samples', 'mobilesyncexplorerkotlintemplate', 'app', 'MobileSyncExplorerKotlinTemplateApp.kt');
 
     // //
     // // Replace in files

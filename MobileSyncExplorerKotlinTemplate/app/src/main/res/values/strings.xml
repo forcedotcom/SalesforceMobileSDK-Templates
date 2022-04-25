@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Mobile Sync Compose</string>
+    <string name="app_name">Mobile Sync Explorer Kotlin Template</string>
 
     <string name="body_delete_confirm">Are you sure you want to delete this object?</string>
     <string name="body_delete_confirm_with_name">Are you sure you want to delete %1$s?</string>
