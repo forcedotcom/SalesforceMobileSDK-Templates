@@ -129,10 +129,7 @@ class ContactsActivity
         vm.switchUser(newUser = userAccount)
     }
 
-    override fun onLogoutComplete() {
-        // TODO is there any cleanup required after logout?
-        /* no-op */
-    }
+    override fun onLogoutComplete() {}
 
     override fun onUserSwitched() {
         salesforceActivityDelegate.onResume(true)
