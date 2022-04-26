@@ -32,6 +32,7 @@ import android.view.KeyEvent
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.toComposeRect
@@ -57,6 +58,12 @@ class ContactsActivity
 
     private lateinit var vm: ContactsActivityViewModel
     private lateinit var salesforceActivityDelegate: SalesforceActivityDelegate
+
+    private val vmBackPressedCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            vm.handleBackClick()
+        }
+    }
 
     @Suppress("UNCHECKED_CAST")
     private val vmFactory = object : ViewModelProvider.Factory {
@@ -96,6 +103,12 @@ class ContactsActivity
         }
 
         lifecycleScope.launch {
+            repeatOnLifecycle(state = Lifecycle.State.STARTED) {
+                vm.isHandlingBackEvents.collect { vmBackPressedCallback.isEnabled = it }
+            }
+        }
+
+        lifecycleScope.launch {
             repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
                 vm.messages.collect {
                     Toast.makeText(this@ContactsActivity, it.stringRes, LENGTH_SHORT)
@@ -103,6 +116,8 @@ class ContactsActivity
                 }
             }
         }
+
+        onBackPressedDispatcher.addCallback(this, vmBackPressedCallback)
     }
 
     override fun onResume() {
@@ -158,15 +173,6 @@ class ContactsActivity
 
     override fun onSyncClick() {
         vm.fullSync()
-    }
-
-    // TODO this may cause multiple back presses to fire rapidly if they queue up waiting for the VM to respond. It may be a better user experience to only allow one back handler to run at one time
-    override fun onBackPressed() {
-        lifecycleScope.launch {
-            if (!vm.onBackPressed()) {
-                super.onBackPressed()
-            }
-        }
     }
 
     companion object {

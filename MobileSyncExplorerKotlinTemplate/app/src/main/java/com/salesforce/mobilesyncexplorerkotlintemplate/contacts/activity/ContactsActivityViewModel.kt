@@ -45,6 +45,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -62,16 +63,18 @@ interface ContactsActivityUiInteractor {
 }
 
 interface ContactsActivityViewModel : ContactsActivityUiInteractor {
+    val isHandlingBackEvents: StateFlow<Boolean>
+
     fun switchUser(newUser: UserAccount)
     fun fullSync()
-    suspend fun onBackPressed(): Boolean
+    fun handleBackClick()
 }
 
 class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel {
 
     private val logger = SalesforceLogger.getLogger(ContactsActivity.COMPONENT_NAME, appContext)
-    private val detailsVm by lazy { DefaultContactDetailsViewModel() }
-    private val listVm by lazy { DefaultContactsListViewModel() }
+    private val detailsVm = DefaultContactDetailsViewModel()
+    private val listVm = DefaultContactsListViewModel()
 
     override val detailsUiState: StateFlow<ContactDetailsUiState> get() = detailsVm.uiState
     override val listUiState: StateFlow<ContactsListUiState> get() = listVm.uiState
@@ -92,6 +95,15 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
         ContactsActivityUiState(isSyncing = false, dataOpIsActive = false, dialogUiState = null)
     )
     override val activityUiState: StateFlow<ContactsActivityUiState> get() = mutActivityUiState
+
+    override val isHandlingBackEvents: StateFlow<Boolean> =
+        detailsVm.uiState
+            .combine(listVm.uiState) { _, _ -> detailsVm.willHandleBack || listVm.willHandleBack }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.Lazily,
+                initialValue = detailsVm.willHandleBack || listVm.willHandleBack
+            )
 
     private val mutMessages = MutableSharedFlow<ContactsActivityMessages>(
         extraBufferCapacity = 1,
@@ -193,8 +205,15 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
         }
     }
 
-    override suspend fun onBackPressed(): Boolean = eventMutex.withLockDebug {
-        detailsVm.onBackPressed() || listVm.onBackPressed()
+    private val isBackBeingHandled = AtomicBoolean(false)
+
+    override fun handleBackClick() {
+        if (isBackBeingHandled.compareAndSet(false, true)) {
+            safeHandleUiEvent {
+                detailsVm.onBackPressed() // list does not handle back click
+                isBackBeingHandled.set(false)
+            }
+        }
     }
 
     private suspend fun setContactWithConfirmation(contactId: String?, editing: Boolean) {
@@ -409,6 +428,9 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
 
         val uiState: StateFlow<ContactDetailsUiState> get() = mutDetailsUiState
 
+        val willHandleBack: Boolean get() =
+            uiState.value is ContactDetailsUiState.ViewingContactDetails
+
         fun reset() {
             mutDetailsUiState.value = initialState
         }
@@ -436,17 +458,15 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
             // TODO Actually figure out how we want to reconcile locally-created contacts after sync with its ID changing
         }
 
-        fun onBackPressed(): Boolean {
+        suspend fun onBackPressed() {
             val curState = uiState.value as? ContactDetailsUiState.ViewingContactDetails
-                ?: return false
+                ?: return
 
             if (curState.isEditingEnabled) {
-                exitEditClick()
+                setContactWithConfirmation(contactId = uiState.value.recordId, editing = false)
             } else {
-                deselectContactClick()
+                setContactWithConfirmation(contactId = null, editing = false)
             }
-
-            return true
         }
 
         fun clobberRecord(record: ContactRecord?, editing: Boolean) {
@@ -647,6 +667,8 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
         private val mutListUiState = MutableStateFlow(initialState)
         val uiState: StateFlow<ContactsListUiState> get() = mutListUiState
 
+        val willHandleBack: Boolean = false
+
         fun reset() {
             curSearchJob?.cancel()
             mutListUiState.value = initialState
@@ -662,8 +684,6 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
             }
             // TODO handle when selected contact is no longer in the records list
         }
-
-        fun onBackPressed(): Boolean = false // this component does not handle back press
 
         fun setSelectedContact(id: String?) {
             mutListUiState.value = uiState.value.copy(curSelectedContactId = id)
