@@ -171,4 +171,8 @@ class ContactsActivity
             }
         }
     }
+
+    companion object {
+        const val COMPONENT_NAME = "ContactsActivity"
+    }
 }

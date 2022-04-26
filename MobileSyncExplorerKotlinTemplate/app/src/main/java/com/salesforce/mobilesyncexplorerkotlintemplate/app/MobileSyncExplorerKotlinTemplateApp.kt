@@ -27,12 +27,22 @@
 package com.salesforce.mobilesyncexplorerkotlintemplate.app
 
 import android.app.Application
+import android.content.Context
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.ContactsActivity
 
 class MobileSyncExplorerKotlinTemplateApp : Application() {
     override fun onCreate() {
         super.onCreate()
+        appContext = applicationContext
         MobileSyncSDKManager.initNative(this, ContactsActivity::class.java)
     }
+
+    companion object {
+        lateinit var appContext: Context
+            @Synchronized get
+            @Synchronized private set
+    }
 }
+
+val appContext: Context get() = MobileSyncExplorerKotlinTemplateApp.appContext

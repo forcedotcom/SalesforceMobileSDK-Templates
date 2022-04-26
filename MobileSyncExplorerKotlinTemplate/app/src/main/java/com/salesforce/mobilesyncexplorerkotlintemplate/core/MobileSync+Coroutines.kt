@@ -37,9 +37,7 @@ import kotlin.coroutines.suspendCoroutine
 suspend fun SyncManager.suspendCleanResyncGhosts(syncName: String) = withContext(NonCancellable) {
     suspendCoroutine<Int> { cont ->
         val callback = object : SyncManager.CleanResyncGhostsCallback {
-            override fun onSuccess(numRecords: Int) {
-                cont.resume(numRecords)
-            }
+            override fun onSuccess(numRecords: Int) = cont.resume(numRecords)
 
             override fun onError(e: java.lang.Exception) {
                 cont.resumeWithException(

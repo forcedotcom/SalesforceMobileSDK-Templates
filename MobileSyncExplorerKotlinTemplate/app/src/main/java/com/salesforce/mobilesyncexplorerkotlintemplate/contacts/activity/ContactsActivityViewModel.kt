@@ -26,11 +26,11 @@
  */
 package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.salesforce.androidsdk.accounts.UserAccount
-import com.salesforce.androidsdk.mobilesync.target.SyncTarget
+import com.salesforce.androidsdk.analytics.logger.SalesforceLogger
+import com.salesforce.mobilesyncexplorerkotlintemplate.app.appContext
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.ContactsActivityMessages.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListClickHandler
@@ -39,7 +39,6 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.withLockD
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.repos.RepoOperationException
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.repos.SyncDownException
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.repos.SyncUpException
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.isLocallyDeleted
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.*
 import kotlinx.coroutines.*
@@ -70,6 +69,7 @@ interface ContactsActivityViewModel : ContactsActivityUiInteractor {
 
 class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel {
 
+    private val logger = SalesforceLogger.getLogger(ContactsActivity.COMPONENT_NAME, appContext)
     private val detailsVm by lazy { DefaultContactDetailsViewModel() }
     private val listVm by lazy { DefaultContactsListViewModel() }
 
@@ -156,7 +156,7 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
                 contactsRepo.syncUp()
                 true
             } catch (ex: SyncUpException) {
-                Log.e(TAG, ex.toString())
+                logger.e(TAG, ex.toString())
 
                 when (ex) {
                     is SyncUpException.FailedToFinish -> SyncUpFinishFailed
@@ -172,7 +172,7 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
                 try {
                     contactsRepo.syncDown()
                 } catch (ex: SyncDownException) {
-                    Log.e(TAG, ex.toString())
+                    logger.e(TAG, ex.toString())
 
                     when (ex) {
                         is SyncDownException.CleaningUpstreamRecordsFailed -> CleanGhostsFailed
@@ -182,7 +182,7 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
                         mutMessages.tryEmit(it)
                     }
                 } catch (ex: RepoOperationException.SmartStoreOperationFailed) {
-                    Log.e(TAG, ex.toString())
+                    logger.e(TAG, ex.toString())
                     mutMessages.tryEmit(RepoRefreshFailed)
                 }
             }
@@ -237,7 +237,7 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
                     detailsVm.clobberRecord(record = updatedRecord, editing = false)
                 }
             } catch (ex: RepoOperationException) {
-                Log.e(TAG, ex.toString())
+                logger.e(TAG, ex.toString())
 
                 when (ex) {
                     is RepoOperationException.InvalidResultObject,
@@ -263,7 +263,7 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
                     detailsVm.clobberRecord(record = newRecord, editing = false)
                 }
             } catch (ex: RepoOperationException) {
-                Log.e(TAG, ex.toString())
+                logger.e(TAG, ex.toString())
 
                 when (ex) {
                     is RepoOperationException.InvalidResultObject,
@@ -303,7 +303,7 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
                         detailsVm.clobberRecord(record = updatedRecord, editing = false)
                     }
                 } catch (ex: RepoOperationException) {
-                    Log.e(TAG, ex.toString())
+                    logger.e(TAG, ex.toString())
 
                     when (ex) {
                         is RepoOperationException.InvalidResultObject,
@@ -344,7 +344,7 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
                         editing = false
                     )
                 } catch (ex: RepoOperationException) {
-                    Log.e(TAG, ex.toString())
+                    logger.e(TAG, ex.toString())
 
                     when (ex) {
                         is RepoOperationException.InvalidResultObject,
