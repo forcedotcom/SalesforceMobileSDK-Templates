@@ -27,6 +27,7 @@
 package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ui
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -43,6 +44,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.SubcomposeLayout
+import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -54,7 +58,6 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.Co
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.LocalStatus
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.FloatingTextEntryBar
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.LoadingOverlay
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.rememberSimpleSpinAnimation
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.toUiSyncState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
@@ -67,46 +70,58 @@ fun ContactsListContent(
     listClickHandler: ContactsListClickHandler,
     onSearchTermUpdated: (newSearchTerm: String) -> Unit
 ) {
-    LazyColumn(modifier = modifier) {
-        item {
-            val searchTerm = uiState.curSearchTerm
-            val isSearchActive = uiState.isSearchJobRunning
-            // TODO actually get this to float on top of the list
-            FloatingTextEntryBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                value = searchTerm,
-                onValueChange = onSearchTermUpdated,
-                placeholder = { Text(stringResource(id = cta_search)) },
-                leadingIcon = {
-                    if (isSearchActive) {
-                        val angle: Float by rememberSimpleSpinAnimation(hertz = 1f)
-                        Icon(
-                            Icons.Default.Refresh,
-                            contentDescription = stringResource(id = cta_search),
-                            modifier = Modifier.graphicsLayer { rotationZ = angle }
-                        )
-                    } else {
-                        Icon(
-                            Icons.Default.Search,
-                            contentDescription = stringResource(id = cta_search)
-                        )
-                    }
-                },
-                trailingIcon = {
-                    if (searchTerm.isNotBlank()) {
-                        IconButton(onClick = { onSearchTermUpdated("") }) {
-                            Icon(
-                                Icons.Default.Close,
-                                contentDescription = stringResource(id = content_desc_cancel_search)
-                            )
-                        }
-                    }
-                }
+    SubcomposeLayout(modifier = modifier) { constraints ->
+        val searchConstraints = constraints.copy(minWidth = 0, minHeight = 0)
+
+        val searchBarMeasureables = subcompose(slotId = ID_FLOATING_SEARCH_BAR) {
+            SearchBar(
+                modifier = Modifier.layoutId(ID_FLOATING_SEARCH_BAR),
+                searchTerm = uiState.curSearchTerm,
+                isSearchActive = uiState.isSearchJobRunning,
+                onSearchTermUpdated = onSearchTermUpdated
             )
         }
 
+        val searchBarPlaceable = searchBarMeasureables
+            .first { it.layoutId == ID_FLOATING_SEARCH_BAR }
+            .measure(searchConstraints)
+
+        val listMeasureables = subcompose(slotId = ID_CONTACTS_LIST) {
+            val paddingDp = with(LocalDensity.current) { searchBarPlaceable.height.toDp() }
+
+            ListContentInner(
+                modifier = Modifier.layoutId(ID_CONTACTS_LIST),
+                contentPadding = PaddingValues(top = paddingDp),
+                uiState = uiState,
+                listClickHandler = listClickHandler
+            )
+        }
+
+        val listPlaceable = listMeasureables
+            .first { it.layoutId == ID_CONTACTS_LIST }
+            .measure(constraints)
+
+        layout(
+            width = maxOf(searchBarPlaceable.width, listPlaceable.width),
+            height = maxOf(searchBarPlaceable.height, listPlaceable.height)
+        ) {
+            listPlaceable.placeRelative(0, 0)
+            searchBarPlaceable.placeRelative(0, 0)
+        }
+    }
+}
+
+@Composable
+private fun ListContentInner(
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues,
+    uiState: ContactsListUiState,
+    listClickHandler: ContactsListClickHandler
+) {
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = contentPadding
+    ) {
         items(items = uiState.contacts, key = { it.id }) { record ->
             ContactCard(
                 modifier = Modifier.padding(4.dp),
@@ -120,11 +135,53 @@ fun ContactsListContent(
             )
         }
     }
-
-    if (uiState.isDoingInitialLoad || uiState.isDoingDataAction) {
-        LoadingOverlay()
-    }
 }
+
+@Composable
+private fun SearchBar(
+    modifier: Modifier = Modifier,
+    searchTerm: String,
+    isSearchActive: Boolean,
+    onSearchTermUpdated: (newSearchTerm: String) -> Unit
+) {
+    FloatingTextEntryBar(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        value = searchTerm,
+        onValueChange = onSearchTermUpdated,
+        placeholder = { Text(stringResource(id = cta_search)) },
+        leadingIcon = {
+            if (isSearchActive) {
+                val angle: Float by rememberSimpleSpinAnimation(hertz = 1f)
+                Icon(
+                    Icons.Default.Refresh,
+                    contentDescription = stringResource(id = cta_search),
+                    modifier = Modifier.graphicsLayer { rotationZ = angle }
+                )
+            } else {
+                Icon(
+                    Icons.Default.Search,
+                    contentDescription = stringResource(id = cta_search)
+                )
+            }
+        },
+        trailingIcon = {
+            if (searchTerm.isNotBlank()) {
+                IconButton(onClick = { onSearchTermUpdated("") }) {
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = stringResource(id = content_desc_cancel_search)
+                    )
+                }
+            }
+        },
+        elevation = 16.dp
+    )
+}
+
+private const val ID_CONTACTS_LIST = "ID_CONTACTS_LIST"
+private const val ID_FLOATING_SEARCH_BAR = "ID_FLOATING_SEARCH_BAR"
 
 @Preview(showBackground = true)
 @Composable

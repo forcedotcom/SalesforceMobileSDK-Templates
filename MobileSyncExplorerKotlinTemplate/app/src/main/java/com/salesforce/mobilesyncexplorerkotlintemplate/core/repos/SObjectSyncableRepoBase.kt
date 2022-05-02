@@ -100,6 +100,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
             doSyncDown()
             try {
                 // TODO This cannot be called immediately after syncDown impl with coroutines
+                //  UPDATE Wolf just opened https://github.com/forcedotcom/SalesforceMobileSDK-Android/pull/2301 which would fix the issue
                 syncManager.suspendCleanResyncGhosts(syncName = syncDownName)
             } catch (ex: CleanResyncGhostsException) {
                 throw SyncDownException.CleaningUpstreamRecordsFailed(cause = ex)
