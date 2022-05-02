@@ -99,6 +99,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
         syncMutex.withLockDebug {
             doSyncDown()
             try {
+                // TODO This cannot be called immediately after syncDown impl with coroutines
                 syncManager.suspendCleanResyncGhosts(syncName = syncDownName)
             } catch (ex: CleanResyncGhostsException) {
                 throw SyncDownException.CleaningUpstreamRecordsFailed(cause = ex)
@@ -217,7 +218,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
             }
 
             val result = try {
-                store.upsert(soupName, retrievedElt)
+                store.upsert(soupName, retrievedElt)!!
             } catch (ex: Exception) {
                 throw RepoOperationException.SmartStoreOperationFailed(
                     message = "Failed to update the object in SmartStore.",
@@ -242,7 +243,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
                         .applyObjProperties()
                 }
 
-                store.upsert(soupName, elt)
+                store.upsert(soupName, elt)!!
             } catch (ex: Exception) {
                 throw RepoOperationException.SmartStoreOperationFailed(
                     message = "Failed to create the object in SmartStore.",
@@ -300,7 +301,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
                         .putOpt(LOCAL, true)
 
                     try {
-                        store.update(soupName, retrieved.elt, retrieved.soupId)
+                        store.update(soupName, retrieved.elt, retrieved.soupId)!!
                     } catch (ex: Exception) {
                         throw RepoOperationException.SmartStoreOperationFailed(
                             message = "Locally-delete operation failed. Could not save the updated object in SmartStore.",
@@ -350,7 +351,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
                 )
 
             try {
-                val result = store.update(soupName, retrieved.elt, retrieved.soupId)
+                val result = store.update(soupName, retrieved.elt, retrieved.soupId)!!
                 store.setTransactionSuccessful()
                 result
             } catch (ex: Exception) {

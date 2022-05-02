@@ -182,6 +182,7 @@ private fun ListDetail(
         floatingActionButtonPosition = FabPosition.End,
         isFloatingActionButtonDocked = false
     ) {
+        // TODO actually get the padding right
         val evenSplit = windowSizeClasses.horiz != WindowSizeClass.Expanded
 
         Row(modifier = Modifier.fillMaxSize()) {

@@ -86,6 +86,7 @@ fun ContactDetailsContentSinglePane(
                         componentClickHandler::deselectContactClick
                 )
 
+                // TODO move the menu to the bottom of the scaffold
                 ContactsActivityMenuButton(menuHandler = menuHandler)
             }
         },
@@ -93,6 +94,7 @@ fun ContactDetailsContentSinglePane(
         bottomBar = {
             BottomAppBar(cutoutShape = MaterialTheme.shapes.small.copy(CornerSize(percent = 50))) {
                 if (contactDetailsUi != null) {
+                    // TODO move this to top to stay in line with list-detail
                     ContactDetailsBottomAppBarSinglePane(
                         showDelete = contactDetailsUi.uiSyncState != SObjectUiSyncState.Deleted,
                         detailsDeleteClick = componentClickHandler::deleteClick
@@ -106,6 +108,7 @@ fun ContactDetailsContentSinglePane(
         },
         isFloatingActionButtonDocked = true
     ) { paddingValues ->
+        // TODO test padding
         ContactDetailsContent(
             modifier = Modifier
                 .padding(paddingValues)

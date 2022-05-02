@@ -73,6 +73,7 @@ private fun ContactDetailsViewingContact(
             LocallyDeletedRow()
         }
 
+        // TODO for the love of all things good, please get IME actions (tab, go-to-next, etc.) working
         details.firstNameField.OutlinedTextFieldWithHelp(isEditingEnabled = details.isEditingEnabled)
         details.lastNameField.OutlinedTextFieldWithHelp(isEditingEnabled = details.isEditingEnabled)
         details.titleField.OutlinedTextFieldWithHelp(isEditingEnabled = details.isEditingEnabled)

@@ -71,6 +71,7 @@ fun ContactsListContent(
         item {
             val searchTerm = uiState.curSearchTerm
             val isSearchActive = uiState.isSearchJobRunning
+            // TODO actually get this to float on top of the list
             FloatingTextEntryBar(
                 modifier = Modifier
                     .fillMaxWidth()
