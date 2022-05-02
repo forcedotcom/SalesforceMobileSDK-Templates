@@ -181,9 +181,10 @@ private fun ListDetail(
         },
         floatingActionButtonPosition = FabPosition.End,
         isFloatingActionButtonDocked = false
-    ) {
-        // TODO actually get the padding right
+    ) { paddingVals ->
         val evenSplit = windowSizeClasses.horiz != WindowSizeClass.Expanded
+        val topPadding = paddingVals.calculateTopPadding()
+        val bottomPadding = paddingVals.calculateBottomPadding()
 
         Row(modifier = Modifier.fillMaxSize()) {
             val listModifier: Modifier
@@ -197,7 +198,7 @@ private fun ListDetail(
                 detailModifier = Modifier.weight(1f)
             }
 
-            Column(modifier = listModifier) {
+            Column(modifier = listModifier.padding(top = topPadding, bottom = bottomPadding)) {
                 ContactsListContent(
                     modifier = Modifier.fillMaxSize(),
                     uiState = listUiState,
@@ -206,7 +207,7 @@ private fun ListDetail(
                 )
             }
 
-            Column(modifier = detailModifier) {
+            Column(modifier = detailModifier.padding(top = topPadding, bottom = bottomPadding)) {
                 ListDetailContactDetailsContent(
                     detailsUiState = detailsUiState,
                     onExitClick = detailsClickHandler::exitEditClick
