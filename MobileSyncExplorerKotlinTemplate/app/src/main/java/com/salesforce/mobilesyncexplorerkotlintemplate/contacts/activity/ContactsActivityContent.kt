@@ -194,7 +194,7 @@ private fun ListDetail(
                 listModifier = Modifier.weight(0.5f)
                 detailModifier = Modifier.weight(0.5f)
             } else {
-                listModifier = Modifier.width((WINDOW_SIZE_COMPACT_CUTOFF_DP / 2).dp)
+                listModifier = Modifier.width((WINDOW_SIZE_MEDIUM_CUTOFF_DP / 2).dp)
                 detailModifier = Modifier.weight(1f)
             }
 
