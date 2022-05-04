@@ -138,6 +138,7 @@ private fun EditableTextFieldUiState.toOutlinedTextFieldWithHelp(
     var textFieldValueState by remember { mutableStateOf(TextFieldValue(fieldValue ?: "")) }
     val textFieldValue = textFieldValueState.copy(text = fieldValue ?: "")
 
+    // Move the cursor to the end of the field if IME action changes focus:
     val focusChangeHandlerModifier = Modifier
         .onFocusChanged {
             if (!hasFocus && it.hasFocus) {
@@ -160,13 +161,14 @@ private fun EditableTextFieldUiState.toOutlinedTextFieldWithHelp(
     }
 
     OutlinedTextFieldWithHelp(
-        fieldModifier = focusChangeHandlerModifier,
+        modifier = Modifier.fillMaxWidth(),
+        fieldModifier = focusChangeHandlerModifier.fillMaxWidth(),
         value = textFieldValue,
         isEditEnabled = isEditingEnabled && fieldIsEnabled,
         isError = isInErrorState,
         onValueChange = onValueChangedHandler,
         label = { label?.let { Text(stringResource(id = it.resId, *it.formattingArgs)) } },
-        help = { helper?.let { Text(stringResource(id = it.resId, *it.formattingArgs)) } },
+        help = helper?.let { stringResource(id = it.resId, *it.formattingArgs) },
         placeholder = {
             placeholder?.let { Text(stringResource(id = it.resId, *it.formattingArgs)) }
         },

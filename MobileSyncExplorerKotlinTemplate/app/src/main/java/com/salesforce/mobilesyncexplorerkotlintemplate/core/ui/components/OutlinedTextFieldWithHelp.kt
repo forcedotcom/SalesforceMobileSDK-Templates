@@ -40,6 +40,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 
+/**
+ * A text field which extends the built-in [OutlinedTextField] to also have a "helper" text below
+ * the input field.
+ */
 @Composable
 fun OutlinedTextFieldWithHelp(
     value: String,
@@ -50,7 +54,7 @@ fun OutlinedTextFieldWithHelp(
     fieldModifier: Modifier = Modifier,
     label: (@Composable () -> Unit)? = null,
     placeholder: (@Composable () -> Unit)? = null,
-    help: (@Composable () -> Unit)? = null,
+    help: String? = null,
     maxLines: UInt = UInt.MAX_VALUE,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default
@@ -94,7 +98,7 @@ fun OutlinedTextFieldWithHelp(
     fieldModifier: Modifier = Modifier,
     label: (@Composable () -> Unit)? = null,
     placeholder: (@Composable () -> Unit)? = null,
-    help: (@Composable () -> Unit)? = null,
+    help: String? = null,
     maxLines: UInt = UInt.MAX_VALUE,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default
@@ -116,21 +120,20 @@ fun OutlinedTextFieldWithHelp(
             keyboardActions = keyboardActions,
             keyboardOptions = keyboardOptions
         )
-        if (help != null) {
-            val localContentColor = when {
-                isError -> MaterialTheme.colors.error
-                isEditEnabled -> LocalContentColor.current
-                else -> LocalContentColor.current.copy(ContentAlpha.disabled)
-            }
 
-            val textStyle = MaterialTheme.typography.caption.copy(color = localContentColor)
+        val localContentColor = when {
+            isError -> MaterialTheme.colors.error
+            isEditEnabled -> LocalContentColor.current
+            else -> LocalContentColor.current.copy(ContentAlpha.disabled)
+        }
 
-            CompositionLocalProvider(
-                LocalContentColor provides localContentColor,
-                LocalTextStyle provides textStyle
-            ) {
-                help()
-            }
+        val textStyle = MaterialTheme.typography.caption.copy(color = localContentColor)
+
+        CompositionLocalProvider(
+            LocalContentColor provides localContentColor,
+            LocalTextStyle provides textStyle
+        ) {
+            Text(help ?: "")
         }
     }
 }
@@ -152,7 +155,7 @@ private fun LabeledTextFieldPreview() {
                     isError = isError,
                     label = { Text("Label") },
                     placeholder = { Text("Hint") },
-                    help = { Text("Help Text Goes Here") },
+                    help = "Help Text Goes Here",
                     onValueChange = {}
                 )
 
@@ -166,7 +169,7 @@ private fun LabeledTextFieldPreview() {
                     isError = isError,
                     label = { Text("Label") },
                     placeholder = { Text("Hint") },
-                    help = { Text("Help Text Goes Here") },
+                    help = "Help Text Goes Here",
                     onValueChange = {}
                 )
 
@@ -181,7 +184,7 @@ private fun LabeledTextFieldPreview() {
                     isError = isError,
                     label = { Text("Label") },
                     placeholder = { Text("Hint") },
-                    help = { Text("Help Text Goes Here") },
+                    help = "Help Text Goes Here",
                     onValueChange = {}
                 )
 
@@ -195,7 +198,7 @@ private fun LabeledTextFieldPreview() {
                     isError = isError,
                     label = { Text("Label") },
                     placeholder = { Text("Hint") },
-                    help = { Text("Help Text Goes Here") },
+                    help = "Help Text Goes Here",
                     onValueChange = {}
                 )
             }
