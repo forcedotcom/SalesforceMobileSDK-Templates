@@ -26,9 +26,10 @@
  */
 package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent
 
-import com.salesforce.mobilesyncexplorerkotlintemplate.R
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.vm.EditableTextFieldUiState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.vm.FieldUiState
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.vm.FormattedStringRes
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactValidationException
 
@@ -39,10 +40,24 @@ sealed interface ContactDetailsField : FieldUiState {
         override val fieldIsEnabled: Boolean = true,
         override val maxLines: UInt = 1u
     ) : ContactDetailsField, EditableTextFieldUiState {
-        override val isInErrorState: Boolean = false
-        override val helperRes: Int? = null
-        override val labelRes: Int = R.string.label_contact_first_name
-        override val placeholderRes: Int = R.string.label_contact_first_name
+        override val isInErrorState: Boolean
+        override val helper: FormattedStringRes?
+
+        init {
+            val validateException = runCatching { ContactObject.validateFirstName(fieldValue) }
+                .exceptionOrNull() as ContactValidationException.FieldContainsIllegalText?
+
+            if (validateException == null) {
+                isInErrorState = false
+                helper = null
+            } else {
+                isInErrorState = true
+                helper = FormattedStringRes(help_illegal_characters)
+            }
+        }
+
+        override val label = FormattedStringRes(label_contact_first_name)
+        override val placeholder = FormattedStringRes(label_contact_first_name)
     }
 
     data class LastName(
@@ -52,7 +67,7 @@ sealed interface ContactDetailsField : FieldUiState {
         override val maxLines: UInt = 1u
     ) : ContactDetailsField, EditableTextFieldUiState {
         override val isInErrorState: Boolean
-        override val helperRes: Int?
+        override val helper: FormattedStringRes?
 
         init {
             val validateException = runCatching { ContactObject.validateLastName(fieldValue) }
@@ -60,17 +75,21 @@ sealed interface ContactDetailsField : FieldUiState {
 
             if (validateException == null) {
                 isInErrorState = false
-                helperRes = null
+                helper = null
             } else {
                 isInErrorState = true
-                helperRes = when (validateException) {
-                    ContactValidationException.LastNameCannotBeBlank -> R.string.help_cannot_be_blank
+                helper = when (validateException) {
+                    ContactValidationException.LastNameCannotBeBlank ->
+                        FormattedStringRes(help_cannot_be_blank)
+
+                    is ContactValidationException.FieldContainsIllegalText ->
+                        FormattedStringRes(help_illegal_characters)
                 }
             }
         }
 
-        override val labelRes: Int = R.string.label_contact_last_name
-        override val placeholderRes: Int = R.string.label_contact_last_name
+        override val label = FormattedStringRes(label_contact_last_name)
+        override val placeholder = FormattedStringRes(label_contact_last_name)
     }
 
     data class Title(
@@ -80,9 +99,9 @@ sealed interface ContactDetailsField : FieldUiState {
         override val maxLines: UInt = 1u
     ) : ContactDetailsField, EditableTextFieldUiState {
         override val isInErrorState: Boolean = false
-        override val labelRes: Int = R.string.label_contact_title
-        override val helperRes: Int? = null
-        override val placeholderRes: Int = R.string.label_contact_title
+        override val label = FormattedStringRes(label_contact_title)
+        override val helper: FormattedStringRes? = null
+        override val placeholder = FormattedStringRes(label_contact_title)
     }
 
     data class Department(
@@ -92,8 +111,8 @@ sealed interface ContactDetailsField : FieldUiState {
         override val maxLines: UInt = 1u
     ) : ContactDetailsField, EditableTextFieldUiState {
         override val isInErrorState: Boolean = false
-        override val labelRes: Int = R.string.label_contact_department
-        override val helperRes: Int? = null
-        override val placeholderRes: Int = R.string.label_contact_department
+        override val label = FormattedStringRes(label_contact_department)
+        override val helper: FormattedStringRes? = null
+        override val placeholder = FormattedStringRes(label_contact_department)
     }
 }

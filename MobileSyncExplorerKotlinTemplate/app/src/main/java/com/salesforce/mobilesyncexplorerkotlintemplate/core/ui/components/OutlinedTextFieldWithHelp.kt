@@ -30,21 +30,19 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 
-/**
- * A text field which extends the built-in [OutlinedTextField] to also have a "helper" text below
- * the input field.
- */
 @Composable
 fun OutlinedTextFieldWithHelp(
-    fieldValue: String?,
+    value: String,
     isEditEnabled: Boolean,
     isError: Boolean,
     onValueChange: (String) -> Unit,
@@ -54,18 +52,69 @@ fun OutlinedTextFieldWithHelp(
     placeholder: (@Composable () -> Unit)? = null,
     help: (@Composable () -> Unit)? = null,
     maxLines: UInt = UInt.MAX_VALUE,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
+    // This implementation is very similar to the built-in OutlinedTextField
+    var textFieldValueState by remember { mutableStateOf(TextFieldValue(value)) }
+    val textFieldValue = textFieldValueState.copy(text = value)
+
+    OutlinedTextFieldWithHelp(
+        value = textFieldValue,
+        isEditEnabled = isEditEnabled,
+        isError = isError,
+        onValueChange = {
+            textFieldValueState = it
+            if (it.text != value) {
+                onValueChange(it.text)
+            }
+        },
+        modifier = modifier,
+        fieldModifier = fieldModifier,
+        label = label,
+        placeholder = placeholder,
+        help = help,
+        maxLines = maxLines,
+        keyboardActions = keyboardActions,
+        keyboardOptions = keyboardOptions
+    )
+}
+
+/**
+ * A text field which extends the built-in [OutlinedTextField] to also have a "helper" text below
+ * the input field.
+ */
+@Composable
+fun OutlinedTextFieldWithHelp(
+    value: TextFieldValue,
+    isEditEnabled: Boolean,
+    isError: Boolean,
+    onValueChange: (TextFieldValue) -> Unit,
+    modifier: Modifier = Modifier,
+    fieldModifier: Modifier = Modifier,
+    label: (@Composable () -> Unit)? = null,
+    placeholder: (@Composable () -> Unit)? = null,
+    help: (@Composable () -> Unit)? = null,
+    maxLines: UInt = UInt.MAX_VALUE,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
+) {
+    val safeMaxLines = maxLines.toInt().coerceIn(1..Int.MAX_VALUE)
+
     Column(modifier = modifier) {
         OutlinedTextField(
-            modifier = fieldModifier.then(Modifier.fillMaxWidth()),
-            value = fieldValue ?: "",
+            modifier = fieldModifier,
+            value = value,
             onValueChange = onValueChange,
             label = label,
             placeholder = placeholder,
             readOnly = !isEditEnabled,
             isError = isError,
             enabled = isEditEnabled,
-            maxLines = maxLines.toInt().coerceIn(1..Int.MAX_VALUE),
+            maxLines = safeMaxLines,
+            singleLine = safeMaxLines == 1,
+            keyboardActions = keyboardActions,
+            keyboardOptions = keyboardOptions
         )
         if (help != null) {
             val localContentColor = when {
@@ -98,7 +147,7 @@ private fun LabeledTextFieldPreview() {
                 OutlinedTextFieldWithHelp(
                     modifier = Modifier.padding(8.dp),
                     fieldModifier = Modifier.fillMaxWidth(),
-                    fieldValue = "isEditEnabled = $isEditEnabled, isError = $isError",
+                    value = "isEditEnabled = $isEditEnabled, isError = $isError",
                     isEditEnabled = isEditEnabled,
                     isError = isError,
                     label = { Text("Label") },
@@ -112,7 +161,7 @@ private fun LabeledTextFieldPreview() {
                 OutlinedTextFieldWithHelp(
                     modifier = Modifier.padding(8.dp),
                     fieldModifier = Modifier.fillMaxWidth(),
-                    fieldValue = "isEditEnabled = $isEditEnabled, isError = $isError",
+                    value = "isEditEnabled = $isEditEnabled, isError = $isError",
                     isEditEnabled = isEditEnabled,
                     isError = isError,
                     label = { Text("Label") },
@@ -127,7 +176,7 @@ private fun LabeledTextFieldPreview() {
                 OutlinedTextFieldWithHelp(
                     modifier = Modifier.padding(8.dp),
                     fieldModifier = Modifier.fillMaxWidth(),
-                    fieldValue = "isEditEnabled = $isEditEnabled, isError = $isError",
+                    value = "isEditEnabled = $isEditEnabled, isError = $isError",
                     isEditEnabled = isEditEnabled,
                     isError = isError,
                     label = { Text("Label") },
@@ -141,7 +190,7 @@ private fun LabeledTextFieldPreview() {
                 OutlinedTextFieldWithHelp(
                     modifier = Modifier.padding(8.dp),
                     fieldModifier = Modifier.fillMaxWidth(),
-                    fieldValue = "isEditEnabled = $isEditEnabled, isError = $isError",
+                    value = "isEditEnabled = $isEditEnabled, isError = $isError",
                     isEditEnabled = isEditEnabled,
                     isError = isError,
                     label = { Text("Label") },
@@ -158,7 +207,7 @@ private fun LabeledTextFieldPreview() {
 @Composable
 private fun OverflowPreview() {
     OutlinedTextFieldWithHelp(
-        fieldValue = "OverflowOverflowOverflowOverflowOverflowOverflowOverflowOverflowOverflowOverflowOverflow",
+        value = "OverflowOverflowOverflowOverflowOverflowOverflowOverflowOverflowOverflowOverflowOverflow",
         isEditEnabled = false,
         isError = false,
         onValueChange = {},

@@ -46,6 +46,7 @@ data class ContactObject
 ) : SObject {
     init {
         validateLastName(lastName)
+        validateFirstName(firstName)
     }
 
     override val objectType: String = Constants.CONTACT
@@ -81,24 +82,53 @@ data class ContactObject
                     allowedValuesDescription = "Contact Last Name cannot be blank",
                     offendingJsonString = fromJson.toString()
                 )
+                is ContactValidationException.FieldContainsIllegalText -> InvalidPropertyValue(
+                    propertyKey = ex.fieldName,
+                    allowedValuesDescription = "Contact ${ex.fieldName} contained invalid characters: ${ex.illegalText}",
+                    offendingJsonString = fromJson.toString()
+                )
             }.let { throw it } // exhaustive when
         }
 
-        @Throws(ContactValidationException.LastNameCannotBeBlank::class)
+        @Throws(ContactValidationException::class)
         fun validateLastName(lastName: String?) {
             if (lastName.isNullOrBlank())
                 throw ContactValidationException.LastNameCannotBeBlank
+
+            val matchingIllegalChar = illegalCharacterRegex.find(lastName)
+            if (matchingIllegalChar != null)
+                throw ContactValidationException.FieldContainsIllegalText(
+                    fieldName = KEY_LAST_NAME,
+                    illegalText = matchingIllegalChar.value
+                )
+        }
+
+        @Throws(ContactValidationException.FieldContainsIllegalText::class)
+        fun validateFirstName(firstName: String?) {
+            if (firstName == null) return
+            val matchingIllegalChar = illegalCharacterRegex.find(firstName)
+            if (matchingIllegalChar != null)
+                throw ContactValidationException.FieldContainsIllegalText(
+                    fieldName = KEY_FIRST_NAME,
+                    illegalText = matchingIllegalChar.value
+                )
         }
 
         fun formatFullName(firstName: String?, lastName: String?) = buildString {
             if (firstName != null) append("$firstName ")
             if (lastName != null) append(lastName)
         }.trim()
+
+        private val illegalCharacterRegex by lazy { Regex("\\R|\\t") }
     }
 }
 
 sealed class ContactValidationException(override val message: String?) : Exception() {
     object LastNameCannotBeBlank : ContactValidationException("Contact Last Name cannot be blank")
+    data class FieldContainsIllegalText(
+        val fieldName: String,
+        val illegalText: String,
+    ) : ContactValidationException("Found illegal text \"$illegalText\" in $fieldName")
 }
 
 typealias ContactRecord = SObjectRecord<ContactObject>

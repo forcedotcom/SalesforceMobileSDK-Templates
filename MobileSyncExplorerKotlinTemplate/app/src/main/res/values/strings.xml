@@ -48,6 +48,7 @@
     <string name="message_wait_for_data_op">Please wait for the operation to finish</string>
 
     <string name="help_cannot_be_blank">This field cannot be left blank</string>
+    <string name="help_illegal_characters">This field contains disallowed characters</string>
 
     <string name="content_desc_add_contact">Create New Contact</string>
     <string name="content_desc_cancel_edit">Cancel editing</string>

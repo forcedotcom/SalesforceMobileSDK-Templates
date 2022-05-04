@@ -34,7 +34,27 @@ import androidx.annotation.StringRes
 interface FieldUiState {
     val fieldValue: String?
     val isInErrorState: Boolean
-    val labelRes: Int? @StringRes get
-    val helperRes: Int? @StringRes get
-    val placeholderRes: Int? @StringRes get
+    val label: FormattedStringRes?
+    val helper: FormattedStringRes?
+    val placeholder: FormattedStringRes?
+}
+
+data class FormattedStringRes(@StringRes val resId: Int, val formattingArgs: Array<String> = emptyArray()) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as FormattedStringRes
+
+        if (resId != other.resId) return false
+        if (!formattingArgs.contentEquals(other.formattingArgs)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = resId
+        result = 31 * result + formattingArgs.contentHashCode()
+        return result
+    }
 }

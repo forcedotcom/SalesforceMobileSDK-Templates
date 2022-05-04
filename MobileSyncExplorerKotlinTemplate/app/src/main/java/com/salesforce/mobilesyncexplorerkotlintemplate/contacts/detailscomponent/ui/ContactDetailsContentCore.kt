@@ -29,19 +29,32 @@ package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponen
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.*
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.salesforce.mobilesyncexplorerkotlintemplate.R.drawable.ic_help
 import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.*
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsField
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsUiState
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.removeNewlineChars
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.removeTabChars
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.LoadingOverlay
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.OutlinedTextFieldWithHelp
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.SObjectUiSyncState
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.vm.EditableTextFieldUiState
 
 @Composable
@@ -63,7 +76,10 @@ private fun ContactDetailsViewingContact(
     modifier: Modifier = Modifier,
     details: ContactDetailsUiState.ViewingContactDetails,
 ) {
+    val focusManager = LocalFocusManager.current
+    val focusRequester = remember { FocusRequester.Default }
     val scrollState = rememberScrollState()
+
     Column(
         modifier = modifier
             .padding(horizontal = 8.dp)
@@ -73,11 +89,27 @@ private fun ContactDetailsViewingContact(
             LocallyDeletedRow()
         }
 
-        // TODO for the love of all things good, please get IME actions (tab, go-to-next, etc.) working
-        details.firstNameField.OutlinedTextFieldWithHelp(isEditingEnabled = details.isEditingEnabled)
-        details.lastNameField.OutlinedTextFieldWithHelp(isEditingEnabled = details.isEditingEnabled)
-        details.titleField.OutlinedTextFieldWithHelp(isEditingEnabled = details.isEditingEnabled)
-        details.departmentField.OutlinedTextFieldWithHelp(isEditingEnabled = details.isEditingEnabled)
+        details.firstNameField.toOutlinedTextFieldWithHelp(
+            isEditingEnabled = details.isEditingEnabled,
+            focusManager = focusManager,
+            focusRequester = focusRequester,
+        )
+        details.lastNameField.toOutlinedTextFieldWithHelp(
+            isEditingEnabled = details.isEditingEnabled,
+            focusManager = focusManager,
+            focusRequester = focusRequester,
+        )
+        details.titleField.toOutlinedTextFieldWithHelp(
+            isEditingEnabled = details.isEditingEnabled,
+            focusManager = focusManager,
+            focusRequester = focusRequester,
+        )
+        details.departmentField.toOutlinedTextFieldWithHelp(
+            isEditingEnabled = details.isEditingEnabled,
+            focusManager = focusManager,
+            focusRequester = focusRequester,
+            hasNextField = false
+        )
     }
 
     if (details.doingInitialLoad) {
@@ -96,17 +128,59 @@ private fun ContactDetailsNoContactSelected() {
 }
 
 @Composable
-private fun EditableTextFieldUiState.OutlinedTextFieldWithHelp(isEditingEnabled: Boolean) {
-    com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.OutlinedTextFieldWithHelp(
-        fieldValue = fieldValue,
+private fun EditableTextFieldUiState.toOutlinedTextFieldWithHelp(
+    isEditingEnabled: Boolean,
+    focusManager: FocusManager,
+    focusRequester: FocusRequester,
+    hasNextField: Boolean = true,
+) {
+    var hasFocus by remember { mutableStateOf(false) }
+    var textFieldValueState by remember { mutableStateOf(TextFieldValue(fieldValue ?: "")) }
+    val textFieldValue = textFieldValueState.copy(text = fieldValue ?: "")
+
+    val focusChangeHandlerModifier = Modifier
+        .onFocusChanged {
+            if (!hasFocus && it.hasFocus) {
+                textFieldValueState = textFieldValueState.copy(
+                    selection = TextRange(textFieldValue.text.length)
+                )
+            }
+            hasFocus = it.hasFocus
+        }
+        .focusRequester(focusRequester)
+
+    val onValueChangedHandler: (TextFieldValue) -> Unit = {
+        val sanitized = it.copy(text = it.text.sanitize())
+
+        textFieldValueState = sanitized
+
+        if (sanitized.text != fieldValue ?: "") {
+            onValueChange(it.text)
+        }
+    }
+
+    OutlinedTextFieldWithHelp(
+        fieldModifier = focusChangeHandlerModifier,
+        value = textFieldValue,
         isEditEnabled = isEditingEnabled && fieldIsEnabled,
         isError = isInErrorState,
-        onValueChange = onValueChange,
-        label = { labelRes?.let { Text(stringResource(id = it)) } },
-        help = { helperRes?.let { Text(stringResource(id = it)) } },
-        placeholder = { placeholderRes?.let { Text(stringResource(id = it)) } }
+        onValueChange = onValueChangedHandler,
+        label = { label?.let { Text(stringResource(id = it.resId, *it.formattingArgs)) } },
+        help = { helper?.let { Text(stringResource(id = it.resId, *it.formattingArgs)) } },
+        placeholder = {
+            placeholder?.let { Text(stringResource(id = it.resId, *it.formattingArgs)) }
+        },
+        keyboardActions = KeyboardActions(
+            onNext = { focusManager.moveFocus(FocusDirection.Next) },
+        ),
+        keyboardOptions = KeyboardOptions(
+            imeAction = if (hasNextField) ImeAction.Next else ImeAction.Done
+        ),
+        maxLines = 1u
     )
 }
+
+private fun String.sanitize(): String = this.removeNewlineChars().removeTabChars()
 
 @Composable
 private fun LocallyDeletedRow() {
@@ -144,4 +218,36 @@ private fun LocallyDeletedInfoDialog(onDismiss: () -> Unit) {
         },
         text = { Text(stringResource(id = body_locally_deleted_info)) }
     )
+}
+
+@Preview
+@Composable
+private fun ContactDetailsContentViewingContactPreview() {
+    val detailsUiState = ContactDetailsUiState.ViewingContactDetails(
+        recordId = "1",
+        firstNameField = ContactDetailsField.FirstName(
+            fieldValue = "Foo",
+            onValueChange = {},
+        ),
+        lastNameField = ContactDetailsField.LastName(
+            fieldValue = "Bar",
+            onValueChange = {}
+        ),
+        titleField = ContactDetailsField.Title(
+            fieldValue = "Title",
+            onValueChange = {}
+        ),
+        departmentField = ContactDetailsField.Department(
+            fieldValue = null,
+            onValueChange = {}
+        ),
+        uiSyncState = SObjectUiSyncState.Updated,
+        isEditingEnabled = true,
+        shouldScrollToErrorField = false,
+    )
+    SalesforceMobileSDKAndroidTheme {
+        Surface {
+            ContactDetailsViewingContact(details = detailsUiState)
+        }
+    }
 }
