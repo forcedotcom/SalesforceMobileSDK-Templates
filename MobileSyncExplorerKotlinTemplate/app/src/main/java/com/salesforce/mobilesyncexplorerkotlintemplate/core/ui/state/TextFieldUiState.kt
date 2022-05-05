@@ -24,37 +24,26 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.salesforce.mobilesyncexplorerkotlintemplate.core.vm
-
-import androidx.annotation.StringRes
+package com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state
 
 /**
- * Non-editable, general UI state for any field rendered in a form.
+ * Non-editable UI state for a text field.
  */
-interface FieldUiState {
-    val fieldValue: String?
-    val isInErrorState: Boolean
-    val label: FormattedStringRes?
-    val helper: FormattedStringRes?
-    val placeholder: FormattedStringRes?
+interface TextFieldUiState : FieldUiState {
+    val maxLines: UInt
 }
 
-data class FormattedStringRes(@StringRes val resId: Int, val formattingArgs: Array<String> = emptyArray()) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as FormattedStringRes
-
-        if (resId != other.resId) return false
-        if (!formattingArgs.contentEquals(other.formattingArgs)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = resId
-        result = 31 * result + formattingArgs.contentHashCode()
-        return result
-    }
-}
+/**
+ * Editable UI state for a text field.
+ */
+data class EditableTextFieldUiState(
+    override val fieldValue: String?,
+    override val onValueChange: (newValue: String) -> Unit,
+    override val isInErrorState: Boolean,
+    override val label: FormattedStringRes?,
+    override val placeholder: FormattedStringRes?,
+    override val helper: FormattedStringRes?,
+    override val maxLines: UInt = UInt.MAX_VALUE,
+    override val fieldIsEnabled: Boolean = true,
+    override val sanitizer: (input: String) -> String = NO_CHANGE_SANITIZER
+) : TextFieldUiState, EditableFieldUiState

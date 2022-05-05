@@ -26,6 +26,7 @@
  */
 package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent
 
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.EditableTextFieldUiState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.SObjectUiSyncState
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
 
@@ -35,10 +36,10 @@ sealed interface ContactDetailsUiState {
 
     data class ViewingContactDetails(
         override val recordId: String?,
-        val firstNameField: ContactDetailsField.FirstName,
-        val lastNameField: ContactDetailsField.LastName,
-        val titleField: ContactDetailsField.Title,
-        val departmentField: ContactDetailsField.Department,
+        val firstNameField: EditableTextFieldUiState,
+        val lastNameField: EditableTextFieldUiState,
+        val titleField: EditableTextFieldUiState,
+        val departmentField: EditableTextFieldUiState,
 
         val uiSyncState: SObjectUiSyncState,
         val isEditingEnabled: Boolean,

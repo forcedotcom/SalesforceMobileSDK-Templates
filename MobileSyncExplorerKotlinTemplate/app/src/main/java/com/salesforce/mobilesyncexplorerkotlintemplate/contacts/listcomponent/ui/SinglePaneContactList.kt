@@ -42,11 +42,14 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.ContactsActivityMenuButton
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.ContactsActivityMenuHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.previewContactListSearchField
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.LocalStatus
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.LoadingOverlay
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.EditableTextFieldUiState
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.FormattedStringRes
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactRecord
@@ -58,7 +61,6 @@ fun ContactsListSinglePaneComponent(
     uiState: ContactsListUiState,
     showLoading: Boolean,
     listClickHandler: ContactsListClickHandler,
-    onSearchTermUpdated: (newSearchTerm: String) -> Unit,
     menuHandler: ContactsActivityMenuHandler
 ) {
     Scaffold(
@@ -86,7 +88,6 @@ fun ContactsListSinglePaneComponent(
                 .then(contentModifier),
             uiState = uiState,
             listClickHandler = listClickHandler,
-            onSearchTermUpdated = onSearchTermUpdated
         )
 
         if (showLoading) {
@@ -141,12 +142,15 @@ private fun ContactsListSinglePaneComponentPreview() {
                     curSelectedContactId = null,
                     isDoingInitialLoad = false,
                     isDoingDataAction = false,
-                    isSearchJobRunning = false
+                    isSearchJobRunning = false,
+                    searchField = previewContactListSearchField(
+                        fieldValue = null,
+                        onValueChanged = {}
+                    )
                 ),
                 showLoading = false,
                 listClickHandler = PREVIEW_LIST_ITEM_CLICK_HANDLER,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
-                onSearchTermUpdated = {}
             )
         }
     }
@@ -184,12 +188,14 @@ private fun ContactListSyncingAndSearchingPreview() {
                     isDoingInitialLoad = false,
                     isDoingDataAction = false,
                     isSearchJobRunning = false,
-                    curSearchTerm = curSearchTerm
+                    searchField = previewContactListSearchField(
+                        fieldValue = curSearchTerm,
+                        onValueChanged = {},
+                    )
                 ),
                 showLoading = false,
                 listClickHandler = PREVIEW_LIST_ITEM_CLICK_HANDLER,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
-                onSearchTermUpdated = {}
             )
         }
     }
@@ -209,12 +215,15 @@ private fun ContactListLoadingPreview() {
                     curSelectedContactId = null,
                     isDoingInitialLoad = true,
                     isDoingDataAction = false,
-                    isSearchJobRunning = false
+                    isSearchJobRunning = false,
+                    searchField = previewContactListSearchField(
+                        fieldValue = null,
+                        onValueChanged = {},
+                    )
                 ),
                 showLoading = true,
                 listClickHandler = PREVIEW_LIST_ITEM_CLICK_HANDLER,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
-                onSearchTermUpdated = {}
             )
         }
     }

@@ -24,16 +24,15 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.salesforce.mobilesyncexplorerkotlintemplate.core.vm
+package com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state
 
 /**
- * Non-editable UI state for a text field.
+ * UI state for a general editable field rendered in a form.
  */
-interface TextFieldUiState : FieldUiState {
-    val maxLines: UInt
+interface EditableFieldUiState : FieldUiState {
+    val fieldIsEnabled: Boolean
+    val onValueChange: (newValue: String) -> Unit
+    val sanitizer: (String) -> String
 }
 
-/**
- * Editable UI state for a text field.
- */
-interface EditableTextFieldUiState : TextFieldUiState, EditableFieldUiState
+val NO_CHANGE_SANITIZER: (String) -> String = { it }

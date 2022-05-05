@@ -48,10 +48,11 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.Contact
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.SyncImage
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsClickHandler
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsField
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsUiState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.LocalStatus
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.LoadingOverlay
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.EditableTextFieldUiState
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.FormattedStringRes
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.SObjectUiSyncState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
@@ -251,21 +252,37 @@ fun ContactRecord.toPreviewViewingContactDetails(
     shouldScrollToErrorField: Boolean = false,
 ) = ContactDetailsUiState.ViewingContactDetails(
     recordId = id,
-    firstNameField = ContactDetailsField.FirstName(
+    firstNameField = EditableTextFieldUiState(
         fieldValue = sObject.firstName,
-        onValueChange = {}
+        onValueChange = {},
+        isInErrorState = false,
+        label = FormattedStringRes(label_contact_first_name),
+        placeholder = FormattedStringRes(label_contact_first_name),
+        helper = null
     ),
-    lastNameField = ContactDetailsField.LastName(
+    lastNameField = EditableTextFieldUiState(
         fieldValue = sObject.lastName,
-        onValueChange = {}
+        onValueChange = {},
+        isInErrorState = false,
+        label = FormattedStringRes(label_contact_last_name),
+        placeholder = FormattedStringRes(label_contact_last_name),
+        helper = null
     ),
-    titleField = ContactDetailsField.Title(
+    titleField = EditableTextFieldUiState(
         fieldValue = sObject.title,
-        onValueChange = {}
+        onValueChange = {},
+        isInErrorState = false,
+        label = FormattedStringRes(label_contact_title),
+        placeholder = FormattedStringRes(label_contact_title),
+        helper = null
     ),
-    departmentField = ContactDetailsField.Department(
+    departmentField = EditableTextFieldUiState(
         fieldValue = sObject.department,
-        onValueChange = {}
+        onValueChange = {},
+        isInErrorState = false,
+        label = FormattedStringRes(label_contact_department),
+        placeholder = FormattedStringRes(label_contact_department),
+        helper = null
     ),
     uiSyncState = uiSyncState,
     isEditingEnabled = isEditingEnabled,

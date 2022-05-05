@@ -47,15 +47,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.salesforce.mobilesyncexplorerkotlintemplate.R.drawable.ic_help
 import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.*
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsField
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsUiState
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.removeNewlineChars
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.removeTabChars
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.LoadingOverlay
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.OutlinedTextFieldWithHelp
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.EditableTextFieldUiState
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.FormattedStringRes
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.SObjectUiSyncState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.vm.EditableTextFieldUiState
 
 @Composable
 fun ContactDetailsContent(
@@ -93,11 +91,13 @@ private fun ContactDetailsViewingContact(
             isEditingEnabled = details.isEditingEnabled,
             focusManager = focusManager,
             focusRequester = focusRequester,
+            imeAction = ImeAction.Next
         )
         details.lastNameField.toOutlinedTextFieldWithHelp(
             isEditingEnabled = details.isEditingEnabled,
             focusManager = focusManager,
             focusRequester = focusRequester,
+            imeAction = ImeAction.Next
         )
         details.titleField.toOutlinedTextFieldWithHelp(
             isEditingEnabled = details.isEditingEnabled,
@@ -108,7 +108,6 @@ private fun ContactDetailsViewingContact(
             isEditingEnabled = details.isEditingEnabled,
             focusManager = focusManager,
             focusRequester = focusRequester,
-            hasNextField = false
         )
     }
 
@@ -132,7 +131,7 @@ private fun EditableTextFieldUiState.toOutlinedTextFieldWithHelp(
     isEditingEnabled: Boolean,
     focusManager: FocusManager,
     focusRequester: FocusRequester,
-    hasNextField: Boolean = true,
+    imeAction: ImeAction = ImeAction.Default
 ) {
     var hasFocus by remember { mutableStateOf(false) }
     var textFieldValueState by remember { mutableStateOf(TextFieldValue(fieldValue ?: "")) }
@@ -151,12 +150,12 @@ private fun EditableTextFieldUiState.toOutlinedTextFieldWithHelp(
         .focusRequester(focusRequester)
 
     val onValueChangedHandler: (TextFieldValue) -> Unit = {
-        val sanitized = it.copy(text = it.text.sanitize())
+        val sanitized = it.copy(text = sanitizer(it.text))
 
         textFieldValueState = sanitized
 
         if (sanitized.text != fieldValue ?: "") {
-            onValueChange(it.text)
+            onValueChange(sanitized.text)
         }
     }
 
@@ -175,14 +174,10 @@ private fun EditableTextFieldUiState.toOutlinedTextFieldWithHelp(
         keyboardActions = KeyboardActions(
             onNext = { focusManager.moveFocus(FocusDirection.Next) },
         ),
-        keyboardOptions = KeyboardOptions(
-            imeAction = if (hasNextField) ImeAction.Next else ImeAction.Done
-        ),
-        maxLines = 1u
+        keyboardOptions = KeyboardOptions(imeAction = imeAction),
+        maxLines = maxLines
     )
 }
-
-private fun String.sanitize(): String = this.removeNewlineChars().removeTabChars()
 
 @Composable
 private fun LocallyDeletedRow() {
@@ -227,21 +222,37 @@ private fun LocallyDeletedInfoDialog(onDismiss: () -> Unit) {
 private fun ContactDetailsContentViewingContactPreview() {
     val detailsUiState = ContactDetailsUiState.ViewingContactDetails(
         recordId = "1",
-        firstNameField = ContactDetailsField.FirstName(
+        firstNameField = EditableTextFieldUiState(
             fieldValue = "Foo",
             onValueChange = {},
+            isInErrorState = false,
+            label = FormattedStringRes(label_contact_first_name),
+            placeholder = FormattedStringRes(label_contact_first_name),
+            helper = null
         ),
-        lastNameField = ContactDetailsField.LastName(
-            fieldValue = "Bar",
-            onValueChange = {}
-        ),
-        titleField = ContactDetailsField.Title(
-            fieldValue = "Title",
-            onValueChange = {}
-        ),
-        departmentField = ContactDetailsField.Department(
+        lastNameField = EditableTextFieldUiState(
             fieldValue = null,
-            onValueChange = {}
+            onValueChange = {},
+            isInErrorState = true,
+            label = FormattedStringRes(label_contact_last_name),
+            placeholder = FormattedStringRes(label_contact_last_name),
+            helper = FormattedStringRes(help_cannot_be_blank)
+        ),
+        titleField = EditableTextFieldUiState(
+            fieldValue = "Title",
+            onValueChange = {},
+            isInErrorState = false,
+            label = FormattedStringRes(label_contact_title),
+            placeholder = FormattedStringRes(label_contact_title),
+            helper = null
+        ),
+        departmentField = EditableTextFieldUiState(
+            fieldValue = null,
+            onValueChange = {},
+            isInErrorState = false,
+            label = FormattedStringRes(label_contact_department),
+            placeholder = FormattedStringRes(label_contact_department),
+            helper = null
         ),
         uiSyncState = SObjectUiSyncState.Updated,
         isEditingEnabled = true,

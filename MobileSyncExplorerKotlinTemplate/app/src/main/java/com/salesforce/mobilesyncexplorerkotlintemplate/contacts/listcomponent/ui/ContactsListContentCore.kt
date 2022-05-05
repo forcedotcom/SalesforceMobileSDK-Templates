@@ -53,12 +53,15 @@ import androidx.compose.ui.unit.dp
 import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.content_desc_cancel_search
 import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.cta_search
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.PreviewListVm
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.previewContactListSearchField
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.LocalStatus
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.FloatingTextEntryBar
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.rememberSimpleSpinAnimation
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.EditableTextFieldUiState
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.FormattedStringRes
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.toUiSyncState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
@@ -68,7 +71,6 @@ fun ContactsListContent(
     modifier: Modifier = Modifier,
     uiState: ContactsListUiState,
     listClickHandler: ContactsListClickHandler,
-    onSearchTermUpdated: (newSearchTerm: String) -> Unit
 ) {
     SubcomposeLayout(modifier = modifier) { constraints ->
         val searchConstraints = constraints.copy(minWidth = 0, minHeight = 0)
@@ -76,9 +78,8 @@ fun ContactsListContent(
         val searchBarMeasureables = subcompose(slotId = ID_FLOATING_SEARCH_BAR) {
             SearchBar(
                 modifier = Modifier.layoutId(ID_FLOATING_SEARCH_BAR),
-                searchTerm = uiState.curSearchTerm,
                 isSearchActive = uiState.isSearchJobRunning,
-                onSearchTermUpdated = onSearchTermUpdated
+                field = uiState.searchField
             )
         }
 
@@ -140,16 +141,20 @@ private fun ListContentInner(
 @Composable
 private fun SearchBar(
     modifier: Modifier = Modifier,
-    searchTerm: String,
     isSearchActive: Boolean,
-    onSearchTermUpdated: (newSearchTerm: String) -> Unit
+    field: EditableTextFieldUiState
 ) {
     FloatingTextEntryBar(
         modifier = modifier
             .fillMaxWidth()
             .padding(8.dp),
-        value = searchTerm,
-        onValueChange = onSearchTermUpdated,
+        value = field.fieldValue ?: "",
+        onValueChange = {
+            val sanitized = field.sanitizer(it)
+            if (field.fieldValue != sanitized) {
+                field.onValueChange(sanitized)
+            }
+        },
         placeholder = { Text(stringResource(id = cta_search)) },
         leadingIcon = {
             if (isSearchActive) {
@@ -167,8 +172,8 @@ private fun SearchBar(
             }
         },
         trailingIcon = {
-            if (searchTerm.isNotBlank()) {
-                IconButton(onClick = { onSearchTermUpdated("") }) {
+            if (field.fieldValue != null && field.fieldValue.isNotBlank()) {
+                IconButton(onClick = { field.onValueChange("") }) {
                     Icon(
                         Icons.Default.Close,
                         contentDescription = stringResource(id = content_desc_cancel_search)
@@ -208,18 +213,17 @@ private fun ContactsListContentPreview(searchTerm: String = "9") {
         isDoingInitialLoad = false,
         isDoingDataAction = false,
         isSearchJobRunning = false,
-        curSearchTerm = searchTerm
+        searchField = previewContactListSearchField(
+            fieldValue = searchTerm,
+            onValueChanged = {},
+        )
     )
 
     val vm = PreviewListVm(uiState = uiState)
 
     SalesforceMobileSDKAndroidTheme {
         Surface {
-            ContactsListContent(
-                uiState = vm.uiStateValue,
-                listClickHandler = vm,
-                onSearchTermUpdated = vm::onSearchTermUpdated
-            )
+            ContactsListContent(uiState = vm.uiStateValue, listClickHandler = vm)
         }
     }
 }

@@ -66,6 +66,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emptyFlow
+import org.jetbrains.annotations.TestOnly
 
 /**
  * The main entry point for all Contacts Activity UI.
@@ -87,7 +88,6 @@ fun ContactsActivityContent(
             detailsClickHandler = activityUiInteractor.detailsClickHandler,
             listUiState = listUiState,
             listClickHandler = activityUiInteractor.listClickHandler,
-            onSearchTermUpdated = activityUiInteractor.searchTermUpdatedHandler,
             menuHandler = menuHandler
         )
         ContactsActivityContentLayout.ListDetail -> ListDetail(
@@ -96,7 +96,6 @@ fun ContactsActivityContent(
             detailsClickHandler = activityUiInteractor.detailsClickHandler,
             listUiState = listUiState,
             listClickHandler = activityUiInteractor.listClickHandler,
-            onSearchTermUpdated = activityUiInteractor.searchTermUpdatedHandler,
             menuHandler = menuHandler,
             windowSizeClasses = windowSizeClasses
         )
@@ -112,7 +111,6 @@ private fun SinglePane(
     detailsClickHandler: ContactDetailsClickHandler,
     listUiState: ContactsListUiState,
     listClickHandler: ContactsListClickHandler,
-    onSearchTermUpdated: (newSearchTerm: String) -> Unit,
     menuHandler: ContactsActivityMenuHandler,
 ) {
     val showLoading = activityUiState.dataOpIsActive || activityUiState.isSyncing
@@ -129,7 +127,6 @@ private fun SinglePane(
             uiState = listUiState,
             showLoading = showLoading,
             listClickHandler = listClickHandler,
-            onSearchTermUpdated = onSearchTermUpdated,
             menuHandler = menuHandler
         )
     }
@@ -142,7 +139,6 @@ private fun ListDetail(
     detailsClickHandler: ContactDetailsClickHandler,
     listUiState: ContactsListUiState,
     listClickHandler: ContactsListClickHandler,
-    onSearchTermUpdated: (newSearchTerm: String) -> Unit,
     menuHandler: ContactsActivityMenuHandler,
     windowSizeClasses: WindowSizeClasses
 ) {
@@ -204,7 +200,6 @@ private fun ListDetail(
                     modifier = Modifier.fillMaxSize(),
                     uiState = listUiState,
                     listClickHandler = listClickHandler,
-                    onSearchTermUpdated = onSearchTermUpdated
                 )
             }
 
@@ -362,7 +357,11 @@ private fun SinglePaneListPreview() {
             curSelectedContactId = null,
             isDoingInitialLoad = false,
             isDoingDataAction = false,
-            isSearchJobRunning = false
+            isSearchJobRunning = false,
+            searchField = previewContactListSearchField(
+                fieldValue = null,
+                onValueChanged = {}
+            )
         )
     )
 
@@ -418,7 +417,11 @@ private fun SinglePaneDetailsPreview() {
             curSelectedContactId = selectedContact.id,
             isDoingInitialLoad = false,
             isDoingDataAction = false,
-            isSearchJobRunning = false
+            isSearchJobRunning = false,
+            searchField = previewContactListSearchField(
+                fieldValue = null,
+                onValueChanged = {},
+            )
         )
     )
 
@@ -478,7 +481,11 @@ private fun ListDetailMediumPreview() {
             curSelectedContactId = selectedContact.id,
             isDoingInitialLoad = false,
             isDoingDataAction = false,
-            isSearchJobRunning = false
+            isSearchJobRunning = false,
+            searchField = previewContactListSearchField(
+                fieldValue = null,
+                onValueChanged = {}
+            )
         )
     )
 
@@ -496,7 +503,6 @@ private fun ListDetailMediumPreview() {
                 detailsClickHandler = detailsVm,
                 listUiState = listVm.uiStateValue,
                 listClickHandler = listVm,
-                onSearchTermUpdated = listVm::onSearchTermUpdated,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
                 WindowSizeClasses(horiz = WindowSizeClass.Medium, vert = WindowSizeClass.Expanded)
             )
@@ -537,7 +543,11 @@ private fun ListDetailEditingPreview() {
             curSelectedContactId = selectedContact.id,
             isDoingInitialLoad = false,
             isDoingDataAction = false,
-            isSearchJobRunning = false
+            isSearchJobRunning = false,
+            searchField = previewContactListSearchField(
+                fieldValue = null,
+                onValueChanged = {}
+            )
         )
     )
 
@@ -555,7 +565,6 @@ private fun ListDetailEditingPreview() {
                 detailsClickHandler = detailsVm,
                 listUiState = listVm.uiStateValue,
                 listClickHandler = listVm,
-                onSearchTermUpdated = listVm::onSearchTermUpdated,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
                 WindowSizeClasses(horiz = WindowSizeClass.Medium, vert = WindowSizeClass.Expanded)
             )
@@ -595,7 +604,10 @@ private fun ListDetailNoContactPreview() {
             isDoingInitialLoad = false,
             isDoingDataAction = false,
             isSearchJobRunning = false,
-            curSearchTerm = curSearchTerm
+            searchField = previewContactListSearchField(
+                fieldValue = curSearchTerm,
+                onValueChanged = {}
+            )
         )
     )
 
@@ -613,7 +625,6 @@ private fun ListDetailNoContactPreview() {
                 detailsClickHandler = detailsVm,
                 listUiState = listVm.uiStateValue,
                 listClickHandler = listVm,
-                onSearchTermUpdated = listVm::onSearchTermUpdated,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
                 WindowSizeClasses(horiz = WindowSizeClass.Medium, vert = WindowSizeClass.Expanded)
             )
@@ -659,7 +670,11 @@ private fun ListDetailExpandedPreview() {
             curSelectedContactId = selectedContact.id,
             isDoingInitialLoad = false,
             isDoingDataAction = false,
-            isSearchJobRunning = false
+            isSearchJobRunning = false,
+            searchField = previewContactListSearchField(
+                fieldValue = null,
+                onValueChanged = {}
+            )
         )
     )
 
@@ -677,7 +692,6 @@ private fun ListDetailExpandedPreview() {
                 detailsClickHandler = detailsVm,
                 listUiState = listVm.uiStateValue,
                 listClickHandler = listVm,
-                onSearchTermUpdated = listVm::onSearchTermUpdated,
                 menuHandler = PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER,
                 WindowSizeClasses(horiz = WindowSizeClass.Expanded, vert = WindowSizeClass.Expanded)
             )
@@ -734,8 +748,6 @@ class PreviewActivityVm(
     override val detailsClickHandler: ContactDetailsClickHandler get() = detailsVm
     override val detailsFieldChangeHandler: ContactDetailsFieldChangeHandler get() = detailsVm
     override val listClickHandler: ContactsListClickHandler get() = listVm
-    override val searchTermUpdatedHandler: (newSearchTerm: String) -> Unit
-        get() = listVm::onSearchTermUpdated
     override val messages: Flow<ContactsActivityMessages>
         get() = emptyFlow()
 }
@@ -746,3 +758,17 @@ val PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER = object : ContactsActivityMenuHandle
     override fun onSwitchUserClick() {}
     override fun onSyncClick() {}
 }
+
+@TestOnly
+fun previewContactListSearchField(
+    fieldValue: String?,
+    onValueChanged: (String) -> Unit,
+) = EditableTextFieldUiState(
+    fieldValue = fieldValue,
+    onValueChange = onValueChanged,
+    isInErrorState = false,
+    label = null,
+    placeholder = FormattedStringRes(cta_search),
+    helper = null,
+    maxLines = 1u,
+)

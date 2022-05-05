@@ -26,7 +26,10 @@
  */
 package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent
 
+import com.salesforce.mobilesyncexplorerkotlintemplate.R
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.EditableTextFieldUiState
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.FormattedStringRes
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
 
 data class ContactsListUiState(
@@ -35,5 +38,5 @@ data class ContactsListUiState(
     val isDoingInitialLoad: Boolean,
     val isDoingDataAction: Boolean,
     val isSearchJobRunning: Boolean,
-    val curSearchTerm: String = ""
+    val searchField: EditableTextFieldUiState
 )

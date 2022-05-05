@@ -30,11 +30,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.salesforce.androidsdk.accounts.UserAccount
 import com.salesforce.androidsdk.analytics.logger.SalesforceLogger
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.appContext
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.ContactsActivityMessages.*
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.*
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsClickHandler
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsFieldChangeHandler
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsUiState
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.copy
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiState
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.removeNewlineChars
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.removeTabChars
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.withLockDebug
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.repos.RepoOperationException
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.repos.SyncDownException
@@ -59,7 +65,6 @@ interface ContactsActivityUiInteractor {
     val detailsFieldChangeHandler: ContactDetailsFieldChangeHandler
     val detailsClickHandler: ContactDetailsClickHandler
     val listClickHandler: ContactsListClickHandler
-    val searchTermUpdatedHandler: (newSearchTerm: String) -> Unit
 }
 
 interface ContactsActivityViewModel : ContactsActivityUiInteractor {
@@ -81,7 +86,6 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
     override val detailsClickHandler: ContactDetailsClickHandler get() = detailsVm
     override val detailsFieldChangeHandler: ContactDetailsFieldChangeHandler get() = detailsVm
     override val listClickHandler: ContactsListClickHandler get() = listVm
-    override val searchTermUpdatedHandler: (newSearchTerm: String) -> Unit get() = listVm::onSearchTermUpdated
 
     /**
      * Acquire this lock and hold it for the entire time you are handling an event. Events are
@@ -428,8 +432,8 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
 
         val uiState: StateFlow<ContactDetailsUiState> get() = mutDetailsUiState
 
-        val willHandleBack: Boolean get() =
-            uiState.value is ContactDetailsUiState.ViewingContactDetails
+        val willHandleBack: Boolean
+            get() = uiState.value is ContactDetailsUiState.ViewingContactDetails
 
         fun reset() {
             mutDetailsUiState.value = initialState
@@ -475,22 +479,10 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
                     // Creating new contact
                     mutDetailsUiState.value = ContactDetailsUiState.ViewingContactDetails(
                         recordId = null,
-                        firstNameField = ContactDetailsField.FirstName(
-                            fieldValue = null,
-                            onValueChange = ::onFirstNameChange
-                        ),
-                        lastNameField = ContactDetailsField.LastName(
-                            fieldValue = null,
-                            onValueChange = ::onLastNameChange
-                        ),
-                        titleField = ContactDetailsField.Title(
-                            fieldValue = null,
-                            onValueChange = ::onTitleChange
-                        ),
-                        departmentField = ContactDetailsField.Department(
-                            fieldValue = null,
-                            onValueChange = ::onDepartmentChange
-                        ),
+                        firstNameField = buildFirstNameField(fieldValue = null),
+                        lastNameField = buildLastNameField(fieldValue = null),
+                        titleField = buildTitleField(fieldValue = null),
+                        departmentField = buildDepartmentField(fieldValue = null),
 
                         uiSyncState = SObjectUiSyncState.NotSaved,
 
@@ -622,35 +614,95 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
         ): ContactDetailsUiState.ViewingContactDetails {
             return ContactDetailsUiState.ViewingContactDetails(
                 recordId = id,
-                firstNameField = sObject.buildFirstNameField(),
-                lastNameField = sObject.buildLastNameField(),
-                titleField = sObject.buildTitleField(),
-                departmentField = sObject.buildDepartmentField(),
+                firstNameField = buildFirstNameField(sObject.firstName),
+                lastNameField = buildLastNameField(sObject.lastName),
+                titleField = buildTitleField(sObject.title),
+                departmentField = buildDepartmentField(sObject.department),
                 uiSyncState = uiSyncState,
                 isEditingEnabled = isEditingEnabled,
                 shouldScrollToErrorField = shouldScrollToErrorField,
             )
         }
 
-        private fun ContactObject.buildFirstNameField() = ContactDetailsField.FirstName(
-            fieldValue = firstName,
-            onValueChange = this@DefaultContactDetailsViewModel::onFirstNameChange
+        private fun buildFirstNameField(fieldValue: String?): EditableTextFieldUiState {
+            val isInErrorState: Boolean
+            val helper: FormattedStringRes?
+
+            val validateException = runCatching { ContactObject.validateFirstName(fieldValue) }
+                .exceptionOrNull() as ContactValidationException.FieldContainsIllegalText?
+
+            if (validateException == null) {
+                isInErrorState = false
+                helper = null
+            } else {
+                isInErrorState = true
+                helper = FormattedStringRes(help_illegal_characters)
+            }
+
+            return EditableTextFieldUiState(
+                fieldValue = fieldValue,
+                onValueChange = ::onFirstNameChange,
+                isInErrorState = isInErrorState,
+                label = FormattedStringRes(label_contact_first_name),
+                placeholder = FormattedStringRes(label_contact_first_name),
+                helper = helper,
+                sanitizer = ::sanitizeName
+            )
+        }
+
+        private fun buildLastNameField(fieldValue: String?): EditableTextFieldUiState {
+            val isInErrorState: Boolean
+            val helper: FormattedStringRes?
+
+            val validateException = runCatching { ContactObject.validateLastName(fieldValue) }
+                .exceptionOrNull() as ContactValidationException?
+
+            if (validateException == null) {
+                isInErrorState = false
+                helper = null
+            } else {
+                isInErrorState = true
+                helper = when (validateException) {
+                    ContactValidationException.LastNameCannotBeBlank ->
+                        FormattedStringRes(help_cannot_be_blank)
+
+                    is ContactValidationException.FieldContainsIllegalText ->
+                        FormattedStringRes(help_illegal_characters)
+                }
+            }
+
+            return EditableTextFieldUiState(
+                fieldValue = fieldValue,
+                onValueChange = ::onLastNameChange,
+                isInErrorState = isInErrorState,
+                label = FormattedStringRes(label_contact_last_name),
+                placeholder = FormattedStringRes(label_contact_last_name),
+                helper = helper,
+                sanitizer = ::sanitizeName
+            )
+        }
+
+        private fun buildTitleField(fieldValue: String?) = EditableTextFieldUiState(
+            fieldValue = fieldValue,
+            onValueChange = ::onTitleChange,
+            isInErrorState = false,
+            label = FormattedStringRes(label_contact_title),
+            placeholder = FormattedStringRes(label_contact_title),
+            helper = null,
+            maxLines = UInt.MAX_VALUE,
         )
 
-        private fun ContactObject.buildLastNameField() = ContactDetailsField.LastName(
-            fieldValue = lastName,
-            onValueChange = this@DefaultContactDetailsViewModel::onLastNameChange
+        private fun buildDepartmentField(fieldValue: String?) = EditableTextFieldUiState(
+            fieldValue = fieldValue,
+            onValueChange = ::onDepartmentChange,
+            isInErrorState = false,
+            label = FormattedStringRes(label_contact_department),
+            placeholder = FormattedStringRes(label_contact_department),
+            helper = null,
+            maxLines = UInt.MAX_VALUE
         )
 
-        private fun ContactObject.buildTitleField() = ContactDetailsField.Title(
-            fieldValue = title,
-            onValueChange = this@DefaultContactDetailsViewModel::onTitleChange
-        )
-
-        private fun ContactObject.buildDepartmentField() = ContactDetailsField.Department(
-            fieldValue = department,
-            onValueChange = this@DefaultContactDetailsViewModel::onDepartmentChange
-        )
+        private fun sanitizeName(name: String): String = name.removeNewlineChars().removeTabChars()
     }
 
     private inner class DefaultContactsListViewModel : ContactsListClickHandler {
@@ -661,7 +713,17 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
                 curSelectedContactId = null,
                 isDoingInitialLoad = true,
                 isDoingDataAction = false,
-                isSearchJobRunning = false
+                isSearchJobRunning = false,
+                searchField = EditableTextFieldUiState(
+                    fieldValue = null,
+                    onValueChange = ::onSearchTermUpdated,
+                    isInErrorState = false,
+                    label = null,
+                    placeholder = FormattedStringRes(cta_search),
+                    helper = null,
+                    maxLines = 1u,
+                    sanitizer = ::sanitizeSearch
+                )
             )
 
         private val mutListUiState = MutableStateFlow(initialState)
@@ -679,7 +741,7 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
                 mutListUiState.value = uiState.value.copy(isDoingInitialLoad = false)
             }
 
-            restartSearch(searchTerm = uiState.value.curSearchTerm) { filteredResults ->
+            restartSearch(searchTerm = uiState.value.searchField.fieldValue) { filteredResults ->
                 mutListUiState.value = uiState.value.copy(contacts = filteredResults)
             }
             // TODO handle when selected contact is no longer in the records list
@@ -710,7 +772,9 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
         }
 
         fun onSearchTermUpdated(newSearchTerm: String) = safeHandleUiEvent {
-            mutListUiState.value = uiState.value.copy(curSearchTerm = newSearchTerm)
+            mutListUiState.value = uiState.value.copy(
+                searchField = uiState.value.searchField.copy(fieldValue = newSearchTerm)
+            )
 
             restartSearch(searchTerm = newSearchTerm) { filteredList ->
                 eventMutex.withLockDebug {
@@ -723,7 +787,7 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
         private var curSearchJob: Job? = null
 
         private fun restartSearch(
-            searchTerm: String,
+            searchTerm: String?,
             block: suspend (filteredList: List<ContactRecord>) -> Unit
         ) {
             val contacts = curRecordsByIds.values.toList()
@@ -734,7 +798,7 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
                     mutListUiState.value = uiState.value.copy(isSearchJobRunning = true)
 
                     val filteredResults =
-                        if (searchTerm.isEmpty()) {
+                        if (searchTerm.isNullOrEmpty()) {
                             contacts
                         } else {
                             contacts.filter {
@@ -753,5 +817,8 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
                 }
             }
         }
+
+        private fun sanitizeSearch(searchTerm: String): String =
+            searchTerm.removeTabChars().removeNewlineChars()
     }
 }
