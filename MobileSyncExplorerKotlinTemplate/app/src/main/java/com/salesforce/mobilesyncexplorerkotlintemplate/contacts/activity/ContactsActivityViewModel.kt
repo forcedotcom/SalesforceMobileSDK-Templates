@@ -30,7 +30,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.salesforce.androidsdk.accounts.UserAccount
 import com.salesforce.androidsdk.analytics.logger.SalesforceLogger
-import com.salesforce.mobilesyncexplorerkotlintemplate.app.appContext
+import com.salesforce.mobilesyncexplorerkotlintemplate.appContext
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.ContactsActivityMessages.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListClickHandler

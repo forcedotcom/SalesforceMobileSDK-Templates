@@ -146,6 +146,7 @@ private fun ListDetail(
     menuHandler: ContactsActivityMenuHandler,
     windowSizeClasses: WindowSizeClasses
 ) {
+    // TODO don't show list-detail only based on width.
     Scaffold(
         topBar = {
             TopAppBar {
@@ -232,6 +233,7 @@ private fun ListDetailContactDetailsContent(
     val topPadding by animateIntAsState(targetValue = if (isEditing) 64 else 0)
 
     Box(modifier = Modifier.fillMaxSize()) {
+        // TODO Get the fields to scroll behind x button
         ContactDetailsContent(
             details = detailsUiState,
             modifier = Modifier
