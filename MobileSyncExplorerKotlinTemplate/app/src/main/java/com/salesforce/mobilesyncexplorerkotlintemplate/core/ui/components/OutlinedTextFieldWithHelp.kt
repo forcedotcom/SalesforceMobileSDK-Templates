@@ -38,7 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.coerceToNonNegativeInt
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 
 /**
@@ -104,7 +103,7 @@ fun OutlinedTextFieldWithHelp(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
-    val safeMaxLines = maxLines.coerceToNonNegativeInt()
+    val safeMaxLines = maxLines.coerceIn(0u..Int.MAX_VALUE.toUInt()).toInt()
 
     Column(modifier = modifier) {
         OutlinedTextField(
