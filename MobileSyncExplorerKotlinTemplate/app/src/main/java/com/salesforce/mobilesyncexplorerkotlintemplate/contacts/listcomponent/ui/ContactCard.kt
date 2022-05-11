@@ -53,7 +53,6 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceM
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
 
 @Composable
-/* TODO If not in single pane, don't show expando. It's not helping the user in any way in that case, and arguably makes things more confusing */
 fun ContactCard(
     modifier: Modifier = Modifier,
     model: ContactObject,
@@ -108,7 +107,6 @@ private fun ContactCardInnerContent(
     var isExpanded by rememberSaveable { mutableStateOf(startExpanded) }
     Column(modifier = modifier.padding(8.dp)) {
         Row {
-            // TODO There is a bug where long-pressing on the name will both select the text and open the menu.
             SelectionContainer(modifier = Modifier.weight(1f)) {
                 Text(
                     model.fullName,

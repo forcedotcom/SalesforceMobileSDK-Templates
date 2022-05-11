@@ -457,9 +457,6 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
             }
 
             // if editing, let the user keep their changes
-
-            // TODO Corner case: If user is editing a contact and the upstream gets modified/deleted
-            // TODO Actually figure out how we want to reconcile locally-created contacts after sync with its ID changing
         }
 
         suspend fun onBackPressed() {
@@ -744,7 +741,6 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
             restartSearch(searchTerm = uiState.value.searchField.fieldValue) { filteredResults ->
                 mutListUiState.value = uiState.value.copy(contacts = filteredResults)
             }
-            // TODO handle when selected contact is no longer in the records list
         }
 
         fun setSelectedContact(id: String?) {

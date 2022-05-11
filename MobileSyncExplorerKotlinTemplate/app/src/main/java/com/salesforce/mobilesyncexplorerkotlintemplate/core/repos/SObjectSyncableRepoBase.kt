@@ -27,6 +27,7 @@
 package com.salesforce.mobilesyncexplorerkotlintemplate.core.repos
 
 import com.salesforce.androidsdk.accounts.UserAccount
+import com.salesforce.androidsdk.analytics.logger.SalesforceLogger
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.androidsdk.mobilesync.manager.SyncManager
 import com.salesforce.androidsdk.mobilesync.target.SyncTarget.*
@@ -34,16 +35,20 @@ import com.salesforce.androidsdk.mobilesync.util.Constants
 import com.salesforce.androidsdk.mobilesync.util.SyncState
 import com.salesforce.androidsdk.smartstore.store.QuerySpec
 import com.salesforce.androidsdk.smartstore.store.SmartStore
+import com.salesforce.mobilesyncexplorerkotlintemplate.appContext
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.CleanResyncGhostsException
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.suspendCleanResyncGhosts
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -70,6 +75,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
 
     protected val store: SmartStore = MobileSyncSDKManager.getInstance().getSmartStore(account)
     protected val syncManager: SyncManager = SyncManager.getInstance(account)
+    protected val logger = SalesforceLogger.getLogger(COMPONENT_NAME, appContext)
 
     init {
         MobileSyncSDKManager.getInstance().apply {
@@ -88,9 +94,6 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
     // region Public Sync Implementation
 
 
-    // TODO revisit what it means to cancel a sync down. E.g. does cancel stop the refreshing of the
-    //  records list? Is Sync Down + Refresh an atomic, uncancellable operation? Individual Sync
-    //  operations cannot be cancelled by themselves...
     @Throws(
         SyncDownException::class,
         RepoOperationException.SmartStoreOperationFailed::class,
@@ -99,7 +102,6 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
         syncMutex.withLockDebug {
             doSyncDown()
             try {
-                // TODO when is the appropriate time to call clean resync ghosts?
                 syncManager.suspendCleanResyncGhosts(syncName = syncDownName)
             } catch (ex: CleanResyncGhostsException) {
                 throw SyncDownException.CleaningUpstreamRecordsFailed(cause = ex)
@@ -373,6 +375,11 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
     @Throws(RepoOperationException.SmartStoreOperationFailed::class)
     override suspend fun refreshRecordsListFromSmartStore(): Unit = withContext(ioDispatcher) {
         val (parseSuccesses, parseFailures) = runFetchAllQuery()
+        val messages = parseFailures.mapNotNull { it.message }
+        logger.e(
+            TAG,
+            "There were parse failures from the contacts soup: $messages"
+        )
         setRecordsList(parseSuccesses)
     }
 
@@ -403,7 +410,6 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
                 )
             }
 
-            // TODO What to do with parse failures?  Swallow them?
             queryResults
                 .map { runCatching { deserializer.coerceFromJsonOrThrow(it) } }
                 .partitionBySuccess()
@@ -470,4 +476,9 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
 
 
     // endregion
+
+    private companion object {
+        private const val COMPONENT_NAME = "SObjectSyncableRepo"
+        private const val TAG = "SObjectSyncableRepoBase"
+    }
 }

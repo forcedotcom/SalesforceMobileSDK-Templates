@@ -31,7 +31,6 @@ import androidx.annotation.StringRes
 /**
  * Non-editable, general UI state for any field rendered in a form.
  */
-// TODO this is a little clunky to use for fields which don't support all these functions like helper and error.  Is there a better way to generify this framework?
 interface FieldUiState {
     val fieldValue: String?
     val isInErrorState: Boolean

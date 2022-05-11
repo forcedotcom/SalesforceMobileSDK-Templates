@@ -68,7 +68,6 @@ fun ContactsListSinglePaneComponent(
         topBar = {
             TopAppBar {
                 ContactsListTopAppBarSinglePane()
-                // TODO move the menu to the bottom of the scaffold
                 ContactsActivityMenuButton(menuHandler = menuHandler)
             }
         },
@@ -81,7 +80,6 @@ fun ContactsListSinglePaneComponent(
         floatingActionButtonPosition = FabPosition.Center,
         isFloatingActionButtonDocked = true,
     ) {
-        // TODO test padding
         ContactsListContent(
             modifier = Modifier
                 .padding(it)
