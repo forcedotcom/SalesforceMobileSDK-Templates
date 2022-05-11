@@ -32,7 +32,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -60,6 +59,7 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.Loc
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.LoadingOverlay
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.*
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.MIN_TOUCH_TARGET_SIZE_DP
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
 import kotlinx.coroutines.flow.Flow
@@ -225,7 +225,8 @@ private fun ListDetailContactDetailsContent(
     val isEditing = detailsUiState is ContactDetailsUiState.ViewingContactDetails
             && detailsUiState.isEditingEnabled
 
-    val topPadding by animateIntAsState(targetValue = if (isEditing) 64 else 0)
+    val clearButtonPaddingDp = 4
+    val topPadding by animateIntAsState(targetValue = if (isEditing) MIN_TOUCH_TARGET_SIZE_DP + clearButtonPaddingDp else 8)
 
     Box(modifier = Modifier.fillMaxSize()) {
         // TODO Get the fields to scroll behind x button
@@ -234,26 +235,21 @@ private fun ListDetailContactDetailsContent(
             modifier = Modifier
                 .animateContentSize()
                 .fillMaxSize()
-                .padding(top = topPadding.dp)
+                .padding(horizontal = 8.dp),
+            contentPadding = PaddingValues(top = topPadding.dp)
         )
 
         AnimatedVisibility(
             visible = isEditing,
             modifier = Modifier
-                .padding(8.dp)
+                .padding(clearButtonPaddingDp.dp)
                 .align(Alignment.TopEnd)
         ) {
-            // This is similar to FloatingActionButton but constrained to the size of an icon button:
-            Surface(
-                shape = MaterialTheme.shapes.small.copy(CornerSize(percent = 50)),
-                elevation = 4.dp,
-            ) {
-                IconButton(onClick = onExitClick) {
-                    Icon(
-                        Icons.Default.Close,
-                        contentDescription = stringResource(id = content_desc_cancel_edit)
-                    )
-                }
+            IconButton(onClick = onExitClick) {
+                Icon(
+                    Icons.Default.Close,
+                    contentDescription = stringResource(id = content_desc_cancel_edit)
+                )
             }
         }
     }

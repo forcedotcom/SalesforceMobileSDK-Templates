@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.*
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -59,11 +60,13 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceM
 fun ContactDetailsContent(
     details: ContactDetailsUiState,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(all = 0.dp)
 ) {
     when (details) {
         is ContactDetailsUiState.ViewingContactDetails -> ContactDetailsViewingContact(
             modifier = modifier,
             details = details,
+            contentPadding = contentPadding
         )
         is ContactDetailsUiState.NoContactSelected -> ContactDetailsNoContactSelected()
     }
@@ -73,6 +76,7 @@ fun ContactDetailsContent(
 private fun ContactDetailsViewingContact(
     modifier: Modifier = Modifier,
     details: ContactDetailsUiState.ViewingContactDetails,
+    contentPadding: PaddingValues
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester.Default }
@@ -80,8 +84,13 @@ private fun ContactDetailsViewingContact(
 
     Column(
         modifier = modifier
-            .padding(horizontal = 8.dp)
             .verticalScroll(state = scrollState)
+            .padding(
+                top = contentPadding.calculateTopPadding(),
+                bottom = contentPadding.calculateBottomPadding(),
+                start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
+                end = contentPadding.calculateEndPadding(LocalLayoutDirection.current)
+            ),
     ) {
         if (details.uiSyncState == SObjectUiSyncState.Deleted) {
             LocallyDeletedRow()
@@ -260,7 +269,10 @@ private fun ContactDetailsContentViewingContactPreview() {
     )
     SalesforceMobileSDKAndroidTheme {
         Surface {
-            ContactDetailsViewingContact(details = detailsUiState)
+            ContactDetailsViewingContact(
+                details = detailsUiState,
+                contentPadding = PaddingValues(all = 0.dp)
+            )
         }
     }
 }

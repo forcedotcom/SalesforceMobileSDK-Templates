@@ -77,3 +77,5 @@ fun SalesforceMobileSDKAndroidTheme(
         content = content
     )
 }
+
+const val MIN_TOUCH_TARGET_SIZE_DP = 48

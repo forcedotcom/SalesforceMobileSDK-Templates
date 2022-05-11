@@ -27,10 +27,7 @@
 package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ui
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -41,6 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.salesforce.mobilesyncexplorerkotlintemplate.R.drawable.ic_undo
 import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.ContactsActivityMenuButton
@@ -66,7 +64,6 @@ fun ContactDetailsContentSinglePane(
     componentClickHandler: ContactDetailsClickHandler,
     menuHandler: ContactsActivityMenuHandler,
     modifier: Modifier = Modifier,
-    contentModifier: Modifier = Modifier
 ) {
     val contactDetailsUi = details as? ContactDetailsUiState.ViewingContactDetails
     Scaffold(
@@ -111,10 +108,9 @@ fun ContactDetailsContentSinglePane(
     ) { paddingValues ->
         // TODO test padding
         ContactDetailsContent(
-            modifier = Modifier
-                .padding(paddingValues)
-                .then(contentModifier),
-            details = details
+            modifier = Modifier.padding(paddingValues),
+            details = details,
+            contentPadding = PaddingValues(all = 8.dp)
         )
 
         if (showLoadingOverlay) {
