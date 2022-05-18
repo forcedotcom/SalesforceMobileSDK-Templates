@@ -51,7 +51,7 @@ function listKtFiles(dirPath) {
     return result;
 }
 
-function cleanDirs(dirPath) {
+function cleanEmptyDirs(dirPath) {
     if(dirPath != '') {
         try {
             fs.rmdirSync(dirPath);
