@@ -51,6 +51,17 @@ function listKtFiles(dirPath) {
     return result;
 }
 
+function cleanDirs(dirPath) {
+    if(dirPath != '') {
+        try {
+            fs.rmdirSync(dirPath);
+            cleanEmptyDirs(path.dirname(dirPath));
+        } catch (error) {
+            // not empty - let's stop
+        }
+    }
+}
+
 
 function prepare(config, replaceInFiles, moveFile, removeFile) {
 
@@ -66,7 +77,8 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     const templateAndroidManifestFile = path.join('app', 'AndroidManifest.xml');
     const templateStringsXmlFile = path.join('app', 'src', 'main', 'res', 'values', 'strings.xml');
     const templateBootconfigFile = path.join('app', 'src', 'main', 'res', 'values', 'bootconfig.xml');
-    const ktFiles = listKtFiles(path.join('app', 'src', 'main', 'java'));
+    const javaDirPath = path.join('app', 'src', 'main', 'java');
+    const ktFiles = listKtFiles(javaDirPath);
 
     //
     // Replace in files
@@ -84,7 +96,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     ktFiles.forEach(function(ktFilePath) {
         moveFile(ktFilePath, ktFilePath.replace(templatePackagePath, configPackagePath));
     })
-    fs.rmdirSync(templatePackagePath, {recursive: true});
+    cleanEmptyDirs(path.join(javaDirPath, templatePackagePath));
 
     //
     // Run install.js
