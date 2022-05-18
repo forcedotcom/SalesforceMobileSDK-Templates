@@ -70,6 +70,10 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     const ktFiles = listKtFiles(javaDirPath);
 
     //
+    // TODO rename application class
+    //
+
+    //
     // Replace in files
     //
 
