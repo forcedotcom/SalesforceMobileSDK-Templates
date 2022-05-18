@@ -51,34 +51,8 @@ function listKtFiles(dirPath) {
     return result;
 }
 
-function cleanDirs(dirPath) {
-    if(dirPath != '') {
-        try {
-            console.log("Cleaning => " + dirPath);
-            fs.rmdirSync(dirPath);
-            cleanEmptyDirs(path.dirname(dirPath));
-        } catch (error) {
-            // not empty - let's stop
-        }
-    }
-}
-
 
 function prepare(config, replaceInFiles, moveFile, removeFile) {
-
-    const rif = replaceInFiles;
-    const mf = moveFile;
-
-    replaceInFiles = function(a,b,c) {
-        console.log("Replacing in files => " + a + " to " + b + " in " + c.length);
-        rif(a,b,c);
-    };
-
-    moveFile = function(a,b) {
-        console.log("Moving file => " + a + " to " + b);
-        mf(a,b);
-    };
-
 
     // Values in template
     const templateAppName = 'Mobile Sync Explorer Kotlin Template';
@@ -110,7 +84,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     ktFiles.forEach(function(ktFilePath) {
         moveFile(ktFilePath, ktFilePath.replace(templatePackagePath, configPackagePath));
     })
-    cleanDirs(templatePackagePath);
+    fs.rm(templatePackagePath, {recursive: true});
 
     //
     // Run install.js
