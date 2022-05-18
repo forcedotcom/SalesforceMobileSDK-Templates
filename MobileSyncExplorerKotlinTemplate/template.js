@@ -66,8 +66,8 @@ function cleanDirs(dirPath) {
 function prepare(config, replaceInFiles, moveFile, removeFile) {
 
     // Values in template
-    const templateAppName = 'Mobile Sync Compose';
-    const templatePackageName = 'com.salesforce.samples.mobilesynccompose';
+    const templateAppName = 'Mobile Sync Explorer Kotlin Template';
+    const templatePackageName = 'com.salesforce.samples.mobilesyncexplorerkotlintemplate';
     const templatePackagePath = templatePackageName.replaceAll(".", path.sep);
     const configPackagePath = config.packagename.replaceAll(".", path.sep);
     
@@ -75,8 +75,8 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     const templatePackageJsonFile = 'package.json';
     const templateSettingsGradle = 'settings.gradle';
     const templateAndroidManifestFile = path.join('app', 'AndroidManifest.xml');
-    const templateStringsXmlFile = path.join('app', 'src', 'res', 'values', 'strings.xml');
-    const templateBootconfigFile = path.join('app', 'src', 'res', 'values', 'bootconfig.xml');
+    const templateStringsXmlFile = path.join('app', 'src', 'main', 'res', 'values', 'strings.xml');
+    const templateBootconfigFile = path.join('app', 'src', 'main', 'res', 'values', 'bootconfig.xml');
     const ktFiles = listKtFiles(path.join('app', 'src', 'main', 'java'));
 
     //
