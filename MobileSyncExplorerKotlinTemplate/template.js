@@ -51,17 +51,6 @@ function listKtFiles(dirPath) {
     return result;
 }
 
-function cleanEmptyDirs(dirPath) {
-    if(dirPath != '') {
-        try {
-            fs.rmdirSync(dirPath);
-            cleanEmptyDirs(path.dirname(dirPath));
-        } catch (error) {
-            // not empty - let's stop
-        }
-    }
-}
-
 
 function prepare(config, replaceInFiles, moveFile, removeFile) {
 
@@ -96,7 +85,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     ktFiles.forEach(function(ktFilePath) {
         moveFile(ktFilePath, ktFilePath.replace(templatePackagePath, configPackagePath));
     })
-    cleanEmptyDirs(path.join(javaDirPath, templatePackagePath));
+    fs.rmdirSync(path.join(javaDirPath, templatePackagePath), {recursive: true});
 
     //
     // Run install.js
