@@ -84,7 +84,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     ktFiles.forEach(function(ktFilePath) {
         moveFile(ktFilePath, ktFilePath.replace(templatePackagePath, configPackagePath));
     })
-    fs.rm(templatePackagePath, {recursive: true});
+    fs.rmdirSync(templatePackagePath, {recursive: true});
 
     //
     // Run install.js
