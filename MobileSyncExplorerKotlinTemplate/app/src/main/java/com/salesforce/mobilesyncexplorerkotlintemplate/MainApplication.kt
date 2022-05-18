@@ -31,7 +31,7 @@ import android.content.Context
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.ContactsActivity
 
-class MobileSyncExplorerKotlinTemplateApp : Application() {
+class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         appContext = applicationContext
@@ -45,4 +45,4 @@ class MobileSyncExplorerKotlinTemplateApp : Application() {
     }
 }
 
-val appContext: Context get() = MobileSyncExplorerKotlinTemplateApp.appContext
+val appContext: Context get() = MainApplication.appContext
