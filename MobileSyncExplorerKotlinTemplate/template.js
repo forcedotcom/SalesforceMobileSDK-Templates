@@ -54,6 +54,7 @@ function listKtFiles(dirPath) {
 function cleanDirs(dirPath) {
     if(dirPath != '') {
         try {
+            console.log("Cleaning => " + dirPath);
             fs.rmdirSync(dirPath);
             cleanEmptyDirs(path.dirname(dirPath));
         } catch (error) {
@@ -64,6 +65,20 @@ function cleanDirs(dirPath) {
 
 
 function prepare(config, replaceInFiles, moveFile, removeFile) {
+
+    const rif = replaceInFiles;
+    const mf = moveFile;
+
+    replaceInFiles = function(a,b,c) {
+        console.log("Replacing in files => " + a + " to " + b + " in " + c.length);
+        rif(a,b,c);
+    };
+
+    moveFile = function(a,b) {
+        console.log("Moving file => " + a + " to " + b);
+        mf(a,b);
+    };
+
 
     // Values in template
     const templateAppName = 'Mobile Sync Explorer Kotlin Template';
