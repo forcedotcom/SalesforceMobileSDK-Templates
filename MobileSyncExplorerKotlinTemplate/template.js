@@ -82,7 +82,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
 
     // Values in template
     const templateAppName = 'Mobile Sync Explorer Kotlin Template';
-    const templatePackageName = 'com.salesforce.samples.mobilesyncexplorerkotlintemplate';
+    const templatePackageName = 'com.salesforce.mobilesyncexplorerkotlintemplate';
     const templatePackagePath = templatePackageName.replaceAll(".", path.sep);
     const configPackagePath = config.packagename.replaceAll(".", path.sep);
     
