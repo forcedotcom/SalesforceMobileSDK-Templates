@@ -31,46 +31,71 @@
  *   workspace
  *   bootconfigFile
  */
+
+const path = require('path');
+const fs = require('fs');
+
+function listKtFiles(dirPath) {
+    var result = [];
+    fs.readdirSync(dirPath).forEach(function (file) {
+        const fileFullPath = path.join(dirPath, file);
+        const stats = fs.statSync(fileFullPath);
+        if (fs.statSync(fileFullPath).isDirectory()) {
+            result = result.concat(listKtFiles(fileFullPath));
+        } else {
+            if (file.endsWith('.kt')) {
+                result.push(fileFullPath);
+            }
+        }
+    });
+    return result;
+}
+
+function cleanDirs(dirPath) {
+    if(dirPath != '') {
+        try {
+            fs.rmdirSync(dirPath);
+            cleanEmptyDirs(path.dirname(dirPath));
+        } catch (error) {
+            // not empty - let's stop
+        }
+    }
+}
+
+
 function prepare(config, replaceInFiles, moveFile, removeFile) {
 
-    var path = require('path');
-
-    //
-    // FIXME - move source files according to user provided app package
-    //
-
-    // // Values in template
-    // var templateAppName = 'Mobile Sync Explorer Kotlin Template';
-    // var templatePackageName = 'com.salesforce.mobilesyncexplorerkotlintemplate';
-    // // Key files
-    // var templatePackageJsonFile = 'package.json';
-    // var templateSettingsGradle = 'settings.gradle';
-    // var templateAndroidManifestFile = path.join('app', 'AndroidManifest.xml');
-    // var templateStringsXmlFile = path.join('app', 'src', 'res', 'values', 'strings.xml');
-    // var templateBootconfigFile = path.join('app', 'src', 'res', 'values', 'bootconfig.xml');
-    // var templateMainActivityFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'samples', 'mobilesyncexplorerkotlintemplate', 'contacts', 'activity', 'ContactsActivity.kt');
-    // var templateMainApplicationFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'samples', 'mobilesyncexplorerkotlintemplate', 'app', 'MobileSyncExplorerKotlinTemplateApp.kt');
-
-    // //
-    // // Replace in files
-    // //
-
-    // // app name
-    // replaceInFiles(templateAppName, config.appname, [templatePackageJsonFile, templateSettingsGradle, templateStringsXmlFile]);
-
-    // // package name
-    // replaceInFiles(templatePackageName, config.packagename, [templateAndroidManifestFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile]);
+    // Values in template
+    const templateAppName = 'Mobile Sync Compose';
+    const templatePackageName = 'com.salesforce.samples.mobilesynccompose';
+    const templatePackagePath = templatePackageName.replaceAll(".", path.sep);
+    const configPackagePath = config.packagename.replaceAll(".", path.sep);
     
-    // //
-    // // Rename/move files
-    // //
-    // var tmpPathActivityFile = path.join('app', 'src', 'MainActivity.kt');
-    // var tmpPathApplicationFile = path.join('app', 'src', 'MainApplication.kt');
-    // moveFile(templateMainActivityFile, tmpPathActivityFile);
-    // moveFile(templateMainApplicationFile, tmpPathApplicationFile);
-    // removeFile(path.join('app', 'src', 'com'));
-    // moveFile(tmpPathActivityFile, path.join.apply(null, ['app', 'src'].concat(config.packagename.split('.')).concat(['MainActivity.kt'])));
-    // moveFile(tmpPathApplicationFile, path.join.apply(null, ['app', 'src'].concat(config.packagename.split('.')).concat(['MainApplication.kt'])));
+    // Key files
+    const templatePackageJsonFile = 'package.json';
+    const templateSettingsGradle = 'settings.gradle';
+    const templateAndroidManifestFile = path.join('app', 'AndroidManifest.xml');
+    const templateStringsXmlFile = path.join('app', 'src', 'res', 'values', 'strings.xml');
+    const templateBootconfigFile = path.join('app', 'src', 'res', 'values', 'bootconfig.xml');
+    const ktFiles = listKtFiles(path.join('app', 'src', 'main', 'java'));
+
+    //
+    // Replace in files
+    //
+
+    // app name
+    replaceInFiles(templateAppName, config.appname, [templatePackageJsonFile, templateSettingsGradle, templateStringsXmlFile]);
+
+    // package name
+    replaceInFiles(templatePackageName, config.packagename, [templateAndroidManifestFile, templateStringsXmlFile].concat(ktFiles));
+
+    //
+    // Rename/move files
+    //
+    ktFiles.forEach(function(ktFilePath) {
+        moveFile(ktFilePath, ktFilePath.replace(templatePackagePath, configPackagePath));
+    })
+    cleanDirs(templatePackagePath);
 
     //
     // Run install.js
