@@ -29,16 +29,36 @@ package com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state
 import androidx.annotation.StringRes
 
 /**
- * Non-editable, general UI state for any field rendered in a form.
+ * General UI state for any field rendered in a form. This only allows String values, meaning any
+ * complex data (e.g. a date) must first be transformed into string form. Conversely, it is up to
+ * higher-level logic to transform the field value back into any complex data structure.
  */
 interface FieldUiState {
     val fieldValue: String?
     val isInErrorState: Boolean
+
+    /**
+     * One or two words shown next to the field to indicate to the user what the field is for.
+     */
     val label: FormattedStringRes?
+
+    /**
+     * A short message rendered next to the field, usually used to provide guidance to the user for
+     * how to correct an error.
+     */
     val helper: FormattedStringRes?
+
+    /**
+     * Text shown in the field before the user has entered anything, giving the user an example of
+     * what should go in the field.
+     */
     val placeholder: FormattedStringRes?
 }
 
+/**
+ * Encapsulation of a string resource ID and its optional formatting parameters for use in rendering
+ * in the UI.
+ */
 data class FormattedStringRes(@StringRes val resId: Int, val formattingArgs: Array<String> = emptyArray()) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

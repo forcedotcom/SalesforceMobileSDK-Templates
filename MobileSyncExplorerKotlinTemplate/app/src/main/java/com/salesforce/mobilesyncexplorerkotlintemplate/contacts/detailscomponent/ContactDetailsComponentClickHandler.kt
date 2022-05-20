@@ -24,23 +24,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state
+package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent
 
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.LocalStatus
-
-enum class SObjectUiSyncState {
-    Deleted,
-    NotSaved,
-    Synced,
-    Updated,
-}
-
-fun LocalStatus.toUiSyncState(): SObjectUiSyncState = when (this) {
-    LocalStatus.LocallyDeleted,
-    LocalStatus.LocallyDeletedAndLocallyUpdated -> SObjectUiSyncState.Deleted
-
-    LocalStatus.LocallyCreated,
-    LocalStatus.LocallyUpdated -> SObjectUiSyncState.Updated
-
-    LocalStatus.MatchesUpstream -> SObjectUiSyncState.Synced
+/**
+ * Interface encapsulating all the possible UI click interactions the user can perform within the
+ * Contact Details component across all details component modes.
+ */
+interface ContactDetailsComponentClickHandler {
+    fun createClick()
+    fun deleteClick()
+    fun undeleteClick()
+    fun deselectContactClick()
+    fun editClick()
+    fun exitEditClick()
+    fun saveClick()
 }

@@ -26,17 +26,34 @@
  */
 package com.salesforce.mobilesyncexplorerkotlintemplate.core.repos
 
+import com.salesforce.androidsdk.smartstore.store.SmartStore.SmartStoreException
+
+/**
+ * Sealed class representing the exhaustive set of all failure modes for the [SObjectSyncableRepo]
+ * methods which interact with SmartStore.
+ */
 sealed class RepoOperationException : Exception() {
+    /**
+     * Thrown when the SObject JSON failed to deserialize into a JVM runtime model.
+     */
     data class InvalidResultObject(
         override val message: String?,
         override val cause: Throwable?
     ) : RepoOperationException()
 
+    /**
+     * Wrapper for rethrowing any underlying SmartStore exception (not limited to only
+     * [SmartStoreException]). Used to indicate that the repo operation failure was due to something
+     * in SmartStore, not the Repo itself.
+     */
     data class SmartStoreOperationFailed(
         override val message: String?,
         override val cause: Throwable?
     ) : RepoOperationException()
 
+    /**
+     * Thrown when the requested Repo operation was provided an ID for a record that does not exist.
+     */
     data class RecordNotFound(
         val id: String,
         val soupName: String,

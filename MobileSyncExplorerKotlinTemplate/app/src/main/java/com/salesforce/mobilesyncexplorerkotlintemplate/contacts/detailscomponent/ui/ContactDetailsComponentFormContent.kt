@@ -56,8 +56,13 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.FormattedSt
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.SObjectUiSyncState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 
+/**
+ * The form content of the Contact Details component. Adds all the fields in the [details] object to
+ * the Compose UI in a single column scrollable format. Use this to embed the Contact Details form
+ * within higher-level layouts.
+ */
 @Composable
-fun ContactDetailsContent(
+fun ContactDetailsComponentFormContent(
     details: ContactDetailsUiState,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(all = 0.dp)
@@ -146,15 +151,15 @@ private fun EditableTextFieldUiState.toOutlinedTextFieldWithHelp(
     var textFieldValueState by remember { mutableStateOf(TextFieldValue(fieldValue ?: "")) }
     val textFieldValue = textFieldValueState.copy(text = fieldValue ?: "")
 
-    // Move the cursor to the end of the field if IME action changes focus:
+    // Move the cursor to the end of the field content if IME action changes focus to this field:
     val focusChangeHandlerModifier = Modifier
-        .onFocusChanged {
-            if (!hasFocus && it.hasFocus) {
+        .onFocusChanged { newFocusState ->
+            if (!hasFocus && newFocusState.hasFocus) {
                 textFieldValueState = textFieldValueState.copy(
                     selection = TextRange(textFieldValue.text.length)
                 )
             }
-            hasFocus = it.hasFocus
+            hasFocus = newFocusState.hasFocus
         }
         .focusRequester(focusRequester)
 
@@ -163,7 +168,7 @@ private fun EditableTextFieldUiState.toOutlinedTextFieldWithHelp(
 
         textFieldValueState = sanitized
 
-        if (sanitized.text != fieldValue ?: "") {
+        if (sanitized.text != (fieldValue ?: "")) {
             onValueChange(sanitized.text)
         }
     }

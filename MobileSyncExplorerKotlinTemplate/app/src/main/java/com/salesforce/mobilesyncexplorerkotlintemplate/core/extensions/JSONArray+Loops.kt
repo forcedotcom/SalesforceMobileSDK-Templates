@@ -37,14 +37,6 @@ inline fun JSONArray.forEach(block: (JSONObject) -> Unit) {
     }
 }
 
-inline fun JSONArray.forEachIndexed(block: (index: Int, JSONObject) -> Unit) {
-    val length = length().also { if (it < 1) return }
-
-    for (i in 0 until length) {
-        block(i, getJSONObject(i))
-    }
-}
-
 inline fun <reified T> JSONArray.map(mapper: (JSONObject) -> T): List<T> {
     val results = mutableListOf<T>()
 
@@ -55,25 +47,10 @@ inline fun <reified T> JSONArray.map(mapper: (JSONObject) -> T): List<T> {
     return results
 }
 
-fun JSONArray.firstOrNull(): JSONObject? = if (length() > 0) this.getJSONObject(0) else null
-
 @Throws(NoSuchElementException::class)
 fun JSONArray.first(): JSONObject {
     if (length() < 1)
         throw NoSuchElementException()
 
     return this.getJSONObject(0)
-}
-
-inline fun JSONArray.firstOrNull(predicate: (JSONObject) -> Boolean): JSONObject? {
-    var result: JSONObject? = null
-
-    this.forEach {
-        if (predicate(it)) {
-            result = it
-            return@forEach
-        }
-    }
-
-    return result
 }

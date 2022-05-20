@@ -26,10 +26,18 @@
  */
 package com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject
 
+/**
+ * Sealed class representing all the possible failure modes for coercing an arbitrary JSON into a
+ * [SObject].
+ */
 sealed class CoerceException(message: String?) : Exception(message) {
     abstract val offendingJsonString: String
 }
 
+/**
+ * Exception indicating that the provided SObject JSON had the incorrect object type declared in its
+ * structure.
+ */
 data class IncorrectObjectType(
     val expectedObjectType: String,
     val foundObjectType: String,
@@ -42,6 +50,11 @@ data class IncorrectObjectType(
     }
 )
 
+/**
+ * Exception indicating that the provided SObject JSON had an invalid value for one of its fields.
+ * [SObjectDeserializer] and [SObject] implementations encapsulate the business logic for which
+ * values are allowed.
+ */
 data class InvalidPropertyValue(
     val propertyKey: String,
     val allowedValuesDescription: String,
@@ -55,12 +68,17 @@ data class InvalidPropertyValue(
     }
 )
 
+/**
+ * Exception indicating that the provided SObject JSON was missing a required property in its structure.
+ * [SObjectDeserializer] and [SObject] implementations encapsulate the business logic for which
+ * properties are required.
+ */
 class MissingRequiredProperties(
     override val offendingJsonString: String,
     vararg val propertyKeys: String,
 ) : CoerceException(
     buildString {
-        appendLine("CoerceException - MissingRequiredProperty")
+        appendLine("CoerceException - MissingRequiredProperties")
         appendLine("This JSON was missing one or more of the required properties: $propertyKeys")
         appendLine("Offending JSON = '$offendingJsonString'")
     }

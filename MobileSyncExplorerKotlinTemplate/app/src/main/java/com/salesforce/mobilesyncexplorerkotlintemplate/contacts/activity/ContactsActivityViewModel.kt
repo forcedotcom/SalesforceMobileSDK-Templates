@@ -33,8 +33,7 @@ import com.salesforce.androidsdk.analytics.logger.SalesforceLogger
 import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.appContext
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.ContactsActivityMessages.*
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsClickHandler
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsFieldChangeHandler
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsComponentClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsUiState
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.copy
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListClickHandler
@@ -51,30 +50,66 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
-import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+/**
+ * The combination of UI state and interaction handling exposed to the Compose framework for the
+ * [ContactsActivity].
+ */
 interface ContactsActivityUiInteractor {
     val activityUiState: StateFlow<ContactsActivityUiState>
     val detailsUiState: StateFlow<ContactDetailsUiState>
     val listUiState: StateFlow<ContactsListUiState>
 
+    /**
+     * Flow of alert messages to show to the user. Usually emissions are in response to exceptions.
+     */
     val messages: Flow<ContactsActivityMessages>
 
-    val detailsFieldChangeHandler: ContactDetailsFieldChangeHandler
-    val detailsClickHandler: ContactDetailsClickHandler
+    val detailsClickHandler: ContactDetailsComponentClickHandler
     val listClickHandler: ContactsListClickHandler
 }
 
+/**
+ * The ViewModel declaration for [ContactsActivity], exposing functionality specifically for the
+ * Activity to use so as to keep certain things unavailable to the Compose UI.
+ */
 interface ContactsActivityViewModel : ContactsActivityUiInteractor {
+    /**
+     * [StateFlow] indicating whether UI components in this Activity should handle the back button
+     * instead of the system. Used to drive enabling of registered back handlers.
+     */
     val isHandlingBackEvents: StateFlow<Boolean>
 
+    /**
+     * Used in response to user switched events to recreate all data-layer objects using the new
+     * account. Must also be called when the initial user is provided after login.
+     */
     fun switchUser(newUser: UserAccount)
+
+    /**
+     * Performs a sync up and sync down for contacts.
+     */
     fun fullSync()
     fun handleBackClick()
 }
 
+/**
+ * Default implementation of the [ContactsActivityViewModel]. This is one interpretation for how to
+ * implement the user task of, "I want to view and edit the contacts in my Org" by coupling the
+ * Contacts List component to the Contact Details component.
+ *
+ * This implementation is complex, but many of the patterns used could be abstracted to common base
+ * classes if similar list-detail tasks are needed.
+ *
+ * The key pattern used here is the [eventMutex]. The asynchronous nature of Repo operations, record
+ * emissions, and UI interactions means concurrent programming must be the primary concern for this
+ * View Model. [eventMutex] is the gatekeeper for all asynchronous event handling by locking the
+ * entire View Model's state to only handle one event at a time. This effectively serializes the
+ * asynchronous events that this View Model handles, thus vastly simplifying internal state mutation
+ * logic.
+ */
 class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel {
 
     private val logger = SalesforceLogger.getLogger(ContactsActivity.COMPONENT_NAME, appContext)
@@ -83,15 +118,14 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
 
     override val detailsUiState: StateFlow<ContactDetailsUiState> get() = detailsVm.uiState
     override val listUiState: StateFlow<ContactsListUiState> get() = listVm.uiState
-    override val detailsClickHandler: ContactDetailsClickHandler get() = detailsVm
-    override val detailsFieldChangeHandler: ContactDetailsFieldChangeHandler get() = detailsVm
+    override val detailsClickHandler: ContactDetailsComponentClickHandler get() = detailsVm
     override val listClickHandler: ContactsListClickHandler get() = listVm
 
     /**
      * Acquire this lock and hold it for the entire time you are handling an event. Events are
      * anything asynchronous like user input events and repo data emissions.
      *
-     * Serializing event handling ensures the rest of the private implementation to safely mutate
+     * Serializing event handling allows the rest of the private implementation to safely mutate
      * internal state as needed without concurrency worries.
      */
     private val eventMutex = Mutex()
@@ -100,6 +134,7 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
     )
     override val activityUiState: StateFlow<ContactsActivityUiState> get() = mutActivityUiState
 
+    // This checks the status of the back handlers each time the components' UI state changes:
     override val isHandlingBackEvents: StateFlow<Boolean> =
         detailsVm.uiState
             .combine(listVm.uiState) { _, _ -> detailsVm.willHandleBack || listVm.willHandleBack }
@@ -115,18 +150,30 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
     )
     override val messages: Flow<ContactsActivityMessages> get() = mutMessages
 
+    /**
+     * The Repo record emissions captured by reference. It is faster to simply set the variable by
+     * reference than to replace all the content in a mutable map.
+     */
     @Volatile
     private var curRecordsByIds: Map<String, ContactRecord> = emptyMap()
 
+    /**
+     * Flag preventing handling of events until the first user account is provided after initial
+     * login.
+     */
     @Volatile
     private var hasInitialAccount = false
 
+    /**
+     * This can only be initialized once we have a [UserAccount], so it is lateinit.
+     */
     @Volatile
     private lateinit var contactsRepo: ContactsRepo
 
     @Volatile
     private var curUser: UserAccount? = null
 
+    @Volatile
     private var repoCollectorJob: Job? = null
 
     override fun switchUser(newUser: UserAccount) {
@@ -157,6 +204,7 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
 
                 hasInitialAccount = true
 
+                // Always do a full sync when the user changes to ensure all data is up-to-date:
                 fullSync()
             }
         }
@@ -164,6 +212,10 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
 
     override fun fullSync() {
         viewModelScope.launch {
+            /* Only perform the UI state update within the event lock. Otherwise the user input will
+             * be unresponsive during the long-running sync operations. This is okay because the user
+             * can continue to interact with the current list of records without affecting the sync
+             * operation. */
             eventMutex.withLockDebug {
                 mutActivityUiState.value = activityUiState.value.copy(isSyncing = true)
             }
@@ -209,14 +261,9 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
         }
     }
 
-    private val isBackBeingHandled = AtomicBoolean(false)
-
-    override fun handleBackClick() {
-        if (isBackBeingHandled.compareAndSet(false, true)) {
-            safeHandleUiEvent {
-                detailsVm.onBackPressed() // list does not handle back click
-                isBackBeingHandled.set(false)
-            }
+    override fun handleBackClick() = safeHandleUiEvent {
+        if (isHandlingBackEvents.value) {
+            detailsVm.onBackPressed() // list does not handle back click
         }
     }
 
@@ -228,6 +275,15 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
 
         val record = contactId?.let { curRecordsByIds[contactId] }
 
+        /* This wraps the discard changes dialog in a coroutine so that the method only continues
+         * once the user has made a selection. THIS KEEPS THE EVENT MUTEX LOCKED UNTIL THE USER
+         * MAKES A CHOICE. It is okay to do this because the dialog will take over the screen, not
+         * allowing any other user interaction until they make a decision.
+         *
+         * It also prevents the VM from reacting to any record emissions from the data layer until
+         * the user makes a choice, and this too is a good thing. Changing the data displayed in the
+         * UI while there is an alert dialog present may lead to the user's choice having unintended
+         * side-effects. */
         val mayContinue = !detailsVm.hasUnsavedChanges || suspendCoroutine { cont ->
             val discardChangesDialog = DiscardChangesDialogUiState(
                 onCancelDiscardChanges = { cont.resume(value = false) },
@@ -305,6 +361,15 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
             return
         }
 
+        /* This wraps the delete dialog in a coroutine so that the method only continues once the
+         * user has made a selection. THIS KEEPS THE EVENT MUTEX LOCKED UNTIL THE USER MAKES A CHOICE.
+         * It is okay to do this because the dialog will take over the screen, not allowing any other
+         * user interaction until they make a decision.
+         *
+         * It also prevents the VM from reacting to any record emissions from the data layer until
+         * the user makes a choice, and this too is a good thing. Changing the data displayed in the
+         * UI while there is an alert dialog present may lead to the user's choice having unintended
+         * side-effects. */
         val confirmed = suspendCoroutine<Boolean> { cont ->
             val deleteDialog = DeleteConfirmationDialogUiState(
                 objIdToDelete = idToDelete,
@@ -346,6 +411,15 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
             return
         }
 
+        /* This wraps the undelete dialog in a coroutine so that the method only continues once the
+         * user has made a selection. THIS KEEPS THE EVENT MUTEX LOCKED UNTIL THE USER MAKES A CHOICE.
+         * It is okay to do this because the dialog will take over the screen, not allowing any other
+         * user interaction until they make a decision.
+         *
+         * It also prevents the VM from reacting to any record emissions from the data layer until
+         * the user makes a choice, and this too is a good thing. Changing the data displayed in the
+         * UI while there is an alert dialog present may lead to the user's choice having unintended
+         * side-effects. */
         val confirmed = suspendCoroutine<Boolean> { cont ->
             val undeleteDialog = UndeleteConfirmationDialogUiState(
                 objIdToUndelete = idToUndelete,
@@ -381,6 +455,10 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
         }
     }
 
+    /**
+     * Convenience method for the common case of performing an action while the UI is updated to
+     * indicate that a data operation is active (e.g. showing a loading overlay).
+     */
     private suspend fun withDataOpActiveUiState(block: suspend () -> Unit) {
         try {
             mutActivityUiState.value = activityUiState.value.copy(dataOpIsActive = true)
@@ -409,6 +487,9 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
         }
     }
 
+    /**
+     * Convenience method for dismissing the currently-shown alert dialog.
+     */
     private fun dismissCurDialog() {
         mutActivityUiState.value = mutActivityUiState.value.copy(dialogUiState = null)
     }
@@ -421,9 +502,13 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
     // endregion
 
 
-    private inner class DefaultContactDetailsViewModel
-        : ContactDetailsFieldChangeHandler,
-        ContactDetailsClickHandler {
+    /**
+     * An implementation of the Contact Details Component contract, implementing the details field
+     * change handlers and the UI click handlers. Implemented as an inner class to allow access to
+     * common [DefaultContactsActivityViewModel] properties such as the shared event lock while
+     * keeping implementation details hidden from other components.
+     */
+    private inner class DefaultContactDetailsViewModel : ContactDetailsComponentClickHandler {
 
         private val initialState: ContactDetailsUiState
             get() = ContactDetailsUiState.NoContactSelected(doingInitialLoad = true)
@@ -463,6 +548,7 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
             val curState = uiState.value as? ContactDetailsUiState.ViewingContactDetails
                 ?: return
 
+            // This component's back-stack is implemented as NoContactSelected -> ViewingContactDetails (editing = false) -> ViewingContactDetails (editing = true)
             if (curState.isEditingEnabled) {
                 setContactWithConfirmation(contactId = uiState.value.recordId, editing = false)
             } else {
@@ -470,6 +556,25 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
             }
         }
 
+        /**
+         * Unconditionally sets the displayed contact details in the Contact Details component to
+         * the provided [record] in the provided [editing] mode. There are four modes the component can
+         * change to, depending on the combination of arguments provided.
+         *
+         * ```
+         * +===========+============+==================================+
+         * | Record    | Editing    | Resulting Mode                   |
+         * +===========+============+==================================+
+         * | null      | false      | No Contact Selected              |
+         * +-----------+------------+----------------------------------+
+         * | null      | true       | Creating New Contact             |
+         * +-----------+------------+----------------------------------+
+         * | non-null  | false      | Viewing Provided Record          |
+         * +-----------+------------+----------------------------------+
+         * | non-null  | true       | Editing Provided Record          |
+         * +-----------+------------+----------------------------------+
+         * ```
+         */
         fun clobberRecord(record: ContactRecord?, editing: Boolean) {
             if (record == null) {
                 if (editing) {
@@ -491,7 +596,7 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
                 }
             } else {
                 mutDetailsUiState.value = record.buildViewingContactUiState(
-                    uiSyncState = record.localStatus.toUiSyncState(),
+                    uiSyncState = record.syncState.toUiSyncState(),
                     isEditingEnabled = editing,
                     shouldScrollToErrorField = false,
                 )
@@ -509,6 +614,7 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
                             true
                         }
                     } ?: true // creating new contact, so assume changes are present
+
                     is ContactDetailsUiState.NoContactSelected -> false
                 }
             }
@@ -560,7 +666,7 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
             }
         }
 
-        override fun onFirstNameChange(newFirstName: String) = safeHandleUiEvent {
+        private fun onFirstNameChange(newFirstName: String) = safeHandleUiEvent {
             val curState = uiState.value as? ContactDetailsUiState.ViewingContactDetails
                 ?: return@safeHandleUiEvent
 
@@ -569,7 +675,7 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
             )
         }
 
-        override fun onLastNameChange(newLastName: String) = safeHandleUiEvent {
+        private fun onLastNameChange(newLastName: String) = safeHandleUiEvent {
             val curState = uiState.value as? ContactDetailsUiState.ViewingContactDetails
                 ?: return@safeHandleUiEvent
 
@@ -578,7 +684,7 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
             )
         }
 
-        override fun onTitleChange(newTitle: String) = safeHandleUiEvent {
+        private fun onTitleChange(newTitle: String) = safeHandleUiEvent {
             val curState = uiState.value as? ContactDetailsUiState.ViewingContactDetails
                 ?: return@safeHandleUiEvent
 
@@ -587,7 +693,7 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
             )
         }
 
-        override fun onDepartmentChange(newDepartment: String) = safeHandleUiEvent {
+        private fun onDepartmentChange(newDepartment: String) = safeHandleUiEvent {
             val curState = uiState.value as? ContactDetailsUiState.ViewingContactDetails
                 ?: return@safeHandleUiEvent
 
@@ -702,6 +808,12 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
         private fun sanitizeName(name: String): String = name.removeNewlineChars().removeTabChars()
     }
 
+    /**
+     * An implementation of the Contacts List Component contract, implementing the list click handlers.
+     * Implemented as an inner class to allow access to common * [DefaultContactsActivityViewModel]
+     * properties such as the shared event lock while keeping implementation details hidden from other
+     * components.
+     */
     private inner class DefaultContactsListViewModel : ContactsListClickHandler {
 
         private val initialState: ContactsListUiState
@@ -782,6 +894,13 @@ class DefaultContactsActivityViewModel : ViewModel(), ContactsActivityViewModel 
         @Volatile
         private var curSearchJob: Job? = null
 
+        /**
+         * Starts or restarts the [Job] for searching through the current list of contacts for the
+         * user's entered search term. This [Job] runs on [Dispatchers.Default].
+         *
+         * @param searchTerm The string to locate in the names of contacts.
+         * @param block The code to be run with the filtered results of the completed search.
+         */
         private fun restartSearch(
             searchTerm: String?,
             block: suspend (filteredList: List<ContactRecord>) -> Unit

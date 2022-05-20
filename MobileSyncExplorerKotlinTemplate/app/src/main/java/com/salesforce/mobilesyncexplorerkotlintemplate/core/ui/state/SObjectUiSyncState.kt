@@ -24,11 +24,27 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent
+package com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state
 
-interface ContactDetailsFieldChangeHandler {
-    fun onFirstNameChange(newFirstName: String)
-    fun onLastNameChange(newLastName: String)
-    fun onTitleChange(newTitle: String)
-    fun onDepartmentChange(newDepartment: String)
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectSyncState
+
+/**
+ * A UI layer abstraction of the [SObjectSyncState] so as to simplify building UI and separate
+ * concerns.
+ */
+enum class SObjectUiSyncState {
+    Deleted,
+    NotSaved,
+    Synced,
+    Updated,
+}
+
+fun SObjectSyncState.toUiSyncState(): SObjectUiSyncState = when (this) {
+    SObjectSyncState.LocallyDeleted,
+    SObjectSyncState.LocallyDeletedAndLocallyUpdated -> SObjectUiSyncState.Deleted
+
+    SObjectSyncState.LocallyCreated,
+    SObjectSyncState.LocallyUpdated -> SObjectUiSyncState.Updated
+
+    SObjectSyncState.MatchesUpstream -> SObjectUiSyncState.Synced
 }

@@ -26,11 +26,18 @@
  */
 package com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions
 
+/**
+ * Simple convenience encapsulation for the return value of [partitionBySuccess].
+ */
 data class ResultPartition<out S>(
     val successes: List<S>,
     val failures: List<Throwable>
 )
 
+/**
+ * Convenience method to partition a collection of [Result]s into a list of success values and a list
+ * of [Throwable]s.
+ */
 fun <T> Iterable<Result<T>>.partitionBySuccess(): ResultPartition<T> {
     val successes = mutableListOf<T>()
     val failures = mutableListOf<Throwable>()

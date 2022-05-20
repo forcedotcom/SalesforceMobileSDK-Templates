@@ -52,6 +52,10 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.ALPHA_DISAB
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
 
+/**
+ * A [Card] Composable for showing the name and sync status of a contact. Also offers an expando
+ * button to show or hide more contact details.
+ */
 @Composable
 fun ContactCard(
     modifier: Modifier = Modifier,
@@ -120,7 +124,7 @@ private fun ContactCardInnerContent(
                 modifier = Modifier
                     .size(48.dp)
                     .padding(4.dp),
-                uiState = syncState
+                uiSyncState = syncState
             )
 
             ExpandoButton(
@@ -183,7 +187,7 @@ private fun ContactDropdownMenu(
 @Preview(showBackground = true)
 @Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable
-fun PreviewContactListItem() {
+private fun PreviewContactListItem() {
     SalesforceMobileSDKAndroidTheme {
         Surface {
             Column {

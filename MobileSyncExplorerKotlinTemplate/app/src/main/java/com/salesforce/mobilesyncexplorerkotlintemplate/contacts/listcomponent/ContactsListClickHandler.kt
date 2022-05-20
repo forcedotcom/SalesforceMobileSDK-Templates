@@ -26,6 +26,9 @@
  */
 package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent
 
+/**
+ * Interface encapsulating all possible click events that can occur in the Contacts List component.
+ */
 interface ContactsListClickHandler {
     fun contactClick(contactId: String)
     fun createClick()

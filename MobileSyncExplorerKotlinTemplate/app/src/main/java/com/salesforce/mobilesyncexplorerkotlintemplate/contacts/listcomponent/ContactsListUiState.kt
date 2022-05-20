@@ -26,12 +26,20 @@
  */
 package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent
 
-import com.salesforce.mobilesyncexplorerkotlintemplate.R
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.EditableTextFieldUiState
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.FormattedStringRes
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
 
+/**
+ * UI state for the Contacts List component.
+ *
+ * @param contacts The list of contacts to render. Set this to your filtered list of contacts when search results are obtained.
+ * @param curSelectedContactId Used to visually indicate which contact the user has selected.
+ * @param isDoingInitialLoad Flag to visually indicate that the list is doing its initial data fetch (e.g. showing a loading spinner).
+ * @param isDoingDataAction Flag to visually indicate that the list is doing a data operation such as deleting a contact.
+ * @param isSearchJobRunning Flag to visually indicate that the contact list search operation is active.
+ * @param searchField Field object to encapsulate the search bar for the contacts list.
+ */
 data class ContactsListUiState(
     val contacts: List<SObjectRecord<ContactObject>>,
     val curSelectedContactId: String?,

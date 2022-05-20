@@ -49,6 +49,10 @@ import androidx.compose.ui.unit.dp
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.WINDOW_SIZE_COMPACT_CUTOFF_DP
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 
+/**
+ * Wraps a [TextField] in a [Surface] with elevation to give it the appearance of floating above the
+ * rest of the UI. Restricted to one (1) line.
+ */
 @Composable
 fun FloatingTextEntryBar(
     value: String,

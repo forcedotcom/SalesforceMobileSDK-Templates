@@ -30,12 +30,18 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 
+/**
+ * The different logical sizes of the app window, applicable to both horizontal and vertical axes.
+ */
 enum class WindowSizeClass {
     Compact,
     Medium,
     Expanded
 }
 
+/**
+ * A simple data holder representing the horizontal and vertical [WindowSizeClass].
+ */
 data class WindowSizeClasses(val horiz: WindowSizeClass, val vert: WindowSizeClass)
 
 fun DpSize.toWindowSizeClasses() = WindowSizeClasses(

@@ -30,10 +30,22 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.EditableTex
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.SObjectUiSyncState
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
 
+/**
+ * Sealed interface encapsulating all possible states of the Contact Details component. This
+ * interface defines several common properties shared between all sub-states of the component.
+ */
 sealed interface ContactDetailsUiState {
     val doingInitialLoad: Boolean
     val recordId: String?
 
+    /**
+     * State of the Contact Details component when the user is viewing or editing contact details.
+     *
+     * The [isEditingEnabled] flag is what controls whether the Details component is in "edit mode" or
+     * "viewing mode." These two states could be represented by separate concrete types, but the only
+     * difference between them would be the [isEditingEnabled] flag. For simplicity, these two modes
+     * are combined into this one sub-state.
+     */
     data class ViewingContactDetails(
         override val recordId: String?,
         val firstNameField: EditableTextFieldUiState,
@@ -53,6 +65,9 @@ sealed interface ContactDetailsUiState {
         )
     }
 
+    /**
+     * State of the Contact Details component when the component has no details to show.
+     */
     data class NoContactSelected(
         override val doingInitialLoad: Boolean = false
     ) : ContactDetailsUiState {
@@ -60,6 +75,11 @@ sealed interface ContactDetailsUiState {
     }
 }
 
+/**
+ * Convenience method to get data class copy semantics on the sealed interface. This method cannot
+ * be used to change to a different sub-state of the Contact Details component; it only allows
+ * modification of the shared state properties.
+ */
 fun ContactDetailsUiState.copy(
     doingInitialLoad: Boolean = this.doingInitialLoad,
 ) = when (this) {

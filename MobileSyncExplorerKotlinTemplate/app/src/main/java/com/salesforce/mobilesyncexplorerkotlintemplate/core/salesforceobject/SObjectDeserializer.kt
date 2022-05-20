@@ -44,10 +44,10 @@ abstract class SObjectDeserializerBase<T : SObject>(val objectType: String) :
         SObjectDeserializerHelper.requireSoType(json, objectType)
 
         val id = SObjectDeserializerHelper.getIdOrThrow(json)
-        val localStatus = json.coerceToLocalStatus()
+        val syncState = json.coerceToSyncState()
         val model = buildModel(fromJson = json)
 
-        return SObjectRecord(id = id, localStatus = localStatus, sObject = model)
+        return SObjectRecord(id = id, syncState = syncState, sObject = model)
     }
 
     @Throws(CoerceException::class)

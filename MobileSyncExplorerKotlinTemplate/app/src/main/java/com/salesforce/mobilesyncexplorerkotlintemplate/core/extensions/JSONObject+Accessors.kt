@@ -28,6 +28,10 @@ package com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions
 
 import org.json.JSONObject
 
+/**
+ * Returns the String for the provided key in this [JSONObject], or null if the key does not exist
+ * or the value of the key is [JSONObject.NULL].
+ */
 fun JSONObject.optStringOrNull(key: String): String? =
     if (this.isNotNull(key)) getString(key)
     else null

@@ -44,19 +44,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.salesforce.mobilesyncexplorerkotlintemplate.R
 import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.*
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsClickHandler
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsFieldChangeHandler
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsComponentClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsUiState
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ui.ContactDetailsContent
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ui.ContactDetailsContentSinglePane
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ui.ContactDetailsComponentFormContent
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ui.ContactDetailsSinglePaneComponent
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ui.ContactDetailsTopBarContentExpanded
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ui.toPreviewViewingContactDetails
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiState
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ui.ContactsListContent
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ui.ContactsListComponentListContent
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ui.ContactsListSinglePaneComponent
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.LocalStatus
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectSyncState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.LoadingOverlay
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.MIN_TOUCH_TARGET_SIZE_DP
@@ -81,6 +80,7 @@ fun ContactsActivityContent(
     val listUiState by activityUiInteractor.listUiState.collectAsState()
     val activityUiState by activityUiInteractor.activityUiState.collectAsState()
 
+    // Use the provided window size class to determine high-level Activity layout:
     when (windowSizeClasses.toContactsActivityContentLayout()) {
         ContactsActivityContentLayout.SinglePane -> SinglePane(
             activityUiState = activityUiState,
@@ -108,16 +108,19 @@ fun ContactsActivityContent(
 private fun SinglePane(
     activityUiState: ContactsActivityUiState,
     detailsUiState: ContactDetailsUiState,
-    detailsClickHandler: ContactDetailsClickHandler,
+    detailsClickHandler: ContactDetailsComponentClickHandler,
     listUiState: ContactsListUiState,
     listClickHandler: ContactsListClickHandler,
     menuHandler: ContactsActivityMenuHandler,
 ) {
     val showLoading = activityUiState.dataOpIsActive || activityUiState.isSyncing
-    // In single pane mode, if the user is viewing contact details then only show the details component;
-    // else show the list component
+
+    // If the user is viewing contact details then only show the details component in single pane
+    // mode; else show the list component. This acts like a back stack even though there are no
+    // Fragment transactions or navigation.
+
     when (detailsUiState) {
-        is ContactDetailsUiState.ViewingContactDetails -> ContactDetailsContentSinglePane(
+        is ContactDetailsUiState.ViewingContactDetails -> ContactDetailsSinglePaneComponent(
             details = detailsUiState,
             showLoadingOverlay = showLoading,
             componentClickHandler = detailsClickHandler,
@@ -136,7 +139,7 @@ private fun SinglePane(
 private fun ListDetail(
     activityUiState: ContactsActivityUiState,
     detailsUiState: ContactDetailsUiState,
-    detailsClickHandler: ContactDetailsClickHandler,
+    detailsClickHandler: ContactDetailsComponentClickHandler,
     listUiState: ContactsListUiState,
     listClickHandler: ContactsListClickHandler,
     menuHandler: ContactsActivityMenuHandler,
@@ -148,7 +151,7 @@ private fun ListDetail(
                 when (detailsUiState) {
                     is ContactDetailsUiState.NoContactSelected -> Text(stringResource(id = label_contacts))
                     is ContactDetailsUiState.ViewingContactDetails -> {
-                        SyncImage(uiState = detailsUiState.uiSyncState)
+                        SyncImage(uiSyncState = detailsUiState.uiSyncState)
                         Text(detailsUiState.fullName)
                     }
                 }
@@ -182,6 +185,8 @@ private fun ListDetail(
         val topPadding = paddingVals.calculateTopPadding()
         val bottomPadding = paddingVals.calculateBottomPadding()
 
+        // Entire Activity is implemented as a single row with two columns -- one for the list and
+        // one for the details:
         Row(modifier = Modifier.fillMaxSize()) {
             val listModifier: Modifier
             val detailModifier: Modifier
@@ -195,7 +200,7 @@ private fun ListDetail(
             }
 
             Column(modifier = listModifier.padding(top = topPadding, bottom = bottomPadding)) {
-                ContactsListContent(
+                ContactsListComponentListContent(
                     modifier = Modifier.fillMaxSize(),
                     uiState = listUiState,
                     listClickHandler = listClickHandler,
@@ -228,7 +233,7 @@ private fun ListDetailContactDetailsContent(
     val topPadding by animateIntAsState(targetValue = if (isEditing) MIN_TOUCH_TARGET_SIZE_DP + clearButtonPaddingDp else 8)
 
     Box(modifier = Modifier.fillMaxSize()) {
-        ContactDetailsContent(
+        ContactDetailsComponentFormContent(
             details = detailsUiState,
             modifier = Modifier
                 .animateContentSize()
@@ -254,41 +259,44 @@ private fun ListDetailContactDetailsContent(
 }
 
 @Composable
-fun ContactsActivityMenuButton(menuHandler: ContactsActivityMenuHandler) {
+fun ContactsActivityMenuButton(
+    modifier: Modifier = Modifier,
+    menuHandler: ContactsActivityMenuHandler
+) {
     var menuExpanded by remember { mutableStateOf(false) }
-    fun dismissMenu() {
-        menuExpanded = false
-    }
 
-    IconButton(onClick = { menuExpanded = !menuExpanded }) {
+    IconButton(modifier = modifier, onClick = { menuExpanded = !menuExpanded }) {
         Icon(
             Icons.Default.MoreVert,
             contentDescription = stringResource(id = content_desc_menu)
         )
 
         DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
-            DropdownMenuItem(onClick = { dismissMenu(); menuHandler.onSyncClick() }) {
+            DropdownMenuItem(onClick = { menuExpanded = false; menuHandler.onSyncClick() }) {
                 Text(stringResource(id = cta_sync))
             }
 
-            DropdownMenuItem(onClick = { dismissMenu(); menuHandler.onSwitchUserClick() }) {
+            DropdownMenuItem(onClick = { menuExpanded = false; menuHandler.onSwitchUserClick() }) {
                 Text(stringResource(id = cta_switch_user))
             }
 
-            DropdownMenuItem(onClick = { dismissMenu(); menuHandler.onLogoutClick() }) {
+            DropdownMenuItem(onClick = { menuExpanded = false; menuHandler.onLogoutClick() }) {
                 Text(stringResource(id = cta_logout))
             }
 
-            DropdownMenuItem(onClick = { dismissMenu(); menuHandler.onInspectDbClick() }) {
+            DropdownMenuItem(onClick = { menuExpanded = false; menuHandler.onInspectDbClick() }) {
                 Text(stringResource(id = cta_inspect_db))
             }
         }
     }
 }
 
+/**
+ * The Composable for rendering an icon corresponding to the provided [uiSyncState].
+ */
 @Composable
-fun SyncImage(modifier: Modifier = Modifier, uiState: SObjectUiSyncState) {
-    when (uiState) {
+fun SyncImage(modifier: Modifier = Modifier, uiSyncState: SObjectUiSyncState) {
+    when (uiSyncState) {
         SObjectUiSyncState.NotSaved -> Icon(
             Icons.Default.Star,
             contentDescription = stringResource(id = content_desc_not_saved)
@@ -314,6 +322,9 @@ fun SyncImage(modifier: Modifier = Modifier, uiState: SObjectUiSyncState) {
     }
 }
 
+/**
+ * The different top-level UI configurations for the [ContactsActivity]
+ */
 private enum class ContactsActivityContentLayout {
     SinglePane,
     ListDetail
@@ -331,7 +342,7 @@ private fun SinglePaneListPreview() {
     val contacts = (1..100).map { it.toString() }.map {
         SObjectRecord(
             id = it,
-            localStatus = LocalStatus.MatchesUpstream,
+            syncState = SObjectSyncState.MatchesUpstream,
             sObject = ContactObject(
                 firstName = "First $it",
                 lastName = "Last $it",
@@ -341,7 +352,7 @@ private fun SinglePaneListPreview() {
         )
     }
 
-    val detailsVm = PreviewDetailsVm(
+    val detailsVm = PreviewDetailsComponentVm(
         uiState = ContactDetailsUiState.NoContactSelected()
     )
 
@@ -389,7 +400,7 @@ private fun SinglePaneDetailsPreview() {
     val contacts = (1..100).map { it.toString() }.map {
         SObjectRecord(
             id = it,
-            localStatus = LocalStatus.MatchesUpstream,
+            syncState = SObjectSyncState.MatchesUpstream,
             sObject = ContactObject(
                 firstName = "First $it",
                 lastName = "Last $it",
@@ -401,7 +412,7 @@ private fun SinglePaneDetailsPreview() {
 
     val selectedContact = contacts[3]
 
-    val detailsVm = PreviewDetailsVm(
+    val detailsVm = PreviewDetailsComponentVm(
         uiState = selectedContact.toPreviewViewingContactDetails()
     )
 
@@ -453,7 +464,7 @@ private fun ListDetailMediumPreview() {
     val contacts = (1..100).map { it.toString() }.map {
         SObjectRecord(
             id = it,
-            localStatus = LocalStatus.MatchesUpstream,
+            syncState = SObjectSyncState.MatchesUpstream,
             sObject = ContactObject(
                 firstName = "First $it",
                 lastName = "Last $it",
@@ -465,7 +476,7 @@ private fun ListDetailMediumPreview() {
 
     val selectedContact = contacts[3]
 
-    val detailsVm = PreviewDetailsVm(
+    val detailsVm = PreviewDetailsComponentVm(
         uiState = selectedContact.toPreviewViewingContactDetails()
     )
 
@@ -515,7 +526,7 @@ private fun ListDetailEditingPreview() {
     val contacts = (1..100).map { it.toString() }.map {
         SObjectRecord(
             id = it,
-            localStatus = LocalStatus.MatchesUpstream,
+            syncState = SObjectSyncState.MatchesUpstream,
             sObject = ContactObject(
                 firstName = "First $it",
                 lastName = "Last $it",
@@ -527,7 +538,7 @@ private fun ListDetailEditingPreview() {
 
     val selectedContact = contacts[3]
 
-    val detailsVm = PreviewDetailsVm(
+    val detailsVm = PreviewDetailsComponentVm(
         uiState = selectedContact.toPreviewViewingContactDetails(isEditingEnabled = true)
     )
 
@@ -577,7 +588,7 @@ private fun ListDetailNoContactPreview() {
     val contacts = (1..100).map { it.toString() }.map {
         SObjectRecord(
             id = it,
-            localStatus = LocalStatus.MatchesUpstream,
+            syncState = SObjectSyncState.MatchesUpstream,
             sObject = ContactObject(
                 firstName = "First $it",
                 lastName = "Last $it",
@@ -587,7 +598,7 @@ private fun ListDetailNoContactPreview() {
         )
     }.filter { it.sObject.fullName.contains(curSearchTerm) }
 
-    val detailsVm = PreviewDetailsVm(
+    val detailsVm = PreviewDetailsComponentVm(
         uiState = ContactDetailsUiState.NoContactSelected()
     )
 
@@ -642,7 +653,7 @@ private fun ListDetailExpandedPreview() {
     val contacts = (1..100).map { it.toString() }.map {
         SObjectRecord(
             id = it,
-            localStatus = LocalStatus.MatchesUpstream,
+            syncState = SObjectSyncState.MatchesUpstream,
             sObject = ContactObject(
                 firstName = "First $it",
                 lastName = "Last $it",
@@ -654,7 +665,7 @@ private fun ListDetailExpandedPreview() {
 
     val selectedContact = contacts[3]
 
-    val detailsVm = PreviewDetailsVm(
+    val detailsVm = PreviewDetailsComponentVm(
         uiState = selectedContact.toPreviewViewingContactDetails()
     )
 
@@ -693,16 +704,12 @@ private fun ListDetailExpandedPreview() {
     }
 }
 
-class PreviewDetailsVm(uiState: ContactDetailsUiState) : ContactDetailsClickHandler,
-    ContactDetailsFieldChangeHandler {
+class PreviewDetailsComponentVm(uiState: ContactDetailsUiState) :
+    ContactDetailsComponentClickHandler {
 
     val uiState: StateFlow<ContactDetailsUiState> = MutableStateFlow(uiState)
     val uiStateValue get() = this.uiState.value
 
-    override fun onFirstNameChange(newFirstName: String) {}
-    override fun onLastNameChange(newLastName: String) {}
-    override fun onTitleChange(newTitle: String) {}
-    override fun onDepartmentChange(newDepartment: String) {}
     override fun createClick() {}
     override fun deleteClick() {}
     override fun undeleteClick() {}
@@ -721,7 +728,6 @@ class PreviewListVm(uiState: ContactsListUiState) : ContactsListClickHandler {
     override fun deleteClick(contactId: String) {}
     override fun editClick(contactId: String) {}
     override fun undeleteClick(contactId: String) {}
-    fun onSearchTermUpdated(newSearchTerm: String) {}
 }
 
 class PreviewActivityVm(
@@ -733,14 +739,13 @@ class PreviewActivityVm(
         MutableStateFlow(activityState)
     val uiStateValue get() = activityUiState.value
 
-    private val detailsVm = PreviewDetailsVm(detailsState)
+    private val detailsVm = PreviewDetailsComponentVm(detailsState)
     private val listVm = PreviewListVm(listState)
 
     override val detailsUiState: StateFlow<ContactDetailsUiState> get() = detailsVm.uiState
     override val listUiState: StateFlow<ContactsListUiState> get() = listVm.uiState
 
-    override val detailsClickHandler: ContactDetailsClickHandler get() = detailsVm
-    override val detailsFieldChangeHandler: ContactDetailsFieldChangeHandler get() = detailsVm
+    override val detailsClickHandler: ContactDetailsComponentClickHandler get() = detailsVm
     override val listClickHandler: ContactsListClickHandler get() = listVm
     override val messages: Flow<ContactsActivityMessages>
         get() = emptyFlow()

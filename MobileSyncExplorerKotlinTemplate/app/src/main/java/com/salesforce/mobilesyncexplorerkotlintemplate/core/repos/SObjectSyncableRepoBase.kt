@@ -54,6 +54,14 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
+/**
+ * A base implementation of [SObjectSyncableRepo] for a single SObject of type [T].
+ *
+ * NB: Caution is advised when using this implementation at large scales because of the
+ * [MutableSharedFlow] with _replay_. This hot [Flow] will keep the latest emission of records loaded
+ * in-memory at all times, and for large numbers of records this can significantly impact memory
+ * usage.
+ */
 abstract class SObjectSyncableRepoBase<T : SObject>(
     account: UserAccount,
     protected val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
@@ -66,6 +74,10 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
     private val listMutex = Mutex()
 
     private val mutRecordsById = mutableMapOf<String, SObjectRecord<T>>()
+
+    /**
+     * This is equivalent to a StateFlow that does not require an initial value.
+     */
     private val mutState = MutableSharedFlow<Map<String, SObjectRecord<T>>>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
@@ -280,7 +292,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
 
         try {
             val retrieved = retrieveByIdOrThrowOperationException(id)
-            val localStatus = retrieved.elt.coerceToLocalStatus()
+            val localStatus = retrieved.elt.coerceToSyncState()
 
             val result = when {
                 localStatus.isLocallyCreated -> {
@@ -338,7 +350,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
 
         try {
             val retrieved = retrieveByIdOrThrowOperationException(id)
-            val curLocalStatus = retrieved.elt.coerceToLocalStatus()
+            val curLocalStatus = retrieved.elt.coerceToSyncState()
 
             if (!curLocalStatus.isLocallyDeleted) {
                 store.setTransactionSuccessful()
@@ -467,11 +479,16 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
      * Convenience method for the common procedure of trying to retrieve a single object by its ID
      * or throwing the corresponding exception.
      */
-    @Throws(RepoOperationException.RecordNotFound::class)
+    @Throws(
+        RepoOperationException.RecordNotFound::class,
+        RepoOperationException.SmartStoreOperationFailed::class,
+    )
     protected fun retrieveByIdOrThrowOperationException(id: String) = try {
         store.retrieveSingleById(soupName = soupName, idColName = Constants.ID, id = id)
     } catch (ex: NoSuchElementException) {
         throw RepoOperationException.RecordNotFound(id = id, soupName = soupName, cause = ex)
+    } catch (ex: IllegalArgumentException) {
+        throw RepoOperationException.SmartStoreOperationFailed(message = ex.message, cause = ex)
     }
 
 

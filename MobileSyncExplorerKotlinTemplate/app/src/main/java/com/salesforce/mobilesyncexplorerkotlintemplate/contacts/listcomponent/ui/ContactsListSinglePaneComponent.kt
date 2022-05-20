@@ -45,15 +45,17 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.PREVIEW
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.previewContactListSearchField
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiState
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.LocalStatus
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectSyncState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.LoadingOverlay
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.EditableTextFieldUiState
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.FormattedStringRes
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactRecord
 
+/**
+ * Composable for when the Contacts List component should take up all space in the app. Acts like a
+ * full screen Activity for interacting with contacts list.
+ */
 @Composable
 fun ContactsListSinglePaneComponent(
     modifier: Modifier = Modifier,
@@ -80,7 +82,7 @@ fun ContactsListSinglePaneComponent(
         floatingActionButtonPosition = FabPosition.Center,
         isFloatingActionButtonDocked = true,
     ) {
-        ContactsListContent(
+        ContactsListComponentListContent(
             modifier = Modifier
                 .padding(it)
                 .then(contentModifier),
@@ -121,7 +123,7 @@ private fun ContactsListSinglePaneComponentPreview() {
         .map {
             SObjectRecord(
                 id = it,
-                localStatus = LocalStatus.LocallyCreated,
+                syncState = SObjectSyncState.LocallyCreated,
                 sObject = ContactObject(
                     firstName = "Contact",
                     lastName = it,
@@ -163,7 +165,7 @@ private fun ContactListSyncingAndSearchingPreview() {
         .map {
             SObjectRecord(
                 id = it,
-                localStatus = LocalStatus.LocallyCreated,
+                syncState = SObjectSyncState.LocallyCreated,
                 sObject = ContactObject(
                     firstName = "Contact",
                     lastName = it,

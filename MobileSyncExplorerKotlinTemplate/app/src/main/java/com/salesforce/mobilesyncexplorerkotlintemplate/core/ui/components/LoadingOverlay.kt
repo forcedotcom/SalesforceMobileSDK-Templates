@@ -56,17 +56,7 @@ fun LoadingOverlay() {
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            val transition = rememberInfiniteTransition()
-            val angle: Float by transition.animateFloat(
-                initialValue = 0f,
-                targetValue = 360f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(
-                        durationMillis = 750,
-                        easing = LinearEasing
-                    ),
-                )
-            )
+            val angle: Float by rememberSimpleSpinAnimation(hertz = 1.25f)
             Icon(
                 Icons.Default.Refresh,
                 contentDescription = null,

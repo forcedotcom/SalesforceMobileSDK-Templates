@@ -43,19 +43,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.salesforce.mobilesyncexplorerkotlintemplate.R.drawable.ic_undo
 import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.*
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsClickHandler
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsComponentClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsUiState
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.LocalStatus
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectSyncState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.SObjectUiSyncState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.WINDOW_SIZE_MEDIUM_CUTOFF_DP
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactRecord
 
+/**
+ * Composable for the top app bar of the Contact Details component when the app window is in the
+ * expanded size class.
+ */
 @Composable
 fun RowScope.ContactDetailsTopBarContentExpanded(
     detailsUiState: ContactDetailsUiState,
-    eventHandler: ContactDetailsClickHandler
+    eventHandler: ContactDetailsComponentClickHandler
 ) {
     Spacer(modifier = Modifier.weight(1f))
     when (detailsUiState) {
@@ -104,7 +108,7 @@ fun RowScope.ContactDetailsTopBarContentExpanded(
 private fun ContactDetailsTopBarExpandedPreview() {
     val mockContact = ContactRecord(
         id = "1",
-        localStatus = LocalStatus.MatchesUpstream,
+        syncState = SObjectSyncState.MatchesUpstream,
         sObject = ContactObject(
             firstName = "First",
             lastName = "Last",

@@ -27,12 +27,24 @@
 package com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state
 
 /**
- * UI state for a general editable field rendered in a form.
+ * The editable version of [FieldUiState].
  */
 interface EditableFieldUiState : FieldUiState {
     val fieldIsEnabled: Boolean
+
+    /**
+     * The callback for when the field value changes. The contract for this callback is that the new
+     * value will be sanitized by the UI before invoking the callback.
+     */
     val onValueChange: (newValue: String) -> Unit
+
+    /**
+     * Used in the UI to ensure there is no bad data in the user-inputted String. E.g. removing newline characters.
+     */
     val sanitizer: (String) -> String
 }
 
+/**
+ * A no-op sanitizer function which simply returns the original string.
+ */
 val NO_CHANGE_SANITIZER: (String) -> String = { it }

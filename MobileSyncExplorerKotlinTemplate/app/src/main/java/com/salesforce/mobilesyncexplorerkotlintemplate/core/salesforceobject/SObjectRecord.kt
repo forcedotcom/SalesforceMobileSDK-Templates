@@ -26,8 +26,15 @@
  */
 package com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject
 
+/**
+ * Represents a record of a SObject.
+ *
+ * @param id The global ID of the SObject assigned by the Org.
+ * @param syncState The locally-modified status of the SObject (e.g. "Locally Deleted").
+ * @param sObject The instance of the SObject model this record represents.
+ */
 data class SObjectRecord<T : SObject>(
     val id: String,
-    val localStatus: LocalStatus,
+    val syncState: SObjectSyncState,
     val sObject: T
 )

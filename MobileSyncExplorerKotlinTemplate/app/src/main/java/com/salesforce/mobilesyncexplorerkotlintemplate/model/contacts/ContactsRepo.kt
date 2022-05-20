@@ -30,18 +30,16 @@ import com.salesforce.androidsdk.accounts.UserAccount
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.repos.SObjectSyncableRepo
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.repos.SObjectSyncableRepoBase
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectDeserializer
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
 /**
- * The default implementation of the [ContactsRepo].
+ * The basic implementation of [SObjectSyncableRepo] for the [ContactObject] SObject.
  */
 class DefaultContactsRepo(
     account: UserAccount,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-) : SObjectSyncableRepoBase<ContactObject>(
-    account = account,
-    ioDispatcher = ioDispatcher
-) {
+) : SObjectSyncableRepoBase<ContactObject>(account = account, ioDispatcher = ioDispatcher) {
 
     override val deserializer: SObjectDeserializer<ContactObject> = ContactObject.Companion
     override val soupName: String = CONTACTS_SOUP_NAME

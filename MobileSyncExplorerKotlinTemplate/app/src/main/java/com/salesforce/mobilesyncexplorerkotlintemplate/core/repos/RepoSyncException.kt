@@ -28,6 +28,10 @@ package com.salesforce.mobilesyncexplorerkotlintemplate.core.repos
 
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.CleanResyncGhostsException
 
+/**
+ * Sealed class representing the exhaustive set of all failure modes for the [SObjectSyncableRepo]
+ * methods which perform sync down operations.
+ */
 sealed class SyncDownException : Exception() {
     data class FailedToFinish(
         override val cause: Throwable? = null,
@@ -46,6 +50,10 @@ sealed class SyncDownException : Exception() {
     }
 }
 
+/**
+ * Sealed class representing the exhaustive set of all failure modes for the [SObjectSyncableRepo]
+ * methods which perform sync up operations.
+ */
 sealed class SyncUpException : Exception() {
     data class FailedToFinish(
         override val message: String? = null,

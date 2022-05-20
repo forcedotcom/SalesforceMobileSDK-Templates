@@ -98,18 +98,18 @@ fun JSONObject.getRequiredArrayOrThrow(key: String): JSONArray =
         throw MissingRequiredProperties(propertyKeys = arrayOf(key), offendingJsonString = this.toString())
     }
 
-fun JSONObject.coerceToLocalStatus(): LocalStatus {
+fun JSONObject.coerceToSyncState(): SObjectSyncState {
     val locallyCreated: Boolean = optBoolean(LOCALLY_CREATED, false)
     val locallyDeleted: Boolean = optBoolean(LOCALLY_DELETED, false)
     val locallyUpdated: Boolean = optBoolean(LOCALLY_UPDATED, false)
 
     return when {
         locallyDeleted -> {
-            if (locallyUpdated) LocalStatus.LocallyDeletedAndLocallyUpdated
-            else LocalStatus.LocallyDeleted
+            if (locallyUpdated) SObjectSyncState.LocallyDeletedAndLocallyUpdated
+            else SObjectSyncState.LocallyDeleted
         }
-        locallyCreated -> LocalStatus.LocallyCreated
-        locallyUpdated -> LocalStatus.LocallyUpdated
-        else -> LocalStatus.MatchesUpstream
+        locallyCreated -> SObjectSyncState.LocallyCreated
+        locallyUpdated -> SObjectSyncState.LocallyUpdated
+        else -> SObjectSyncState.MatchesUpstream
     }
 }

@@ -56,7 +56,7 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.Preview
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.previewContactListSearchField
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ContactsListUiState
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.LocalStatus
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectSyncState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.FloatingTextEntryBar
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.rememberSimpleSpinAnimation
@@ -65,12 +65,19 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.toUiSyncSta
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
 
+/**
+ * The Contacts List content without any scaffolding. Use this to embed the Contacts List within
+ * higher-level layouts.
+ */
 @Composable
-fun ContactsListContent(
+fun ContactsListComponentListContent(
     modifier: Modifier = Modifier,
     uiState: ContactsListUiState,
     listClickHandler: ContactsListClickHandler,
 ) {
+    /* This layout first subcomposes and measures the search bar, using its measured height to apply
+     * padding to the contacts list. This allows the search bar to appear to be laid out linearly
+     * with the list content, but then it floats over the list when scrolled. */
     SubcomposeLayout(modifier = modifier) { constraints ->
         val searchConstraints = constraints.copy(minWidth = 0, minHeight = 0)
 
@@ -89,7 +96,7 @@ fun ContactsListContent(
         val listMeasureables = subcompose(slotId = ID_CONTACTS_LIST) {
             val paddingDp = with(LocalDensity.current) { searchBarPlaceable.height.toDp() }
 
-            ListContentInner(
+            ContactsList(
                 modifier = Modifier.layoutId(ID_CONTACTS_LIST),
                 contentPadding = PaddingValues(top = paddingDp),
                 uiState = uiState,
@@ -112,7 +119,7 @@ fun ContactsListContent(
 }
 
 @Composable
-private fun ListContentInner(
+private fun ContactsList(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues,
     uiState: ContactsListUiState,
@@ -127,7 +134,7 @@ private fun ListContentInner(
                 modifier = Modifier.padding(4.dp),
                 startExpanded = false,
                 model = record.sObject,
-                syncState = record.localStatus.toUiSyncState(),
+                syncState = record.syncState.toUiSyncState(),
                 onCardClick = { listClickHandler.contactClick(record.id) },
                 onDeleteClick = { listClickHandler.deleteClick(record.id) },
                 onUndeleteClick = { listClickHandler.undeleteClick(record.id) },
@@ -195,7 +202,7 @@ private fun ContactsListContentPreview(searchTerm: String = "9") {
         .map {
             SObjectRecord(
                 id = it,
-                localStatus = LocalStatus.MatchesUpstream,
+                syncState = SObjectSyncState.MatchesUpstream,
                 sObject = ContactObject(
                     firstName = "First $it",
                     lastName = "Last $it",
@@ -222,7 +229,7 @@ private fun ContactsListContentPreview(searchTerm: String = "9") {
 
     SalesforceMobileSDKAndroidTheme {
         Surface {
-            ContactsListContent(uiState = vm.uiStateValue, listClickHandler = vm)
+            ContactsListComponentListContent(uiState = vm.uiStateValue, listClickHandler = vm)
         }
     }
 }

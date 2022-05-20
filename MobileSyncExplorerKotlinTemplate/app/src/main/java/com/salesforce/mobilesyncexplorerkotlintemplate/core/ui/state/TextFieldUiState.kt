@@ -27,14 +27,15 @@
 package com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state
 
 /**
- * Non-editable UI state for a text field.
+ * UI state for a field in which plain text is entered. Built from [FieldUiState] to include text
+ * entry-specific properties.
  */
 interface TextFieldUiState : FieldUiState {
     val maxLines: UInt
 }
 
 /**
- * Editable UI state for a text field.
+ * Editable UI state of [TextFieldUiState].
  */
 data class EditableTextFieldUiState(
     override val fieldValue: String?,

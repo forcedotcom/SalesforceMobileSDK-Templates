@@ -45,9 +45,9 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.Contact
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.ContactsActivityMenuHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.SyncImage
-import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsClickHandler
+import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsComponentClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsUiState
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.LocalStatus
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectSyncState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.LoadingOverlay
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.EditableTextFieldUiState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.FormattedStringRes
@@ -57,11 +57,16 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObj
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactRecord
 import org.jetbrains.annotations.TestOnly
 
+/**
+ * Composable for when the Contact Details component should take up all space in the app. Acts like
+ * a full screen Activity for interacting with contact details including viewing, editing, saving,
+ * deleting, and undeleting.
+ */
 @Composable
-fun ContactDetailsContentSinglePane(
+fun ContactDetailsSinglePaneComponent(
     details: ContactDetailsUiState,
     showLoadingOverlay: Boolean,
-    componentClickHandler: ContactDetailsClickHandler,
+    componentClickHandler: ContactDetailsComponentClickHandler,
     menuHandler: ContactsActivityMenuHandler,
     modifier: Modifier = Modifier,
 ) {
@@ -74,7 +79,7 @@ fun ContactDetailsContentSinglePane(
                     label = contactDetailsUi?.fullName ?: "",
                     syncIconContent = {
                         contactDetailsUi?.let {
-                            SyncImage(uiState = contactDetailsUi.uiSyncState)
+                            SyncImage(uiSyncState = contactDetailsUi.uiSyncState)
                         }
                     },
                     onUpClick =
@@ -104,7 +109,7 @@ fun ContactDetailsContentSinglePane(
         },
         isFloatingActionButtonDocked = true
     ) { paddingValues ->
-        ContactDetailsContent(
+        ContactDetailsComponentFormContent(
             modifier = Modifier.padding(paddingValues),
             details = details,
             contentPadding = PaddingValues(all = 8.dp)
@@ -160,7 +165,7 @@ private fun RowScope.ContactDetailsBottomAppBarSinglePane(
 private fun ContactDetailsFab(
     modifier: Modifier = Modifier,
     uiState: ContactDetailsUiState,
-    handler: ContactDetailsClickHandler
+    handler: ContactDetailsComponentClickHandler
 ) {
     when (uiState) {
         is ContactDetailsUiState.ViewingContactDetails -> {
@@ -217,9 +222,9 @@ private fun ContactDetailsFab(
 private fun ContactDetailViewModePreview() {
     val contact = ContactRecord(
         id = "1",
-        localStatus = LocalStatus.MatchesUpstream,
+        syncState = SObjectSyncState.MatchesUpstream,
         sObject = ContactObject(
-            firstName = "FirstFirstFirstFirstFirstFirstFirstFirstFirstFirst",
+            firstName = "FirstFirstFirstFirstFirstFirstFirstFirstFirstFirstFirstFirstFirst",
             lastName = "LastLastLastLastLastLastLastLastLastLastLastLastLastLastLastLast",
             title = "Titletitletitletitletitletitletitletitletitletitletitletitletitletitle",
             department = "DepartmentDepartmentDepartmentDepartmentDepartmentDepartmentDepartmentDepartmentDepartmentDepartment"
@@ -228,7 +233,7 @@ private fun ContactDetailViewModePreview() {
 
     SalesforceMobileSDKAndroidTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
-            ContactDetailsContentSinglePane(
+            ContactDetailsSinglePaneComponent(
                 details = contact.toPreviewViewingContactDetails(),
                 showLoadingOverlay = false,
                 componentClickHandler = PREVIEW_CONTACT_DETAILS_UI_HANDLER,
@@ -251,7 +256,8 @@ fun ContactRecord.toPreviewViewingContactDetails(
         isInErrorState = false,
         label = FormattedStringRes(label_contact_first_name),
         placeholder = FormattedStringRes(label_contact_first_name),
-        helper = null
+        helper = null,
+        maxLines = 1u
     ),
     lastNameField = EditableTextFieldUiState(
         fieldValue = sObject.lastName,
@@ -259,7 +265,8 @@ fun ContactRecord.toPreviewViewingContactDetails(
         isInErrorState = false,
         label = FormattedStringRes(label_contact_last_name),
         placeholder = FormattedStringRes(label_contact_last_name),
-        helper = null
+        helper = null,
+        maxLines = 1u
     ),
     titleField = EditableTextFieldUiState(
         fieldValue = sObject.title,
@@ -282,7 +289,7 @@ fun ContactRecord.toPreviewViewingContactDetails(
     shouldScrollToErrorField = shouldScrollToErrorField,
 )
 
-val PREVIEW_CONTACT_DETAILS_UI_HANDLER = object : ContactDetailsClickHandler {
+val PREVIEW_CONTACT_DETAILS_UI_HANDLER = object : ContactDetailsComponentClickHandler {
     override fun createClick() {}
     override fun deleteClick() {}
     override fun undeleteClick() {}

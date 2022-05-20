@@ -29,7 +29,16 @@ package com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions
 import com.salesforce.androidsdk.smartstore.store.SmartStore
 import org.json.JSONObject
 
-@Throws(NoSuchElementException::class)
+/**
+ * Convenience method to return a single SmartStore Soup ELT by an arbitrary ID column.
+ *
+ * @throws NoSuchElementException If the ELT could not be found.
+ * @throws IllegalArgumentException If more than one ELT was found for the given [id] and [idColName], or the ELT could not be retrieved due to a SmartStore error.
+ */
+@Throws(
+    NoSuchElementException::class,
+    IllegalArgumentException::class
+)
 fun SmartStore.retrieveSingleById(
     soupName: String,
     idColName: String,
@@ -38,16 +47,33 @@ fun SmartStore.retrieveSingleById(
     beginTransaction()
 
     try {
-        val soupId = lookupSoupEntryId(soupName, idColName, id)
+        val soupIdResult = runCatching { lookupSoupEntryId(soupName, idColName, id) }
+
+        soupIdResult.exceptionOrNull()?.let {
+            throw IllegalArgumentException(
+                message = "Could not retrieve single soup ID for provided ID=$id and column name=$idColName",
+                cause = it
+            )
+        }
+
+        val soupId = soupIdResult.getOrThrow()
 
         val result = if (soupId < 0) {
             throw NoSuchElementException("id=$id was not found in soup $soupName")
         } else {
-            val results = retrieve(soupName, soupId)
+            val results = runCatching { retrieve(soupName, soupId) }
+
+            results.exceptionOrNull()?.let {
+                throw IllegalArgumentException(
+                    message = "Could not retrieve single soup ID for provided ID=$id and column name=$idColName",
+                    cause = it
+                )
+            }
+
             RetrievedSoupElt(
-                results.first(),
-                soupId
-            ) // guaranteed to succeed at this point
+                elt = results.getOrThrow().first(), // either succeeds or throws appropriate exception
+                soupId = soupId
+            )
         }
 
         setTransactionSuccessful()

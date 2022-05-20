@@ -28,12 +28,22 @@ package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity
 
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.DialogUiState
 
+/**
+ * UI state of the [ContactsActivity] itself; i.e. _not_ the UI state of the contained UI components.
+ *
+ * @param isSyncing Set to true when the VM wants to indicate that a sync up or down operation is active.
+ * @param dataOpIsActive Set to true when the VM wants to indicate that a data operation involving SmartStore is active (e.g. saving the contact details).
+ * @param dialogUiState The dialog to show to the user. Set to `null` when there is no dialog shown.
+ */
 data class ContactsActivityUiState(
     val isSyncing: Boolean,
     val dataOpIsActive: Boolean,
     val dialogUiState: DialogUiState?,
 )
 
+/**
+ * The functions the user can invoke through the menu of the [ContactsActivity]
+ */
 interface ContactsActivityMenuHandler {
     fun onInspectDbClick()
     fun onLogoutClick()

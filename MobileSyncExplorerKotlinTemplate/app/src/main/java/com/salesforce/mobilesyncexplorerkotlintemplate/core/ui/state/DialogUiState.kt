@@ -34,11 +34,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.*
 
+/**
+ * Abstraction of a popover dialog which encapsulates the dialog rendering.
+ */
 interface DialogUiState {
     @Composable
     fun RenderDialog(modifier: Modifier)
 }
 
+/**
+ * Reusable confirmation dialog which confirms whether the user wants to delete an SObject instance.
+ *
+ * @param objIdToDelete The ID of the SObject instance to delete. This will be provided to the [onConfirmDelete] callback if the user confirms the delete.
+ * @param objName Optional friendly name of the SObject instance to help clarify exactly what is being deleted. If null, a fallback message will be used without the name.
+ * @param onCancelDelete Invoked when the user cancels the delete action.
+ * @param onConfirmDelete Invoked when the user confirms the delete action.
+ */
 data class DeleteConfirmationDialogUiState(
     val objIdToDelete: String,
     val objName: String?,
@@ -71,6 +82,9 @@ data class DeleteConfirmationDialogUiState(
     }
 }
 
+/**
+ * Reusable confirmation dialog which confirms that the user is okay with losing their unsaved changes.
+ */
 data class DiscardChangesDialogUiState(
     val onCancelDiscardChanges: () -> Unit,
     val onConfirmDiscardChanges: () -> Unit,
@@ -96,6 +110,14 @@ data class DiscardChangesDialogUiState(
     }
 }
 
+/**
+ * Reusable confirmation dialog which confirms whether the user wants to undelete an SObject instance.
+ *
+ * @param objIdToUndelete The ID of the SObject instance to undelete. This will be provided to the [onConfirmUndelete] callback if the user confirms the undelete.
+ * @param objName Optional friendly name of the SObject instance to help clarify exactly what is being undeleted. If null, a fallback message will be used without the name.
+ * @param onCancelUndelete Invoked when the user cancels the undelete action.
+ * @param onConfirmUndelete Invoked when the user confirms the undelete action.
+ */
 data class UndeleteConfirmationDialogUiState(
     val objIdToUndelete: String,
     val objName: String?,

@@ -33,6 +33,11 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
+/**
+ * Coroutine wrapper around the "clean resync ghosts" operation in MobileSync. This operation is _not_
+ * cancellable via coroutine cancellation semantics due to the non-cancellable nature of individual
+ * MobileSync operations.
+ */
 @Throws(CleanResyncGhostsException::class)
 suspend fun SyncManager.suspendCleanResyncGhosts(syncName: String) = withContext(NonCancellable) {
     suspendCoroutine<Int> { cont ->

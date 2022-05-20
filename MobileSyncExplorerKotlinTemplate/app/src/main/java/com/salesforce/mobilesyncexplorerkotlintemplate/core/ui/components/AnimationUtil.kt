@@ -30,6 +30,12 @@ import androidx.compose.animation.core.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 
+/**
+ * Remembers the [State] of a [Float] value, which represents the angle of an infinite spinning
+ * animation.
+ *
+ * @param hertz The frequency of the spin animation in the SI unit of Hertz.
+ */
 @Composable
 fun rememberSimpleSpinAnimation(hertz: Float): State<Float> {
     val transition = rememberInfiniteTransition()

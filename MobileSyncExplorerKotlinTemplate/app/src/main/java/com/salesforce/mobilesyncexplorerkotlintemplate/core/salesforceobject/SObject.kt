@@ -28,7 +28,18 @@ package com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject
 
 import org.json.JSONObject
 
+/**
+ * The core representation of a Salesforce Object, creating a bridge between runtime data model
+ * instances and the SObject JSON backing data structure.
+ */
 interface SObject {
+    /**
+     * Mutates the receiver JSON with the properties of the runtime data model implementation.
+     */
     fun JSONObject.applyObjProperties(): JSONObject
+
+    /**
+     * The SObject type, represented as a String matching how it appears in the SObject JSON.
+     */
     val objectType: String
 }

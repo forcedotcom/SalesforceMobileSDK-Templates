@@ -51,6 +51,13 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceM
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
+/**
+ * The realization of the following user task: "I want to view and edit the contacts in my Org."
+ *
+ * This Activity combines the Contacts List component and the Contact Details component to create a
+ * list of contacts that the user can search through. They can then click on a contact to see its
+ * full details and edit those details.
+ */
 class ContactsActivity
     : ComponentActivity(),
     SalesforceActivityInterface,
@@ -81,6 +88,7 @@ class ContactsActivity
         salesforceActivityDelegate = SalesforceActivityDelegate(this).also { it.onCreate() }
 
         setContent {
+            // Using LocalConfiguration.current as a key for remember allows recomposition when device configuration changes:
             val windowSize = remember(LocalConfiguration.current) {
                 WindowMetricsCalculator.getOrCreate()
                     .computeCurrentWindowMetrics(this)
@@ -102,8 +110,9 @@ class ContactsActivity
             }
         }
 
+        // Coroutine to reactively enable/disable the VM back handling
         lifecycleScope.launch {
-            repeatOnLifecycle(state = Lifecycle.State.STARTED) {
+            repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
                 vm.isHandlingBackEvents.collect { vmBackPressedCallback.isEnabled = it }
             }
         }

@@ -32,10 +32,9 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.*
 import org.json.JSONObject
 
 /**
- * An abstraction and runtime data model of a Contact Salesforce Standard Object.
- *
- * Note how this is not a [SalesforceObject]. [SalesforceObject]s are _mutable_ which goes against
- * Jetpack Compose guidelines to make state objects immutable.
+ * The runtime data model of the Salesforce Standard Contact Object. The _constructor_ of this class
+ * throws [ContactValidationException] if the provided value for a property is not valid, as determined
+ * by this class' business logic.
  */
 data class ContactObject
 @Throws(ContactValidationException::class) constructor(
@@ -61,6 +60,10 @@ data class ContactObject
         putOpt(Constants.NAME, fullName)
     }
 
+    /**
+     * [SObjectDeserializer] for the [ContactObject] SObject, implemented as the companion object
+     * of [ContactObject] for logical encapsulation of data validation.
+     */
     companion object : SObjectDeserializerBase<ContactObject>(objectType = Constants.CONTACT) {
         const val KEY_FIRST_NAME = "FirstName"
         const val KEY_LAST_NAME = "LastName"
@@ -69,6 +72,8 @@ data class ContactObject
 
         @Throws(CoerceException::class)
         override fun buildModel(fromJson: JSONObject): ContactObject = try {
+            // Leverage the ContactObject constructor for property validation and rethrow the
+            // corresponding CoerceException:
             ContactObject(
                 firstName = fromJson.optStringOrNull(KEY_FIRST_NAME),
                 lastName = fromJson.optString(KEY_LAST_NAME),
@@ -123,8 +128,12 @@ data class ContactObject
     }
 }
 
+/**
+ * Sealed class representing all possible property validation exceptions for the [ContactObject].
+ */
 sealed class ContactValidationException(override val message: String?) : Exception() {
     object LastNameCannotBeBlank : ContactValidationException("Contact Last Name cannot be blank")
+
     data class FieldContainsIllegalText(
         val fieldName: String,
         val illegalText: String,
