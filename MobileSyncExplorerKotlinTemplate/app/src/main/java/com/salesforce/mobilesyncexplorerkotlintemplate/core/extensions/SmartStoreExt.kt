@@ -51,8 +51,8 @@ fun SmartStore.retrieveSingleById(
 
         soupIdResult.exceptionOrNull()?.let {
             throw IllegalArgumentException(
-                message = "Could not retrieve single soup ID for provided ID=$id and column name=$idColName",
-                cause = it
+                "Could not retrieve single soup ID for provided ID=$id and column name=$idColName",
+                it
             )
         }
 
@@ -65,8 +65,8 @@ fun SmartStore.retrieveSingleById(
 
             results.exceptionOrNull()?.let {
                 throw IllegalArgumentException(
-                    message = "Could not retrieve single soup ID for provided ID=$id and column name=$idColName",
-                    cause = it
+                    "Could not retrieve single soup ID for provided ID=$id and column name=$idColName",
+                    it
                 )
             }
 
