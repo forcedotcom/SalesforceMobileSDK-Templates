@@ -102,7 +102,7 @@
     },
     {
 
-        "path": "MobileSyncExplorerKotlin",
+        "path": "MobileSyncExplorerKotlinTemplate",
         "description": "Sample Kotlin application using MobileSync data framework",
         "appType": "native_kotlin",
         "platforms": ["android"]
