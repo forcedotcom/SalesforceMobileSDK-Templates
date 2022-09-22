@@ -10,7 +10,18 @@ project 'ReactNativeDeferredTemplate.xcodeproj'
 target 'ReactNativeDeferredTemplate' do
   source 'https://cdn.cocoapods.org/'
   config = use_native_modules!
-  use_react_native!(:path => config["reactNativePath"])
+
+  # Flags change depending on the env values.
+  flags = get_default_flags()
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    :hermes_enabled => false,
+    :fabric_enabled => flags[:fabric_enabled],
+    :flipper_configuration => FlipperConfiguration.disabled,
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
   use_mobile_sdk!(:path => '../mobile_sdk/SalesforceMobileSDK-iOS')
   pod 'SalesforceReact', :path => '../node_modules/react-native-force'
 end
@@ -31,7 +42,12 @@ post_install do |installer|
   signposts_post_install(installer)
 
   # React native post install
-  react_native_post_install(installer)  
+  react_native_post_install(
+      installer,
+      # Set `mac_catalyst_enabled` to `true` in order to apply patches
+      # necessary for Mac Catalyst builds
+      :mac_catalyst_enabled => false
+  )
   
   # Cocoapods workaround for M1 machines
   __apply_Xcode_12_5_M1_post_install_workaround(installer)
