@@ -9,13 +9,11 @@
 /* Begin PBXBuildFile section */
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		4F08604A236D0F380087150A /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4F086048236D0EFC0087150A /* MaterialCommunityIcons.ttf */; };
-		4F08604B236D0F3B0087150A /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4F086049236D0EFC0087150A /* MaterialIcons.ttf */; };
 		4F3AFF401DC2C79E006FF6B0 /* InitialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F3AFF3E1DC2C79E006FF6B0 /* InitialViewController.m */; };
-		8BC5214908B3BE588047AD03 /* Pods_MobileSyncExplorerReactNative.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 241B7882460CD09A8AF3E536 /* Pods_MobileSyncExplorerReactNative.framework */; };
 		B7168FC01FACCB8A00A48DB5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7168FBF1FACCB8900A48DB5 /* LaunchScreen.storyboard */; };
 		B77BD8B1211363F70036B284 /* bootconfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = B77BD8B0211363F70036B284 /* bootconfig.plist */; };
 		CE6BC3F620F12070009E4AAE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F3AFF441DC2C8C8006FF6B0 /* Images.xcassets */; };
+		F82D7DA349881BDCDC7A44CA /* libPods-MobileSyncExplorerReactNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6919252FC5A12C953709275E /* libPods-MobileSyncExplorerReactNative.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,13 +23,13 @@
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = MobileSyncExplorerReactNative/AppDelegate.m; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = MobileSyncExplorerReactNative/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = MobileSyncExplorerReactNative/main.m; sourceTree = "<group>"; };
-		241B7882460CD09A8AF3E536 /* Pods_MobileSyncExplorerReactNative.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MobileSyncExplorerReactNative.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F086048236D0EFC0087150A /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		4F086049236D0EFC0087150A /* MaterialIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		4F3AFF3D1DC2C79E006FF6B0 /* InitialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InitialViewController.h; path = MobileSyncExplorerReactNative/InitialViewController.h; sourceTree = "<group>"; };
 		4F3AFF3E1DC2C79E006FF6B0 /* InitialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InitialViewController.m; path = MobileSyncExplorerReactNative/InitialViewController.m; sourceTree = "<group>"; };
 		4F3AFF441DC2C8C8006FF6B0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "../mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/Images.xcassets"; sourceTree = "<group>"; };
 		4FF12F8E1DCA93E2004D9EF9 /* MobileSyncExplorerReactNative.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = MobileSyncExplorerReactNative.entitlements; path = MobileSyncExplorerReactNative/MobileSyncExplorerReactNative.entitlements; sourceTree = "<group>"; };
+		6919252FC5A12C953709275E /* libPods-MobileSyncExplorerReactNative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MobileSyncExplorerReactNative.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AE79D28E6E57F5B77FA24716 /* Pods-MobileSyncExplorerReactNative.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileSyncExplorerReactNative.release.xcconfig"; path = "Pods/Target Support Files/Pods-MobileSyncExplorerReactNative/Pods-MobileSyncExplorerReactNative.release.xcconfig"; sourceTree = "<group>"; };
 		B7168FBF1FACCB8900A48DB5 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = "../mobile_sdk/salesforcemobilesdk-ios/shared/resources/LaunchScreen.storyboard"; sourceTree = "<group>"; };
 		B77BD8B0211363F70036B284 /* bootconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = bootconfig.plist; path = MobileSyncExplorerReactNative/bootconfig.plist; sourceTree = "<group>"; };
@@ -43,7 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8BC5214908B3BE588047AD03 /* Pods_MobileSyncExplorerReactNative.framework in Frameworks */,
+				F82D7DA349881BDCDC7A44CA /* libPods-MobileSyncExplorerReactNative.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -126,7 +124,7 @@
 			isa = PBXGroup;
 			children = (
 				CE46D5431E9C942C006E6537 /* XCTest.framework */,
-				241B7882460CD09A8AF3E536 /* Pods_MobileSyncExplorerReactNative.framework */,
+				6919252FC5A12C953709275E /* libPods-MobileSyncExplorerReactNative.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -144,6 +142,7 @@
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				2E0BD7FE4A4B39D5E6E2F291 /* [CP] Embed Pods Frameworks */,
+				AD789C7F8A064EA59E21E621 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -198,8 +197,6 @@
 			files = (
 				B77BD8B1211363F70036B284 /* bootconfig.plist in Resources */,
 				CE6BC3F620F12070009E4AAE /* Images.xcassets in Resources */,
-				4F08604B236D0F3B0087150A /* MaterialIcons.ttf in Resources */,
-				4F08604A236D0F380087150A /* MaterialCommunityIcons.ttf in Resources */,
 				B7168FC01FACCB8A00A48DB5 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -254,6 +251,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MobileSyncExplorerReactNative/Pods-MobileSyncExplorerReactNative-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		AD789C7F8A064EA59E21E621 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MobileSyncExplorerReactNative/Pods-MobileSyncExplorerReactNative-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MobileSyncExplorerReactNative/Pods-MobileSyncExplorerReactNative-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MobileSyncExplorerReactNative/Pods-MobileSyncExplorerReactNative-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -377,7 +391,7 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -438,7 +452,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
