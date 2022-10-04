@@ -5,44 +5,47 @@ require_relative '../mobile_sdk/SalesforceMobileSDK-iOS/mobilesdk_pods'
 
 platform :ios, '14.0'
 
-use_frameworks!
-
 project 'MobileSyncExplorerReactNative.xcodeproj'
 target 'MobileSyncExplorerReactNative' do
   source 'https://cdn.cocoapods.org/'
   config = use_native_modules!
-  use_react_native!(:path => config["reactNativePath"])
+
+  # Flags change depending on the env values.
+  flags = get_default_flags()
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    :hermes_enabled => true,
+    :fabric_enabled => flags[:fabric_enabled],
+    :flipper_configuration => FlipperConfiguration.disabled,
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
   use_mobile_sdk!(:path => '../mobile_sdk/SalesforceMobileSDK-iOS')
   pod 'SalesforceReact', :path => '../node_modules/react-native-force'
 end
 
-# To avoid Xcode 12 compilation errors in RNScreens and RNCMaskedView
 pre_install do |installer|
-  installer.pod_targets.each do |pod|
-    if pod.name.eql?('RNScreens') || pod.name.eql?('RNCMaskedView')
-      def pod.build_type
-        Pod::BuildType.static_library
-      end
-    end
-  end
+  # Mobile SDK pre install
+  mobile_sdk_pre_install(installer)  
 end
+
 
 post_install do |installer|
   # Comment the following if you do not want the SDK to emit signpost events for instrumentation. Signposts are  enabled for non release version of the app.
   signposts_post_install(installer)
 
   # React native post install
-  react_native_post_install(installer)  
+  react_native_post_install(
+      installer,
+      # Set `mac_catalyst_enabled` to `true` in order to apply patches
+      # necessary for Mac Catalyst builds
+      :mac_catalyst_enabled => false
+  )
   
   # Cocoapods workaround for M1 machines
   __apply_Xcode_12_5_M1_post_install_workaround(installer)
   
-  # Keeping Mobile SDK iOS deployment target at 14 (__apply_Xcode_12_5_M1_post_install_workaround changes it to 11)
-  installer.pods_project.targets.each do |target|
-    if ['SalesforceAnalytics', 'SalesforceSDKCommon', 'SalesforceSDKCore', 'SmartStore', 'MobileSync', 'SalesforceReact'].include?(target.name)
-      target.build_configurations.each do |config|
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
-      end
-    end
-  end
+  # Mobile SDK post install
+  mobile_sdk_post_install(installer)
 end

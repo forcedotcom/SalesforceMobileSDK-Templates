@@ -35,26 +35,24 @@
 #import <SalesforceSDKCore/SFLoginViewController.h>
 #import <SalesforceReact/SFSDKReactLogger.h>
 #import <SalesforceSDKCore/SFSDKAuthHelper.h>
+#import <UserNotifications/UserNotifications.h>
+
 @implementation AppDelegate
 
 - (id)init
 {
     self = [super init];
     if (self) {
-
-        // Need to use SalesforceReactSDKManager in Salesforce Mobile SDK apps using React Native
-        [SalesforceReactSDKManager initializeSDK];
-        //App Setup for any changes to the current authenticated user
-        __weak typeof (self) weakSelf = self;
-        [SFSDKAuthHelper registerBlockForCurrentUserChangeNotifications:^{
-          __strong typeof (weakSelf) strongSelf = weakSelf;
-          [strongSelf resetViewState:^{
-            [strongSelf setupRootViewController];
-          }];
+      // Need to use SalesforceReactSDKManager in Salesforce Mobile SDK apps using React Native
+      [SalesforceReactSDKManager initializeSDK];
+      
+      //App Setup for any changes to the current authenticated user
+      [SFSDKAuthHelper registerBlockForCurrentUserChangeNotifications:^{
+        [self resetViewState:^{
+            [self setupRootViewController];
         }];
-      
+      }];
     }
-      
     return self;
 }
 
@@ -76,8 +74,19 @@
     }];
     return YES;
 }
+
 - (void)registerForRemotePushNotifications {
-    [[SFPushNotificationManager sharedInstance] registerForRemoteNotifications];
+    [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge) completionHandler:^(BOOL granted, NSError * _Nullable error) {
+        if (granted) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[SFPushNotificationManager sharedInstance] registerForRemoteNotifications];
+             });
+        }
+
+        if (error) {
+            [SFLogger e:[self class] format:@"Push notification authorization error: %@", error];
+        }
+    }];
 }
 
 - (void)customizeLoginView {
@@ -121,7 +130,6 @@
 - (BOOL)enableIDPLoginFlowForURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
      return [[SFUserAccountManager sharedInstance] handleIDPAuthenticationResponse:url options:options];
 }
-
 #pragma mark - Private methods
 
 - (void)initializeAppViewState
@@ -141,7 +149,7 @@
 {
     NSURL *jsCodeLocation;
 
-    jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+    jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
 
     RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                         moduleName:@"MobileSyncExplorerReactNative"
