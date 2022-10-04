@@ -7,8 +7,8 @@
         "test": "jest"
     },
     "sdkDependencies": {
-        "SalesforceMobileSDK-Android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#v10.2.0",
-        "SalesforceMobileSDK-iOS": "https://github.com/forcedotcom/SalesforceMobileSDK-iOS.git#v10.2.0"
+        "SalesforceMobileSDK-Android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#dev",
+        "SalesforceMobileSDK-iOS": "https://github.com/forcedotcom/SalesforceMobileSDK-iOS.git#dev"
     },
     "dependencies": {
         "@react-native-masked-view/masked-view": "^0.2.7",
@@ -17,7 +17,7 @@
         "react-native-elements": "^3.4.2",
         "react": "18.1.0",
         "react-native": "0.70.1",
-        "react-native-force": "git+https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#v10.2.0",
+        "react-native-force": "git+https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#dev",
         "react-native-gesture-handler": "^1.10.3",
         "react-native-safe-area-context": "^3.3.0",
         "react-native-screens": "^3.6.0",
