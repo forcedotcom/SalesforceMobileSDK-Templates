@@ -6,6 +6,8 @@
 	android:versionName="1.0"
 	android:installLocation="internalOnly">
 
+	<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+
 	<application android:icon="@drawable/sf__icon"
 	    android:label="@string/app_name"
 		android:name=".MainApplication"
@@ -91,15 +93,4 @@
         <activity android:name="com.facebook.react.devsupport.DevSettingsActivity"
             android:exported="true" />
 	</application>
-
-    <!--
-        GCM permission to ensure that only this application can
-        receive the messages and registration result. This must be of
-        the format <app-package-name>.C2D_MESSAGE for it to work.
-    -->
-    <permission android:name="com.salesforce.reactnativedeferredtemplate.C2D_MESSAGE"
-        android:protectionLevel="signature" />
-
-    <uses-permission android:name="com.salesforce.reactnativedeferredtemplate.C2D_MESSAGE" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 </manifest>
