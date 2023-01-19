@@ -3,7 +3,6 @@ apply plugin: 'kotlin-android'
 
 dependencies {
   implementation project(':libs:MobileSync')
-  implementation "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 }
 
 android {
