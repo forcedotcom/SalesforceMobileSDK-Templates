@@ -185,7 +185,7 @@ class MainActivity : SalesforceActivity() {
 
         // Adding user hint and target component.
         intent.putExtra(IDPInititatedLoginReceiver.USER_HINT_KEY, currentUser?.orgId + COLON + currentUser?.userId)
-        intent.putExtra(IDPInititatedLoginReceiver.SP_ACTVITY_NAME_KEY, appComponentName)
+        intent.putExtra(IDPInititatedLoginReceiver.SP_ACTVITY_NAME_KEY, appPackageName + "." + appComponentName)
         sendBroadcast(intent)
     }
 }
