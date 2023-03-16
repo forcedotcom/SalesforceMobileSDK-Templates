@@ -37,7 +37,7 @@ import android.widget.ListView
 import android.widget.TabHost
 import com.salesforce.androidsdk.accounts.UserAccount
 import com.salesforce.androidsdk.accounts.UserAccountManager
-import com.salesforce.androidsdk.auth.idp.IDPInititatedLoginReceiver
+import com.salesforce.androidsdk.auth.idp.IDPInitiatedLoginReceiver
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.androidsdk.rest.RestClient
 import com.salesforce.androidsdk.ui.SalesforceActivity
@@ -177,15 +177,6 @@ class MainActivity : SalesforceActivity() {
             }
         }
         Log.d(TAG, "App being launched: " + appName + ", package name: " + appPackageName)
-        val intent = Intent(IDPInititatedLoginReceiver.IDP_LOGIN_REQUEST_ACTION)
-        intent.addCategory(Intent.CATEGORY_DEFAULT)
-
-        // Limiting intent to the target app's package.
-        intent.`package` = appPackageName
-
-        // Adding user hint and target component.
-        intent.putExtra(IDPInititatedLoginReceiver.USER_HINT_KEY, currentUser?.orgId + COLON + currentUser?.userId)
-        intent.putExtra(IDPInititatedLoginReceiver.SP_ACTVITY_NAME_KEY, appPackageName + "." + appComponentName)
-        sendBroadcast(intent)
+        IDPInitiatedLoginReceiver.sendLoginRequest(this, currentUser, appPackageName, appComponentName, null)
     }
 }
