@@ -26,7 +26,6 @@
  */
 package com.salesforce.samples.salesforceandroididptemplateapp
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -37,7 +36,7 @@ import android.widget.ListView
 import android.widget.TabHost
 import com.salesforce.androidsdk.accounts.UserAccount
 import com.salesforce.androidsdk.accounts.UserAccountManager
-import com.salesforce.androidsdk.auth.idp.IDPInitiatedLoginReceiver
+import com.salesforce.androidsdk.auth.idp.IDPRequestReceiver
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.androidsdk.rest.RestClient
 import com.salesforce.androidsdk.ui.SalesforceActivity
@@ -177,6 +176,12 @@ class MainActivity : SalesforceActivity() {
             }
         }
         Log.d(TAG, "App being launched: " + appName + ", package name: " + appPackageName)
-        IDPInitiatedLoginReceiver.sendLoginRequest(this, currentUser, appPackageName, appComponentName, null)
+        IDPRequestReceiver.sendLoginRequest(
+            this,
+            appPackageName,
+            appComponentName,
+            currentUser,
+            null
+        )
     }
 }
