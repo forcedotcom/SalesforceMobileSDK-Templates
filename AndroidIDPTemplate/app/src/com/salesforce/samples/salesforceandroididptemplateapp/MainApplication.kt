@@ -27,6 +27,7 @@
 package com.salesforce.samples.salesforceandroididptemplateapp
 
 import android.app.Application
+import com.salesforce.androidsdk.auth.idp.SPConfig
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 
 /**
@@ -43,12 +44,30 @@ class MainApplication : Application() {
         MobileSyncSDKManager.initNative(applicationContext, MainActivity::class.java)
         MobileSyncSDKManager.getInstance().registerUsedAppFeature(FEATURE_APP_USES_KOTLIN)
 
-        /*
-         * Uncomment the following line to enable IDP login flow. This will allow the user to
-         * either authenticate using the current app or use a designated IDP app for login.
-         * Replace 'idpAppURIScheme' with the URI scheme of the IDP app meant to be used.
-         */
-        // MobileSyncSDKManager.getInstance().idpAppURIScheme = idpAppURIScheme
+        // Setting app as IDP for these allowed SP apps
+        MobileSyncSDKManager.getInstance().setAllowedSPApps(listOf(
+            SPConfig(
+                "com.salesforce.samples.mobilesyncexplorer",
+                "com.salesforce.samples.mobilesyncexplorer.MainActivity",
+                "3MVG94DzwlYDSHS5d9A2_Ra7sqI.2ttBQuZPF1cS65n9QOZFzBL0F36mCZe33SMzKDKXFthjUNvbJMo.faevi",
+                "spsfdc:///mobilesdk/detect/oauth/done",
+                arrayOf("api", "web")
+            ),
+            SPConfig(
+                "com.salesforce.samples.restexplorer",
+                "com.salesforce.samples.restexplorer.ExplorerActivity",
+                "3MVG94DzwlYDSHS5d9A2_Ra7sqI.2ttBQuZPF1cS65n9QOZFzBL0F36mCZe33SMzKDKXFthjUNvbJMo.faevi",
+                "spsfdc:///mobilesdk/detect/oauth/done",
+                arrayOf("api", "web")
+            ),
+            SPConfig(
+                "com.salesforce.samples.accounteditor",
+                "com.salesforce.samples.accounteditor.SalesforceDroidGapActivity",
+                "3MVG94DzwlYDSHS5d9A2_Ra7sqI.2ttBQuZPF1cS65n9QOZFzBL0F36mCZe33SMzKDKXFthjUNvbJMo.faevi",
+                "spsfdc:///mobilesdk/detect/oauth/done",
+                arrayOf("api", "web")
+            )
+        ))
 
         /*
 		 * Un-comment the line below to enable push notifications in this app.
