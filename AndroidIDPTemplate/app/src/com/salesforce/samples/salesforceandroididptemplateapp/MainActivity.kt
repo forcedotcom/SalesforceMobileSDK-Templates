@@ -34,12 +34,17 @@ import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.TabHost
+import android.widget.Toast
 import com.salesforce.androidsdk.accounts.UserAccount
 import com.salesforce.androidsdk.accounts.UserAccountManager
 import com.salesforce.androidsdk.app.SalesforceSDKManager
+import com.salesforce.androidsdk.auth.idp.interfaces.IDPManager
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.androidsdk.rest.RestClient
 import com.salesforce.androidsdk.ui.SalesforceActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * This activity represents the landing screen. It displays 2 tabs - 1 for apps
@@ -164,9 +169,24 @@ class MainActivity : SalesforceActivity() {
         Log.d(TAG, "Launching SP app ${appName} with package ${spAppPackageName}")
         if (spAppPackageName != null) {
             SalesforceSDKManager.getInstance().idpManager?.let { idpManager ->
-                idpManager.kickOffIDPInitiatedLoginFlow(this, spAppPackageName)
+                idpManager.kickOffIDPInitiatedLoginFlow(this, spAppPackageName,
+                    object:IDPManager.StatusUpdateCallback {
+                        var currentToast:Toast? = null
+                        override fun onStatusUpdate(status: IDPManager.Status) {
+                            CoroutineScope(Dispatchers.Main).launch {
+                                currentToast?.let { it.cancel() }
+                                currentToast = Toast.makeText(
+                                    applicationContext,
+                                    getString(status.resIdForDescription),
+                                    Toast.LENGTH_SHORT
+                                )
+                                currentToast?.show()
+                            }
+                        }
+                    }
+                )
             } ?: run {
-                Log.e(TAG, "Cannot proceed with launch of ${appName} - not configure as IDP")
+                Log.e(TAG, "Cannot proceed with launch of ${appName} - not configured as IDP")
             }
         }
     }
