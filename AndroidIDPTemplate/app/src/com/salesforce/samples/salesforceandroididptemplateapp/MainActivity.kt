@@ -171,16 +171,14 @@ class MainActivity : SalesforceActivity() {
             SalesforceSDKManager.getInstance().idpManager?.let { idpManager ->
                 idpManager.kickOffIDPInitiatedLoginFlow(this, spAppPackageName,
                     object:IDPManager.StatusUpdateCallback {
-                        var currentToast:Toast? = null
                         override fun onStatusUpdate(status: IDPManager.Status) {
+                            Log.d(TAG, "Got update ${status}")
                             CoroutineScope(Dispatchers.Main).launch {
-                                currentToast?.let { it.cancel() }
-                                currentToast = Toast.makeText(
+                                Toast.makeText(
                                     applicationContext,
                                     getString(status.resIdForDescription),
                                     Toast.LENGTH_SHORT
-                                )
-                                currentToast?.show()
+                                ).show()
                             }
                         }
                     }
