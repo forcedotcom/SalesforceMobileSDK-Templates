@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    <string name="remoteAccessConsumerKey">3MVG94DzwlYDSHS5d9A2_Ra7sqJsdiY0zdA7Z2Mp4Goe4jX2xtzO7YdXA7awWDiceSNOBiRRWrzB5xWIVs5nV</string>
+    <!-- Mobile SDK IDP Template App (gs0.mobilesdk.com) -->
+    <string name="remoteAccessConsumerKey">3MVG98dostKihXN53TYStBIiS8KId1azmmFbEmeg8aE1Ja.XIGKef4m7uDeLjcwQf6GUAyVF1hqzcVwsSn0HO</string>
     <string name="oauthRedirectURI">idpsfdc:///mobilesdk/detect/oauth/done</string>
     <string-array name="oauthScopes">
         <item>api</item>

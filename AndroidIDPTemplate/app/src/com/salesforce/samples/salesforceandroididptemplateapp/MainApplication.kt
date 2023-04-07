@@ -45,26 +45,29 @@ class MainApplication : Application() {
         MobileSyncSDKManager.getInstance().registerUsedAppFeature(FEATURE_APP_USES_KOTLIN)
 
         // Setting app as IDP for these allowed SP apps
+        val mobileSDKSampleAppConsumerKey = "3MVG98dostKihXN53TYStBIiS8FC2a3tE3XhGId0hQ37iQjF0xe4fxMSb2mFaWZn9e3GiLs1q67TNlyRji.Xw"
+        val mobileSDKSampleAppCallbackUrl = "testsfdc:///mobilesdk/detect/oauth/done"
+
         MobileSyncSDKManager.getInstance().setAllowedSPApps(listOf(
             SPConfig(
                 "com.salesforce.samples.mobilesyncexplorer",
                 "com.salesforce.samples.mobilesyncexplorer.MainActivity",
-                "3MVG9Iu66FKeHhINkB1l7xt7kR8czFcCTUhgoA8Ol2Ltf1eYHOU4SqQRSEitYFDUpqRWcoQ2.dBv_a1Dyu5xa",
-                "testsfdc:///mobilesdk/detect/oauth/done",
+                mobileSDKSampleAppConsumerKey,
+                mobileSDKSampleAppCallbackUrl,
                 arrayOf("api", "web")
             ),
             SPConfig(
                 "com.salesforce.samples.restexplorer",
                 "com.salesforce.samples.restexplorer.ExplorerActivity",
-                "3MVG9Iu66FKeHhINkB1l7xt7kR8czFcCTUhgoA8Ol2Ltf1eYHOU4SqQRSEitYFDUpqRWcoQ2.dBv_a1Dyu5xa",
-                "testsfdc:///mobilesdk/detect/oauth/done",
+                mobileSDKSampleAppConsumerKey,
+                mobileSDKSampleAppCallbackUrl,
                 arrayOf("api", "web")
             ),
             SPConfig(
                 "com.salesforce.samples.accounteditor",
                 "com.salesforce.samples.accounteditor.SalesforceDroidGapActivity",
-                "3MVG9Iu66FKeHhINkB1l7xt7kR8czFcCTUhgoA8Ol2Ltf1eYHOU4SqQRSEitYFDUpqRWcoQ2.dBv_a1Dyu5xa",
-                "testsfdc:///mobilesdk/detect/oauth/done",
+                mobileSDKSampleAppConsumerKey,
+                mobileSDKSampleAppCallbackUrl,
                 arrayOf("api", "web")
             )
         ))
