@@ -49,22 +49,22 @@ class MainApplication : Application() {
             SPConfig(
                 "com.salesforce.samples.mobilesyncexplorer",
                 "com.salesforce.samples.mobilesyncexplorer.MainActivity",
-                "3MVG94DzwlYDSHS5d9A2_Ra7sqI.2ttBQuZPF1cS65n9QOZFzBL0F36mCZe33SMzKDKXFthjUNvbJMo.faevi",
-                "spsfdc:///mobilesdk/detect/oauth/done",
+                "3MVG9Iu66FKeHhINkB1l7xt7kR8czFcCTUhgoA8Ol2Ltf1eYHOU4SqQRSEitYFDUpqRWcoQ2.dBv_a1Dyu5xa",
+                "testsfdc:///mobilesdk/detect/oauth/done",
                 arrayOf("api", "web")
             ),
             SPConfig(
                 "com.salesforce.samples.restexplorer",
                 "com.salesforce.samples.restexplorer.ExplorerActivity",
-                "3MVG94DzwlYDSHS5d9A2_Ra7sqI.2ttBQuZPF1cS65n9QOZFzBL0F36mCZe33SMzKDKXFthjUNvbJMo.faevi",
-                "spsfdc:///mobilesdk/detect/oauth/done",
+                "3MVG9Iu66FKeHhINkB1l7xt7kR8czFcCTUhgoA8Ol2Ltf1eYHOU4SqQRSEitYFDUpqRWcoQ2.dBv_a1Dyu5xa",
+                "testsfdc:///mobilesdk/detect/oauth/done",
                 arrayOf("api", "web")
             ),
             SPConfig(
                 "com.salesforce.samples.accounteditor",
                 "com.salesforce.samples.accounteditor.SalesforceDroidGapActivity",
-                "3MVG94DzwlYDSHS5d9A2_Ra7sqI.2ttBQuZPF1cS65n9QOZFzBL0F36mCZe33SMzKDKXFthjUNvbJMo.faevi",
-                "spsfdc:///mobilesdk/detect/oauth/done",
+                "3MVG9Iu66FKeHhINkB1l7xt7kR8czFcCTUhgoA8Ol2Ltf1eYHOU4SqQRSEitYFDUpqRWcoQ2.dBv_a1Dyu5xa",
+                "testsfdc:///mobilesdk/detect/oauth/done",
                 arrayOf("api", "web")
             )
         ))
