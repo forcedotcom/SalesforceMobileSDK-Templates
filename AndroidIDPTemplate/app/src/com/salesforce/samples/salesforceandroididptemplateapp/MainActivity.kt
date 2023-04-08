@@ -26,7 +26,6 @@
  */
 package com.salesforce.samples.salesforceandroididptemplateapp
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -35,12 +34,17 @@ import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.TabHost
+import android.widget.Toast
 import com.salesforce.androidsdk.accounts.UserAccount
 import com.salesforce.androidsdk.accounts.UserAccountManager
-import com.salesforce.androidsdk.auth.idp.IDPInititatedLoginReceiver
+import com.salesforce.androidsdk.app.SalesforceSDKManager
+import com.salesforce.androidsdk.auth.idp.interfaces.IDPManager
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.androidsdk.rest.RestClient
 import com.salesforce.androidsdk.ui.SalesforceActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * This activity represents the landing screen. It displays 2 tabs - 1 for apps
@@ -62,10 +66,6 @@ class MainActivity : SalesforceActivity() {
         private const val MOBILE_SYNC_EXPLORER_PACKAGE = "com.salesforce.samples.mobilesyncexplorer"
         private const val REST_EXPLORER_PACKAGE = "com.salesforce.samples.restexplorer"
         private const val ACCOUNT_EDITOR_PACKAGE = "com.salesforce.samples.accounteditor"
-        private const val MOBILE_SYNC_COMPONENT_NAME = "MainActivity"
-        private const val REST_EXPLORER_COMPONENT_NAME = "ExplorerActivity"
-        private const val ACCOUNT_EDITOR_COMPONENT_NAME = "SalesforceDroidGapActivity"
-        private const val COLON = ":"
     }
 
     private var client: RestClient? = null
@@ -160,32 +160,33 @@ class MainActivity : SalesforceActivity() {
     private fun handleAppsListItemClick(position: Int) {
         Log.d(TAG, "Apps list item clicked, position: " + position)
         val appName = appsListView?.adapter?.getItem(position) as String
-        var appPackageName = ""
-        var appComponentName = ""
-        when (appName) {
-            MOBILE_SYNC_EXPLORER -> {
-                appPackageName = MOBILE_SYNC_EXPLORER_PACKAGE
-                appComponentName = MOBILE_SYNC_COMPONENT_NAME
-            }
-            REST_EXPLORER -> {
-                appPackageName = REST_EXPLORER_PACKAGE
-                appComponentName = REST_EXPLORER_COMPONENT_NAME
-            }
-            ACCOUNT_EDITOR -> {
-                appPackageName = ACCOUNT_EDITOR_PACKAGE
-                appComponentName = ACCOUNT_EDITOR_COMPONENT_NAME
+        val spAppPackageName = when (appName) {
+            MOBILE_SYNC_EXPLORER -> MOBILE_SYNC_EXPLORER_PACKAGE
+            REST_EXPLORER -> REST_EXPLORER_PACKAGE
+            ACCOUNT_EDITOR -> ACCOUNT_EDITOR_PACKAGE
+            else -> null
+        }
+        Log.d(TAG, "Launching SP app ${appName} with package ${spAppPackageName}")
+        if (spAppPackageName != null) {
+            SalesforceSDKManager.getInstance().idpManager?.let { idpManager ->
+                idpManager.kickOffIDPInitiatedLoginFlow(this, spAppPackageName,
+                    object:IDPManager.StatusUpdateCallback {
+                        override fun onStatusUpdate(status: IDPManager.Status) {
+                            Log.d(TAG, "Got update ${status}")
+                            CoroutineScope(Dispatchers.Main).launch {
+                                Toast.makeText(
+                                    applicationContext,
+                                    getString(status.resIdForDescription),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
+                )
+            } ?: run {
+                Log.e(TAG, "Cannot proceed with launch of ${appName} - not configured as IDP")
             }
         }
-        Log.d(TAG, "App being launched: " + appName + ", package name: " + appPackageName)
-        val intent = Intent(IDPInititatedLoginReceiver.IDP_LOGIN_REQUEST_ACTION)
-        intent.addCategory(Intent.CATEGORY_DEFAULT)
-
-        // Limiting intent to the target app's package.
-        intent.`package` = appPackageName
-
-        // Adding user hint and target component.
-        intent.putExtra(IDPInititatedLoginReceiver.USER_HINT_KEY, currentUser?.orgId + COLON + currentUser?.userId)
-        intent.putExtra(IDPInititatedLoginReceiver.SP_ACTVITY_NAME_KEY, appComponentName)
-        sendBroadcast(intent)
     }
 }
+
