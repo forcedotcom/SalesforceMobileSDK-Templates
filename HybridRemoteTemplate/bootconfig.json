@@ -6,5 +6,6 @@
     "startPage": "apex/HybridRemotePage",
     "errorPage": "error.html",
     "shouldAuthenticate": true,
-    "attemptOfflineLoad": false
+    "attemptOfflineLoad": false,
+    "androidPushNotificationClientId": ""
 }
