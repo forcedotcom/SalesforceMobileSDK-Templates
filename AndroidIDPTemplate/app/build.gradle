@@ -6,6 +6,8 @@ dependencies {
 }
 
 android {
+    namespace = "com.salesforce.samples.salesforceandroididptemplateapp"
+
     compileSdkVersion 33
 
     defaultConfig {

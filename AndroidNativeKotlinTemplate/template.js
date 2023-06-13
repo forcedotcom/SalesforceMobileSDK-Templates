@@ -42,7 +42,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Key files
     var templatePackageJsonFile = 'package.json';
     var templateSettingsGradle = 'settings.gradle';
-    var templateAndroidManifestFile = path.join('app', 'AndroidManifest.xml');
+    var templateBuildGradleFile = path.join('app', 'build.gradle');
     var templateStringsXmlFile = path.join('app', 'res', 'values', 'strings.xml');
     var templateBootconfigFile = path.join('app', 'res', 'values', 'bootconfig.xml');
     var templateMainActivityFile = path.join('app', 'src', 'com', 'salesforce', 'androidnativekotlintemplate', 'MainActivity.kt');
@@ -56,7 +56,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     replaceInFiles(templateAppName, config.appname, [templatePackageJsonFile, templateSettingsGradle, templateStringsXmlFile]);
 
     // package name
-    replaceInFiles(templatePackageName, config.packagename, [templateAndroidManifestFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile]);
+    replaceInFiles(templatePackageName, config.packagename, [templateBuildGradleFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile]);
     
     //
     // Rename/move files

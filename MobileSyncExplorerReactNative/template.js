@@ -108,7 +108,6 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         var templatePackageJsonFile = 'package.json';
         var templateIndexAndroidFile = 'index.js';
         var templateSettingsGradle = path.join('android', 'settings.gradle');
-        var templateAndroidManifestFile = path.join('android', 'app', 'src', 'main', 'AndroidManifest.xml');
         var templateBuckFile = path.join('android', 'app', 'BUCK');
         var templateAppBuildGradleFile = path.join('android', 'app', 'build.gradle');
         var templateStringsXmlFile = path.join('android', 'app', 'src', 'main', 'res', 'values', 'strings.xml');
@@ -124,7 +123,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         replaceInFiles(templateAppName, config.appname, [templatePackageJsonFile, templateIndexAndroidFile, templateSettingsGradle, templateStringsXmlFile, templateMainActivityFile]);
 
         // package name
-        replaceInFiles(templatePackageName, config.packagename, [templateAndroidManifestFile, templateBuckFile, templateAppBuildGradleFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile]);
+        replaceInFiles(templatePackageName, config.packagename, [templateBuckFile, templateAppBuildGradleFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile]);
         
         //
         // Rename/move/remove files

@@ -5,6 +5,8 @@ dependencies {
 }
 
 android {
+  namespace = "com.salesforce.androidnativetemplate"
+
   compileSdkVersion 33
 
   defaultConfig {
