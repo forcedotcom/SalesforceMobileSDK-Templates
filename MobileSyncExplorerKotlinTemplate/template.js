@@ -63,7 +63,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Key files
     const templatePackageJsonFile = 'package.json';
     const templateSettingsGradle = 'settings.gradle';
-    const templateBuildGradleFile = path.join('app', 'build.gradle');    
+    const templateBuildGradleFile = path.join('app', 'build.gradle');
     const templateStringsXmlFile = path.join('app', 'src', 'main', 'res', 'values', 'strings.xml');
     const templateBootconfigFile = path.join('app', 'src', 'main', 'res', 'values', 'bootconfig.xml');
     const javaDirPath = path.join('app', 'src', 'main', 'java');
