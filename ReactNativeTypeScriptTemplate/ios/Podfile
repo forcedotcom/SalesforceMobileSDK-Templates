@@ -2,7 +2,7 @@ require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 require_relative '../mobile_sdk/SalesforceMobileSDK-iOS/mobilesdk_pods'
 
-platform :ios, '14.0'
+platform :ios, '15.0'
 
 project 'ReactNativeTypeScriptTemplate.xcodeproj'
 target 'ReactNativeTypeScriptTemplate' do
