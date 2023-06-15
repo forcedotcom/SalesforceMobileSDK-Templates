@@ -3,7 +3,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 require_relative '../mobile_sdk/SalesforceMobileSDK-iOS/mobilesdk_pods'
 
 
-platform :ios, '14.0'
+platform :ios, '15.0'
 
 project 'MobileSyncExplorerReactNative.xcodeproj'
 target 'MobileSyncExplorerReactNative' do
@@ -46,7 +46,7 @@ post_install do |installer|
   # Cocoapods workaround for M1 machines
   __apply_Xcode_12_5_M1_post_install_workaround(installer)
 
-  # Needed with XCdoe 14.3
+  # Needed with Xcode 14.3
   installer.pods_project.targets.each do |target|
     if target.name == "React-Codegen" 
       change_deployment_target(target, '12.0')
