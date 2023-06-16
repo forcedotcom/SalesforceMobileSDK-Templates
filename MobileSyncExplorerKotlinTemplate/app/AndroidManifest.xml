@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     
     <application
-        android:name="com.salesforce.mobilesyncexplorerkotlintemplate.MainApplication"
+        android:name="com.salesforce.androidmobilesyncexplorerkotlin.MainApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -10,9 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SalesforceMobileSDKAndroid">
         <activity
-            android:name="com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.ContactsActivity"
+            android:name="com.salesforce.androidmobilesyncexplorerkotlin.contacts.activity.ContactsActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.SalesforceMobileSDKAndroid">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
