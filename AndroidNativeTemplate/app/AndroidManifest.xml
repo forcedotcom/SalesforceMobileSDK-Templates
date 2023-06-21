@@ -13,7 +13,7 @@
 		<!-- Launcher screen -->
 		<activity android:name=".MainActivity"
 		    android:label="@string/app_name"
-			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+			android:theme="@style/SalesforceSDK_Fullscreen"
             android:exported="true">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
