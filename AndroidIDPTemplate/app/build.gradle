@@ -3,14 +3,15 @@ apply plugin: 'kotlin-android'
 
 dependencies {
   implementation project(':libs:MobileSync')
-  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 android {
-    compileSdkVersion 32
+    namespace = "com.salesforce.samples.salesforceandroididptemplateapp"
+
+    compileSdkVersion 33
 
     defaultConfig {
-        targetSdkVersion 32
+        targetSdkVersion 33
         minSdkVersion 24
     }
 

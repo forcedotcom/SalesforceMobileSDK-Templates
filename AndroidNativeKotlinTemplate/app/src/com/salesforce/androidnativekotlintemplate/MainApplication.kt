@@ -45,10 +45,11 @@ class MainApplication : Application() {
 
         /*
          * Uncomment the following line to enable IDP login flow. This will allow the user to
-         * either authenticate using the current app or use a designated IDP app for login.
-         * Replace 'idpAppURIScheme' with the URI scheme of the IDP app meant to be used.
+         * either authenticate using the current app or use the designated IDP app for login.
+         * Replace 'com.salesforce.samples.salesforceandroididptemplateapp' with the package name
+         * of the IDP app meant to be used.
          */
-        // MobileSyncSDKManager.getInstance().idpAppURIScheme = idpAppURIScheme
+        // MobileSyncSDKManager.getInstance().idpAppPackageName = "com.salesforce.samples.salesforceandroididptemplateapp"
 
         /*
 		 * Un-comment the line below to enable push notifications in this app.

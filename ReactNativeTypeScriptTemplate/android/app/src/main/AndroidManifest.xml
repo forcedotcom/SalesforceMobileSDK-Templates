@@ -5,6 +5,8 @@
 	android:versionCode="1"
 	android:versionName="1.0"
 	android:installLocation="internalOnly">
+	
+	<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
 	<application android:icon="@drawable/sf__icon"
 	    android:label="@string/app_name"
@@ -58,47 +60,6 @@
             </intent-filter>
         </activity>
         -->
-
-		<!-- IDP account picker activity -->
-		<!--
-            To enable this app as an IDP app that's capable of handling authentication
-            requests originating from other SP apps, uncomment the lines below and replace
-            'scheme' and 'host' with the values you wish to use to define your IDP app.
-            The URI constructed from this must be unique and will be set in the SP app
-            as well. This will be used to launch the IDP app from the SP app.
-
-            In the example given below, 'scheme' is "com.salesforce.reactnativetypescripttemplate" and
-            'host' is "authenticator". The full URI that needs to be set on the SP app would be
-            "com.salesforce.reactnativetypescripttemplate://authenticator".
-        -->
-		<!--
-        <activity android:name="com.salesforce.androidsdk.auth.idp.IDPAccountPickerActivity"
-            android:excludeFromRecents="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:exported="true">
-
-
-            <intent-filter>
-                <data android:scheme="com.salesforce.reactnativetypescripttemplate"
-                    android:host="authenticator" />
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        -->
-
         <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="true" />
 	</application>
-
-    <!--
-        GCM permission to ensure that only this application can
-        receive the messages and registration result. This must be of
-        the format <app-package-name>.C2D_MESSAGE for it to work.
-    -->
-    <permission android:name="com.salesforce.reactnativetypescripttemplate.C2D_MESSAGE"
-        android:protectionLevel="signature" />
-
-    <uses-permission android:name="com.salesforce.reactnativetypescripttemplate.C2D_MESSAGE" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 </manifest>

@@ -27,6 +27,7 @@
 package com.salesforce.samples.salesforceandroididptemplateapp
 
 import android.app.Application
+import com.salesforce.androidsdk.auth.idp.SPConfig
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 
 /**
@@ -43,12 +44,33 @@ class MainApplication : Application() {
         MobileSyncSDKManager.initNative(applicationContext, MainActivity::class.java)
         MobileSyncSDKManager.getInstance().registerUsedAppFeature(FEATURE_APP_USES_KOTLIN)
 
-        /*
-         * Uncomment the following line to enable IDP login flow. This will allow the user to
-         * either authenticate using the current app or use a designated IDP app for login.
-         * Replace 'idpAppURIScheme' with the URI scheme of the IDP app meant to be used.
-         */
-        // MobileSyncSDKManager.getInstance().idpAppURIScheme = idpAppURIScheme
+        // Setting app as IDP for these allowed SP apps
+        val mobileSDKSampleAppConsumerKey = "3MVG98dostKihXN53TYStBIiS8FC2a3tE3XhGId0hQ37iQjF0xe4fxMSb2mFaWZn9e3GiLs1q67TNlyRji.Xw"
+        val mobileSDKSampleAppCallbackUrl = "testsfdc:///mobilesdk/detect/oauth/done"
+
+        MobileSyncSDKManager.getInstance().setAllowedSPApps(listOf(
+            SPConfig(
+                "com.salesforce.samples.mobilesyncexplorer",
+                "com.salesforce.samples.mobilesyncexplorer.MainActivity",
+                mobileSDKSampleAppConsumerKey,
+                mobileSDKSampleAppCallbackUrl,
+                arrayOf("api", "web")
+            ),
+            SPConfig(
+                "com.salesforce.samples.restexplorer",
+                "com.salesforce.samples.restexplorer.ExplorerActivity",
+                mobileSDKSampleAppConsumerKey,
+                mobileSDKSampleAppCallbackUrl,
+                arrayOf("api", "web")
+            ),
+            SPConfig(
+                "com.salesforce.samples.accounteditor",
+                "com.salesforce.samples.accounteditor.SalesforceDroidGapActivity",
+                mobileSDKSampleAppConsumerKey,
+                mobileSDKSampleAppCallbackUrl,
+                arrayOf("api", "web")
+            )
+        ))
 
         /*
 		 * Un-comment the line below to enable push notifications in this app.

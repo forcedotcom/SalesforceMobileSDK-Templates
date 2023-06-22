@@ -55,7 +55,7 @@ function listKtFiles(dirPath) {
 function prepare(config, replaceInFiles, moveFile, removeFile) {
 
     // Values in template
-    const templateAppName = 'Mobile Sync Explorer Kotlin Template';
+    const templateAppName = 'MobileSyncExplorerKotlinTemplate';
     const templatePackageName = 'com.salesforce.mobilesyncexplorerkotlintemplate';
     const templatePackagePath = templatePackageName.replace(/\./g, path.sep);
     const configPackagePath = config.packagename.replace(/\./g, path.sep);
@@ -63,7 +63,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Key files
     const templatePackageJsonFile = 'package.json';
     const templateSettingsGradle = 'settings.gradle';
-    const templateAndroidManifestFile = path.join('app', 'AndroidManifest.xml');
+    const templateBuildGradleFile = path.join('app', 'build.gradle');
     const templateStringsXmlFile = path.join('app', 'src', 'main', 'res', 'values', 'strings.xml');
     const templateBootconfigFile = path.join('app', 'src', 'main', 'res', 'values', 'bootconfig.xml');
     const javaDirPath = path.join('app', 'src', 'main', 'java');
@@ -77,7 +77,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     replaceInFiles(templateAppName, config.appname, [templatePackageJsonFile, templateSettingsGradle, templateStringsXmlFile]);
 
     // package name
-    replaceInFiles(templatePackageName, config.packagename, [templateAndroidManifestFile, templateStringsXmlFile].concat(ktFiles));
+    replaceInFiles(templatePackageName, config.packagename, [templateBuildGradleFile, templateStringsXmlFile].concat(ktFiles));
 
     //
     // Rename/move files
