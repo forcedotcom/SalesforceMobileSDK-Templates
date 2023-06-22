@@ -55,7 +55,7 @@ function listKtFiles(dirPath) {
 function prepare(config, replaceInFiles, moveFile, removeFile) {
 
     // Values in template
-    const templateAppName = 'Mobile Sync Explorer Kotlin Template';
+    const templateAppName = 'MobileSyncExplorerKotlinTemplate';
     const templatePackageName = 'com.salesforce.mobilesyncexplorerkotlintemplate';
     const templatePackagePath = templatePackageName.replace(/\./g, path.sep);
     const configPackagePath = config.packagename.replace(/\./g, path.sep);
