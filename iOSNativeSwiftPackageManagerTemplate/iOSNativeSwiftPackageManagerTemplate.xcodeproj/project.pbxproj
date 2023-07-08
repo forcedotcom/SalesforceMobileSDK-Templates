@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -33,7 +33,6 @@
 		4F13E940237DD5EE005BCAE9 /* usersyncs.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = usersyncs.json; sourceTree = "<group>"; };
 		4F13E941237DD5EE005BCAE9 /* userstore.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = userstore.json; sourceTree = "<group>"; };
 		4F13E946237DD72E005BCAE9 /* AccountsListModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsListModel.swift; sourceTree = "<group>"; };
-		4F26BB832A5783D500156FE7 /* SalesforceMobileSDK-iOS */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "SalesforceMobileSDK-iOS"; path = "mobile_sdk/SalesforceMobileSDK-iOS"; sourceTree = "<group>"; };
 		4F393A281C3C8BCD00B3EA13 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		4FD6C4741B754AF1002F9F90 /* iOSNativeSwiftPackageManagerTemplate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSNativeSwiftPackageManagerTemplate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FD6C4781B754AF1002F9F90 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -81,7 +80,6 @@
 		4F26BB822A5783D500156FE7 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				4F26BB832A5783D500156FE7 /* SalesforceMobileSDK-iOS */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -188,6 +186,9 @@
 				Base,
 			);
 			mainGroup = 4FD6C46B1B754AF1002F9F90;
+			packageReferences = (
+				4F26BB872A58E01200156FE7 /* XCRemoteSwiftPackageReference "SalesforceMobileSDK-iOS-SPM" */,
+			);
 			productRefGroup = 4FD6C4751B754AF1002F9F90 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -398,6 +399,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4F26BB872A58E01200156FE7 /* XCRemoteSwiftPackageReference "SalesforceMobileSDK-iOS-SPM" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "git@github.com:wmathurin/SalesforceMobileSDK-iOS-SPM";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = 4FD6C46C1B754AF1002F9F90 /* Project object */;
 }
