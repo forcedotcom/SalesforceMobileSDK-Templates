@@ -18,6 +18,11 @@
 		4F393A291C3C8BCD00B3EA13 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F393A281C3C8BCD00B3EA13 /* main.swift */; };
 		4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */; };
 		4FD6C4A01B755242002F9F90 /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C49D1B755242002F9F90 /* InitialViewController.swift */; };
+		4FFBC65A2A5DC21B004CF964 /* MobileSync in Frameworks */ = {isa = PBXBuildFile; productRef = 4FFBC6592A5DC21B004CF964 /* MobileSync */; };
+		4FFBC65C2A5DC21B004CF964 /* SalesforceAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 4FFBC65B2A5DC21B004CF964 /* SalesforceAnalytics */; };
+		4FFBC65E2A5DC21B004CF964 /* SalesforceSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 4FFBC65D2A5DC21B004CF964 /* SalesforceSDKCommon */; };
+		4FFBC6602A5DC21B004CF964 /* SalesforceSDKCore in Frameworks */ = {isa = PBXBuildFile; productRef = 4FFBC65F2A5DC21B004CF964 /* SalesforceSDKCore */; };
+		4FFBC6622A5DC21B004CF964 /* SmartStore in Frameworks */ = {isa = PBXBuildFile; productRef = 4FFBC6612A5DC21B004CF964 /* SmartStore */; };
 		B7168FBC1FACC6F900A48DB5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */; };
 		B73B520D234FA65F001B069B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73B520C234FA65F001B069B /* SceneDelegate.swift */; };
 		B77BD8A321125B510036B284 /* bootconfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = B77BD8A221125B510036B284 /* bootconfig.plist */; };
@@ -39,10 +44,10 @@
 		4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4FD6C49D1B755242002F9F90 /* InitialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitialViewController.swift; sourceTree = "<group>"; };
 		4FF12F8A1DCA91F5004D9EF9 /* iOSNativeSwiftPackageManagerTemplate.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iOSNativeSwiftPackageManagerTemplate.entitlements; sourceTree = "<group>"; };
-		B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = "../mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/LaunchScreen.storyboard"; sourceTree = "<group>"; };
+		B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B73B520C234FA65F001B069B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		B77BD8A221125B510036B284 /* bootconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = bootconfig.plist; sourceTree = "<group>"; };
-		CEA8CA031F071B2300448B51 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/Images.xcassets"; sourceTree = SOURCE_ROOT; };
+		CEA8CA031F071B2300448B51 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = iOSNativeSwiftPackageManagerTemplate/Images.xcassets; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,6 +55,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4FFBC65C2A5DC21B004CF964 /* SalesforceAnalytics in Frameworks */,
+				4FFBC65A2A5DC21B004CF964 /* MobileSync in Frameworks */,
+				4FFBC6622A5DC21B004CF964 /* SmartStore in Frameworks */,
+				4FFBC65E2A5DC21B004CF964 /* SalesforceSDKCommon in Frameworks */,
+				4FFBC6602A5DC21B004CF964 /* SalesforceSDKCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,12 +94,20 @@
 			name = Packages;
 			sourceTree = "<group>";
 		};
+		4F3359122A5CAF140095C61F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		4FD6C46B1B754AF1002F9F90 = {
 			isa = PBXGroup;
 			children = (
 				4F26BB822A5783D500156FE7 /* Packages */,
 				4FD6C4761B754AF1002F9F90 /* iOSNativeSwiftPackageManagerTemplate */,
 				4FD6C4751B754AF1002F9F90 /* Products */,
+				4F3359122A5CAF140095C61F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -152,6 +170,13 @@
 			dependencies = (
 			);
 			name = iOSNativeSwiftPackageManagerTemplate;
+			packageProductDependencies = (
+				4FFBC6592A5DC21B004CF964 /* MobileSync */,
+				4FFBC65B2A5DC21B004CF964 /* SalesforceAnalytics */,
+				4FFBC65D2A5DC21B004CF964 /* SalesforceSDKCommon */,
+				4FFBC65F2A5DC21B004CF964 /* SalesforceSDKCore */,
+				4FFBC6612A5DC21B004CF964 /* SmartStore */,
+			);
 			productName = iOSNativeSwiftPackageManagerTemplate;
 			productReference = 4FD6C4741B754AF1002F9F90 /* iOSNativeSwiftPackageManagerTemplate.app */;
 			productType = "com.apple.product-type.application";
@@ -187,7 +212,7 @@
 			);
 			mainGroup = 4FD6C46B1B754AF1002F9F90;
 			packageReferences = (
-				4F26BB872A58E01200156FE7 /* XCRemoteSwiftPackageReference "SalesforceMobileSDK-iOS-SPM" */,
+				4FFBC6582A5DC21B004CF964 /* XCRemoteSwiftPackageReference "SalesforceMobileSDK-iOS-SPM" */,
 			);
 			productRefGroup = 4FD6C4751B754AF1002F9F90 /* Products */;
 			projectDirPath = "";
@@ -401,15 +426,43 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		4F26BB872A58E01200156FE7 /* XCRemoteSwiftPackageReference "SalesforceMobileSDK-iOS-SPM" */ = {
+		4FFBC6582A5DC21B004CF964 /* XCRemoteSwiftPackageReference "SalesforceMobileSDK-iOS-SPM" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "git@github.com:wmathurin/SalesforceMobileSDK-iOS-SPM";
+			repositoryURL = "https://github.com/wmathurin/SalesforceMobileSDK-iOS-SPM";
 			requirement = {
 				branch = main;
 				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4FFBC6592A5DC21B004CF964 /* MobileSync */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4FFBC6582A5DC21B004CF964 /* XCRemoteSwiftPackageReference "SalesforceMobileSDK-iOS-SPM" */;
+			productName = MobileSync;
+		};
+		4FFBC65B2A5DC21B004CF964 /* SalesforceAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4FFBC6582A5DC21B004CF964 /* XCRemoteSwiftPackageReference "SalesforceMobileSDK-iOS-SPM" */;
+			productName = SalesforceAnalytics;
+		};
+		4FFBC65D2A5DC21B004CF964 /* SalesforceSDKCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4FFBC6582A5DC21B004CF964 /* XCRemoteSwiftPackageReference "SalesforceMobileSDK-iOS-SPM" */;
+			productName = SalesforceSDKCommon;
+		};
+		4FFBC65F2A5DC21B004CF964 /* SalesforceSDKCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4FFBC6582A5DC21B004CF964 /* XCRemoteSwiftPackageReference "SalesforceMobileSDK-iOS-SPM" */;
+			productName = SalesforceSDKCore;
+		};
+		4FFBC6612A5DC21B004CF964 /* SmartStore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4FFBC6582A5DC21B004CF964 /* XCRemoteSwiftPackageReference "SalesforceMobileSDK-iOS-SPM" */;
+			productName = SmartStore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4FD6C46C1B754AF1002F9F90 /* Project object */;
 }
