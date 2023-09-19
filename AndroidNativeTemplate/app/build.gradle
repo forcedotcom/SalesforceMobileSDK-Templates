@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 dependencies {
-  implementation 'com.salesforce.mobilesdk:MobileSync:11.0.0'
+  implementation 'com.salesforce.mobilesdk:MobileSync'
 }
 
 android {
