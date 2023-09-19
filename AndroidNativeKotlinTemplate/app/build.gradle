@@ -2,19 +2,19 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 dependencies {
-  implementation project(':libs:MobileSync')
+    implementation 'com.salesforce.mobilesdk:MobileSync:11.0.0'
 }
 
 android {
     namespace = "com.salesforce.androidnativekotlintemplate"
 
-    compileSdkVersion 33
+    compileSdk 33
 
     defaultConfig {
         targetSdkVersion 33
         minSdkVersion 24
     }
-  
+
     buildTypes {
       debug {
          testCoverageEnabled = true

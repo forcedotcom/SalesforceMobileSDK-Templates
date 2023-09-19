@@ -123,7 +123,7 @@ def enableHermes = project.ext.react.get("enableHermes", false);
 android {
     namespace =  "com.salesforce.reactnativedeferredtemplate"
 
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    compileSdk rootProject.ext.compileSdk
 
     defaultConfig {
         applicationId "com.salesforce.reactnativedeferredtemplate"
@@ -168,7 +168,7 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
-    implementation project(':libs:SalesforceReact') // From node_modules
+    implementation 'com.salesforce.mobilesdk:SalesforceReact:11.0.0' // From node_modules
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 

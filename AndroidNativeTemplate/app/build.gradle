@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 dependencies {
-  implementation project(':libs:MobileSync')
+  implementation 'com.salesforce.mobilesdk:MobileSync:11.0.0'
 }
 
 android {
   namespace = "com.salesforce.androidnativetemplate"
 
-  compileSdkVersion 33
+  compileSdk 33
 
   defaultConfig {
     targetSdkVersion 33
