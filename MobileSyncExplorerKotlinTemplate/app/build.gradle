@@ -57,7 +57,6 @@ android {
             excludes += ['META-INF/LICENSE', 'META-INF/LICENSE.txt', 'META-INF/DEPENDENCIES', 'META-INF/NOTICE']
         }
     }
-    buildToolsVersion '33.0.0'
 
     sourceSets {
         main {
@@ -81,7 +80,7 @@ dependencies {
     implementation 'androidx.activity:activity-compose:1.4.0'
     implementation 'androidx.window:window:1.0.0'
 
-    implementation project(':libs:MobileSync')
+    implementation 'com.salesforce.mobilesdk:MobileSync'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
