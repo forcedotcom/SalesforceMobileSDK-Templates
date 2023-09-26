@@ -26,7 +26,7 @@
  */
 package com.salesforce.mobilesyncexplorerkotlintemplate.core.repos
 
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.CleanResyncGhostsException
+import com.salesforce.androidsdk.mobilesync.manager.SyncManager.CleanResyncGhostsException
 
 /**
  * Sealed class representing the exhaustive set of all failure modes for the [SObjectSyncableRepo]
