@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     android
     `kotlin-android`
@@ -13,8 +15,8 @@ android {
     compileSdk = 33
 
     defaultConfig {
-        targetSdk = 33
         minSdk = 24
+        targetSdk = 33
     }
 
     buildTypes {

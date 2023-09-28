@@ -1,4 +1,9 @@
-plugins { android }
+@file:Suppress("UnstableApiUsage")
+
+plugins {
+    android
+    `kotlin-android`
+}
 
 dependencies {
     implementation("com.salesforce.mobilesdk:MobileSync")
@@ -10,8 +15,8 @@ android {
     compileSdk = 33
 
     defaultConfig {
-        targetSdk = 33
         minSdk = 24
+        targetSdk = 33
     }
 
     buildTypes {
@@ -37,4 +42,9 @@ android {
             excludes += setOf("META-INF/LICENSE", "META-INF/LICENSE.txt", "META-INF/DEPENDENCIES", "META-INF/NOTICE")
         }
     }
+}
+
+repositories {
+    google()
+    mavenCentral()
 }
