@@ -1,5 +1,0 @@
-rootProject.name = 'AndroidNativeTemplate'
-
-include ':app'
-
-includeBuild(new File(settingsDir, 'mobile_sdk/SalesforceMobileSDK-Android'))
