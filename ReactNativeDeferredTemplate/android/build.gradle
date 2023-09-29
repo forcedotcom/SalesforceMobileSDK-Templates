@@ -11,7 +11,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:8.1.1'
+    classpath 'com.android.tools.build:gradle:7.4.2'
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.21"
   }
 }
@@ -31,27 +31,5 @@ allprojects {
 
     google()
     maven { url 'https://www.jitpack.io' }
-  }
-}
-
-/*
- * TODO: Remove this guard which applies Android Gradle Plugin 8's required `namespace` property to any sub-project that doesn't yet provide it. ECJ20230919
- *
- * React Native will migrate to Gradle 8 and Android Gradle Plugin 8 in its 0.73
- * version, which hasn't yet been released.  According to React Native's
- * community, at that time all React Native community libraries will be required
- * to provide the Android `namespace` attribute.
- *
- * Until that time, this work-around applies a temporary `namespace` only as
- * needed.
- *
- * https://github.com/react-native-community/discussions-and-proposals/issues/671
- */
-subprojects {
-  afterEvaluate {
-    if (android.namespace == null) {
-      logger.warn("Applying a Gradle 8 and Android Gradle Plugin 8 compatible namespace to Android project named '" + project.name + "'.  Consider upgrading to a new version, if possible.")
-      android.namespace = 'todo.agp.namespace.for.gradle8.incompatible.module'
-    }
   }
 }
