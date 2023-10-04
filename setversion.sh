@@ -71,6 +71,7 @@ update_package_json "./ReactNativeDeferredTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./iOSIDPTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./iOSNativeSwiftEncryptedNotificationTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./iOSNativeSwiftTemplate/package.json"  "${SDK_TAG}"
+update_package_json "./iOSNativeSwiftPackageManagerTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./iOSNativeTemplate/package.json"  "${SDK_TAG}"
 
 
