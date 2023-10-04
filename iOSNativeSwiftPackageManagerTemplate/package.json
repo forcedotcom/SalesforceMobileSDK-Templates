@@ -3,6 +3,6 @@
     "version": "0.0.1",
     "private": true,
     "sdkDependencies": {
-        "SalesforceMobileSDK-iOS-SPM": "https://github.com/forcedotcom/SalesforceMobileSDK-iOS-SPM#master"
+        "SalesforceMobileSDK-iOS-SPM": "https://github.com/wmathurin/SalesforceMobileSDK-iOS-SPM#master"
     }
 }
