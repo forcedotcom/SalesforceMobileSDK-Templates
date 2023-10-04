@@ -31,12 +31,3 @@ if (isNaN(parseInt(spm.branchOrTag))) {
 } else {
     fixProjectFile(spm.repoUrl, 'exactVersion', 'version', spm.branchOrTag)
 }
-
-original  = '		4FFBC6582A5DC21B004CF964 /* XCRemoteSwiftPackageReference "SalesforceMobileSDK-iOS-SPM" */ = {\n' +
-'			isa = XCRemoteSwiftPackageReference;\n' + 
-'			repositoryURL = "https://github.com/forcedotcom/SalesforceMobileSDK-iOS-SPM";\n' + 
-'			requirement= {\n' + 
-'				kind = exactVersion;\n' + 
-'				version = 11.0.1\n' + 
-'			};\n' + 
-'		};'
