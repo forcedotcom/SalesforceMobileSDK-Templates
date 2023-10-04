@@ -41,8 +41,8 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
 
     // Key files
     var templatePackageJsonFile = 'package.json';
-    var templateSettingsGradle = 'settings.gradle';
-    var templateBuildGradleFile = path.join('app', 'build.gradle');
+    var templateSettingsGradle = 'settings.gradle.kts';
+    var templateBuildGradleFile = path.join('app', 'build.gradle.kts');
     var templateStringsXmlFile = path.join('app', 'res', 'values', 'strings.xml');
     var templateBootconfigFile = path.join('app', 'res', 'values', 'bootconfig.xml');
     var templateMainActivityFile = path.join('app', 'src', 'com', 'salesforce', 'samples', 'salesforceandroididptemplateapp', 'MainActivity.kt');

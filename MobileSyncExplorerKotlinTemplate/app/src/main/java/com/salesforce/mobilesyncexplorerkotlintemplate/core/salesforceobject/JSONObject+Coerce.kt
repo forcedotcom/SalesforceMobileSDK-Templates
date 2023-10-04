@@ -27,6 +27,9 @@
 package com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject
 
 import com.salesforce.androidsdk.mobilesync.target.SyncTarget.*
+import com.salesforce.androidsdk.mobilesync.target.SyncTarget.Companion.LOCALLY_CREATED
+import com.salesforce.androidsdk.mobilesync.target.SyncTarget.Companion.LOCALLY_DELETED
+import com.salesforce.androidsdk.mobilesync.target.SyncTarget.Companion.LOCALLY_UPDATED
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject

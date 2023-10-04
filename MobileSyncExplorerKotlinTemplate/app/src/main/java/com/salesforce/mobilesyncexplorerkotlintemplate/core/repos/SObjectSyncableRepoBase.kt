@@ -31,15 +31,16 @@ import com.salesforce.androidsdk.analytics.logger.SalesforceLogger
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.androidsdk.mobilesync.manager.SyncManager
 import com.salesforce.androidsdk.mobilesync.target.SyncTarget.*
+import com.salesforce.androidsdk.mobilesync.target.SyncTarget.Companion.LOCAL
+import com.salesforce.androidsdk.mobilesync.target.SyncTarget.Companion.LOCALLY_DELETED
+import com.salesforce.androidsdk.mobilesync.target.SyncTarget.Companion.LOCALLY_UPDATED
 import com.salesforce.androidsdk.mobilesync.util.Constants
 import com.salesforce.androidsdk.mobilesync.util.SyncState
 import com.salesforce.androidsdk.smartstore.store.QuerySpec
 import com.salesforce.androidsdk.smartstore.store.SmartStore
 import com.salesforce.mobilesyncexplorerkotlintemplate.appContext
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.CleanResyncGhostsException
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.extensions.*
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.*
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.suspendCleanResyncGhosts
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
@@ -115,7 +116,7 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
             doSyncDown()
             try {
                 syncManager.suspendCleanResyncGhosts(syncName = syncDownName)
-            } catch (ex: CleanResyncGhostsException) {
+            } catch (ex: SyncManager.CleanResyncGhostsException) {
                 throw SyncDownException.CleaningUpstreamRecordsFailed(cause = ex)
             }
         }
@@ -135,66 +136,26 @@ abstract class SObjectSyncableRepoBase<T : SObject>(
 
 
     @Throws(SyncDownException::class)
-    private suspend fun doSyncDown(): SyncState = withContext(NonCancellable) {
-        suspendCoroutine { cont ->
-            val callback: (SyncState) -> Unit = {
-                when (it.status) {
-                    // terminal states
-                    SyncState.Status.DONE -> cont.resume(it)
-                    SyncState.Status.FAILED,
-                    SyncState.Status.STOPPED -> cont.resumeWithException(
-                        SyncDownException.FailedToFinish(
-                            message = "Sync Down operation failed with terminal Sync State = $it"
-                        )
-                    )
-
-                    SyncState.Status.NEW,
-                    SyncState.Status.RUNNING,
-                    null -> {
-                        /* no-op; suspending for terminal state */
-                    }
-                }
-            }
-
-            try {
-                syncManager.reSync(syncDownName, callback)
-            } catch (ex: Exception) {
-                cont.resumeWithException(SyncDownException.FailedToStart(cause = ex))
-            }
+    private suspend fun doSyncDown(): SyncState {
+        try {
+            return syncManager.suspendReSync(syncDownName)
+        } catch (es: SyncManager.ReSyncException.FailedToStart) {
+            throw SyncDownException.FailedToStart(cause = es)
+        } catch (ef: SyncManager.ReSyncException.FailedToFinish) {
+            throw SyncDownException.FailedToFinish(cause = ef)
         }
     }
 
     @Throws(SyncUpException::class)
-    private suspend fun doSyncUp(): SyncState = withContext(NonCancellable) {
-        suspendCoroutine { cont ->
-            val callback: (SyncState) -> Unit = {
-                when (it.status) {
-                    // terminal states
-                    SyncState.Status.DONE -> cont.resume(it)
-
-                    SyncState.Status.FAILED,
-                    SyncState.Status.STOPPED -> cont.resumeWithException(
-                        SyncUpException.FailedToFinish(
-                            message = "Sync Up operation failed with terminal Sync State = $it"
-                        )
-                    )
-
-                    SyncState.Status.NEW,
-                    SyncState.Status.RUNNING,
-                    null -> {
-                        /* no-op; suspending for terminal state */
-                    }
-                }
-            }
-
-            try {
-                syncManager.reSync(syncUpName, callback)
-            } catch (ex: Exception) {
-                cont.resumeWithException(SyncUpException.FailedToStart(cause = ex))
-            }
+    private suspend fun doSyncUp(): SyncState {
+        try {
+            return syncManager.suspendReSync(syncUpName)
+        } catch (es: SyncManager.ReSyncException.FailedToStart) {
+            throw SyncUpException.FailedToStart(cause = es)
+        } catch (ef: SyncManager.ReSyncException.FailedToFinish) {
+            throw SyncUpException.FailedToFinish(cause = ef)
         }
     }
-
 
     // endregion
     // region Local Modifications
