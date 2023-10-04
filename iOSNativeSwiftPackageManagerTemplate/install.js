@@ -1,5 +1,42 @@
 #!/usr/bin/env node
 
-var packageJson = require('./package.json')
+const fs = require('fs')
+const path = require('path')
 
-// TODO Point to the right SalesforceMobileSDK-iOS-SPM ??
+function replaceTextInFile(fileName, textInFile, replacementText) {
+    const contents = fs.readFileSync(fileName, 'utf8')
+    const result = contents.replace(textInFile, replacementText)
+    fs.writeFileSync(fileName, result, 'utf8')
+}
+
+
+function getSwiftPackageRepoAndBranch() {
+    const packageJson = require('./package.json')
+    const spmRepoUrlWithBranch = packageJson.sdkDependencies["SalesforceMobileSDK-iOS-SPM"]
+    const parts = spmRepoUrlWithBranch.split('#'), repoUrl = parts[0], branchOrTag = parts.length > 1 ? parts[1] : 'master'
+    return {repoUrl: repoUrl, branchOrTag: branchOrTag}
+}
+
+function fixProjectFile(repoUrl, kind, key, value) {
+    const projectFilePath = './iOSNativeSwiftPackageManagerTemplate.xcodeproj/project.pbxproj'
+    replaceTextInFile(projectFilePath,
+		      /repositoryURL = ".*SalesforceMobileSDK-iOS-SPM";\s*requirement = {[^}]*};/m,
+		      `repositoryURL = "${repoUrl}";\n\t\t\trequirement = {\n\t\t\t\tkind = ${kind};\n\t\t\t\t${key} = ${value};\n\t\t\t};`)
+}
+
+const spm = getSwiftPackageRepoAndBranch()
+console.log(`Using Swift Package ${spm.repoUrl} at ${spm.branchOrTag}`)
+if (isNaN(parseInt(spm.branchOrTag))) {
+    fixProjectFile(spm.repoUrl, 'branch', 'branch', spm.branchOrTag)
+} else {
+    fixProjectFile(spm.repoUrl, 'exactVersion', 'version', spm.branchOrTag)
+}
+
+original  = '		4FFBC6582A5DC21B004CF964 /* XCRemoteSwiftPackageReference "SalesforceMobileSDK-iOS-SPM" */ = {\n' +
+'			isa = XCRemoteSwiftPackageReference;\n' + 
+'			repositoryURL = "https://github.com/forcedotcom/SalesforceMobileSDK-iOS-SPM";\n' + 
+'			requirement= {\n' + 
+'				kind = exactVersion;\n' + 
+'				version = 11.0.1\n' + 
+'			};\n' + 
+'		};'
