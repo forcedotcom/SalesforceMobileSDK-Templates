@@ -45,11 +45,14 @@ update_package_json ()
 parse_opts "$@"
 
 SDK_TAG=""
+SDK_TAG_SPM=""
 if [ "$OPT_IS_DEV" == "yes" ]
 then
     SDK_TAG="dev"
+    SDK_TAG_SPM="master"
 else
     SDK_TAG="v${OPT_VERSION}"
+    SDK_TAG_SPM=$SDK_TAG
 fi
 
 echo -e "${YELLOW}*** POINTING TO SDK TAG ${SDK_TAG} ***${NC}"
@@ -60,18 +63,18 @@ update_package_json "./AndroidIDPTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./AndroidNativeKotlinTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./AndroidNativeTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./HybridLocalTemplate/package.json"  "${SDK_TAG}"
-update_package_json "./HybridRemoteTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./HybridLwcTemplate/package.json"  "${SDK_TAG}"
+update_package_json "./HybridRemoteTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./MobileSyncExplorerKotlinTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./MobileSyncExplorerReactNative/package.json"  "${SDK_TAG}"
 update_package_json "./MobileSyncExplorerSwift/package.json"  "${SDK_TAG}"
+update_package_json "./ReactNativeDeferredTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./ReactNativeTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./ReactNativeTypeScriptTemplate/package.json"  "${SDK_TAG}"
-update_package_json "./ReactNativeDeferredTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./iOSIDPTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./iOSNativeSwiftEncryptedNotificationTemplate/package.json"  "${SDK_TAG}"
+update_package_json "./iOSNativeSwiftPackageManagerTemplate/package.json"  "${SDK_TAG_SPM}"
 update_package_json "./iOSNativeSwiftTemplate/package.json"  "${SDK_TAG}"
-update_package_json "./iOSNativeSwiftPackageManagerTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./iOSNativeTemplate/package.json"  "${SDK_TAG}"
 
 
