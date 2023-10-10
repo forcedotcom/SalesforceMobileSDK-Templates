@@ -10,6 +10,7 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		4F3AFF401DC2C79E006FF6B0 /* InitialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F3AFF3E1DC2C79E006FF6B0 /* InitialViewController.m */; };
+		69BE96172AD53442002E3F6C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 69BE96162AD53442002E3F6C /* PrivacyInfo.xcprivacy */; };
 		95C7C3652A03B3F2EC5A80D1 /* libPods-ReactNativeDeferredTemplate.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CC492F435FC814C9A5D1930 /* libPods-ReactNativeDeferredTemplate.a */; };
 		B7168FBE1FACC7EB00A48DB5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7168FBD1FACC7EB00A48DB5 /* LaunchScreen.storyboard */; };
 		B77BD8AF2113632C0036B284 /* bootconfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = B77BD8AE2113632C0036B284 /* bootconfig.plist */; };
@@ -28,6 +29,7 @@
 		4F3AFF3D1DC2C79E006FF6B0 /* InitialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InitialViewController.h; path = ReactNativeDeferredTemplate/InitialViewController.h; sourceTree = "<group>"; };
 		4F3AFF3E1DC2C79E006FF6B0 /* InitialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InitialViewController.m; path = ReactNativeDeferredTemplate/InitialViewController.m; sourceTree = "<group>"; };
 		4FF12F8E1DCA93E2004D9EF9 /* ReactNativeDeferredTemplate.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = ReactNativeDeferredTemplate.entitlements; path = ReactNativeDeferredTemplate/ReactNativeDeferredTemplate.entitlements; sourceTree = "<group>"; };
+		69BE96162AD53442002E3F6C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = ReactNativeDeferredTemplate/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		AE79D28E6E57F5B77FA24716 /* Pods-ReactNativeDeferredTemplate.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeDeferredTemplate.release.xcconfig"; path = "Pods/Target Support Files/Pods-ReactNativeDeferredTemplate/Pods-ReactNativeDeferredTemplate.release.xcconfig"; sourceTree = "<group>"; };
 		B7168FBD1FACC7EB00A48DB5 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = "../mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/LaunchScreen.storyboard"; sourceTree = "<group>"; };
 		B77BD8AE2113632C0036B284 /* bootconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = bootconfig.plist; path = ReactNativeDeferredTemplate/bootconfig.plist; sourceTree = "<group>"; };
@@ -70,6 +72,7 @@
 		4F3AFF431DC2C869006FF6B0 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				69BE96162AD53442002E3F6C /* PrivacyInfo.xcprivacy */,
 				B77BD8AE2113632C0036B284 /* bootconfig.plist */,
 				B7168FBD1FACC7EB00A48DB5 /* LaunchScreen.storyboard */,
 				CEA8CA051F071C3300448B51 /* Images.xcassets */,
@@ -185,6 +188,7 @@
 			files = (
 				B77BD8AF2113632C0036B284 /* bootconfig.plist in Resources */,
 				CEA8CA061F071C3300448B51 /* Images.xcassets in Resources */,
+				69BE96172AD53442002E3F6C /* PrivacyInfo.xcprivacy in Resources */,
 				B7168FBE1FACC7EB00A48DB5 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
