@@ -14,7 +14,7 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.4.0")
     implementation("androidx.window:window:1.0.0")
 
-    implementation("com.salesforce.mobilesdk:MobileSync")
+    implementation("com.salesforce.mobilesdk:MobileSync:11.1.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")

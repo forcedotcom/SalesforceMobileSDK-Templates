@@ -2,4 +2,7 @@ rootProject.name = "MobileSyncExplorerKotlinTemplate"
 
 include(":app")
 
-includeBuild(File(settingsDir, "mobile_sdk/SalesforceMobileSDK-Android"))
+def salesforceMobileSdkRoot = new File('mobile_sdk/SalesforceMobileSDK-Android');
+if (salesforceMobileSdkRoot.exists()) {
+    includeBuild(salesforceMobileSdkRoot)
+}
