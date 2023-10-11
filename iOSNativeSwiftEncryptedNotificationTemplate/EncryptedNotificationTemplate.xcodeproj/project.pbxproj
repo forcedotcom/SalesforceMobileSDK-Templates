@@ -14,6 +14,7 @@
 		4FD6C4A01B755242002F9F90 /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C49D1B755242002F9F90 /* InitialViewController.swift */; };
 		696BA50F2367942600F38AEF /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696BA50E2367942600F38AEF /* NotificationService.swift */; };
 		696BA5132367942700F38AEF /* NotificationServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 696BA50C2367942600F38AEF /* NotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		69B48C362AD4EDC50026AEC6 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 69B48C352AD4EDC50026AEC6 /* PrivacyInfo.xcprivacy */; };
 		6D56BB454A264D5CD314C6BF /* Pods_EncryptedNotificationTemplate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3BC3CA2799A9E9EE8748480 /* Pods_EncryptedNotificationTemplate.framework */; };
 		B7168FBC1FACC6F900A48DB5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */; };
 		B77BD8A321125B510036B284 /* bootconfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = B77BD8A221125B510036B284 /* bootconfig.plist */; };
@@ -59,6 +60,7 @@
 		696BA50C2367942600F38AEF /* NotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		696BA50E2367942600F38AEF /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		696BA5102367942700F38AEF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		69B48C352AD4EDC50026AEC6 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		762732C14CFE40A989C3AD70 /* Pods-iOSEncryptedNotificationTemplate.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOSEncryptedNotificationTemplate.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iOSEncryptedNotificationTemplate/Pods-iOSEncryptedNotificationTemplate.debug.xcconfig"; sourceTree = "<group>"; };
 		8C1DBCB35DC076BC8DB5910A /* Pods-NotificationServiceExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationServiceExtension.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NotificationServiceExtension/Pods-NotificationServiceExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = "../mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/LaunchScreen.storyboard"; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 		4FD6C4771B754AF1002F9F90 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				69B48C352AD4EDC50026AEC6 /* PrivacyInfo.xcprivacy */,
 				B77BD8A221125B510036B284 /* bootconfig.plist */,
 				B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */,
 				CEA8CA031F071B2300448B51 /* Images.xcassets */,
@@ -267,6 +270,7 @@
 			files = (
 				B77BD8A321125B510036B284 /* bootconfig.plist in Resources */,
 				CEA8CA041F071B2300448B51 /* Images.xcassets in Resources */,
+				69B48C362AD4EDC50026AEC6 /* PrivacyInfo.xcprivacy in Resources */,
 				B7168FBC1FACC6F900A48DB5 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

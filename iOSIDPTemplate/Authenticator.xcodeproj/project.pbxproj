@@ -10,6 +10,7 @@
 		4F393A291C3C8BCD00B3EA13 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F393A281C3C8BCD00B3EA13 /* main.swift */; };
 		4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */; };
 		4FD6C4A01B755242002F9F90 /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C49D1B755242002F9F90 /* InitialViewController.swift */; };
+		696A8B6E2AD103AE00A85A1D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 696A8B6D2AD103AE00A85A1D /* PrivacyInfo.xcprivacy */; };
 		78A235BD93AB7D080D67CD51 /* Pods_Authenticator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82A29C75280BDF73123F14B4 /* Pods_Authenticator.framework */; };
 		B7090D901FA97F98003086EA /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7090D8F1FA97F98003086EA /* Launch Screen.storyboard */; };
 		B73ECEB51F908AD60065F006 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B73ECEB41F908AD60065F006 /* Images.xcassets */; };
@@ -39,6 +40,7 @@
 		4FD6C49A1B755242002F9F90 /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		4FD6C49D1B755242002F9F90 /* InitialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitialViewController.swift; sourceTree = "<group>"; };
 		4FF12F8A1DCA91F5004D9EF9 /* Authenticator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Authenticator.entitlements; sourceTree = "<group>"; };
+		696A8B6D2AD103AE00A85A1D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		762732C14CFE40A989C3AD70 /* Pods-Authenticator.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Authenticator.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Authenticator/Pods-Authenticator.debug.xcconfig"; sourceTree = "<group>"; };
 		82A29C75280BDF73123F14B4 /* Pods_Authenticator.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Authenticator.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7090D8F1FA97F98003086EA /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "Launch Screen.storyboard"; path = "Authenticator/Launch Screen.storyboard"; sourceTree = "<group>"; };
@@ -109,6 +111,7 @@
 				B79B0CBF1F670EE9005F56CC /* SalesforceAppLogo2.png */,
 				B79B0CBD1F670DCB005F56CC /* SalesforceAppLogo.jpg */,
 				4FD6C4781B754AF1002F9F90 /* Info.plist */,
+				696A8B6D2AD103AE00A85A1D /* PrivacyInfo.xcprivacy */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -223,6 +226,7 @@
 				B79B0CC01F670EE9005F56CC /* SalesforceAppLogo2.png in Resources */,
 				B79B0D431F6B5CEF005F56CC /* PermissionsViewController.xib in Resources */,
 				B7090D901FA97F98003086EA /* Launch Screen.storyboard in Resources */,
+				696A8B6E2AD103AE00A85A1D /* PrivacyInfo.xcprivacy in Resources */,
 				B79B0CBE1F670DCB005F56CC /* SalesforceAppLogo.jpg in Resources */,
 				B77BD8A9211355180036B284 /* bootconfig.plist in Resources */,
 				B73ECEB51F908AD60065F006 /* Images.xcassets in Resources */,
@@ -239,27 +243,12 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Authenticator/Pods-Authenticator-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/FMDB/FMDB.framework",
-				"${BUILT_PRODUCTS_DIR}/MobileSync/MobileSync.framework",
-				"${BUILT_PRODUCTS_DIR}/SQLCipher/SQLCipher.framework",
-				"${BUILT_PRODUCTS_DIR}/SalesforceAnalytics/SalesforceAnalytics.framework",
-				"${BUILT_PRODUCTS_DIR}/SalesforceSDKCommon/SalesforceSDKCommon.framework",
-				"${BUILT_PRODUCTS_DIR}/SalesforceSDKCore/SalesforceSDKCore.framework",
-				"${BUILT_PRODUCTS_DIR}/SmartStore/SmartStore.framework",
-				"${BUILT_PRODUCTS_DIR}/SwipeCellKit/SwipeCellKit.framework",
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Authenticator/Pods-Authenticator-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FMDB.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MobileSync.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SQLCipher.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SalesforceAnalytics.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SalesforceSDKCommon.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SalesforceSDKCore.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SmartStore.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwipeCellKit.framework",
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Authenticator/Pods-Authenticator-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
