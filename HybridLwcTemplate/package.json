@@ -4,6 +4,6 @@
   "private": true,
   "sdkDependencies": {
     "SalesforceMobileSDK-Shared": "https://github.com/forcedotcom/SalesforceMobileSDK-Shared.git#dev",
-    "SalesforceMobileSDK-Android": "https://github.com/JohnsonEricAtSalesforce/SalesforceMobileSDK-Android.git#feature/v11.0.1"
+    "SalesforceMobileSDK-Android": "https://github.com/JohnsonEricAtSalesforce/SalesforceMobileSDK-Android.git#feature/feature/w-14246983-android-templates-use-hosted-msdk-dependencies-by-default"
   }
 }
