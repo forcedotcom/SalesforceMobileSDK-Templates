@@ -54,7 +54,8 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     moveFile(path.join('mobile_sdk', 'SalesforceMobileSDK-Shared', 'libs', 'force.js'), 'force.js');
     var msdkAndroidPath = path.join('mobile_sdk', 'SalesforceMobileSDK-Android')
     if (fs.existsSync(msdkAndroidPath)) {
-        moveFile(msdkAndroidPath, '../platforms/android/');
+        fs.mkdirSync('../platforms/android/mobile_sdk/');
+        moveFile(msdkAndroidPath, '../platforms/android/mobile_sdk/');
     }
     moveFile(path.join('node_modules', 'ratchet-npm', 'dist', 'css', 'ratchet.min.css'), 'ratchet.css');
     moveFile(path.join('node_modules', 'ratchet-npm', 'dist', 'css', 'ratchet-theme-' + theme + '.min.css'), 'ratchet-theme.css');

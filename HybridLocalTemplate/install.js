@@ -16,7 +16,7 @@ for (var sdkDependency in packageJson.sdkDependencies) {
        if (fs.existsSync(targetDir)) {
            console.log('SalesforceMobileSDK-Android is release version.  Warning: It\'s published artifacts will not be used since sources are already in ' + targetDir + ' and will be used.  If desired, remove this directory to return to the release artifacts.');
        } else {
-           console.log('SalesforceMobileSDK-Android is release version.  Skipping it\'s source dependency and using published artifacts since it\'s only a source dependency for pre-release versions.');
+           console.log('SalesforceMobileSDK-Android is release version.  Skipping its source dependency and using published artifacts since it\'s only a source dependency for pre-release versions.');
        }
        continue;
     }

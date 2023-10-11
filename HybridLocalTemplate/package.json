@@ -4,7 +4,7 @@
   "private": true,
   "sdkDependencies": {
     "SalesforceMobileSDK-Shared": "https://github.com/forcedotcom/SalesforceMobileSDK-Shared.git#dev",
-    "SalesforceMobileSDK-Android": "https://github.com/JohnsonEricAtSalesforce/SalesforceMobileSDK-Android.git#feature/w-14246983-android-templates-use-hosted-msdk-dependencies-by-default"
+    "SalesforceMobileSDK-Android": "https://github.com/JohnsonEricAtSalesforce/SalesforceMobileSDK-Android.git#v11.0.1"
   },
   "dependencies": {
     "ratchet-npm": "2.0.4"
