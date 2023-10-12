@@ -14,9 +14,9 @@ for (var sdkDependency in packageJson.sdkDependencies) {
     // Exclude tagged SalesforceMobileSDK-Android releases so it's only a source dependency pre-release.
     if (sdkDependency == 'SalesforceMobileSDK-Android' && branch.match(/v\d+\.\d+\.\d+/)) {
        if (fs.existsSync(targetDir)) {
-           console.log('SalesforceMobileSDK-Android is release version.  Warning: Its published artifacts will not be used since sources are already in ' + targetDir + ' and will be used.  If desired, remove this directory to return to the release artifacts.');
+           console.log('SalesforceMobileSDK-Android is a release version.  Warning: Its published artifacts will not be used since sources are already in ' + targetDir + ' and will be used.  If desired, remove this directory to return to the release artifacts.');
        } else {
-           console.log('SalesforceMobileSDK-Android is release version.  Skipping its source dependency and using published artifacts since it\'s only a source dependency for pre-release versions.');
+           console.log('SalesforceMobileSDK-Android is a release version.  Skipping its source dependency and using published artifacts since it\'s only a source dependency for pre-release versions.');
        }
        continue;
     }
