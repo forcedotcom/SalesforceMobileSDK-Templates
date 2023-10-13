@@ -2,4 +2,7 @@ rootProject.name = "AndroidNativeTemplate"
 
 include(":app")
 
-includeBuild(File(settingsDir, "mobile_sdk/SalesforceMobileSDK-Android"))
+val salesforceMobileSdkRoot = File("mobile_sdk/SalesforceMobileSDK-Android")
+if (salesforceMobileSdkRoot.exists()) {
+    includeBuild(salesforceMobileSdkRoot)
+}
