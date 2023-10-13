@@ -59,7 +59,7 @@ then
     SDK_TAG_SPM="master"
 else
     SDK_TAG="v${OPT_VERSION}"
-    SDK_TAG_SPM=$SDK_TAG
+    SDK_TAG_SPM="${OPT_VERSION}" # SPM expects version to be X.Y.Z (with X, Y, Z being integers)
 fi
 
 echo -e "${YELLOW}*** POINTING TO SDK TAG ${SDK_TAG} ***${NC}"
