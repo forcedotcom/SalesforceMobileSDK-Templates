@@ -11,6 +11,7 @@
 		4F8D5EA61B6C0568005E64D4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F8D5EA51B6C0568005E64D4 /* AppDelegate.m */; };
 		4F8D5EC81B6C0F94005E64D4 /* InitialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F8D5EC71B6C0F94005E64D4 /* InitialViewController.m */; };
 		4F8D5ECB1B6C0FE4005E64D4 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F8D5ECA1B6C0FE4005E64D4 /* RootViewController.m */; };
+		69BE96132AD4EF4B002E3F6C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 69BE96122AD4EF4B002E3F6C /* PrivacyInfo.xcprivacy */; };
 		B7168FBA1FACC5D900A48DB5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7168FB91FACC5D900A48DB5 /* LaunchScreen.storyboard */; };
 		B77BD8A1211256BB0036B284 /* bootconfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = B77BD8A0211256BB0036B284 /* bootconfig.plist */; };
 		BB98467CCA978EFA6D0B1208 /* Pods_iOSNativeTemplate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FAD05ACF96B79994243D901 /* Pods_iOSNativeTemplate.framework */; };
@@ -31,6 +32,7 @@
 		4FF12F911DCA9E6B004D9EF9 /* iOSNativeTemplate.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iOSNativeTemplate.entitlements; sourceTree = "<group>"; };
 		5FAD05ACF96B79994243D901 /* Pods_iOSNativeTemplate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOSNativeTemplate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		641A79C6255C9F5C2DC614D8 /* Pods-iOSNativeTemplate.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOSNativeTemplate.release.xcconfig"; path = "Pods/Target Support Files/Pods-iOSNativeTemplate/Pods-iOSNativeTemplate.release.xcconfig"; sourceTree = "<group>"; };
+		69BE96122AD4EF4B002E3F6C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		90400F35EE8FD2C6D3B8B7E7 /* Pods-iOSNativeTemplate.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOSNativeTemplate.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iOSNativeTemplate/Pods-iOSNativeTemplate.debug.xcconfig"; sourceTree = "<group>"; };
 		B7168FB91FACC5D900A48DB5 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = "../mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/LaunchScreen.storyboard"; sourceTree = "<group>"; };
 		B77BD8A0211256BB0036B284 /* bootconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = bootconfig.plist; sourceTree = "<group>"; };
@@ -88,6 +90,7 @@
 		4F8D5EA01B6C0568005E64D4 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				69BE96122AD4EF4B002E3F6C /* PrivacyInfo.xcprivacy */,
 				B77BD8A0211256BB0036B284 /* bootconfig.plist */,
 				B7168FB91FACC5D900A48DB5 /* LaunchScreen.storyboard */,
 				CEA8CA011F071A9D00448B51 /* Images.xcassets */,
@@ -187,6 +190,7 @@
 			files = (
 				B77BD8A1211256BB0036B284 /* bootconfig.plist in Resources */,
 				CEA8CA021F071A9D00448B51 /* Images.xcassets in Resources */,
+				69BE96132AD4EF4B002E3F6C /* PrivacyInfo.xcprivacy in Resources */,
 				B7168FBA1FACC5D900A48DB5 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    implementation("com.salesforce.mobilesdk:MobileSync")
+    implementation("com.salesforce.mobilesdk:MobileSync:11.1.0")
 }
 
 android {

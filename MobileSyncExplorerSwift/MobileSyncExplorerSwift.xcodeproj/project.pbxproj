@@ -14,6 +14,7 @@
 		6900D7F82438103000888336 /* ContactListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6900D7F72438103000888336 /* ContactListViewModel.swift */; };
 		6967D6ED24806EBB001B0046 /* NotificationListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6967D6EC24806EBB001B0046 /* NotificationListModel.swift */; };
 		69B257B1240DABAF00CBCF1A /* ContactDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B257B0240DABAF00CBCF1A /* ContactDetail.swift */; };
+		69B48C342AD4ED440026AEC6 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 69B48C332AD4ED440026AEC6 /* PrivacyInfo.xcprivacy */; };
 		69BC2FF024B4437E0091658C /* NotificationList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69BC2FEF24B4437E0091658C /* NotificationList.swift */; };
 		69C5451727ACF67700864C01 /* ContactHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76D656C20B3323A00B55764 /* ContactHelpers.swift */; };
 		69C5451827ACF68C00864C01 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76D656920B3323A00B55764 /* Constants.swift */; };
@@ -79,6 +80,7 @@
 		6900D7F72438103000888336 /* ContactListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListViewModel.swift; sourceTree = "<group>"; };
 		6967D6EC24806EBB001B0046 /* NotificationListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationListModel.swift; sourceTree = "<group>"; };
 		69B257B0240DABAF00CBCF1A /* ContactDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDetail.swift; sourceTree = "<group>"; };
+		69B48C332AD4ED440026AEC6 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		69BC2FEF24B4437E0091658C /* NotificationList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationList.swift; sourceTree = "<group>"; };
 		69CDE97225CE6B510025C3FC /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		69D6B29527AA5E3A008902E0 /* RecentContactsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RecentContactsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -167,6 +169,7 @@
 		4FD6C4771B754AF1002F9F90 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				69B48C332AD4ED440026AEC6 /* PrivacyInfo.xcprivacy */,
 				B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */,
 				CEA8CA031F071B2300448B51 /* Images.xcassets */,
 				4FD6C4781B754AF1002F9F90 /* Info.plist */,
@@ -365,6 +368,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B77BD8A7211354D00036B284 /* bootconfig.plist in Resources */,
+				69B48C342AD4ED440026AEC6 /* PrivacyInfo.xcprivacy in Resources */,
 				CEA8CA041F071B2300448B51 /* Images.xcassets in Resources */,
 				B7168FBC1FACC6F900A48DB5 /* LaunchScreen.storyboard in Resources */,
 				B767370220AB57C600F04103 /* userstore.json in Resources */,
