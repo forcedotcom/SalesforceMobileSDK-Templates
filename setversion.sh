@@ -35,6 +35,13 @@ parse_opts ()
 }
 
 # Helper functions
+update_build_gradle_dependencies ()
+{
+    local file=$1
+    local version=$2
+    gsed -i "s/\(com.salesforce.mobilesdk:[^:]\+:\)[0-9]\+.[0-9]\+.[0-9]\+/\1$version/g" ${file}
+}
+
 update_package_json ()
 {
     local file=$1
@@ -53,6 +60,13 @@ else
 fi
 
 echo -e "${YELLOW}*** POINTING TO SDK TAG ${SDK_TAG} ***${NC}"
+
+echo "*** Updating build.gradle.kts files ***"
+
+update_build_gradle_dependencies "./AndroidIDPTemplate/app/build.gradle.kts"  "${OPT_VERSION}"
+update_build_gradle_dependencies "./AndroidNativeKotlinTemplate/app/build.gradle.kts"  "${OPT_VERSION}"
+update_build_gradle_dependencies "./AndroidNativeTemplate/app/build.gradle.kts"  "${OPT_VERSION}"
+update_build_gradle_dependencies "./MobileSyncExplorerKotlinTemplate/app/build.gradle.kts"  "${OPT_VERSION}"
 
 echo "*** Updating package.json files ***"
 
