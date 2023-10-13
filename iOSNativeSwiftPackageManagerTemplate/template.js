@@ -37,7 +37,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
 
     // Values in template
     var templateAppName = 'iOSNativeSwiftPackageManagerTemplate';
-    var templatePackageName = 'com.salesforce.iosnativeswifttemplate';
+    var templatePackageName = 'com.salesforce.iosnativeswiftpackagemanagertemplate';
     var templateOrganization = 'iOSNativeSwiftPackageManagerTemplateOrganizationName';
 
     // Key files
