@@ -19,7 +19,7 @@ function getSwiftPackageRepoAndBranch() {
 
 function fixProjectFile(repoUrl, kind, key, value) {
     const projectDirName = fs.readdirSync('.').filter(f => f.endsWith('xcodeproj'))[0] // project name changes once template.js runs
-    const projectFilePath = './${projectDirName}/project.pbxproj'
+    const projectFilePath = `./${projectDirName}/project.pbxproj`
     replaceTextInFile(projectFilePath,
 		      /repositoryURL = ".*SalesforceMobileSDK-iOS-SPM";\s*requirement = {[^}]*};/m,
 		      `repositoryURL = "${repoUrl}";\n\t\t\trequirement = {\n\t\t\t\tkind = ${kind};\n\t\t\t\t${key} = ${value};\n\t\t\t};`)
