@@ -41,7 +41,6 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var templateOrganization = 'iOSNativeSwiftPackageManagerTemplateOrganizationName';
 
     // Key files
-    var templatePodfile = 'Podfile';
     var templatePackageJsonFile = 'package.json';
     var templateProjectDir = templateAppName + '.xcodeproj';
     var templateProjectFile = path.join(templateProjectDir, 'project.pbxproj');
@@ -53,7 +52,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     //
 
     // app name
-    replaceInFiles(templateAppName, config.appname, [templatePodfile, templatePackageJsonFile, templateProjectFile, templateSchemeFile, templateEntitlementsFile]);
+    replaceInFiles(templateAppName, config.appname, [templatePackageJsonFile, templateProjectFile, templateSchemeFile, templateEntitlementsFile]);
 
     // package name
     replaceInFiles(templatePackageName, config.packagename, [templateProjectFile, templateEntitlementsFile]);
