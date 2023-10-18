@@ -66,10 +66,12 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Move/remove some files
     //
     moveFile(path.join('mobile_sdk', 'SalesforceMobileSDK-Shared', 'libs', 'force.js'), path.join(staticResourceDir, 'other', 'force.js'));
-    var msdkAndroidPath = path.join('mobile_sdk', 'SalesforceMobileSDK-Android')
-    if (fs.existsSync(msdkAndroidPath)) {
-        fs.mkdirSync('../platforms/android/mobile_sdk/');
-        moveFile(msdkAndroidPath, '../platforms/android/mobile_sdk/');
+    if (config.platform.includes('android')) {
+        var msdkAndroidPath = path.join('mobile_sdk', 'SalesforceMobileSDK-Android')
+        if (fs.existsSync(msdkAndroidPath)) {
+            fs.mkdirSync('../platforms/android/mobile_sdk/');
+            moveFile(msdkAndroidPath, '../platforms/android/mobile_sdk/');
+        }
     }
     moveFile(mainPage, path.join(pagesDir, safeName + '.page'))
     moveFile(mainPageMeta, path.join(pagesDir, safeName + '.page-meta.xml'))
