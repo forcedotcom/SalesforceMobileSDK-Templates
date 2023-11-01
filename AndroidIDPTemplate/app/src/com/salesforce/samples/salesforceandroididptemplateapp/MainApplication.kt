@@ -50,13 +50,6 @@ class MainApplication : Application() {
 
         MobileSyncSDKManager.getInstance().setAllowedSPApps(listOf(
             SPConfig(
-                "com.salesforce.samples.mobilesyncexplorer",
-                "com.salesforce.samples.mobilesyncexplorer.MainActivity",
-                mobileSDKSampleAppConsumerKey,
-                mobileSDKSampleAppCallbackUrl,
-                arrayOf("api", "web")
-            ),
-            SPConfig(
                 "com.salesforce.samples.restexplorer",
                 "com.salesforce.samples.restexplorer.ExplorerActivity",
                 mobileSDKSampleAppConsumerKey,
