@@ -1,0 +1,12 @@
+{
+  "syncs": [
+    {
+      "syncName": "syncDownAccounts",
+      "syncType": "syncDown",
+      "soupName": "Account",
+      "target": {"type": "soql", "query":"SELECT Id, Name, Industry FROM Account LIMIT 25"},
+      "options": {"fieldlist":["Id", "Name", "Industry", "LastModifiedDate"], "mergeMode":"LEAVE_IF_CHANGED"}
+    }
+  ]
+}
+

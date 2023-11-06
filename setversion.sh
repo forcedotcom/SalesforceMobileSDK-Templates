@@ -35,6 +35,13 @@ parse_opts ()
 }
 
 # Helper functions
+update_build_gradle_dependencies ()
+{
+    local file=$1
+    local version=$2
+    gsed -i "s/\(com.salesforce.mobilesdk:[^:]\+:\)[0-9]\+.[0-9]\+.[0-9]\+/\1$version/g" ${file}
+}
+
 update_package_json ()
 {
     local file=$1
@@ -45,14 +52,24 @@ update_package_json ()
 parse_opts "$@"
 
 SDK_TAG=""
+SDK_TAG_SPM=""
 if [ "$OPT_IS_DEV" == "yes" ]
 then
     SDK_TAG="dev"
+    SDK_TAG_SPM="master"
 else
     SDK_TAG="v${OPT_VERSION}"
+    SDK_TAG_SPM="${OPT_VERSION}" # SPM expects version to be X.Y.Z (with X, Y, Z being integers)
 fi
 
 echo -e "${YELLOW}*** POINTING TO SDK TAG ${SDK_TAG} ***${NC}"
+
+echo "*** Updating build.gradle.kts files ***"
+
+update_build_gradle_dependencies "./AndroidIDPTemplate/app/build.gradle.kts"  "${OPT_VERSION}"
+update_build_gradle_dependencies "./AndroidNativeKotlinTemplate/app/build.gradle.kts"  "${OPT_VERSION}"
+update_build_gradle_dependencies "./AndroidNativeTemplate/app/build.gradle.kts"  "${OPT_VERSION}"
+update_build_gradle_dependencies "./MobileSyncExplorerKotlinTemplate/app/build.gradle.kts"  "${OPT_VERSION}"
 
 echo "*** Updating package.json files ***"
 
@@ -60,16 +77,17 @@ update_package_json "./AndroidIDPTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./AndroidNativeKotlinTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./AndroidNativeTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./HybridLocalTemplate/package.json"  "${SDK_TAG}"
-update_package_json "./HybridRemoteTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./HybridLwcTemplate/package.json"  "${SDK_TAG}"
+update_package_json "./HybridRemoteTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./MobileSyncExplorerKotlinTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./MobileSyncExplorerReactNative/package.json"  "${SDK_TAG}"
 update_package_json "./MobileSyncExplorerSwift/package.json"  "${SDK_TAG}"
+update_package_json "./ReactNativeDeferredTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./ReactNativeTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./ReactNativeTypeScriptTemplate/package.json"  "${SDK_TAG}"
-update_package_json "./ReactNativeDeferredTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./iOSIDPTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./iOSNativeSwiftEncryptedNotificationTemplate/package.json"  "${SDK_TAG}"
+update_package_json "./iOSNativeSwiftPackageManagerTemplate/package.json"  "${SDK_TAG_SPM}"
 update_package_json "./iOSNativeSwiftTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./iOSNativeTemplate/package.json"  "${SDK_TAG}"
 

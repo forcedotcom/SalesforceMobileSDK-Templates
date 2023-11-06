@@ -35,14 +35,15 @@
 function prepare(config, replaceInFiles, moveFile, removeFile) {
 
     // Dependencies
+    var fs = require('fs');
     var path = require('path');
 
     // Values in template
     var templateOrganization = 'HybridLwcTemplateOrganization';
-    var templateStartPage = 'apex/HybridLwcTemplate';    
+    var templateStartPage = 'apex/HybridLwcTemplate';
 
     // Safe app name
-    var safeName = config.appname.replace(/[^a-zA-Z0-9]+/g, '_') 
+    var safeName = config.appname.replace(/[^a-zA-Z0-9]+/g, '_')
 
     // Key files
     var staticResourceDir = path.join('server', 'force-app', 'main', 'default', 'staticresources')
@@ -65,6 +66,13 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Move/remove some files
     //
     moveFile(path.join('mobile_sdk', 'SalesforceMobileSDK-Shared', 'libs', 'force.js'), path.join(staticResourceDir, 'other', 'force.js'));
+    if (config.platform.includes('android')) {
+        var msdkAndroidPath = path.join('mobile_sdk', 'SalesforceMobileSDK-Android')
+        if (fs.existsSync(msdkAndroidPath)) {
+            fs.mkdirSync('../platforms/android/mobile_sdk/');
+            moveFile(msdkAndroidPath, '../platforms/android/mobile_sdk/');
+        }
+    }
     moveFile(mainPage, path.join(pagesDir, safeName + '.page'))
     moveFile(mainPageMeta, path.join(pagesDir, safeName + '.page-meta.xml'))
     removeFile('node_modules');
@@ -77,7 +85,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     ['ios', 'android'].forEach(function(os) {
         if (config.platform.split(',').indexOf(os) === -1) {
             removeFile(path.join(staticResourceDir, 'cordova' + os + '.resource-meta.xml'))
-        }        
+        }
     });
 
     // Return paths of workspace and file with oauth config

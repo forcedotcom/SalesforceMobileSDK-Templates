@@ -7,6 +7,13 @@
         "platforms": ["ios"]
     },
     {
+
+        "path": "iOSNativeSwiftPackageManagerTemplate",
+        "description": "Swift application using MobileSync, SwiftUI and Combine (pulled in using Swift Package Manager)",
+        "appType": "native_swift",
+        "platforms": ["ios"]
+    },
+    {
         "path": "iOSNativeSwiftEncryptedNotificationTemplate",
         "description": "Basic Swift application with notification service extension",
         "appType": "native_swift",

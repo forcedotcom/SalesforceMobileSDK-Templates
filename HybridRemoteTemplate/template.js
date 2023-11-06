@@ -35,6 +35,7 @@
 function prepare(config, replaceInFiles, moveFile, removeFile) {
 
     // Dependencies
+    var fs = require('fs');
     var path = require('path');
 
     // Values in template
@@ -57,6 +58,13 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Move/remove some files
     //
     moveFile(path.join('mobile_sdk', 'SalesforceMobileSDK-Shared', 'libs', 'force.js'), 'force.js');
+    if (config.platform.includes('android')) {
+        var msdkAndroidPath = path.join('mobile_sdk', 'SalesforceMobileSDK-Android')
+        if (fs.existsSync(msdkAndroidPath)) {
+            fs.mkdirSync('../platforms/android/mobile_sdk/');
+            moveFile(msdkAndroidPath, '../platforms/android/mobile_sdk/');
+        }
+    }
     removeFile('node_modules');
     removeFile('mobile_sdk');
     removeFile('package.json');
