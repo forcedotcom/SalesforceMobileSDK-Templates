@@ -41,7 +41,7 @@ class ContactListScreen extends React.Component {
         super(props);
         this.state = {data: []};
     }
-    
+
     componentDidMount() {
         var that = this;
         oauth.getAuthCredentials(
