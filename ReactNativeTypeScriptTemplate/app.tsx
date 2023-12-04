@@ -115,3 +115,5 @@ function App(): JSX.Element {
         </NavigationContainer>
     );
 }
+
+export default App;

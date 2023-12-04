@@ -25,7 +25,7 @@
  */
 
 import { AppRegistry } from 'react-native';
-import { App } from './app.tsx';
+import App from './app.tsx';
 
 
 AppRegistry.registerComponent('ReactNativeTypeScriptTemplate', () => App);
