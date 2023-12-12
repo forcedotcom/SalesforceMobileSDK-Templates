@@ -36,7 +36,7 @@ target 'ReactNativeTypeScriptTemplate' do
     :path => $config[:reactNativePath],
     :hermes_enabled => flags[:hermes_enabled],
     :fabric_enabled => flags[:fabric_enabled],
-    :flipper_configuration => flipper_config,
+    :flipper_configuration => FlipperConfiguration.disabled,
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
