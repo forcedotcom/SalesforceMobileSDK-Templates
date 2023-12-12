@@ -1,6 +1,6 @@
 /*
  Copyright (c) 2011-present, salesforce.com, inc. All rights reserved.
-
+ 
  Redistribution and use of this software in source and binary forms, with or without modification,
  are permitted provided that the following conditions are met:
  * Redistributions of source code must retain the above copyright notice, this list of conditions
@@ -11,7 +11,7 @@
  * Neither the name of salesforce.com, inc. nor the names of its contributors may be used to
  endorse or promote products derived from this software without specific prior written
  permission of salesforce.com, inc.
-
+ 
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
@@ -24,6 +24,7 @@
 
 #import "AppDelegate.h"
 #import "InitialViewController.h"
+#import <React/RCTRootView.h>
 #import <React/RCTBundleURLProvider.h>
 #import <SalesforceSDKCore/SFSDKAppConfig.h>
 #import <SalesforceSDKCore/SFPushNotificationManager.h>
@@ -44,7 +45,7 @@
     if (self) {
       // Need to use SalesforceReactSDKManager in Salesforce Mobile SDK apps using React Native
       [SalesforceReactSDKManager initializeSDK];
-
+      
       //App Setup for any changes to the current authenticated user
       [SFSDKAuthHelper registerBlockForCurrentUserChangeNotifications:^{
         [self resetViewState:^{
@@ -59,24 +60,19 @@
 {
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     [self initializeAppViewState];
-
+    
     // If you wish to register for push notifications, uncomment the line below.  Note that,
     // if you want to receive push notifications from Salesforce, you will also need to
     // implement the application:didRegisterForRemoteNotificationsWithDeviceToken: method (below).
 //    [self registerForRemotePushNotifications];
-
+    
     //Uncomment the code below to see how you can customize the color, textcolor, font and fontsize of the navigation bar
 //    [self customizeLoginView];
-
+    
     [SFSDKAuthHelper loginIfRequired:^{
         [self setupRootViewController];
     }];
-
-    self.moduleName = @"RnDiffApp";
-    // You can add your custom initial props in the dictionary below.
-    // They will be passed down to the ViewController used by React Native.
-    self.initialProps = @{};
-    return [super application:application didFinishLaunchingWithOptions:launchOptions];
+    return YES;
 }
 
 - (void)registerForRemotePushNotifications {
@@ -127,7 +123,7 @@
 {
     // Uncomment following block to enable IDP Login flow
 //    return [self enableIDPLoginFlowForURL:url options:options];
-
+    
     return NO;
 }
 
@@ -160,7 +156,7 @@
                                                  initialProperties:nil
                                                      launchOptions:self.launchOptions];
     rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
-
+    
     UIViewController *rootViewController = [UIViewController new];
     rootViewController.view = rootView;
     self.window.rootViewController = rootViewController;
