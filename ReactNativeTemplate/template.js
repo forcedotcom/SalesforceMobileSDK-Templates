@@ -38,7 +38,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var result = [];
 
     if (platforms.indexOf('ios') >= 0) {
-        
+
         var path = require('path');
 
         // Values in template
@@ -76,7 +76,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         moveFile(templateEntitlementsFile, path.join('ios', templateAppName, config.appname + '.entitlements'));
         moveFile(templateProjectDir, path.join('ios', config.appname + '.xcodeproj'));
         moveFile(path.join('ios', templateAppName), path.join('ios', config.appname));
-        
+
         //
         // Run install.js
         //
@@ -92,12 +92,12 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Removing ios related files if ios is not targeted
     else {
         removeFile('ios');
-        removeFile('installios.js');        
+        removeFile('installios.js');
     }
 
 
     if (platforms.indexOf('android') >= 0) {
-        
+
         var path = require('path');
 
         // Values in template
@@ -109,7 +109,6 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         var templateIndexAndroidFile = 'index.js';
         var templateSettingsGradle = path.join('android', 'settings.gradle');
         var templateAndroidManifestFile = path.join('android', 'app', 'src', 'main', 'AndroidManifest.xml');
-        var templateBuckFile = path.join('android', 'app', 'BUCK');
         var templateAppBuildGradleFile = path.join('android', 'app', 'build.gradle');
         var templateStringsXmlFile = path.join('android', 'app', 'src', 'main', 'res', 'values', 'strings.xml');
         var templateBootconfigFile = path.join('android', 'app', 'src', 'main', 'res', 'values', 'bootconfig.xml');
@@ -124,8 +123,8 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         replaceInFiles(templateAppName, config.appname, [templatePackageJsonFile, templateIndexAndroidFile, templateSettingsGradle, templateStringsXmlFile, templateMainActivityFile]);
 
         // package name
-        replaceInFiles(templatePackageName, config.packagename, [templateAndroidManifestFile, templateBuckFile, templateAppBuildGradleFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile]);
-        
+        replaceInFiles(templatePackageName, config.packagename, [templateAndroidManifestFile, templateAppBuildGradleFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile]);
+
         //
         // Rename/move/remove files
         //
@@ -147,7 +146,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         result.push({
             workspacePath: 'android',
             bootconfigFile: templateBootconfigFile,
-            platform: 'android'            
+            platform: 'android'
         });
 
     }
