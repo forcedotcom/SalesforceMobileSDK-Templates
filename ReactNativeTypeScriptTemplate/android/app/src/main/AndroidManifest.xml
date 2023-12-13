@@ -5,7 +5,7 @@
 	android:versionCode="1"
 	android:versionName="1.0"
 	android:installLocation="internalOnly">
-	
+
 	<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
 	<application android:icon="@drawable/sf__icon"
@@ -55,6 +55,6 @@
             </intent-filter>
         </activity>
         -->
-        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="true" />
+        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity"/>
 	</application>
 </manifest>
