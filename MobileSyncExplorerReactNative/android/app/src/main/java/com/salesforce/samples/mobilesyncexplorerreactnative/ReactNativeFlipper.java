@@ -15,6 +15,9 @@ import com.facebook.react.ReactInstanceManager;
  * flavor of it so it's empty as we don't want to load Flipper.
  */
 public class ReactNativeFlipper {
+    /**
+     * @noinspection unused
+     */
     public static void initializeFlipper(Context context, ReactInstanceManager reactInstanceManager) {
         // Do nothing as we don't want to initialize Flipper on Release.
     }

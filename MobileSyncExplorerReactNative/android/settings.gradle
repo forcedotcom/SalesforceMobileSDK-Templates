@@ -9,7 +9,7 @@ includeBuild('../node_modules/@react-native/gradle-plugin')
 
 include ':app'
 
-def salesforceMobileSdkRoot = new File('../mobile_sdk/SalesforceMobileSDK-Android');
+def salesforceMobileSdkRoot = new File('../mobile_sdk/SalesforceMobileSDK-Android')
 if (salesforceMobileSdkRoot.exists()) {
-    includeBuild(salesforceMobileSdkRoot);
+    includeBuild(salesforceMobileSdkRoot)
 }

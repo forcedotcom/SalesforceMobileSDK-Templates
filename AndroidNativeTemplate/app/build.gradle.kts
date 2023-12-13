@@ -37,6 +37,7 @@ android {
             assets.srcDirs(arrayOf("assets"))
         }
     }
+
     packaging {
         resources {
             excludes += setOf("META-INF/LICENSE", "META-INF/LICENSE.txt", "META-INF/DEPENDENCIES", "META-INF/NOTICE")
