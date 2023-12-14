@@ -4,6 +4,6 @@
   "private": true,
   "sdkDependencies": {
     "SalesforceMobileSDK-Shared": "https://github.com/forcedotcom/SalesforceMobileSDK-Shared.git#dev",
-    "SalesforceMobileSDK-Android": "https://github.com/JohnsonEricAtSalesforce/SalesforceMobileSDK-Android.git#feature/w-13557285-gradle-8-react-native-0.72.6"
+    "SalesforceMobileSDK-Android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#dev"
   }
 }
