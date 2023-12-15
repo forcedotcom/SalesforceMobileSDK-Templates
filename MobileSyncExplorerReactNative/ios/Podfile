@@ -1,21 +1,40 @@
-require_relative '../node_modules/react-native/scripts/react_native_pods'
-require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+# Resolve react_native_pods.rb with node to allow for hoisting
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
 require_relative '../mobile_sdk/SalesforceMobileSDK-iOS/mobilesdk_pods'
 
-
 platform :ios, '15.0'
+prepare_react_native_project!
+# If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
+# because `react-native-flipper` depends on (FlipperKit,...) that will be excluded
+#
+# To fix this you can also exclude `react-native-flipper` using a `react-native.config.js`
+# ```js
+# module.exports = {
+#   dependencies: {
+#     ...(process.env.NO_FLIPPER ? { 'react-native-flipper': { platforms: { ios: null } } } : {}),
+# ```
+flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
+linkage = ENV['USE_FRAMEWORKS']
+if linkage != nil
+  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+  use_frameworks! :linkage => linkage.to_sym
+end
 
 project 'MobileSyncExplorerReactNative.xcodeproj'
 target 'MobileSyncExplorerReactNative' do
   source 'https://cdn.cocoapods.org/'
-  config = use_native_modules!
+  $config = use_native_modules!
 
   # Flags change depending on the env values.
   flags = get_default_flags()
 
   use_react_native!(
-    :path => config[:reactNativePath],
-    :hermes_enabled => true,
+    :path => $config[:reactNativePath],
+    :hermes_enabled => flags[:hermes_enabled],
     :fabric_enabled => flags[:fabric_enabled],
     :flipper_configuration => FlipperConfiguration.disabled,
     :app_path => "#{Pod::Config.instance.installation_root}/.."
@@ -27,32 +46,32 @@ end
 
 pre_install do |installer|
   # Mobile SDK pre install
-  mobile_sdk_pre_install(installer)  
+  mobile_sdk_pre_install(installer)
 end
 
 
 post_install do |installer|
+  # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
   # Comment the following if you do not want the SDK to emit signpost events for instrumentation. Signposts are  enabled for non release version of the app.
   signposts_post_install(installer)
 
   # React native post install
   react_native_post_install(
       installer,
-      # Set `mac_catalyst_enabled` to `true` in order to apply patches
-      # necessary for Mac Catalyst builds
+      $config[:reactNativePath],
       :mac_catalyst_enabled => false
   )
-  
+
   # Cocoapods workaround for M1 machines
   __apply_Xcode_12_5_M1_post_install_workaround(installer)
 
   # Needed with Xcode 14.3
   installer.pods_project.targets.each do |target|
-    if target.name == "React-Codegen" 
+    if target.name == "React-Codegen"
       change_deployment_target(target, '12.0')
     end
   end
-  
+
   # Mobile SDK post install
   mobile_sdk_post_install(installer)
 end

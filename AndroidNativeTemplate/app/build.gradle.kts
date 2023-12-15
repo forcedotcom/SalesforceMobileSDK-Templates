@@ -12,11 +12,11 @@ dependencies {
 android {
     namespace = "com.salesforce.androidnativetemplate"
 
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 34
     }
 
     buildTypes {
@@ -37,10 +37,16 @@ android {
             assets.srcDirs(arrayOf("assets"))
         }
     }
-    packagingOptions {
+
+    packaging {
         resources {
             excludes += setOf("META-INF/LICENSE", "META-INF/LICENSE.txt", "META-INF/DEPENDENCIES", "META-INF/NOTICE")
         }
+    }
+
+    buildFeatures {
+        renderScript = true
+        aidl = true
     }
 }
 

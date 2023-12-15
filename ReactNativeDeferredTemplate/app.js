@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-present, salesforce.com, inc.
+ * Copyright (c) 2023-present, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -44,8 +44,8 @@ class ContactListScreen extends React.Component {
     }
 
     componentDidMount() {
-        console.log("componentDidMount called"); 
-        this.updateLoginLogout()         
+        console.log("componentDidMount called");
+        this.updateLoginLogout()
         this.fetchData();
     }
 
@@ -55,12 +55,12 @@ class ContactListScreen extends React.Component {
 
     updateLoginLogout() {
         this.props.navigation.setOptions({
-            headerRight: () => this.state.loggedIn 
+            headerRight: () => this.state.loggedIn
                 ? (<Button onPress={() => this.onLogout()} title="Logout"/>)
                 : (<Button onPress={() => this.onLogin()} title="Login"/>)
-        }); 
+        });
     }
-    
+
     fetchData() {
         console.log("fetchData called");
         net.query('SELECT Id, Name FROM Contact LIMIT 100',
@@ -82,9 +82,9 @@ class ContactListScreen extends React.Component {
                 this.fetchData()
             },
             (error) => console.log('login failed:' + error)
-        );        
+        );
     }
-    
+
     onLogout() {
         console.log("onLogout called");
         oauth.logout(() => {

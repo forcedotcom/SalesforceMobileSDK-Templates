@@ -7,4 +7,9 @@ apply from: file("../node_modules/@react-native-community/cli-platform-android/n
 
 include ':app'
 
-includeBuild(new File(settingsDir, '../mobile_sdk/SalesforceMobileSDK-Android'))
+includeBuild('../node_modules/@react-native/gradle-plugin')
+
+def salesforceMobileSdkRoot = new File('../mobile_sdk/SalesforceMobileSDK-Android')
+if (salesforceMobileSdkRoot.exists()) {
+    includeBuild(salesforceMobileSdkRoot)
+}
