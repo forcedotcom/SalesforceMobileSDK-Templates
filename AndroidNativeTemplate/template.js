@@ -65,7 +65,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var tmpPathApplicationFile = path.join('app', 'src', 'MainApplication.java');
     moveFile(templateMainActivityFile, tmpPathActivityFile);
     moveFile(templateMainApplicationFile, tmpPathApplicationFile);
-    removeFile(path.join('app', 'src', 'com'));
+    removeFile(path.join('app', 'src', 'main', 'java', 'com'));
     moveFile(tmpPathActivityFile, path.join.apply(null, ['app', 'src', 'main', 'java'].concat(config.packagename.split('.')).concat(['MainActivity.java'])));
     moveFile(tmpPathApplicationFile, path.join.apply(null, ['app', 'src', 'main', 'java'].concat(config.packagename.split('.')).concat(['MainApplication.java'])));
 
