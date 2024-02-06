@@ -43,10 +43,10 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var templatePackageJsonFile = 'package.json';
     var templateSettingsGradle = 'settings.gradle.kts';
     var templateBuildGradleFile = path.join('app', 'build.gradle.kts');
-    var templateStringsXmlFile = path.join('app', 'res', 'values', 'strings.xml');
-    var templateBootconfigFile = path.join('app', 'res', 'values', 'bootconfig.xml');
-    var templateMainActivityFile = path.join('app', 'src', 'com', 'salesforce', 'androidnativekotlintemplate', 'MainActivity.kt');
-    var templateMainApplicationFile = path.join('app', 'src', 'com', 'salesforce', 'androidnativekotlintemplate', 'MainApplication.kt');
+    var templateStringsXmlFile = path.join('app', 'src', 'main', 'res', 'values', 'strings.xml');
+    var templateBootconfigFile = path.join('app', 'src', 'main', 'res', 'values', 'bootconfig.xml');
+    var templateMainActivityFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativekotlintemplate', 'MainActivity.kt');
+    var templateMainApplicationFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativekotlintemplate', 'MainApplication.kt');
 
     //
     // Replace in files
@@ -66,8 +66,8 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     moveFile(templateMainActivityFile, tmpPathActivityFile);
     moveFile(templateMainApplicationFile, tmpPathApplicationFile);
     removeFile(path.join('app', 'src', 'com'));
-    moveFile(tmpPathActivityFile, path.join.apply(null, ['app', 'src'].concat(config.packagename.split('.')).concat(['MainActivity.kt'])));
-    moveFile(tmpPathApplicationFile, path.join.apply(null, ['app', 'src'].concat(config.packagename.split('.')).concat(['MainApplication.kt'])));
+    moveFile(tmpPathActivityFile, path.join.apply(null, ['app', 'src', 'main', 'java'].concat(config.packagename.split('.')).concat(['MainActivity.kt'])));
+    moveFile(tmpPathApplicationFile, path.join.apply(null, ['app', 'src', 'main', 'java'].concat(config.packagename.split('.')).concat(['MainApplication.kt'])));
 
     //
     // Run install.js
