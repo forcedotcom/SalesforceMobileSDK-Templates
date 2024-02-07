@@ -43,10 +43,10 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var templatePackageJsonFile = 'package.json';
     var templateSettingsGradle = 'settings.gradle.kts';
     var templateBuildGradleFile = path.join('app', 'build.gradle.kts');
-    var templateStringsXmlFile = path.join('app', 'res', 'values', 'strings.xml');
-    var templateBootconfigFile = path.join('app', 'res', 'values', 'bootconfig.xml');
-    var templateMainActivityFile = path.join('app', 'src', 'com', 'salesforce', 'androidnativetemplate', 'MainActivity.java');
-    var templateMainApplicationFile = path.join('app', 'src', 'com', 'salesforce', 'androidnativetemplate', 'MainApplication.java');
+    var templateStringsXmlFile = path.join('app', 'src', 'main', 'res', 'values', 'strings.xml');
+    var templateBootconfigFile = path.join('app', 'src', 'main', 'res', 'values', 'bootconfig.xml');
+    var templateMainActivityFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativetemplate', 'MainActivity.java');
+    var templateMainApplicationFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativetemplate', 'MainApplication.java');
 
     //
     // Replace in files
@@ -65,9 +65,9 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var tmpPathApplicationFile = path.join('app', 'src', 'MainApplication.java');
     moveFile(templateMainActivityFile, tmpPathActivityFile);
     moveFile(templateMainApplicationFile, tmpPathApplicationFile);
-    removeFile(path.join('app', 'src', 'com'));
-    moveFile(tmpPathActivityFile, path.join.apply(null, ['app', 'src'].concat(config.packagename.split('.')).concat(['MainActivity.java'])));
-    moveFile(tmpPathApplicationFile, path.join.apply(null, ['app', 'src'].concat(config.packagename.split('.')).concat(['MainApplication.java'])));
+    removeFile(path.join('app', 'src', 'main', 'java', 'com'));
+    moveFile(tmpPathActivityFile, path.join.apply(null, ['app', 'src', 'main', 'java'].concat(config.packagename.split('.')).concat(['MainActivity.java'])));
+    moveFile(tmpPathApplicationFile, path.join.apply(null, ['app', 'src', 'main', 'java'].concat(config.packagename.split('.')).concat(['MainApplication.java'])));
 
     //
     // Run install.js
@@ -78,7 +78,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Return paths of workspace and file with oauth config
     return {
         workspacePath: '',
-        bootconfigFile: path.join('app', 'res', 'values', 'bootconfig.xml')
+        bootconfigFile: path.join('app', 'src', 'main', 'res', 'values', 'bootconfig.xml')
     };
 }
 

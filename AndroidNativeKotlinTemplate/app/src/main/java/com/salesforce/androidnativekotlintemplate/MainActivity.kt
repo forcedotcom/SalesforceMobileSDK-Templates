@@ -55,7 +55,7 @@ class MainActivity : SalesforceActivity() {
         super.onCreate(savedInstanceState)
 
         // Set Theme
-        val idDarkTheme = MobileSyncSDKManager.getInstance().isDarkTheme()
+        val idDarkTheme = MobileSyncSDKManager.getInstance().isDarkTheme
         setTheme(if (idDarkTheme) R.style.SalesforceSDK_Dark else R.style.SalesforceSDK)
         MobileSyncSDKManager.getInstance().setViewNavigationVisibility(this)
 
