@@ -25,7 +25,7 @@ import Foundation
 import UIKit
 import SalesforceSDKCore
 
-
+@UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate
 {
     var window: UIWindow?
