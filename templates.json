@@ -113,5 +113,12 @@
         "description": "Sample Kotlin application using MobileSync data framework",
         "appType": "native_kotlin",
         "platforms": ["android"]
+    },
+    {
+
+        "path": "iOSNativeLoginTemplate",
+        "description": "Sample application with a native login screen written in SwiftUI.",
+        "appType": "native_swift",
+        "platforms": ["ios"]
     }    
 ]
