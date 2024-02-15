@@ -150,7 +150,7 @@
 			dependencies = (
 			);
 			name = iOSNativeLoginTemplate;
-			productName = iOSNativeSwiftTemplate;
+			productName = iOSNativeLoginTemplate;
 			productReference = 4FD6C4741B754AF1002F9F90 /* iOSNativeLoginTemplate.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -162,7 +162,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 0710;
 				LastUpgradeCheck = 0940;
-				ORGANIZATIONNAME = iOSNativeSwiftTemplateOrganizationName;
+				ORGANIZATIONNAME = iOSNativeLoginTemplateOrganizationName;
 				TargetAttributes = {
 					4FD6C4731B754AF1002F9F90 = {
 						CreatedOnToolsVersion = 6.4;
