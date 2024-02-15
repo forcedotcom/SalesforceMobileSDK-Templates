@@ -35,10 +35,6 @@ struct NativeLoginView: View {
     @State private var password = ""
     @State private var errorMessage = ""
     @State private var isAuthenticating = false
-    var foreverAnimation: Animation {
-            Animation.linear(duration: 2.0)
-                .repeatForever(autoreverses: false)
-        }
     
     init() {
 

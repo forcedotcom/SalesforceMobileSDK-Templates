@@ -32,7 +32,6 @@ import SwiftUI
 
     @objc static func create() -> UIViewController {
         let view = UIHostingController(rootView: NativeLoginView())
-        view.viewDidLayoutSubviews()
 
         return view
     }
