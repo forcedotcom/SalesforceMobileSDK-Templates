@@ -15,7 +15,6 @@
 		4F13E942237DD5EE005BCAE9 /* usersyncs.json in Resources */ = {isa = PBXBuildFile; fileRef = 4F13E940237DD5EE005BCAE9 /* usersyncs.json */; };
 		4F13E943237DD5EE005BCAE9 /* userstore.json in Resources */ = {isa = PBXBuildFile; fileRef = 4F13E941237DD5EE005BCAE9 /* userstore.json */; };
 		4F13E947237DD72E005BCAE9 /* AccountsListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F13E946237DD72E005BCAE9 /* AccountsListModel.swift */; };
-		4F393A291C3C8BCD00B3EA13 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F393A281C3C8BCD00B3EA13 /* main.swift */; };
 		4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */; };
 		4FD6C4A01B755242002F9F90 /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C49D1B755242002F9F90 /* InitialViewController.swift */; };
 		69B48C322AD4E7AD0026AEC6 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 69B48C312AD4E7AD0026AEC6 /* PrivacyInfo.xcprivacy */; };
@@ -34,7 +33,6 @@
 		4F13E940237DD5EE005BCAE9 /* usersyncs.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = usersyncs.json; sourceTree = "<group>"; };
 		4F13E941237DD5EE005BCAE9 /* userstore.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = userstore.json; sourceTree = "<group>"; };
 		4F13E946237DD72E005BCAE9 /* AccountsListModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsListModel.swift; sourceTree = "<group>"; };
-		4F393A281C3C8BCD00B3EA13 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		4FD6C4741B754AF1002F9F90 /* iOSNativeSwiftTemplate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSNativeSwiftTemplate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FD6C4781B754AF1002F9F90 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -126,7 +124,6 @@
 				4F13E945237DD62D005BCAE9 /* Models */,
 				4FD6C49D1B755242002F9F90 /* InitialViewController.swift */,
 				4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */,
-				4F393A281C3C8BCD00B3EA13 /* main.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -219,7 +216,6 @@
 				4F13E93F237DD5D9005BCAE9 /* ContactDetailModel.swift in Sources */,
 				4F13E93D237DD5D9005BCAE9 /* ContactsForAccountListView.swift in Sources */,
 				4F13E93E237DD5D9005BCAE9 /* AccountsListView.swift in Sources */,
-				4F393A291C3C8BCD00B3EA13 /* main.swift in Sources */,
 				4FD6C4A01B755242002F9F90 /* InitialViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

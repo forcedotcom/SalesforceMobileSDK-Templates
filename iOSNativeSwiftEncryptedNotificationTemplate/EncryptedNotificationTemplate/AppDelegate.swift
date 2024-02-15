@@ -26,6 +26,7 @@ import Foundation
 import UIKit
 import MobileSync
 
+@UIApplicationMain
 class AppDelegate : UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
