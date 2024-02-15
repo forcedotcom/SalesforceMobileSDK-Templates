@@ -36,10 +36,6 @@ struct NativeLoginView: View {
     @State private var errorMessage = ""
     @State private var isAuthenticating = false
     
-    init() {
-
-    }
-    
     var body: some View {
         VStack {
             Spacer()
