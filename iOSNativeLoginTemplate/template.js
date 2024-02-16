@@ -36,9 +36,9 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var path = require('path');
 
     // Values in template
-    var templateAppName = 'iOSNativeNativeTemplate';
-    var templatePackageName = 'com.salesforce.iosnativenativetemplate';
-    var templateOrganization = 'iOSNativeNativeTemplateOrganizationName';
+    var templateAppName = 'iOSNativeLoginTemplate';
+    var templatePackageName = 'com.salesforce.iosnativelogintemplate';
+    var templateOrganization = 'iOSNativeLoginTemplateOrganizationName';
 
     // Key files
     var templatePodfile = 'Podfile';
