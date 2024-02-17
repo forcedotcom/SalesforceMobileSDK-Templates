@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -426,8 +426,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/wmathurin/SalesforceMobileSDK-iOS-SPM";
 			requirement = {
-				kind = branch;
 				branch = master;
+				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
