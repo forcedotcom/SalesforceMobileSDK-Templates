@@ -28,7 +28,7 @@
 import SwiftUI
 import SalesforceSDKCore
 
-struct NativeLoginView: View {
+struct NativeSubmitOtpView: View {
     @Environment(\.colorScheme) var colorScheme
     
     @State private var username = ""
@@ -150,17 +150,8 @@ struct NativeLoginView: View {
             .frame(maxHeight: .infinity, alignment: .center)
             .padding(.bottom, 125)
 
-            // Other login options.
-            NavigationLink {
-                NativeSubmitOtpView()
-            } label: {
-                VStack {
-                    Image(systemName: "globe")
-                        .imageScale(.large)
-                        .foregroundColor(.accentColor)
-                    Text("Need to register, reset your password or login without a password?")
-                }
-                .padding()
+            // Fallback to webview based authentication.
+            Button("Need to register, reset your password or login without a password???") {
             }.padding(EdgeInsets(top: 0.0, leading: 0.0, bottom: 44.0, trailing: 0.0))
             
             // Fallback to webview based authentication.
