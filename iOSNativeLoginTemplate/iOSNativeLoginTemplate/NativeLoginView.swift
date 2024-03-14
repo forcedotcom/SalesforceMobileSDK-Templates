@@ -147,21 +147,15 @@ struct NativeLoginView: View {
                     .zIndex(2.0)
                 }.padding(.bottom, 0)
             }
-            .frame(maxHeight: .infinity, alignment: .center)
-            .padding(.bottom, 125)
-
+            
             // Other login options.
             NavigationLink {
-                NativeSubmitOtpView()
+                NativeRequestOtpView()
             } label: {
-                VStack {
-                    Image(systemName: "globe")
-                        .imageScale(.large)
-                        .foregroundColor(.accentColor)
-                    Text("Need to register, reset your password or login without a password?")
-                }
-                .padding()
-            }.padding(EdgeInsets(top: 0.0, leading: 0.0, bottom: 44.0, trailing: 0.0))
+                Text("Need to register, reset your password or login without a password?")
+            }
+            
+            Spacer()
             
             // Fallback to webview based authentication.
             Button("Looking for Salesforce Log In?") {

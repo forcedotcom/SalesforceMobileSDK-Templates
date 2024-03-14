@@ -1,8 +1,8 @@
 //
 //  NativeLogin.swift
-//  SalesforceSDKCore
+//  iOSNativeLoginTemplate
 //
-//  Created by Brandon Page on 12/18/23.
+//  Created by Eric C. Johnson <Johnson.Eric@Salesforce.com> on 20240314.
 //  Copyright (c) 2023-present, salesforce.com, inc. All rights reserved.
 //
 //  Redistribution and use of this software in source and binary forms, with or without modification,
@@ -31,43 +31,21 @@ import SalesforceSDKCore
 struct NativeRequestOtpView: View {
     @Environment(\.colorScheme) var colorScheme
     
-    @State private var username = ""
-    @State private var password = ""
     @State private var errorMessage = ""
     @State private var isAuthenticating = false
+    @State private var otpVerificationMethod = OtpVerificationMethod.sms
+    @State private var username = ""
     
     var body: some View {
         VStack {
             Spacer()
-            HStack {
-                
-                // Check Native Login Manager to see if back button should be shown.
-                if (SalesforceManager.shared.nativeLoginManager().shouldShowBackButton()) {
-                    Button {
-                        // Let Native Login Manager do all the work.
-                        SalesforceManager.shared.nativeLoginManager().cancelAuthentication()
-                    } label: {
-                        Image(systemName: "arrowshape.backward.fill")
-                            .resizable()
-                            .frame(width: 30, height: 30, alignment: .topLeading)
-                            .tint(colorScheme == .dark ? .white : .blue)
-                            .opacity(0.5)
-                    }
-                    .frame(width: 30, height: 30, alignment: .topLeading)
-                    .padding(.leading)
-                    
-                } else {
-                    Spacer().frame(height: 30)
-                }
-                Spacer()
-            }
             
+            HStack { Spacer() }
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(.gray.opacity(0.25))
                     .frame(width: 300, height: 450)
                     .padding(.top, 0)
-                
                 VStack {
                     Image(.msdkPhone)
                         .resizable()
@@ -98,15 +76,13 @@ struct NativeRequestOtpView: View {
                         .padding(.top, 25)
                         .zIndex(2.0)
                     
-                    SecureField("Password", text: $password)
-                        .foregroundColor(.blue)
-                        .disableAutocorrection(true)
-                        .multilineTextAlignment(.center)
-                        .buttonStyle(.borderless)
-                        .autocapitalization(.none)
+                    Picker(
+                        "OTP Verification Method",
+                        selection: $otpVerificationMethod) {
+                            Text("Email").tag(OtpVerificationMethod.email)
+                            Text("SMS").tag(OtpVerificationMethod.sms)
+                        }
                         .frame(maxWidth: 250)
-                        .padding(.bottom)
-                        .padding(.top, 10)
                         .zIndex(2.0)
                     
                     Button {
@@ -114,32 +90,31 @@ struct NativeRequestOtpView: View {
                             errorMessage = ""
                             self.isAuthenticating = true
                             
-                            // Login
-                            let result = await SalesforceManager.shared.nativeLoginManager()
-                                .login(username: username, password: password)
-                            self.isAuthenticating = false
-                            
-                            switch result {
-                            case .invalidCredentials:
-                                errorMessage = "Please check your username and password."
-                                break
-                            case .invalidUsername:
-                                errorMessage = "Username format is incorrect."
-                                break
-                            case .invalidPassword:
-                                errorMessage = "Invalid password."
-                                break
-                            case .unknownError:
-                                errorMessage = "An unknown error has occurred."
-                                break
-                            case .success:
-                                self.password = ""
-                            }
+                            //                            let result = await SalesforceManager.shared.nativeLoginManager()
+                            //                                .login(username: username, password: password)
+                            //                            self.isAuthenticating = false
+                            //
+                            //                            switch result {
+                            //                            case .invalidCredentials:
+                            //                                errorMessage = "Please check your username and password."
+                            //                                break
+                            //                            case .invalidUsername:
+                            //                                errorMessage = "Username format is incorrect."
+                            //                                break
+                            //                            case .invalidPassword:
+                            //                                errorMessage = "Invalid password."
+                            //                                break
+                            //                            case .unknownError:
+                            //                                errorMessage = "An unknown error has occurred."
+                            //                                break
+                            //                            case .success:
+                            //                                self.password = ""
+                            //                            }
                         }
                     } label: {
                         HStack {
-                            Image(systemName: "lock")
-                            Text("Log In")
+                            Image(systemName: "key.radiowaves.forward")
+                            Text("Request One-Time-Passcode")
                         }.frame(minWidth: 150)
                     }
                     .buttonStyle(.bordered)
@@ -147,22 +122,13 @@ struct NativeRequestOtpView: View {
                     .zIndex(2.0)
                 }.padding(.bottom, 0)
             }
-            .frame(maxHeight: .infinity, alignment: .center)
-            .padding(.bottom, 125)
-
-            // Fallback to webview based authentication.
-            Button("Need to register, reset your password or login without a password???") {
-            }.padding(EdgeInsets(top: 0.0, leading: 0.0, bottom: 44.0, trailing: 0.0))
             
-            // Fallback to webview based authentication.
-            Button("Looking for Salesforce Log In?") {
-                SalesforceManager.shared.nativeLoginManager().fallbackToWebAuthentication()
-            }
+            Spacer()
         }.background(Gradient(colors: [.blue, .cyan, .green]).opacity(0.6))
             .blur(radius: self.isAuthenticating ? 2.0 : 0.0)
     }
 }
 
 #Preview {
-    NativeLoginView()
+    NativeRequestOtpView()
 }
