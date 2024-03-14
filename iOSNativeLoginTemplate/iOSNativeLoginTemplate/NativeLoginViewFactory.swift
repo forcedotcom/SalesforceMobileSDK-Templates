@@ -28,11 +28,12 @@
 import Foundation
 import SwiftUI
 
-@objc class NativeLoginViewFactory: NSObject {
-
-    @objc static func create() -> UIViewController {
-        let view = UIHostingController(rootView: NativeLoginView())
-
+class NativeLoginViewFactory: NSObject {
+    
+    static func create(reCaptchaClientObservable: ReCaptchaClientObservable) -> UIViewController {
+        let view = UIHostingController(rootView: NativeLoginView()
+            .environmentObject(reCaptchaClientObservable))
+        
         return view
     }
 }

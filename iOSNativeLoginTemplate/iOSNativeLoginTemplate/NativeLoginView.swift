@@ -30,6 +30,9 @@ import SalesforceSDKCore
 
 struct NativeLoginView: View {
     @Environment(\.colorScheme) var colorScheme
+
+    /// The reCAPTCHA client used to obtain reCAPTCHA tokens when needed for Salesforce Headless Identity API requests.
+    @EnvironmentObject var reCaptchaClientObservable: ReCaptchaClientObservable
     
     @State private var username = ""
     @State private var password = ""
@@ -151,6 +154,7 @@ struct NativeLoginView: View {
             // Other login options.
             NavigationLink {
                 NativeRequestOtpView()
+                    .environmentObject(reCaptchaClientObservable)
             } label: {
                 Text("Need to register, reset your password or login without a password?")
             }

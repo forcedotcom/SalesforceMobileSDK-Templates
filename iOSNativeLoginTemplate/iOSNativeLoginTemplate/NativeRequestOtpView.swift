@@ -25,11 +25,14 @@
 //  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
 //  WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import SwiftUI
 import SalesforceSDKCore
+import SwiftUI
 
 struct NativeRequestOtpView: View {
+    
     @Environment(\.colorScheme) var colorScheme
+    
+    @EnvironmentObject var reCaptchaClientObservable: ReCaptchaClientObservable
     
     @State private var errorMessage = ""
     @State private var isAuthenticating = false
@@ -86,9 +89,13 @@ struct NativeRequestOtpView: View {
                         .zIndex(2.0)
                     
                     Button {
-                        Task {
-                            errorMessage = ""
-                            self.isAuthenticating = true
+                        errorMessage = ""
+                        self.isAuthenticating = true
+                        
+                        // Execute for a new reCAPTCHA token.
+                        reCaptchaClientObservable.reCaptchaClient?.execute(withAction: .login) {token, error in
+                            
+                            print(token ?? error?.localizedDescription ?? "Could not obtain a reCAPTCHA token and no error description was provided.")
                             
                             //                            let result = await SalesforceManager.shared.nativeLoginManager()
                             //                                .login(username: username, password: password)
