@@ -3,7 +3,7 @@
 //  iOSNativeLoginTemplate
 //
 //  Created by Eric C. Johnson <Johnson.Eric@Salesforce.com> on 20240314.
-//  Copyright (c) 2023-present, salesforce.com, inc. All rights reserved.
+//  Copyright (c) 2024-present, salesforce.com, inc. All rights reserved.
 //
 //  Redistribution and use of this software in source and binary forms, with or without modification,
 //  are permitted provided that the following conditions are met:
@@ -28,15 +28,33 @@
 import SalesforceSDKCore
 import SwiftUI
 
+///
+/// A view enabling the user to start the Salesforce Identity API's "Headless Passwordless Login Flow for
+/// Public Clients."  This view corresponds to the `init/passwordless/login` endpoint by collecting
+/// a Salesforce username and the user's chosen OTP verification method of email or SMS.
+///
+/// The implementation of the API endpoint's client is provided by Salesforce Mobile SDK in the native login
+/// manager.
+///
+/// On receiving a successful response from the endpoint, a separate view is used to finish the flow.
+///
 struct NativeRequestOtpView: View {
     
     @Environment(\.colorScheme) var colorScheme
     
+    /// The Google reCAPTCHA client.
     @EnvironmentObject var reCaptchaClientObservable: ReCaptchaClientObservable
     
+    /// An error message displayed to the user when needed.
     @State private var errorMessage = ""
+    
+    /// An authenticating state to determine the progress indicator.
     @State private var isAuthenticating = false
+    
+    /// The user's chosen OTP verification method of email or SMS.
     @State private var otpVerificationMethod = OtpVerificationMethod.sms
+    
+    /// The user's entered username.
     @State private var username = ""
     
     var body: some View {
@@ -44,18 +62,21 @@ struct NativeRequestOtpView: View {
             Spacer()
             
             HStack { Spacer() }
+            
             ZStack {
+                
                 RoundedRectangle(cornerRadius: 10)
                     .fill(.gray.opacity(0.25))
                     .frame(width: 300, height: 450)
                     .padding(.top, 0)
+                
                 VStack {
                     Image(.msdkPhone)
                         .resizable()
+                        .blur(radius: 0.0)
                         .frame(width: 150, height: 150)
                         .padding(.bottom, 50)
                         .shadow(color: .black, radius: 3)
-                        .blur(radius: 0.0)
                     
                     if isAuthenticating {
                         ProgressView()
@@ -63,19 +84,19 @@ struct NativeRequestOtpView: View {
                     
                     if !errorMessage.isEmpty {
                         Text(errorMessage)
-                            .foregroundStyle(.red)
                             .frame(width: 250, height: 50)
+                            .foregroundStyle(.red)
                     } else {
                         Spacer().frame(width: 250, height: 65)
                     }
                     
                     TextField("Username", text: $username)
-                        .foregroundColor(.blue)
-                        .disableAutocorrection(true)
-                        .multilineTextAlignment(.center)
-                        .buttonStyle(.borderless)
                         .autocapitalization(.none)
+                        .buttonStyle(.borderless)
+                        .disableAutocorrection(true)
+                        .foregroundColor(.blue)
                         .frame(maxWidth: 250)
+                        .multilineTextAlignment(.center)
                         .padding(.top, 25)
                         .zIndex(2.0)
                     
@@ -89,35 +110,7 @@ struct NativeRequestOtpView: View {
                         .zIndex(2.0)
                     
                     Button {
-                        errorMessage = ""
-                        self.isAuthenticating = true
-                        
-                        // Execute for a new reCAPTCHA token.
-                        reCaptchaClientObservable.reCaptchaClient?.execute(withAction: .login) {token, error in
-                            
-                            print(token ?? error?.localizedDescription ?? "Could not obtain a reCAPTCHA token and no error description was provided.")
-                            
-                            //                            let result = await SalesforceManager.shared.nativeLoginManager()
-                            //                                .login(username: username, password: password)
-                            //                            self.isAuthenticating = false
-                            //
-                            //                            switch result {
-                            //                            case .invalidCredentials:
-                            //                                errorMessage = "Please check your username and password."
-                            //                                break
-                            //                            case .invalidUsername:
-                            //                                errorMessage = "Username format is incorrect."
-                            //                                break
-                            //                            case .invalidPassword:
-                            //                                errorMessage = "Invalid password."
-                            //                                break
-                            //                            case .unknownError:
-                            //                                errorMessage = "An unknown error has occurred."
-                            //                                break
-                            //                            case .success:
-                            //                                self.password = ""
-                            //                            }
-                        }
+                        onRequestOtpTapped()
                     } label: {
                         HStack {
                             Image(systemName: "key.radiowaves.forward")
@@ -127,12 +120,73 @@ struct NativeRequestOtpView: View {
                     .buttonStyle(.bordered)
                     .tint(.blue)
                     .zIndex(2.0)
-                }.padding(.bottom, 0)
+                }
             }
             
             Spacer()
         }.background(Gradient(colors: [.blue, .cyan, .green]).opacity(0.6))
-            .blur(radius: self.isAuthenticating ? 2.0 : 0.0)
+            .blur(radius: isAuthenticating ? 2.0 : 0.0)
+    }
+    
+    ///
+    /// Submits the OTP request when the request button is tapped.  This submits a request to the
+    /// `init/passwordless/login`endpoint and opens the submit OTP verification view on success.
+    ///
+    private func onRequestOtpTapped() {
+        // Reset the error message if needed.
+        errorMessage = ""
+        
+        // Show the progress indicator.
+        isAuthenticating = true
+        
+        // Execute for a new reCAPTCHA token.
+        reCaptchaClientObservable.reCaptchaClient?.execute(withAction: .login) {reCaptchaExecuteResult, error in
+            
+            // Guard for the new reCAPTCHA token.
+            guard let reCaptchaToken = reCaptchaExecuteResult else {
+                print("Could not obtain a reCAPTCHA token due to error with description '\(error?.localizedDescription ?? "(A description wasn't provided.)")'.")
+                return
+            }
+            
+            // Submit the request and act on the response.
+            Task {
+                
+                // Submit the request.
+                let result = await SalesforceManager.shared.nativeLoginManager()
+                    .submitOtpRequest(
+                        username: username,
+                        reCaptchaToken: reCaptchaToken,
+                        otpVerificationMethod: otpVerificationMethod)
+                
+                // Clear the progresss indicator.
+                isAuthenticating = false
+                
+                // Act on the response.
+                switch result.nativeLoginResult {
+                    
+                case .invalidCredentials:
+                    errorMessage = "Check your username and password."
+                    break
+                    
+                case .invalidPassword:
+                    errorMessage = "Invalid password."
+                    break
+                    
+                case .invalidUsername:
+                    errorMessage = "Invalid username."
+                    break
+                    
+                case .unknownError:
+                    errorMessage = "An error occurred."
+                    break
+                    
+                case .success:
+                    
+                    // Navigate to the submit OTP verification view.
+                    print("Success! '\(result.otpIdentifier ?? "...")'.")
+                }
+            }
+        }
     }
 }
 
