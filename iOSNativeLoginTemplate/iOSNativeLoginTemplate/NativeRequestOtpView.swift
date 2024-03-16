@@ -1,5 +1,5 @@
 //
-//  NativeLogin.swift
+//  NativeRequestOtpView.swift
 //  iOSNativeLoginTemplate
 //
 //  Created by Eric C. Johnson <Johnson.Eric@Salesforce.com> on 20240314.
@@ -28,12 +28,6 @@
 import SalesforceSDKCore
 import SwiftUI
 
-/// The OTP identifier returned by the Salesforce Identity API's initialize headless login endpoint.  TODO: This should not be a global, so integrate into SwiftUI navigation and data modeling. ECJ20240316
-var otpIdentifier: String? = nil
-
-/// The OTP verification method used to request OTP delivery from the Salesforce Identity API's initialize headless login endpoint.  TODO: This should not be a global, so integrate into SwiftUI navigation and data modeling. ECJ20240316
-var otpVerificationMethod: OtpVerificationMethod? = nil
-
 ///
 /// A view enabling the user to start the Salesforce Identity API's "Headless Passwordless Login Flow for
 /// Public Clients."  This view corresponds to the `init/passwordless/login` endpoint by collecting
@@ -61,7 +55,7 @@ struct NativeRequestOtpView: View {
     @State private var isAuthenticating = false
     
     /// The user's chosen OTP verification method of email or SMS.
-    @State private var otpVerificationMethodSelected = OtpVerificationMethod.sms
+    @State private var otpVerificationMethod = OtpVerificationMethod.sms
     
     /// The user's entered username.
     @State private var username = ""
@@ -111,7 +105,7 @@ struct NativeRequestOtpView: View {
                     
                     Picker(
                         "OTP Verification Method",
-                        selection: $otpVerificationMethodSelected) {
+                        selection: $otpVerificationMethod) {
                             Text("Email").tag(OtpVerificationMethod.email)
                             Text("SMS").tag(OtpVerificationMethod.sms)
                         }
@@ -162,14 +156,12 @@ struct NativeRequestOtpView: View {
             
             // Submit the request and act on the response.
             Task {
-                otpVerificationMethod = otpVerificationMethodSelected
-                
                 // Submit the request.
                 let result = await SalesforceManager.shared.nativeLoginManager()
                     .submitOtpRequest(
                         username: username,
                         reCaptchaToken: reCaptchaToken,
-                        otpVerificationMethod: otpVerificationMethodSelected)
+                        otpVerificationMethod: otpVerificationMethod)
                 
                 // Clear the progresss indicator.
                 isAuthenticating = false
@@ -194,8 +186,11 @@ struct NativeRequestOtpView: View {
                     break
                     
                 case .success:
-                    otpIdentifier = result.otpIdentifier
-                    navigationPathObservable.navigationPath.append("NativeSubmitOtpView")
+                    guard let otpIdentifier = result.otpIdentifier else { return }
+                    navigationPathObservable.navigationPath.append(
+                        .NativeSubmitOtpView(
+                            otpIdentifier: otpIdentifier,
+                            otpVerificationMethod: otpVerificationMethod))
                 }
             }
         }

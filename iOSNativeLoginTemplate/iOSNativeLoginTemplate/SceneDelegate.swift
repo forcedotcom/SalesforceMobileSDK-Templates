@@ -188,5 +188,5 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 class NavigationPathObservable: ObservableObject {
     
-    @Published var navigationPath: [String] = []
+    @Published var navigationPath: [NavigationDestination] = []
 }

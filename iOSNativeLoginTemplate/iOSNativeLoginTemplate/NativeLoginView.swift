@@ -157,7 +157,7 @@ struct NativeLoginView: View {
                 
                 // Other login options.
                 Button("Need to register, reset your password or login without a password?") {
-                    navigationPathObservable.navigationPath.append("NativeRequestOtpView")
+                    navigationPathObservable.navigationPath.append(.NativeRequestOtpView)
                 }
                 
                 Spacer()
@@ -171,16 +171,19 @@ struct NativeLoginView: View {
                 Gradient(colors: [.blue, .cyan, .green]).opacity(0.6)
             )
             .blur(radius: self.isAuthenticating ? 2.0 : 0.0)
-            .navigationDestination(for: String.self) { path in
-                switch (path) {
-                case "NativeRequestOtpView":
+            .navigationDestination(for: NavigationDestination.self) { navigationDestination in
+                switch (navigationDestination) {
+                    
+                case .NativeRequestOtpView:
                     NativeRequestOtpView()
                     
-                case "NativeSubmitOtpView":
-                    NativeSubmitOtpView()
-                    
-                default:
-                    NativeLoginView()
+                case .NativeSubmitOtpView (
+                    let otpIdentifier,
+                    let otpVerificationMethod
+                ):
+                    NativeSubmitOtpView(
+                        otpIdentifier: otpIdentifier,
+                        otpVerificationMethod: otpVerificationMethod)
                 }
             }
         }
@@ -189,4 +192,22 @@ struct NativeLoginView: View {
 
 #Preview {
     NativeLoginView()
+}
+
+///
+/// The available navigation destinations.
+///
+enum NavigationDestination: Hashable {
+    
+    /// A navigation destination for the request one-time-passcode view.
+    case NativeRequestOtpView
+    
+    /// A navigation destination for the submit one-time-passcode view.
+    case NativeSubmitOtpView(
+        /// The OTP identifier returned by the Salesforce Identity API initialize password-less login endpoint.
+        otpIdentifier: String,
+        
+        /// The OTP verification method used when requesting the OTP and OTP identifier.
+        otpVerificationMethod: OtpVerificationMethod
+    )
 }

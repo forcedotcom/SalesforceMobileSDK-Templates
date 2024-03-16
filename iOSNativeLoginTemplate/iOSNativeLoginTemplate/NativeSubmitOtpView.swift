@@ -1,5 +1,5 @@
 //
-//  NativeLogin.swift
+//  NativeSubmitOtpView.swift
 //  iOSNativeLoginTemplate
 //
 //  Created by Eric C. Johnson <Johnson.Eric@Salesforce.com> on 20240314.
@@ -42,6 +42,13 @@ import SalesforceSDKCore
 ///
 
 struct NativeSubmitOtpView: View {
+    
+    /// The OTP identifier returned by the Salesforce Identity API's initialize headless login endpoint.
+    let otpIdentifier: String
+
+    /// The OTP verification method used to request OTP delivery from the Salesforce Identity API's initialize headless login endpoint.
+    let otpVerificationMethod: OtpVerificationMethod
+    
     @Environment(\.colorScheme) var colorScheme
     
     /// An error message displayed to the user when needed.
@@ -135,10 +142,6 @@ struct NativeSubmitOtpView: View {
         
         // Submit the request and act on the response.
         Task {
-            // Guards.
-            guard let otpIdentifier = otpIdentifier else { return }
-            guard let otpVerificationMethod = otpVerificationMethod else { return }
-            
             // Submit the request.
             let _ = await SalesforceManager.shared.nativeLoginManager()
                 .submitPasswordlessAuthorizationRequest(
@@ -153,5 +156,7 @@ struct NativeSubmitOtpView: View {
 }
 
 #Preview {
-    NativeSubmitOtpView()
+    NativeSubmitOtpView(
+        otpIdentifier: "",
+        otpVerificationMethod: .email)
 }
