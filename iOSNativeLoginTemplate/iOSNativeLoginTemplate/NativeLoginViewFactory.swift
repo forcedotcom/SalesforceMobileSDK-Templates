@@ -34,10 +34,29 @@ class NativeLoginViewFactory: NSObject {
         navigationPathObservable: NavigationPathObservable,
         reCaptchaClientObservable: ReCaptchaClientObservable
     ) -> UIViewController {
-        let view = UIHostingController(rootView: NativeLoginView()
+        let view = NativeLoginTemplateHostingController(rootView: NativeLoginView()
             .environmentObject(navigationPathObservable)
             .environmentObject(reCaptchaClientObservable))
         
         return view
+    }
+}
+
+class NativeLoginTemplateHostingController<Content>: UIHostingController<Content> where Content : View {
+    
+    override func willMove(toParent parent: UIViewController?) {
+        
+        guard let navigationController = (parent as? UINavigationController) else {
+            return
+        }
+        
+        //
+        // The Salesforce Mobile SDK provided navigation controller displays a
+        // navigation bar that is redundant with the SwiftUI navigation in the
+        // template app, so hide it.
+        //
+        // TODO: See if this should be resolved in SFMSDK. ECJ20240516
+        //
+        navigationController.setNavigationBarHidden(true, animated: true)
     }
 }
