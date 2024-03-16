@@ -30,9 +30,12 @@ import SalesforceSDKCore
 
 struct NativeLoginView: View {
     @Environment(\.colorScheme) var colorScheme
-
+    
     /// The reCAPTCHA client used to obtain reCAPTCHA tokens when needed for Salesforce Headless Identity API requests.
     @EnvironmentObject var reCaptchaClientObservable: ReCaptchaClientObservable
+    
+    /// The navigation path.
+    @EnvironmentObject var navigationPathObservable: NavigationPathObservable
     
     @State private var username = ""
     @State private var password = ""
@@ -40,133 +43,147 @@ struct NativeLoginView: View {
     @State private var isAuthenticating = false
     
     var body: some View {
-        VStack {
-            Spacer()
-            HStack {
-                
-                // Check Native Login Manager to see if back button should be shown.
-                if (SalesforceManager.shared.nativeLoginManager().shouldShowBackButton()) {
-                    Button {
-                        // Let Native Login Manager do all the work.
-                        SalesforceManager.shared.nativeLoginManager().cancelAuthentication()
-                    } label: {
-                        Image(systemName: "arrowshape.backward.fill")
-                            .resizable()
-                            .frame(width: 30, height: 30, alignment: .topLeading)
-                            .tint(colorScheme == .dark ? .white : .blue)
-                            .opacity(0.5)
-                    }
-                    .frame(width: 30, height: 30, alignment: .topLeading)
-                    .padding(.leading)
-                    
-                } else {
-                    Spacer().frame(height: 30)
-                }
+        NavigationStack(path: $navigationPathObservable.navigationPath) {
+            VStack {
                 Spacer()
-            }
-            
-            ZStack {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(.gray.opacity(0.25))
-                    .frame(width: 300, height: 450)
-                    .padding(.top, 0)
-                
-                VStack {
-                    Image(.msdkPhone)
-                        .resizable()
-                        .frame(width: 150, height: 150)
-                        .padding(.bottom, 50)
-                        .shadow(color: .black, radius: 3)
-                        .blur(radius: 0.0)
+                HStack {
                     
-                    if isAuthenticating {
-                        ProgressView()
-                    }
-                    
-                    if !errorMessage.isEmpty {
-                        Text(errorMessage)
-                            .foregroundStyle(.red)
-                            .frame(width: 250, height: 50)
-                    } else {
-                        Spacer().frame(width: 250, height: 65)
-                    }
-                    
-                    TextField("Username", text: $username)
-                        .foregroundColor(.blue)
-                        .disableAutocorrection(true)
-                        .multilineTextAlignment(.center)
-                        .buttonStyle(.borderless)
-                        .autocapitalization(.none)
-                        .frame(maxWidth: 250)
-                        .padding(.top, 25)
-                        .zIndex(2.0)
-                    
-                    SecureField("Password", text: $password)
-                        .foregroundColor(.blue)
-                        .disableAutocorrection(true)
-                        .multilineTextAlignment(.center)
-                        .buttonStyle(.borderless)
-                        .autocapitalization(.none)
-                        .frame(maxWidth: 250)
-                        .padding(.bottom)
-                        .padding(.top, 10)
-                        .zIndex(2.0)
-                    
-                    Button {
-                        Task {
-                            errorMessage = ""
-                            self.isAuthenticating = true
-                            
-                            // Login
-                            let result = await SalesforceManager.shared.nativeLoginManager()
-                                .login(username: username, password: password)
-                            self.isAuthenticating = false
-                            
-                            switch result {
-                            case .invalidCredentials:
-                                errorMessage = "Please check your username and password."
-                                break
-                            case .invalidUsername:
-                                errorMessage = "Username format is incorrect."
-                                break
-                            case .invalidPassword:
-                                errorMessage = "Invalid password."
-                                break
-                            case .unknownError:
-                                errorMessage = "An unknown error has occurred."
-                                break
-                            case .success:
-                                self.password = ""
-                            }
+                    // Check Native Login Manager to see if back button should be shown.
+                    if (SalesforceManager.shared.nativeLoginManager().shouldShowBackButton()) {
+                        Button {
+                            // Let Native Login Manager do all the work.
+                            SalesforceManager.shared.nativeLoginManager().cancelAuthentication()
+                        } label: {
+                            Image(systemName: "arrowshape.backward.fill")
+                                .resizable()
+                                .frame(width: 30, height: 30, alignment: .topLeading)
+                                .tint(colorScheme == .dark ? .white : .blue)
+                                .opacity(0.5)
                         }
-                    } label: {
-                        HStack {
-                            Image(systemName: "lock")
-                            Text("Log In")
-                        }.frame(minWidth: 150)
+                        .frame(width: 30, height: 30, alignment: .topLeading)
+                        .padding(.leading)
+                        
+                    } else {
+                        Spacer().frame(height: 30)
                     }
-                    .buttonStyle(.bordered)
-                    .tint(.blue)
-                    .zIndex(2.0)
-                }.padding(.bottom, 0)
+                    Spacer()
+                }
+                
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(.gray.opacity(0.25))
+                        .frame(width: 300, height: 450)
+                        .padding(.top, 0)
+                    
+                    VStack {
+                        Image(.msdkPhone)
+                            .resizable()
+                            .frame(width: 150, height: 150)
+                            .padding(.bottom, 50)
+                            .shadow(color: .black, radius: 3)
+                            .blur(radius: 0.0)
+                        
+                        if isAuthenticating {
+                            ProgressView()
+                        }
+                        
+                        if !errorMessage.isEmpty {
+                            Text(errorMessage)
+                                .foregroundStyle(.red)
+                                .frame(width: 250, height: 50)
+                        } else {
+                            Spacer().frame(width: 250, height: 65)
+                        }
+                        
+                        TextField("Username", text: $username)
+                            .foregroundColor(.blue)
+                            .disableAutocorrection(true)
+                            .multilineTextAlignment(.center)
+                            .buttonStyle(.borderless)
+                            .autocapitalization(.none)
+                            .frame(maxWidth: 250)
+                            .padding(.top, 25)
+                            .zIndex(2.0)
+                        
+                        SecureField("Password", text: $password)
+                            .foregroundColor(.blue)
+                            .disableAutocorrection(true)
+                            .multilineTextAlignment(.center)
+                            .buttonStyle(.borderless)
+                            .autocapitalization(.none)
+                            .frame(maxWidth: 250)
+                            .padding(.bottom)
+                            .padding(.top, 10)
+                            .zIndex(2.0)
+                        
+                        Button {
+                            Task {
+                                errorMessage = ""
+                                self.isAuthenticating = true
+                                
+                                // Login
+                                let result = await SalesforceManager.shared.nativeLoginManager()
+                                    .login(username: username, password: password)
+                                self.isAuthenticating = false
+                                
+                                switch result {
+                                case .invalidCredentials:
+                                    errorMessage = "Please check your username and password."
+                                    break
+                                case .invalidUsername:
+                                    errorMessage = "Username format is incorrect."
+                                    break
+                                case .invalidPassword:
+                                    errorMessage = "Invalid password."
+                                    break
+                                case .unknownError:
+                                    errorMessage = "An unknown error has occurred."
+                                    break
+                                case .success:
+                                    self.password = ""
+                                }
+                            }
+                        } label: {
+                            HStack {
+                                Image(systemName: "lock")
+                                Text("Log In")
+                            }.frame(minWidth: 150)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.blue)
+                        .zIndex(2.0)
+                    }.padding(.bottom, 0)
+                }
+                
+                // Other login options.
+                Button("Need to register, reset your password or login without a password?") {
+                    navigationPathObservable.navigationPath.append("NativeRequestOtpView")
+                }
+                
+                Spacer()
+                
+                // Fallback to webview based authentication.
+                Button("Looking for Salesforce Log In?") {
+                    SalesforceManager.shared.nativeLoginManager().fallbackToWebAuthentication()
+                }
             }
-            
-            // Other login options.
-            NavigationLink {
-                NativeRequestOtpView()
-                    .environmentObject(reCaptchaClientObservable)
-            } label: {
-                Text("Need to register, reset your password or login without a password?")
-            }
-            
-            Spacer()
-            
-            // Fallback to webview based authentication.
-            Button("Looking for Salesforce Log In?") {
-                SalesforceManager.shared.nativeLoginManager().fallbackToWebAuthentication()
-            }
-        }.background(Gradient(colors: [.blue, .cyan, .green]).opacity(0.6))
+            .background(
+                Gradient(colors: [.blue, .cyan, .green]).opacity(0.6)
+            )
             .blur(radius: self.isAuthenticating ? 2.0 : 0.0)
+            .navigationDestination(for: String.self) { path in
+                switch (path) {
+                case "NativeRequestOtpView":
+                    NativeRequestOtpView()
+                    
+                case "NativeSubmitOtpView":
+                    NativeSubmitOtpView()
+                    
+                default:
+                    NativeLoginView()
+                }
+            }
+        }
     }
 }
 

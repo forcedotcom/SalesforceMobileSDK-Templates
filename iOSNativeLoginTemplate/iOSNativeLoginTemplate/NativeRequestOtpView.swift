@@ -28,6 +28,12 @@
 import SalesforceSDKCore
 import SwiftUI
 
+/// The OTP identifier returned by the Salesforce Identity API's initialize headless login endpoint.  TODO: This should not be a global, so integrate into SwiftUI navigation and data modeling. ECJ20240316
+var otpIdentifier: String? = nil
+
+/// The OTP verification method used to request OTP delivery from the Salesforce Identity API's initialize headless login endpoint.  TODO: This should not be a global, so integrate into SwiftUI navigation and data modeling. ECJ20240316
+var otpVerificationMethod: OtpVerificationMethod? = nil
+
 ///
 /// A view enabling the user to start the Salesforce Identity API's "Headless Passwordless Login Flow for
 /// Public Clients."  This view corresponds to the `init/passwordless/login` endpoint by collecting
@@ -45,6 +51,9 @@ struct NativeRequestOtpView: View {
     /// The Google reCAPTCHA client.
     @EnvironmentObject var reCaptchaClientObservable: ReCaptchaClientObservable
     
+    /// The navigation path.
+    @EnvironmentObject var navigationPathObservable: NavigationPathObservable
+    
     /// An error message displayed to the user when needed.
     @State private var errorMessage = ""
     
@@ -52,7 +61,7 @@ struct NativeRequestOtpView: View {
     @State private var isAuthenticating = false
     
     /// The user's chosen OTP verification method of email or SMS.
-    @State private var otpVerificationMethod = OtpVerificationMethod.sms
+    @State private var otpVerificationMethodSelected = OtpVerificationMethod.sms
     
     /// The user's entered username.
     @State private var username = ""
@@ -102,7 +111,7 @@ struct NativeRequestOtpView: View {
                     
                     Picker(
                         "OTP Verification Method",
-                        selection: $otpVerificationMethod) {
+                        selection: $otpVerificationMethodSelected) {
                             Text("Email").tag(OtpVerificationMethod.email)
                             Text("SMS").tag(OtpVerificationMethod.sms)
                         }
@@ -124,12 +133,15 @@ struct NativeRequestOtpView: View {
             }
             
             Spacer()
-        }.background(Gradient(colors: [.blue, .cyan, .green]).opacity(0.6))
-            .blur(radius: isAuthenticating ? 2.0 : 0.0)
+        }
+        .background(
+            Gradient(colors: [.blue, .cyan, .green]).opacity(0.6)
+        )
+        .blur(radius: isAuthenticating ? 2.0 : 0.0)
     }
     
     ///
-    /// Submits the OTP request when the request button is tapped.  This submits a request to the
+    /// Submits the OTP delivery request when the request button is tapped.  This submits a request to the
     /// `init/passwordless/login`endpoint and opens the submit OTP verification view on success.
     ///
     private func onRequestOtpTapped() {
@@ -150,13 +162,14 @@ struct NativeRequestOtpView: View {
             
             // Submit the request and act on the response.
             Task {
+                otpVerificationMethod = otpVerificationMethodSelected
                 
                 // Submit the request.
                 let result = await SalesforceManager.shared.nativeLoginManager()
                     .submitOtpRequest(
                         username: username,
                         reCaptchaToken: reCaptchaToken,
-                        otpVerificationMethod: otpVerificationMethod)
+                        otpVerificationMethod: otpVerificationMethodSelected)
                 
                 // Clear the progresss indicator.
                 isAuthenticating = false
@@ -181,9 +194,8 @@ struct NativeRequestOtpView: View {
                     break
                     
                 case .success:
-                    
-                    // Navigate to the submit OTP verification view.
-                    print("Success! '\(result.otpIdentifier ?? "...")'.")
+                    otpIdentifier = result.otpIdentifier
+                    navigationPathObservable.navigationPath.append("NativeSubmitOtpView")
                 }
             }
         }
