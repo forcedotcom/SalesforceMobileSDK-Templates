@@ -91,7 +91,10 @@ import kotlinx.coroutines.launch
 
 class NativeLogin : ComponentActivity() {
     private lateinit var nativeLoginManager: NativeLoginManager
-    private val fallbackResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    // Start activity for result so we can close this activity if webview login is successful.
+    private val handleWebviewFallbackResult = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()) { result ->
+
         if (result.resultCode == Activity.RESULT_OK) {
             finish()
         }
@@ -105,8 +108,13 @@ class NativeLogin : ComponentActivity() {
         setContentView(
             ComposeView(this).apply {
                 setContent {
+
+                    // We pass all NativeLoginManager related functions here so that Jetpack Compose Preview works.
+                    // If we don't SalesforceSDKManager.getInstance() will complain it has not be setup.
                     LoginView(
+                        // Pass this inline login function to be executed within the composable.
                         login = { username, password -> Boolean
+                            // Call login and handle results.
                             when (val result = nativeLoginManager.login(username, password)) {
                                 NativeLoginResult.InvalidUsername -> {
                                     Toast.makeText(baseContext, result.name,Toast.LENGTH_LONG).show()
@@ -131,10 +139,10 @@ class NativeLogin : ComponentActivity() {
 
                             return@LoginView true
                         },
-                        fallbackResult,
+                        handleWebviewFallbackResult,
                         nativeLoginManager.getFallbackWebAuthenticationIntent(),
                         nativeLoginManager.shouldShowBackButton,
-                        { finish() },
+                        backAction = { finish() },
                     )
                 }
             }
@@ -158,7 +166,7 @@ class NativeLogin : ComponentActivity() {
 @Composable
 fun LoginView(
     login: suspend (String, String) -> Boolean,
-    fallbackResult: ActivityResultLauncher<Intent>? = null,
+    handleWebviewFallbackResult: ActivityResultLauncher<Intent>? = null,
     webviewLoginIntent: Intent? = null,
     shouldShowBack: Boolean = false,
     backAction: () -> Unit,
@@ -167,6 +175,9 @@ fun LoginView(
         Scaffold(
             topBar = {
                 Row(modifier = Modifier.statusBarsPadding()) {
+
+                    // Back button should only be shown if there is a user already logged in.  But not
+                    // in the case of Biometric Authentication.
                     if (shouldShowBack) {
                         TextButton(onClick = { backAction() }) {
                             Image(
@@ -186,7 +197,8 @@ fun LoginView(
                         .navigationBarsPadding()
                         .fillMaxWidth(),
                 ) {
-                    TextButton(onClick = { fallbackResult?.launch(webviewLoginIntent) }) {
+                    // Fallback to web based authentication.
+                    TextButton(onClick = { handleWebviewFallbackResult?.launch(webviewLoginIntent) }) {
                         Text(text = "Looking for Salesforce Log In?")
                     }
                 }

@@ -41,6 +41,7 @@ class MainApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        // Pass NativeLogin class with initNative
         MobileSyncSDKManager.initNative(applicationContext, MainActivity::class.java, null, NativeLogin::class.java)
         MobileSyncSDKManager.getInstance().registerUsedAppFeature(FEATURE_APP_USES_KOTLIN)
         DynamicColors.applyToActivitiesIfAvailable(this)
