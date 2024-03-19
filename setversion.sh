@@ -68,6 +68,7 @@ echo "*** Updating build.gradle.kts files ***"
 
 update_build_gradle_dependencies "./AndroidIDPTemplate/app/build.gradle.kts"  "${OPT_VERSION}"
 update_build_gradle_dependencies "./AndroidNativeKotlinTemplate/app/build.gradle.kts"  "${OPT_VERSION}"
+update_build_gradle_dependencies "./AndroidNativeLoginTemplate/app/build.gradle.kts"  "${OPT_VERSION}"
 update_build_gradle_dependencies "./AndroidNativeTemplate/app/build.gradle.kts"  "${OPT_VERSION}"
 update_build_gradle_dependencies "./MobileSyncExplorerKotlinTemplate/app/build.gradle.kts"  "${OPT_VERSION}"
 
@@ -75,6 +76,7 @@ echo "*** Updating package.json files ***"
 
 update_package_json "./AndroidIDPTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./AndroidNativeKotlinTemplate/package.json"  "${SDK_TAG}"
+update_package_json "./AndroidNativeLoginTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./AndroidNativeTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./HybridLocalTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./HybridLwcTemplate/package.json"  "${SDK_TAG}"
@@ -89,6 +91,7 @@ update_package_json "./iOSIDPTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./iOSNativeSwiftEncryptedNotificationTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./iOSNativeSwiftPackageManagerTemplate/package.json"  "${SDK_TAG_SPM}"
 update_package_json "./iOSNativeSwiftTemplate/package.json"  "${SDK_TAG}"
+update_package_json "./iOSNativeLoginTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./iOSNativeTemplate/package.json"  "${SDK_TAG}"
 
 
