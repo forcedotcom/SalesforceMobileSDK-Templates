@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-present, salesforce.com, inc.
+ * Copyright (c) 2024-present, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@ package com.salesforce.androidnativelogintemplate
 import android.app.Application
 import com.google.android.material.color.DynamicColors
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
-import com.sfdc.nativelogintest.NativeLogin
 
 /**
  * Application class for our application.
