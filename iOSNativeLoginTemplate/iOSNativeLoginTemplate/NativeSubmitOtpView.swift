@@ -45,11 +45,14 @@ struct NativeSubmitOtpView: View {
     
     /// The OTP identifier returned by the Salesforce Identity API's initialize headless login endpoint.
     let otpIdentifier: String
-
+    
     /// The OTP verification method used to request OTP delivery from the Salesforce Identity API's initialize headless login endpoint.
     let otpVerificationMethod: OtpVerificationMethod
     
     @Environment(\.colorScheme) var colorScheme
+    
+    /// The navigation path.
+    @EnvironmentObject var navigationPathObservable: NavigationPathObservable
     
     /// An error message displayed to the user when needed.
     @State private var errorMessage = ""
@@ -118,6 +121,23 @@ struct NativeSubmitOtpView: View {
             }
             
             Spacer()
+            
+            // Check Native Login Manager to see if the "back to app" (cancel login) button should be shown.
+            if (SalesforceManager.shared.nativeLoginManager().shouldShowBackButton()) {
+                Button {
+                    // Pop to the navigation root to reset login experience.
+//                    navigationPathObservable.navigationPath.removeAll()
+                    
+                    // Salesforce Mobile SDK's native login manager provides the cancel authentication logic, plus dismisses the login view so the user returns to the app.
+                    SalesforceManager.shared.nativeLoginManager().cancelAuthentication()
+                } label: {
+                    Text("Cancel").frame(minWidth: 150)
+                }
+                .buttonStyle(.bordered)
+                .tint(.red)
+            } else {
+                Spacer().frame(height: 30)
+            }
         }
         .background(
             Gradient(colors: [.blue, .cyan, .green]).opacity(0.6)
@@ -143,7 +163,7 @@ struct NativeSubmitOtpView: View {
         // Submit the request and act on the response.
         Task {
             // Submit the request.
-            let _ = await SalesforceManager.shared.nativeLoginManager()
+            let result = await SalesforceManager.shared.nativeLoginManager()
                 .submitPasswordlessAuthorizationRequest(
                     otp: otp,
                     otpIdentifier: otpIdentifier,
@@ -151,6 +171,15 @@ struct NativeSubmitOtpView: View {
             
             // Clear the progresss indicator.
             isAuthenticating = false
+            
+            switch result {
+            case .success:
+                // Pop to the navigation root to reset login experience.
+//                navigationPathObservable.navigationPath.removeAll()
+                break
+            default:
+                errorMessage = "An error occurred."
+            }
         }
     }
 }

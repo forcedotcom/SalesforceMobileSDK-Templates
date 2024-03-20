@@ -48,9 +48,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Fill in the values below from the connected app that was created for Native Login and
         // the url of your Experience Cloud community.
         //
-        let clientId = "your-client-id"
-        let redirectUri = "your-redirect-uri"
-        let loginUrl = "your-community-url"
+        // TODO: Revert this change to enable the assertions. ECJ20240314
+        //
+        let clientId = "3MVG9CEn_O3jvv0wTqRT0Le6tmzX.EQ9ZvtHL1TG3gHFV.4IvKZyXw5SgdiVPi61mXrpu40mCOhKevEfYNMOm" // "your-client-id"
+        let redirectUri = "https://msdk-enhanced-dev-ed.my.site.com/services/oauth2/echo" // "your-redirect-uri"
+        let loginUrl = "https://msdk-enhanced-dev-ed.my.site.com/headless" // "your-community-url"
         
         assert(clientId != "your-client-id", "Please add your Native Login client id.")
         assert(redirectUri != "your-redirect-uri", "Please add your Native Login redirect uri.")
@@ -65,8 +67,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Google Cloud Project Id to nil along with a false value for the
         // enterprise parameter.
         //
-        let reCaptchaSiteKeyId = "your-recaptcha-site-key-id"
-        let googleCloudProjectId = "your-google-cloud-project-id"
+        // TODO: Revert this change to enable the assertions. ECJ20240314
+        //
+        let reCaptchaSiteKeyId = "6Lc3vVwpAAAAAL9noKtP5yACufTp5Tu7lIxqLmzQ" // "your-recaptcha-site-key-id"
+        let googleCloudProjectId = "mobile-apps-team-sfdc" // "your-google-cloud-project-id"
         let isReCaptchaEnterprise = true
         
         assert(clientId != "your-recaptcha-site-key-id", "Please add your Google Cloud reCAPTCHA Site Key Id.")

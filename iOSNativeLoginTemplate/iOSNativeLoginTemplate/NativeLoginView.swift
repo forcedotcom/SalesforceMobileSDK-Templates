@@ -42,32 +42,18 @@ struct NativeLoginView: View {
     @State private var errorMessage = ""
     @State private var isAuthenticating = false
     
+    /// The active native login flow.
+    @State private var navigationDestination = NavigationDestination.NativeLoginView
+    
+    /// The user's chosen OTP verification method of email or SMS.
+    @State private var otpVerificationMethod = OtpVerificationMethod.sms
+    
     var body: some View {
         NavigationStack(path: $navigationPathObservable.navigationPath) {
             VStack {
                 Spacer()
-                HStack {
-                    
-                    // Check Native Login Manager to see if back button should be shown.
-                    if (SalesforceManager.shared.nativeLoginManager().shouldShowBackButton()) {
-                        Button {
-                            // Let Native Login Manager do all the work.
-                            SalesforceManager.shared.nativeLoginManager().cancelAuthentication()
-                        } label: {
-                            Image(systemName: "arrowshape.backward.fill")
-                                .resizable()
-                                .frame(width: 30, height: 30, alignment: .topLeading)
-                                .tint(colorScheme == .dark ? .white : .blue)
-                                .opacity(0.5)
-                        }
-                        .frame(width: 30, height: 30, alignment: .topLeading)
-                        .padding(.leading)
-                        
-                    } else {
-                        Spacer().frame(height: 30)
-                    }
-                    Spacer()
-                }
+                
+                HStack {Spacer()}
                 
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
@@ -95,119 +81,247 @@ struct NativeLoginView: View {
                             Spacer().frame(width: 250, height: 65)
                         }
                         
-                        TextField("Username", text: $username)
-                            .foregroundColor(.blue)
-                            .disableAutocorrection(true)
-                            .multilineTextAlignment(.center)
-                            .buttonStyle(.borderless)
-                            .autocapitalization(.none)
-                            .frame(maxWidth: 250)
-                            .padding(.top, 25)
-                            .zIndex(2.0)
-                        
-                        SecureField("Password", text: $password)
-                            .foregroundColor(.blue)
-                            .disableAutocorrection(true)
-                            .multilineTextAlignment(.center)
-                            .buttonStyle(.borderless)
-                            .autocapitalization(.none)
-                            .frame(maxWidth: 250)
-                            .padding(.bottom)
-                            .padding(.top, 10)
-                            .zIndex(2.0)
-                        
-                        Button {
-                            Task {
-                                errorMessage = ""
-                                self.isAuthenticating = true
-                                
-                                // Login
-                                let result = await SalesforceManager.shared.nativeLoginManager()
-                                    .login(username: username, password: password)
-                                self.isAuthenticating = false
-                                
-                                switch result {
-                                case .invalidCredentials:
-                                    errorMessage = "Please check your username and password."
-                                    break
-                                case .invalidUsername:
-                                    errorMessage = "Username format is incorrect."
-                                    break
-                                case .invalidPassword:
-                                    errorMessage = "Invalid password."
-                                    break
-                                case .unknownError:
-                                    errorMessage = "An unknown error has occurred."
-                                    break
-                                case .success:
-                                    self.password = ""
+                        switch(navigationDestination) {
+                            
+                        case .NativeLoginView:
+                            TextField("Username", text: $username)
+                                .foregroundColor(.blue)
+                                .disableAutocorrection(true)
+                                .multilineTextAlignment(.center)
+                                .buttonStyle(.borderless)
+                                .autocapitalization(.none)
+                                .frame(maxWidth: 250)
+                                .padding(.top, 25)
+                                .zIndex(2.0)
+                            
+                            SecureField("Password", text: $password)
+                                .foregroundColor(.blue)
+                                .disableAutocorrection(true)
+                                .multilineTextAlignment(.center)
+                                .buttonStyle(.borderless)
+                                .autocapitalization(.none)
+                                .frame(maxWidth: 250)
+                                .padding(.bottom)
+                                .padding(.top, 10)
+                                .zIndex(2.0)
+                            
+                            Button {
+                                Task {
+                                    errorMessage = ""
+                                    self.isAuthenticating = true
+                                    
+                                    // Login
+                                    let result = await SalesforceManager.shared.nativeLoginManager()
+                                        .login(username: username, password: password)
+                                    self.isAuthenticating = false
+                                    
+                                    switch result {
+                                    case .invalidCredentials:
+                                        errorMessage = "Please check your username and password."
+                                        break
+                                    case .invalidUsername:
+                                        errorMessage = "Username format is incorrect."
+                                        break
+                                    case .invalidPassword:
+                                        errorMessage = "Invalid password."
+                                        break
+                                    case .unknownError:
+                                        errorMessage = "An unknown error has occurred."
+                                        break
+                                    case .success:
+                                        self.password = ""
+                                    }
                                 }
+                            } label: {
+                                HStack {
+                                    Image(systemName: "lock")
+                                    Text("Log In")
+                                }.frame(minWidth: 150)
                             }
+                            .buttonStyle(.bordered)
+                            .tint(.blue)
+                            .zIndex(2.0)
+                            
+                        case .NativeRequestOtpView:
+                            TextField("Username", text: $username)
+                                .autocapitalization(.none)
+                                .buttonStyle(.borderless)
+                                .disableAutocorrection(true)
+                                .foregroundColor(.blue)
+                                .frame(maxWidth: 250)
+                                .multilineTextAlignment(.center)
+                                .padding(.top, 25)
+                                .zIndex(2.0)
+                            
+                            Picker(
+                                "OTP Verification Method",
+                                selection: $otpVerificationMethod) {
+                                    Text("Email").tag(OtpVerificationMethod.email)
+                                    Text("SMS").tag(OtpVerificationMethod.sms)
+                                }
+                                .frame(maxWidth: 250)
+                                .zIndex(2.0)
+                            
+                            Button {
+//                                onRequestOtpTapped()
+                            } label: {
+                                HStack {
+                                    Image(systemName: "key.radiowaves.forward")
+                                    Text("Request One-Time-Passcode")
+                                }.frame(minWidth: 150)
+                            }
+                            .buttonStyle(.bordered)
+                            .tint(.blue)
+                            .zIndex(2.0)
+                            
+                        default:
+                            Text("...")
+                        }
+                    
+                    // Other login options.
+                    Button {
+//                        navigationPathObservable.navigationPath.append(.NativeRequestOtpView)
+                        navigationDestination = .NativeRequestOtpView
+                    } label: {
+                        Text("Use Passcode Instead").frame(minWidth: 150)
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(.blue)
+                    
+                    Spacer()
+                    
+                    // Fallback to webview based authentication.
+                    Button("Looking for Salesforce Log In?") {
+                        SalesforceManager.shared.nativeLoginManager().fallbackToWebAuthentication()
+                    }
+                    
+                    // Check Native Login Manager to see if the "back to app" (cancel login) button should be shown.
+                    if (SalesforceManager.shared.nativeLoginManager().shouldShowBackButton()) {
+                        Button {
+                            // Pop to the navigation root to reset login experience.
+//                            navigationPathObservable.navigationPath.removeAll()
+//                            navigationPathObservable.navigationPath.append(.NativeLoginView)
+                            
+                            // Salesforce Mobile SDK's native login manager provides the cancel authentication logic, plus dismisses the login view so the user returns to the app.
+                            SalesforceManager.shared.nativeLoginManager().cancelAuthentication()
                         } label: {
-                            HStack {
-                                Image(systemName: "lock")
-                                Text("Log In")
-                            }.frame(minWidth: 150)
+                            Text("Cancel").frame(minWidth: 150)
                         }
                         .buttonStyle(.bordered)
-                        .tint(.blue)
-                        .zIndex(2.0)
-                    }.padding(.bottom, 0)
+                        .tint(.red)
+                    } else {
+                        Spacer().frame(height: 30)
+                    }
                 }
-                
-                // Other login options.
-                Button("Need to register, reset your password or login without a password?") {
-                    navigationPathObservable.navigationPath.append(.NativeRequestOtpView)
+                .background(
+                    Gradient(colors: [.blue, .cyan, .green]).opacity(0.6)
+                )
+                .blur(radius: self.isAuthenticating ? 2.0 : 0.0)
+                .navigationDestination(for: NavigationDestination.self) { navigationDestination in
+                    switch (navigationDestination) {
+                        
+                    case .NativeLoginView:
+                        self
+                        
+                    case .NativeRequestOtpView:
+                        NativeRequestOtpView()
+                        
+                    case .NativeSubmitOtpView (
+                        let otpIdentifier,
+                        let otpVerificationMethod
+                    ):
+                        NativeSubmitOtpView(
+                            otpIdentifier: otpIdentifier,
+                            otpVerificationMethod: otpVerificationMethod)
+                    }
                 }
-                
-                Spacer()
-                
-                // Fallback to webview based authentication.
-                Button("Looking for Salesforce Log In?") {
-                    SalesforceManager.shared.nativeLoginManager().fallbackToWebAuthentication()
-                }
-            }
-            .background(
-                Gradient(colors: [.blue, .cyan, .green]).opacity(0.6)
-            )
-            .blur(radius: self.isAuthenticating ? 2.0 : 0.0)
-            .navigationDestination(for: NavigationDestination.self) { navigationDestination in
-                switch (navigationDestination) {
-                    
-                case .NativeRequestOtpView:
-                    NativeRequestOtpView()
-                    
-                case .NativeSubmitOtpView (
-                    let otpIdentifier,
-                    let otpVerificationMethod
-                ):
-                    NativeSubmitOtpView(
-                        otpIdentifier: otpIdentifier,
-                        otpVerificationMethod: otpVerificationMethod)
+//                
+//                ///
+//                /// Submits the OTP delivery request when the request button is tapped.  This submits a request to the
+//                /// `init/passwordless/login`endpoint and opens the submit OTP verification view on success.
+//                ///
+//                private func onRequestOtpTapped() {
+//                    // Reset the error message if needed.
+//                    errorMessage = ""
+//                    
+//                    // Show the progress indicator.
+//                    isAuthenticating = true
+//                    
+//                    // Execute for a new reCAPTCHA token.
+//                    reCaptchaClientObservable.reCaptchaClient?.execute(withAction: .login) {reCaptchaExecuteResult, error in
+//                        
+//                        // Guard for the new reCAPTCHA token.
+//                        guard let reCaptchaToken = reCaptchaExecuteResult else {
+//                            print("Could not obtain a reCAPTCHA token due to error with description '\(error?.localizedDescription ?? "(A description wasn't provided.)")'.")
+//                            return
+//                        }
+//                        
+//                        // Submit the request and act on the response.
+//                        Task {
+//                            // Submit the request.
+//                            let result = await SalesforceManager.shared.nativeLoginManager()
+//                                .submitOtpRequest(
+//                                    username: username,
+//                                    reCaptchaToken: reCaptchaToken,
+//                                    otpVerificationMethod: otpVerificationMethod)
+//                            
+//                            // Clear the progresss indicator.
+//                            isAuthenticating = false
+//                            
+//                            // Act on the response.
+//                            switch result.nativeLoginResult {
+//                                
+//                            case .invalidCredentials:
+//                                errorMessage = "Check your username and password."
+//                                break
+//                                
+//                            case .invalidPassword:
+//                                errorMessage = "Invalid password."
+//                                break
+//                                
+//                            case .invalidUsername:
+//                                errorMessage = "Invalid username."
+//                                break
+//                                
+//                            case .unknownError:
+//                                errorMessage = "An error occurred."
+//                                break
+//                                
+//                            case .success:
+//                                guard let otpIdentifier = result.otpIdentifier else { return }
+//                                navigationPathObservable.navigationPath.append(
+//                                    .NativeSubmitOtpView(
+//                                        otpIdentifier: otpIdentifier,
+//                                        otpVerificationMethod: otpVerificationMethod))
+//                            }
+//                        }
+                    }
                 }
             }
         }
     }
-}
-
-#Preview {
-    NativeLoginView()
-}
-
-///
-/// The available navigation destinations.
-///
-enum NavigationDestination: Hashable {
     
-    /// A navigation destination for the request one-time-passcode view.
-    case NativeRequestOtpView
-    
-    /// A navigation destination for the submit one-time-passcode view.
-    case NativeSubmitOtpView(
-        /// The OTP identifier returned by the Salesforce Identity API initialize password-less login endpoint.
-        otpIdentifier: String,
+    ///
+    /// The available navigation destinations.
+    ///
+    enum NavigationDestination: Hashable {
         
-        /// The OTP verification method used when requesting the OTP and OTP identifier.
-        otpVerificationMethod: OtpVerificationMethod
-    )
-}
+        /// A navigation destination for the login view.
+        case NativeLoginView
+        
+        /// A navigation destination for the request one-time-passcode view.
+        case NativeRequestOtpView
+        
+        /// A navigation destination for the submit one-time-passcode view.
+        case NativeSubmitOtpView(
+            /// The OTP identifier returned by the Salesforce Identity API initialize password-less login endpoint.
+            otpIdentifier: String,
+            
+            /// The OTP verification method used when requesting the OTP and OTP identifier.
+            otpVerificationMethod: OtpVerificationMethod
+        )
+    }
+    
+    #Preview {
+        NativeLoginView()
+    }

@@ -127,6 +127,23 @@ struct NativeRequestOtpView: View {
             }
             
             Spacer()
+            
+            // Check Native Login Manager to see if the "back to app" (cancel login) button should be shown.
+            if (SalesforceManager.shared.nativeLoginManager().shouldShowBackButton()) {
+                Button {
+                    // Pop to the navigation root to reset login experience.
+//                    navigationPathObservable.navigationPath.removeAll()
+                    
+                    // Salesforce Mobile SDK's native login manager provides the cancel authentication logic, plus dismisses the login view so the user returns to the app.
+                    SalesforceManager.shared.nativeLoginManager().cancelAuthentication()
+                } label: {
+                    Text("Cancel").frame(minWidth: 150)
+                }
+                .buttonStyle(.bordered)
+                .tint(.red)
+            } else {
+                Spacer().frame(height: 30)
+            }
         }
         .background(
             Gradient(colors: [.blue, .cyan, .green]).opacity(0.6)
@@ -187,10 +204,10 @@ struct NativeRequestOtpView: View {
                     
                 case .success:
                     guard let otpIdentifier = result.otpIdentifier else { return }
-                    navigationPathObservable.navigationPath.append(
-                        .NativeSubmitOtpView(
-                            otpIdentifier: otpIdentifier,
-                            otpVerificationMethod: otpVerificationMethod))
+//                    navigationPathObservable.navigationPath.append(
+//                        .NativeSubmitOtpView(
+//                            otpIdentifier: otpIdentifier,
+//                            otpVerificationMethod: otpVerificationMethod))
                 }
             }
         }
