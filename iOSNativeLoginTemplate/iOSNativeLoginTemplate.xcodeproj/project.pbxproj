@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -25,7 +25,6 @@
 		B7168FBC1FACC6F900A48DB5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */; };
 		B73B520D234FA65F001B069B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73B520C234FA65F001B069B /* SceneDelegate.swift */; };
 		B77BD8A321125B510036B284 /* bootconfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = B77BD8A221125B510036B284 /* bootconfig.plist */; };
-		D358E1662BA38B190021B36B /* RecaptchaEnterprise.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D358E1652BA38B190021B36B /* RecaptchaEnterprise.xcframework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,7 +50,6 @@
 		B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = "../mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/LaunchScreen.storyboard"; sourceTree = "<group>"; };
 		B73B520C234FA65F001B069B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		B77BD8A221125B510036B284 /* bootconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = bootconfig.plist; sourceTree = "<group>"; };
-		D358E1652BA38B190021B36B /* RecaptchaEnterprise.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = RecaptchaEnterprise.xcframework; sourceTree = "<group>"; };
 		E748778BEB89C67B9B136223 /* Pods-iOSNativeLoginTemplate.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOSNativeLoginTemplate.release.xcconfig"; path = "Target Support Files/Pods-iOSNativeLoginTemplate/Pods-iOSNativeLoginTemplate.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -60,7 +58,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D358E1662BA38B190021B36B /* RecaptchaEnterprise.xcframework in Frameworks */,
 				ABBFCB75F32EB1A0C181C474 /* Pods_iOSNativeLoginTemplate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -94,7 +91,6 @@
 		4FD6C46B1B754AF1002F9F90 = {
 			isa = PBXGroup;
 			children = (
-				D358E1632BA38B190021B36B /* External */,
 				4FD6C4761B754AF1002F9F90 /* iOSNativeLoginTemplate */,
 				4FD6C4751B754AF1002F9F90 /* Products */,
 				F542586166A5A33F610BE13F /* Pods */,
@@ -151,22 +147,6 @@
 				8BDE4964CA1379863C7C0438 /* Pods_iOSNativeLoginTemplate.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		D358E1632BA38B190021B36B /* External */ = {
-			isa = PBXGroup;
-			children = (
-				D358E1642BA38B190021B36B /* ThirdPartyDependencies */,
-			);
-			path = External;
-			sourceTree = "<group>";
-		};
-		D358E1642BA38B190021B36B /* ThirdPartyDependencies */ = {
-			isa = PBXGroup;
-			children = (
-				D358E1652BA38B190021B36B /* RecaptchaEnterprise.xcframework */,
-			);
-			path = ThirdPartyDependencies;
 			sourceTree = "<group>";
 		};
 		F542586166A5A33F610BE13F /* Pods */ = {
