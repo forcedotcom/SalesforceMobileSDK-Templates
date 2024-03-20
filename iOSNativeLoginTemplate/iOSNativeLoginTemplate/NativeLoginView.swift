@@ -87,7 +87,7 @@ struct NativeLoginView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(.gray.opacity(0.25))
-                    .frame(width: 300, height: 450)
+                    .frame(width: 300, height: 470)
                     .padding(.top, 0)
                 
                 VStack {
@@ -100,6 +100,8 @@ struct NativeLoginView: View {
                     
                     if isAuthenticating {
                         ProgressView()
+                    } else {
+                        Spacer().frame(width: 20, height: 20)
                     }
                     
                     if !errorMessage.isEmpty {
@@ -138,7 +140,7 @@ struct NativeLoginView: View {
                         Button {
                             Task {
                                 errorMessage = ""
-                                self.isAuthenticating = true
+                                isAuthenticating = true
                                 
                                 // Login
                                 let result = await SalesforceManager.shared.nativeLoginManager()
@@ -159,7 +161,7 @@ struct NativeLoginView: View {
                                     errorMessage = "An unknown error has occurred."
                                     break
                                 case .success:
-                                    self.password = ""
+                                    password = ""
                                 }
                             }
                         } label: {
@@ -266,7 +268,7 @@ struct NativeLoginView: View {
                 SalesforceManager.shared.nativeLoginManager().fallbackToWebAuthentication()
             }
         }.background(Gradient(colors: [.blue, .cyan, .green]).opacity(0.6))
-            .blur(radius: self.isAuthenticating ? 2.0 : 0.0)
+            .blur(radius: isAuthenticating ? 2.0 : 0.0)
     }
     
     ///
