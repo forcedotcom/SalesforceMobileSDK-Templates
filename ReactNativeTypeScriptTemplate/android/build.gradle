@@ -1,6 +1,7 @@
 buildscript {
     ext {
         minSdkVersion = 26
+        targetSdkVersion = 34 // needed by react native        
         compileSdk = 34
 
         // We use NDK 23 which has both M1 support and is the side-by-side NDK version from AGP.
