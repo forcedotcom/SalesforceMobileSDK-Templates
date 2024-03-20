@@ -287,7 +287,7 @@ struct NativeLoginView: View {
             
             // Guard for the new reCAPTCHA token.
             guard let reCaptchaToken = reCaptchaExecuteResult else {
-                print("Could not obtain a reCAPTCHA token due to error with description '\(error?.localizedDescription ?? "(A description wasn't provided.)")'.")
+                SalesforceLogger.e(AppDelegate.self, message: "Could not obtain a reCAPTCHA token due to error with description '\(error?.localizedDescription ?? "(A description wasn't provided.)")'.")
                 return
             }
             

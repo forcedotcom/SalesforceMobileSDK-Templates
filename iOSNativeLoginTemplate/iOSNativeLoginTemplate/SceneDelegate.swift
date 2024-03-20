@@ -179,7 +179,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
             reCaptchaClient = try await Recaptcha.getClient(withSiteKey: reCaptchaSiteKey)
         } catch let error {
-            print("Cannot get reCAPTCHA client due to an error with description '\(error.localizedDescription).'.")
+            SalesforceLogger.e(AppDelegate.self, message: "Cannot get reCAPTCHA client due to an error with description '\(error.localizedDescription).'.")
         }
     }
 }
