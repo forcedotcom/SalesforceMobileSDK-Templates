@@ -26,8 +26,6 @@
 		B73B520D234FA65F001B069B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73B520C234FA65F001B069B /* SceneDelegate.swift */; };
 		B77BD8A321125B510036B284 /* bootconfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = B77BD8A221125B510036B284 /* bootconfig.plist */; };
 		D358E1662BA38B190021B36B /* RecaptchaEnterprise.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D358E1652BA38B190021B36B /* RecaptchaEnterprise.xcframework */; };
-		D3EEBE412BA122FC005FE83E /* NativeSubmitOtpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3EEBE3F2BA122FC005FE83E /* NativeSubmitOtpView.swift */; };
-		D3EEBE422BA122FC005FE83E /* NativeRequestOtpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3EEBE402BA122FC005FE83E /* NativeRequestOtpView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,8 +52,6 @@
 		B73B520C234FA65F001B069B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		B77BD8A221125B510036B284 /* bootconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = bootconfig.plist; sourceTree = "<group>"; };
 		D358E1652BA38B190021B36B /* RecaptchaEnterprise.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = RecaptchaEnterprise.xcframework; sourceTree = "<group>"; };
-		D3EEBE3F2BA122FC005FE83E /* NativeSubmitOtpView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NativeSubmitOtpView.swift; sourceTree = "<group>"; };
-		D3EEBE402BA122FC005FE83E /* NativeRequestOtpView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NativeRequestOtpView.swift; sourceTree = "<group>"; };
 		E748778BEB89C67B9B136223 /* Pods-iOSNativeLoginTemplate.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOSNativeLoginTemplate.release.xcconfig"; path = "Target Support Files/Pods-iOSNativeLoginTemplate/Pods-iOSNativeLoginTemplate.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -80,8 +76,6 @@
 				4F13E938237DD5D9005BCAE9 /* ContactsForAccountListView.swift */,
 				A37EBBC72B7C2C0400D49498 /* NativeLoginView.swift */,
 				A37EBBC92B7C2CE200D49498 /* NativeLoginViewFactory.swift */,
-				D3EEBE402BA122FC005FE83E /* NativeRequestOtpView.swift */,
-				D3EEBE3F2BA122FC005FE83E /* NativeSubmitOtpView.swift */,
 				B73B520C234FA65F001B069B /* SceneDelegate.swift */,
 			);
 			name = SwiftUI;
@@ -313,13 +307,11 @@
 				4F13E93B237DD5D9005BCAE9 /* ContactDetailsView.swift in Sources */,
 				4F13E947237DD72E005BCAE9 /* AccountsListModel.swift in Sources */,
 				4F13E93C237DD5D9005BCAE9 /* ContactsForAccountModel.swift in Sources */,
-				D3EEBE412BA122FC005FE83E /* NativeSubmitOtpView.swift in Sources */,
 				4F13E93F237DD5D9005BCAE9 /* ContactDetailModel.swift in Sources */,
 				4F13E93D237DD5D9005BCAE9 /* ContactsForAccountListView.swift in Sources */,
 				4F13E93E237DD5D9005BCAE9 /* AccountsListView.swift in Sources */,
 				A37EBBC82B7C2C0400D49498 /* NativeLoginView.swift in Sources */,
 				A37EBBCA2B7C2CE200D49498 /* NativeLoginViewFactory.swift in Sources */,
-				D3EEBE422BA122FC005FE83E /* NativeRequestOtpView.swift in Sources */,
 				4FD6C4A01B755242002F9F90 /* InitialViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

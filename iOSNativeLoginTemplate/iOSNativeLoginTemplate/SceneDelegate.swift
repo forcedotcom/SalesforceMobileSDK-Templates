@@ -33,9 +33,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     /// The reCAPTCHA client used to obtain reCAPTCHA tokens when needed for Salesforce Headless Identity API requests.
     var recaptchaClientObservable: ReCaptchaClientObservable? = nil
     
-    /// The navigation path.
-    var navigationPathObservable = NavigationPathObservable()
-    
     var window: UIWindow?
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -81,7 +78,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         // Used to create a View Controller from SwiftUI.
         let nativeLoginViewController = NativeLoginViewFactory.create(
-            navigationPathObservable: navigationPathObservable,
             reCaptchaClientObservable: recaptchaClientObservable)
 
         // This line tells the SDK the app intends to use Native Login.
@@ -186,9 +182,4 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             print("Cannot get reCAPTCHA client due to an error with description '\(error.localizedDescription).'.")
         }
     }
-}
-
-class NavigationPathObservable: ObservableObject {
-    
-    @Published var navigationPath: [NavigationDestination] = []
 }
