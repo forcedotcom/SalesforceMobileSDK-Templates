@@ -62,16 +62,6 @@ post_install do |installer|
       :mac_catalyst_enabled => false
   )
 
-  # Cocoapods workaround for M1 machines
-  __apply_Xcode_12_5_M1_post_install_workaround(installer)
-
-  # Needed with Xcode 14.3
-  installer.pods_project.targets.each do |target|
-    if target.name == "React-Codegen"
-      change_deployment_target(target, '12.0')
-    end
-  end
-
   # Mobile SDK post install
   mobile_sdk_post_install(installer)
 end
