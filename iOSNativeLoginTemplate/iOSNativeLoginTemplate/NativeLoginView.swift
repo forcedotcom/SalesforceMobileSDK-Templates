@@ -177,7 +177,7 @@ struct NativeLoginView: View {
                         Button {
                             identityFlowLayoutType = .InitializePasswordLessLoginViaOtp
                         } label: {
-                            Text("Use Passcode Instead").frame(minWidth: 150)
+                            Text("Use One Time Password Instead").frame(minWidth: 150)
                         }
                         .buttonStyle(.bordered)
                         .tint(.blue)
@@ -209,7 +209,7 @@ struct NativeLoginView: View {
                         } label: {
                             HStack {
                                 Image(systemName: "key.radiowaves.forward")
-                                Text("Request One-Time-Passcode")
+                                Text("Request One Time Password")
                             }.frame(minWidth: 150)
                         }
                         .buttonStyle(.bordered)
@@ -227,7 +227,7 @@ struct NativeLoginView: View {
                         
                     case .LoginViaUsernameAndOtp:
                         // Layout for password-less login by submitting a previously requested one-time-passcode.
-                        TextField("One-Time-Passcode", text: $otp)
+                        TextField("One Time Password", text: $otp)
                             .autocapitalization(.none)
                             .buttonStyle(.borderless)
                             .disableAutocorrection(true)
