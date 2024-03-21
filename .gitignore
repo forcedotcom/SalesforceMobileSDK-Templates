@@ -24,3 +24,5 @@ xcuserdata
 package-lock.json
 yarn.lock
 yarn-error.log
+.xcode.env
+.xcode.env.local
