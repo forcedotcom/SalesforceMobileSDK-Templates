@@ -424,7 +424,7 @@
 /* Begin XCRemoteSwiftPackageReference section */
 		4FFBC6582A5DC21B004CF964 /* XCRemoteSwiftPackageReference "SalesforceMobileSDK-iOS-SPM" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/wmathurin/SalesforceMobileSDK-iOS-SPM";
+			repositoryURL = "https://github.com/forcedotcom/SalesforceMobileSDK-iOS-SPM";
 			requirement = {
 				branch = master;
 				kind = branch;
