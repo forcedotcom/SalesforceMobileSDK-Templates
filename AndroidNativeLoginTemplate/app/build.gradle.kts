@@ -20,6 +20,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    implementation("com.google.android.recaptcha:recaptcha:18.5.0-beta01")
 }
 
 android {
