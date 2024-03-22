@@ -71,7 +71,7 @@ class AccountsListModel: ObservableObject {
                 }
             }
             .catch { error -> Just<[Account]> in
-                print(error)
+                SalesforceLogger.e(AccountsListModel.self, message: error.localizedDescription)
                 return Just([Account]())
             }
             .assign(to: \AccountsListModel.accounts, on:self)

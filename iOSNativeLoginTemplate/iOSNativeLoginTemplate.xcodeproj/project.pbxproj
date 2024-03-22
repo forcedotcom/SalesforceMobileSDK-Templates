@@ -21,12 +21,14 @@
 		A37EBBC82B7C2C0400D49498 /* NativeLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A37EBBC72B7C2C0400D49498 /* NativeLoginView.swift */; };
 		A37EBBCA2B7C2CE200D49498 /* NativeLoginViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A37EBBC92B7C2CE200D49498 /* NativeLoginViewFactory.swift */; };
 		A37EBBE22B7C31E800D49498 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A37EBBE12B7C31E800D49498 /* Assets.xcassets */; };
+		ABBFCB75F32EB1A0C181C474 /* Pods_iOSNativeLoginTemplate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8BDE4964CA1379863C7C0438 /* Pods_iOSNativeLoginTemplate.framework */; };
 		B7168FBC1FACC6F900A48DB5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */; };
 		B73B520D234FA65F001B069B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73B520C234FA65F001B069B /* SceneDelegate.swift */; };
 		B77BD8A321125B510036B284 /* bootconfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = B77BD8A221125B510036B284 /* bootconfig.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4E08BF0713FC4035E10919D2 /* Pods-iOSNativeLoginTemplate.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOSNativeLoginTemplate.debug.xcconfig"; path = "Target Support Files/Pods-iOSNativeLoginTemplate/Pods-iOSNativeLoginTemplate.debug.xcconfig"; sourceTree = "<group>"; };
 		4F13E936237DD5D9005BCAE9 /* ContactDetailsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactDetailsView.swift; sourceTree = "<group>"; };
 		4F13E937237DD5D9005BCAE9 /* ContactsForAccountModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactsForAccountModel.swift; sourceTree = "<group>"; };
 		4F13E938237DD5D9005BCAE9 /* ContactsForAccountListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactsForAccountListView.swift; sourceTree = "<group>"; };
@@ -41,12 +43,14 @@
 		4FD6C49D1B755242002F9F90 /* InitialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitialViewController.swift; sourceTree = "<group>"; };
 		4FF12F8A1DCA91F5004D9EF9 /* iOSNativeLoginTemplate.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iOSNativeLoginTemplate.entitlements; sourceTree = "<group>"; };
 		69B48C312AD4E7AD0026AEC6 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		8BDE4964CA1379863C7C0438 /* Pods_iOSNativeLoginTemplate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOSNativeLoginTemplate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A37EBBC72B7C2C0400D49498 /* NativeLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeLoginView.swift; sourceTree = "<group>"; };
 		A37EBBC92B7C2CE200D49498 /* NativeLoginViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeLoginViewFactory.swift; sourceTree = "<group>"; };
 		A37EBBE12B7C31E800D49498 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = "../mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/LaunchScreen.storyboard"; sourceTree = "<group>"; };
 		B73B520C234FA65F001B069B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		B77BD8A221125B510036B284 /* bootconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = bootconfig.plist; sourceTree = "<group>"; };
+		E748778BEB89C67B9B136223 /* Pods-iOSNativeLoginTemplate.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOSNativeLoginTemplate.release.xcconfig"; path = "Target Support Files/Pods-iOSNativeLoginTemplate/Pods-iOSNativeLoginTemplate.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ABBFCB75F32EB1A0C181C474 /* Pods_iOSNativeLoginTemplate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,12 +68,12 @@
 		4F13E944237DD626005BCAE9 /* SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
-				B73B520C234FA65F001B069B /* SceneDelegate.swift */,
 				4F13E939237DD5D9005BCAE9 /* AccountsListView.swift */,
-				4F13E938237DD5D9005BCAE9 /* ContactsForAccountListView.swift */,
 				4F13E936237DD5D9005BCAE9 /* ContactDetailsView.swift */,
+				4F13E938237DD5D9005BCAE9 /* ContactsForAccountListView.swift */,
 				A37EBBC72B7C2C0400D49498 /* NativeLoginView.swift */,
 				A37EBBC92B7C2CE200D49498 /* NativeLoginViewFactory.swift */,
+				B73B520C234FA65F001B069B /* SceneDelegate.swift */,
 			);
 			name = SwiftUI;
 			sourceTree = "<group>";
@@ -88,6 +93,8 @@
 			children = (
 				4FD6C4761B754AF1002F9F90 /* iOSNativeLoginTemplate */,
 				4FD6C4751B754AF1002F9F90 /* Products */,
+				F542586166A5A33F610BE13F /* Pods */,
+				99E2E2C9A68344F6FA5A5D63 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -134,6 +141,23 @@
 			name = Classes;
 			sourceTree = "<group>";
 		};
+		99E2E2C9A68344F6FA5A5D63 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8BDE4964CA1379863C7C0438 /* Pods_iOSNativeLoginTemplate.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F542586166A5A33F610BE13F /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4E08BF0713FC4035E10919D2 /* Pods-iOSNativeLoginTemplate.debug.xcconfig */,
+				E748778BEB89C67B9B136223 /* Pods-iOSNativeLoginTemplate.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -141,9 +165,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4FD6C4931B754AF1002F9F90 /* Build configuration list for PBXNativeTarget "iOSNativeLoginTemplate" */;
 			buildPhases = (
+				463308EFC585727E76B87EB4 /* [CP] Check Pods Manifest.lock */,
 				4FD6C4701B754AF1002F9F90 /* Sources */,
 				4FD6C4711B754AF1002F9F90 /* Frameworks */,
 				4FD6C4721B754AF1002F9F90 /* Resources */,
+				07265C4B0B9A08649AE2E12A /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -208,6 +234,48 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		07265C4B0B9A08649AE2E12A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-iOSNativeLoginTemplate/Pods-iOSNativeLoginTemplate-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-iOSNativeLoginTemplate/Pods-iOSNativeLoginTemplate-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-iOSNativeLoginTemplate/Pods-iOSNativeLoginTemplate-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		463308EFC585727E76B87EB4 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-iOSNativeLoginTemplate-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		4FD6C4701B754AF1002F9F90 /* Sources */ = {
@@ -343,6 +411,7 @@
 		};
 		4FD6C4941B754AF1002F9F90 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4E08BF0713FC4035E10919D2 /* Pods-iOSNativeLoginTemplate.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = iOSNativeLoginTemplate/iOSNativeLoginTemplate.entitlements;
@@ -361,6 +430,7 @@
 		};
 		4FD6C4951B754AF1002F9F90 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E748778BEB89C67B9B136223 /* Pods-iOSNativeLoginTemplate.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = iOSNativeLoginTemplate/iOSNativeLoginTemplate.entitlements;

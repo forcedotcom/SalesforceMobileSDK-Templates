@@ -22,13 +22,17 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import UIKit
-import SwiftUI
 import MobileSync
+import RecaptchaEnterprise
 import SalesforceSDKCore
+import SwiftUI
+import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-
+    
+    /// The reCAPTCHA client used to obtain reCAPTCHA tokens when needed for Salesforce Headless Identity API requests.
+    var recaptchaClientObservable: ReCaptchaClientObservable? = nil
+    
     var window: UIWindow?
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -37,29 +41,59 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         self.window?.windowScene = windowScene
         
-        ///
-        /// Fill in the values below from the connected app that was created for Native Login and
-        /// the url of your Experience Cloud community.
-        ///
-        let clientId = "your-client-id"
-        let redirectUri = "your-redirect-uri"
-        let loginUrl = "your-community-url"
+        //
+        // Fill in the values below from the connected app that was created for Native Login and
+        // the url of your Experience Cloud community.
+        //
+        // TODO: Revert this change to enable the assertions. ECJ20240314
+        //
+        let clientId = "3MVG9CEn_O3jvv0wTqRT0Le6tmzX.EQ9ZvtHL1TG3gHFV.4IvKZyXw5SgdiVPi61mXrpu40mCOhKevEfYNMOm" // "your-client-id"
+        let redirectUri = "https://msdk-enhanced-dev-ed.my.site.com/services/oauth2/echo" // "your-redirect-uri"
+        let loginUrl = "https://msdk-enhanced-dev-ed.my.site.com/headless" // "your-community-url"
         
         assert(clientId != "your-client-id", "Please add your Native Login client id.")
         assert(redirectUri != "your-redirect-uri", "Please add your Native Login redirect uri.")
         assert(loginUrl != "your-community-url", "Please add your Native Login community url.")
         
+        //
+        // Fill in the values below from the Google Cloud project reCAPTCA
+        // settings.  Note that only enterprise reCAPTCHA requires the reCAPTCHA
+        // Site Key Id and Google Cloud Project Id.
+        //
+        // When using non-enterprise reCAPTCHA, set reCAPTCHA Site Key Id and
+        // Google Cloud Project Id to nil along with a false value for the
+        // enterprise parameter.
+        //
+        // TODO: Revert this change to enable the assertions. ECJ20240314
+        //
+        let reCaptchaSiteKeyId = "6Lc3vVwpAAAAAL9noKtP5yACufTp5Tu7lIxqLmzQ" // "your-recaptcha-site-key-id"
+        let googleCloudProjectId = "mobile-apps-team-sfdc" // "your-google-cloud-project-id"
+        let isReCaptchaEnterprise = true
+        
+        assert(clientId != "your-recaptcha-site-key-id", "Please add your Google Cloud reCAPTCHA Site Key Id.")
+        assert(redirectUri != "your-google-cloud-project-id", "Please add your Google Cloud Project Id.")
+        
+        let recaptchaClientObservable = ReCaptchaClientObservable(reCaptchaSiteKey: reCaptchaSiteKeyId)
+        self.recaptchaClientObservable = recaptchaClientObservable
+        
         // Used to create a View Controller from SwiftUI.
-        let nativeLoginViewConroller = NativeLoginViewFactory.create()
+        let nativeLoginViewController = NativeLoginViewFactory.create(
+            reCaptchaClientObservable: recaptchaClientObservable)
 
         // This line tells the SDK the app intends to use Native Login.
-        SalesforceManager.shared.useNativeLogin(withConsumerKey: clientId, callbackUrl: redirectUri, communityUrl: loginUrl,
-                                                nativeLoginViewController: nativeLoginViewConroller, scene:scene)
-       
+        SalesforceManager.shared.useNativeLogin(withConsumerKey: clientId,
+                                                callbackUrl: redirectUri,
+                                                communityUrl: loginUrl,
+                                                reCaptchaSiteKeyId: reCaptchaSiteKeyId,
+                                                googleCloudProjectId: googleCloudProjectId,
+                                                isReCaptchaEnterprise: isReCaptchaEnterprise,
+                                                nativeLoginViewController: nativeLoginViewController,
+                                                scene:scene)
+        
         AuthHelper.registerBlock(forCurrentUserChangeNotifications: {
-           self.resetViewState {
-               self.setupRootViewController()
-           }
+            self.resetViewState {
+                self.setupRootViewController()
+            }
         })
     }
 
@@ -128,4 +162,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
        }
        postResetBlock()
    }
+}
+
+@MainActor class ReCaptchaClientObservable: ObservableObject {
+    
+    @Published var reCaptchaClient: RecaptchaClient? = nil
+    
+    init(reCaptchaSiteKey: String) {
+        Task(priority: .medium) {
+            await initializeReCaptchaClient(reCaptchaSiteKey: reCaptchaSiteKey)
+        }
+    }
+    
+    final func initializeReCaptchaClient(reCaptchaSiteKey: String) async {
+        do {
+
+            reCaptchaClient = try await Recaptcha.getClient(withSiteKey: reCaptchaSiteKey)
+        } catch let error {
+            SalesforceLogger.e(SceneDelegate.self, message: "Cannot get reCAPTCHA client due to an error with description '\(error.localizedDescription).'.")
+        }
+    }
 }
