@@ -28,14 +28,12 @@ package com.salesforce.androidnativelogintemplate
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.S
 import android.os.Build.VERSION_CODES.TIRAMISU
 import android.os.Bundle
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
-import android.window.OnBackInvokedDispatcher
 import android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
@@ -62,6 +60,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
@@ -81,20 +80,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color.Companion.LightGray
+import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.KeyboardType.Companion.Password
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.salesforce.androidnativelogintemplate.NativeLogin.IdentityFlowLayoutType
+import com.salesforce.androidnativelogintemplate.NativeLogin.IdentityFlowLayoutType.InitializePasswordLessLoginViaOtp
+import com.salesforce.androidnativelogintemplate.NativeLogin.IdentityFlowLayoutType.LoginViaUsernameAndOtp
+import com.salesforce.androidnativelogintemplate.NativeLogin.IdentityFlowLayoutType.LoginViaUsernamePassword
 import com.salesforce.androidnativelogintemplate.R.drawable.radio_button_checked_24px
 import com.salesforce.androidnativelogintemplate.R.drawable.radio_button_unchecked_24px
 import com.salesforce.androidnativelogintemplate.R.drawable.sf__salesforce_logo
@@ -136,7 +139,8 @@ class NativeLogin : ComponentActivity() {
                     // If we don't SalesforceSDKManager.getInstance() will complain it has not be setup.
                     LoginView(
                         // Pass this inline login function to be executed within the composable.
-                        login = { username, password -> Boolean
+                        login = { username, password ->
+                            Boolean
                             // Call login and handle results.
                             when (val result = nativeLoginManager.login(username, password)) {
                                 InvalidUsername -> {
@@ -166,7 +170,8 @@ class NativeLogin : ComponentActivity() {
 
                             return@LoginView true
                         },
-                        submitOtpRequest = { _, _ -> Boolean
+                        submitOtpRequest = { _, _ ->
+                            Boolean
 
                             // TODO: Submit OTP Delivery Request. ECJ20240325
                             false
@@ -193,8 +198,36 @@ class NativeLogin : ComponentActivity() {
             }
         }
     }
+
+    /**
+     * Layouts for the available Salesforce identity flows.
+     */
+    enum class IdentityFlowLayoutType {
+
+        /** A layout to initialize password-less login via one-time-passcode request. */
+        InitializePasswordLessLoginViaOtp,
+
+        /** A layout for authorization code and credentials flow via username and previously requested one-time-passcode. */
+        LoginViaUsernameAndOtp,
+
+        /** A layout for authorization code and credentials flow via username and password. */
+        LoginViaUsernamePassword
+    }
 }
 
+/**
+ * A layout for the login view, including navigation between layouts for the
+ * available identity flows.
+ * @param login A function for login via username and password
+ * @param submitOtpRequest A function to submit the initialize password-less
+ * login via username and one-time-password
+ * @param handleWebviewFallbackResult An activity for fallback to web login
+ * @param shouldShowBack An option to show the back button which cancels login
+ * @param backAction A function for the back action which cancels login
+ * @param identityFlowLayoutType Optionally, a specific initial identity flow
+ * layout type.  Defaults to login via username and password.  This is intended
+ * for preview support
+ */
 @Composable
 fun LoginView(
     login: suspend (String, String) -> Boolean,
@@ -203,7 +236,12 @@ fun LoginView(
     webviewLoginIntent: Intent? = null,
     shouldShowBack: Boolean = false,
     backAction: () -> Unit,
+    identityFlowLayoutType: IdentityFlowLayoutType = LoginViaUsernamePassword
 ) {
+
+    // The layout type for the user's active identity flow, such as registration, forgot password or login
+    var identityFlowLayoutTypeActive by remember { mutableStateOf(identityFlowLayoutType) }
+
     LoginTheme {
         Scaffold(
             topBar = {
@@ -254,15 +292,51 @@ fun LoginView(
                         .widthIn(350.dp, 500.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
                 ) {
-                    Spacer(modifier = Modifier.height(50.dp))
+                    Spacer(modifier = Modifier.height(25.dp))
                     Image(
                         painter = painterResource(id = sf__salesforce_logo),
                         colorFilter = ColorFilter.tint(colorScheme.primary),
                         contentDescription = "",
                         modifier = Modifier.align(CenterHorizontally),
                     )
-                    // TODO: Update Login View With Additional Login Options And Navigation To Request OTP View. ECJ20240325
-                    UserNameOtpInput(submitOtpRequest)
+
+                    // Switch the layout to match the selected identity flow.
+                    when (identityFlowLayoutTypeActive) {
+                        LoginViaUsernamePassword -> UserNamePasswordInput(login)
+
+                        LoginViaUsernameAndOtp -> UserNameOtpInput(submitOtpRequest)
+
+                        InitializePasswordLessLoginViaOtp -> TODO()
+                    }
+
+                    // Layout navigation buttons between the available identity flow layouts according to the current layout.
+                    when (identityFlowLayoutTypeActive) {
+                        LoginViaUsernamePassword -> {
+                            // From the initial login via username and password layout, allow the user to switch to login via username and OTP.
+                            Button(
+                                onClick = {
+                                    identityFlowLayoutTypeActive = LoginViaUsernameAndOtp
+                                },
+                                modifier = Modifier.align(CenterHorizontally)
+                            ) { Text(text = "Use One Time Password Instead") }
+                        }
+
+                        else -> {
+                            // From all the other layouts, allow the user to cancel back to the initial username and password layout.
+                            Button(
+                                onClick = {
+                                    identityFlowLayoutTypeActive = LoginViaUsernamePassword
+                                },
+                                colors = buttonColors().copy(
+                                    containerColor = LightGray,
+                                    contentColor = Red
+                                ),
+                                modifier = Modifier.align(CenterHorizontally)
+                            ) {
+                                Text(text = "Cancel")
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -443,7 +517,21 @@ fun LoginPreview() {
             login = { _, _ -> run { return@LoginView true } },
             submitOtpRequest = { _, _ -> true },
             shouldShowBack = true,
+            backAction = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun LoginViewUsernameAndOtpPreview() {
+    Column {
+        LoginView(
+            login = { _, _ -> run { return@LoginView true } },
+            submitOtpRequest = { _, _ -> true },
+            shouldShowBack = true,
             backAction = {},
+            identityFlowLayoutType = LoginViaUsernameAndOtp
         )
     }
 }
