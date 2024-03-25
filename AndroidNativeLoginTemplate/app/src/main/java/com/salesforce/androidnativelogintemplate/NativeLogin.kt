@@ -29,16 +29,22 @@ package com.salesforce.androidnativelogintemplate
 import android.app.Activity
 import android.content.Intent
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.S
+import android.os.Build.VERSION_CODES.TIRAMISU
 import android.os.Bundle
 import android.widget.Toast
+import android.widget.Toast.LENGTH_LONG
 import android.window.OnBackInvokedDispatcher
+import android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement.SpaceAround
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -60,6 +66,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -75,25 +82,41 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.KeyboardType.Companion.Password
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.salesforce.androidnativelogintemplate.R.drawable.radio_button_checked_24px
+import com.salesforce.androidnativelogintemplate.R.drawable.radio_button_unchecked_24px
+import com.salesforce.androidnativelogintemplate.R.drawable.sf__salesforce_logo
+import com.salesforce.androidsdk.R.drawable.sf__action_back
 import com.salesforce.androidsdk.app.SalesforceSDKManager
 import com.salesforce.androidsdk.auth.interfaces.NativeLoginManager
-import com.salesforce.androidsdk.auth.interfaces.NativeLoginResult
+import com.salesforce.androidsdk.auth.interfaces.NativeLoginResult.InvalidCredentials
+import com.salesforce.androidsdk.auth.interfaces.NativeLoginResult.InvalidPassword
+import com.salesforce.androidsdk.auth.interfaces.NativeLoginResult.InvalidUsername
+import com.salesforce.androidsdk.auth.interfaces.NativeLoginResult.Success
+import com.salesforce.androidsdk.auth.interfaces.NativeLoginResult.UnknownError
+import com.salesforce.androidsdk.auth.interfaces.OtpVerificationMethod
+import com.salesforce.androidsdk.auth.interfaces.OtpVerificationMethod.Sms
 import kotlinx.coroutines.launch
 
 class NativeLogin : ComponentActivity() {
     private lateinit var nativeLoginManager: NativeLoginManager
+
     // Start activity for result so we can close this activity if webview login is successful.
     private val handleWebviewFallbackResult = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()) { result ->
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
 
         if (result.resultCode == Activity.RESULT_OK) {
             finish()
@@ -116,28 +139,37 @@ class NativeLogin : ComponentActivity() {
                         login = { username, password -> Boolean
                             // Call login and handle results.
                             when (val result = nativeLoginManager.login(username, password)) {
-                                NativeLoginResult.InvalidUsername -> {
-                                    Toast.makeText(baseContext, result.name,Toast.LENGTH_LONG).show()
+                                InvalidUsername -> {
+                                    Toast.makeText(baseContext, result.name, LENGTH_LONG).show()
                                     return@LoginView false
                                 }
-                                NativeLoginResult.InvalidPassword -> {
-                                    Toast.makeText(baseContext, result.name,Toast.LENGTH_LONG).show()
+
+                                InvalidPassword -> {
+                                    Toast.makeText(baseContext, result.name, LENGTH_LONG).show()
                                     return@LoginView false
                                 }
-                                NativeLoginResult.InvalidCredentials -> {
-                                    Toast.makeText(baseContext, result.name,Toast.LENGTH_LONG).show()
+
+                                InvalidCredentials -> {
+                                    Toast.makeText(baseContext, result.name, LENGTH_LONG).show()
                                     return@LoginView false
                                 }
-                                NativeLoginResult.UnknownError -> {
-                                    Toast.makeText(baseContext, result.name, Toast.LENGTH_LONG).show()
+
+                                UnknownError -> {
+                                    Toast.makeText(baseContext, result.name, LENGTH_LONG).show()
                                     return@LoginView false
                                 }
-                                NativeLoginResult.Success -> {
+
+                                Success -> {
                                     finish()
                                 }
                             }
 
                             return@LoginView true
+                        },
+                        submitOtpRequest = { _, _ -> Boolean
+
+                            // TODO: Submit OTP Delivery Request. ECJ20240325
+                            false
                         },
                         handleWebviewFallbackResult,
                         nativeLoginManager.getFallbackWebAuthenticationIntent(),
@@ -148,9 +180,9 @@ class NativeLogin : ComponentActivity() {
             }
         )
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (SDK_INT >= TIRAMISU) {
             onBackInvokedDispatcher.registerOnBackInvokedCallback(
-                OnBackInvokedDispatcher.PRIORITY_DEFAULT
+                PRIORITY_DEFAULT
             ) {
                 if (nativeLoginManager.shouldShowBackButton) {
                     when (SalesforceSDKManager.getInstance().userAccountManager.authenticatedUsers) {
@@ -166,6 +198,7 @@ class NativeLogin : ComponentActivity() {
 @Composable
 fun LoginView(
     login: suspend (String, String) -> Boolean,
+    submitOtpRequest: suspend (String, OtpVerificationMethod) -> Boolean,
     handleWebviewFallbackResult: ActivityResultLauncher<Intent>? = null,
     webviewLoginIntent: Intent? = null,
     shouldShowBack: Boolean = false,
@@ -181,8 +214,8 @@ fun LoginView(
                     if (shouldShowBack) {
                         TextButton(onClick = { backAction() }) {
                             Image(
-                                painter = painterResource(id = com.salesforce.androidsdk.R.drawable.sf__action_back),
-                                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
+                                painter = painterResource(id = sf__action_back),
+                                colorFilter = ColorFilter.tint(colorScheme.primary),
                                 contentDescription = "Back",
                                 modifier = Modifier.padding(start = 16.dp)
                             )
@@ -192,7 +225,7 @@ fun LoginView(
             },
             bottomBar = {
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                    horizontalAlignment = CenterHorizontally,
                     modifier = Modifier
                         .navigationBarsPadding()
                         .fillMaxWidth(),
@@ -205,7 +238,7 @@ fun LoginView(
             },
         ) { innerPadding ->
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
+                horizontalAlignment = CenterHorizontally,
                 modifier = Modifier
                     .verticalScroll(rememberScrollState(), reverseScrolling = true)
                     .navigationBarsPadding()
@@ -223,15 +256,98 @@ fun LoginView(
                 ) {
                     Spacer(modifier = Modifier.height(50.dp))
                     Image(
-                        painter = painterResource(id = R.drawable.sf__salesforce_logo),
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
+                        painter = painterResource(id = sf__salesforce_logo),
+                        colorFilter = ColorFilter.tint(colorScheme.primary),
                         contentDescription = "",
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        modifier = Modifier.align(CenterHorizontally),
                     )
-                    UserNamePasswordInput(login)
+                    // TODO: Update Login View With Additional Login Options And Navigation To Request OTP View. ECJ20240325
+                    UserNameOtpInput(submitOtpRequest)
                 }
             }
         }
+    }
+}
+
+@Composable
+fun UserNameOtpInput(
+    submitOtpRequest: suspend (String, OtpVerificationMethod) -> Boolean
+) {
+    var username by remember { mutableStateOf("") }
+    var otpVerificationMethod by remember { mutableStateOf(Sms) }
+    val scope = rememberCoroutineScope()
+    var loading by remember { mutableStateOf(false) }
+
+    if (loading) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+        ) {
+            Column(modifier = Modifier.align(Center)) {
+                CircularProgressIndicator()
+            }
+        }
+    } else {
+        Spacer(modifier = Modifier.height(100.dp))
+    }
+
+    Column(
+        horizontalAlignment = CenterHorizontally,
+        verticalArrangement = SpaceAround,
+        modifier = Modifier
+            .padding(all = 16.dp)
+            .fillMaxWidth(),
+    ) {
+        OutlinedTextField(
+            value = username,
+            onValueChange = { username = it },
+            label = { Text("Username") },
+        )
+
+        Column {
+            OtpVerificationMethod.entries.forEach { otpVerificationMethodNext ->
+                Row(Modifier.clickable {
+                    otpVerificationMethod = otpVerificationMethodNext
+                }) {
+                    Image(
+                        painter = painterResource(
+                            id = when (otpVerificationMethodNext == otpVerificationMethod) {
+                                true -> radio_button_checked_24px
+                                false -> radio_button_unchecked_24px
+                            }
+                        ),
+                        colorFilter = ColorFilter.tint(colorScheme.primary),
+                        contentDescription = "",
+                        modifier = Modifier.align(CenterVertically),
+                    )
+                    Text(
+                        text = otpVerificationMethodNext.name,
+                        modifier = Modifier
+                            .padding(8.dp)
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(content = {
+            Button(
+                onClick = {
+                    loading = true
+                    scope.launch {
+                        loading = submitOtpRequest(
+                            username,
+                            otpVerificationMethod
+                        )
+                    }
+                }
+            ) {
+                Text(text = "Request One Time Password")
+            }
+        }
+        )
     }
 }
 
@@ -245,10 +361,12 @@ fun UserNamePasswordInput(
     var loading by remember { mutableStateOf(false) }
 
     if (loading) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp)) {
-            Column(modifier = Modifier.align(Alignment.Center)) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+        ) {
+            Column(modifier = Modifier.align(Center)) {
                 CircularProgressIndicator()
             }
         }
@@ -257,8 +375,8 @@ fun UserNamePasswordInput(
     }
 
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceAround,
+        horizontalAlignment = CenterHorizontally,
+        verticalArrangement = SpaceAround,
         modifier = Modifier
             .padding(all = 16.dp)
             .fillMaxWidth(),
@@ -274,7 +392,7 @@ fun UserNamePasswordInput(
             onValueChange = { password = it },
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            keyboardOptions = KeyboardOptions(keyboardType = Password),
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -296,18 +414,21 @@ fun UserNamePasswordInput(
 
 @Composable
 fun LoginTheme(composable: @Composable () -> Unit) {
-    val dynamicColors = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    val dynamicColors = SDK_INT >= S
     val isDarkTheme = isSystemInDarkTheme()
     val colorScheme = when {
         dynamicColors && isDarkTheme -> {
             dynamicDarkColorScheme(LocalContext.current)
         }
+
         dynamicColors && !isDarkTheme -> {
             dynamicLightColorScheme(LocalContext.current)
         }
+
         !dynamicColors && isDarkTheme -> {
             darkColorScheme()
         }
+
         else -> lightColorScheme()
     }
 
@@ -318,8 +439,9 @@ fun LoginTheme(composable: @Composable () -> Unit) {
 @Composable
 fun LoginPreview() {
     Column {
-        LoginView (
+        LoginView(
             login = { _, _ -> run { return@LoginView true } },
+            submitOtpRequest = { _, _ -> true },
             shouldShowBack = true,
             backAction = {},
         )
