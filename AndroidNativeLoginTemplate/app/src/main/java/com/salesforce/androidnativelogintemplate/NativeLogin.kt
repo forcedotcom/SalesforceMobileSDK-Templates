@@ -142,8 +142,7 @@ class NativeLogin : ComponentActivity() {
                     // If we don't SalesforceSDKManager.getInstance() will complain it has not be setup.
                     LoginView(
                         // Pass this inline login function to be executed within the composable.
-                        login = { username, password ->
-                            Boolean
+                        login = { username, password -> Boolean
                             // Call login and handle results.
                             when (val result = nativeLoginManager.login(username, password)) {
                                 InvalidUsername -> {
@@ -173,11 +172,14 @@ class NativeLogin : ComponentActivity() {
 
                             return@LoginView true
                         },
-                        submitOtpRequest = { username, otpVerificationMethod -> String
+                        submitOtpDeliveryRequest = { username, otpVerificationMethod -> String
                             return@LoginView submitOtpDeliveryRequest(
                                 username = username,
                                 otpVerificationMethod = otpVerificationMethod
                             )
+                        },
+                        loginViaOtpVerificationRequest = { _, _ -> false
+                            // TODO: Submit OTP Verification Request. ECJ20240325
                         },
                         handleWebviewFallbackResult,
                         nativeLoginManager.getFallbackWebAuthenticationIntent(),
@@ -287,8 +289,10 @@ enum class IdentityFlowLayoutType {
  * A layout for the login view, including navigation between layouts for the
  * available identity flows.
  * @param login A function for login via username and password
- * @param submitOtpRequest A function to submit the initialize password-less
- * login via username and one-time-password
+ * @param submitOtpDeliveryRequest A function to submit the initialize password-
+ * less login via username and one-time-password
+ * @param loginViaOtpVerificationRequest A function to login via a previously
+ * requested one-time-password
  * @param handleWebviewFallbackResult An activity for fallback to web login
  * @param shouldShowBack An option to show the back button which cancels login
  * @param backAction A function for the back action which cancels login
@@ -299,7 +303,8 @@ enum class IdentityFlowLayoutType {
 @Composable
 fun LoginView(
     login: suspend (String, String) -> Boolean,
-    submitOtpRequest: suspend (String, OtpVerificationMethod) -> String?,
+    submitOtpDeliveryRequest: suspend (String, OtpVerificationMethod) -> String?,
+    loginViaOtpVerificationRequest: suspend (String, OtpVerificationMethod) -> Boolean,
     handleWebviewFallbackResult: ActivityResultLauncher<Intent>? = null,
     webviewLoginIntent: Intent? = null,
     shouldShowBack: Boolean = false,
@@ -372,9 +377,16 @@ fun LoginView(
                     when (identityFlowLayoutTypeActive) {
                         LoginViaUsernamePassword -> UserNamePasswordInput(login)
 
-                        LoginViaUsernameAndOtp -> UserNameOtpInput(submitOtpRequest)
+                        InitializePasswordLessLoginViaOtp -> UserNameOtpInput { username, otpVerificationMethod ->
+                            val otpIdentifier = submitOtpDeliveryRequest(username, otpVerificationMethod)
+                            // Before returning the new OTP identifier, in this scope navigate to the login via OTP layout if applicable.
+                            if (otpIdentifier != null) {
+                                identityFlowLayoutTypeActive = LoginViaUsernameAndOtp
+                            }
+                            otpIdentifier
+                        }
 
-                        InitializePasswordLessLoginViaOtp -> TODO()
+                        LoginViaUsernameAndOtp -> OtpInput(loginViaOtpVerificationRequest)
                     }
 
                     // Layout navigation buttons between the available identity flow layouts according to the current layout.
@@ -383,7 +395,7 @@ fun LoginView(
                             // From the initial login via username and password layout, allow the user to switch to login via username and OTP.
                             Button(
                                 onClick = {
-                                    identityFlowLayoutTypeActive = LoginViaUsernameAndOtp
+                                    identityFlowLayoutTypeActive = InitializePasswordLessLoginViaOtp
                                 },
                                 modifier = Modifier.align(CenterHorizontally)
                             ) { Text(text = "Use One Time Password Instead") }
@@ -498,6 +510,62 @@ fun UserNameOtpInput(
 }
 
 @Composable
+fun OtpInput(
+    submitOtpRequest: suspend (String, OtpVerificationMethod) -> Boolean
+) {
+    var otp by remember { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
+    var loading by remember { mutableStateOf(false) }
+
+    if (loading) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+        ) {
+            Column(modifier = Modifier.align(Center)) {
+                CircularProgressIndicator()
+            }
+        }
+    } else {
+        Spacer(modifier = Modifier.height(100.dp))
+    }
+
+    Column(
+        horizontalAlignment = CenterHorizontally,
+        verticalArrangement = SpaceAround,
+        modifier = Modifier
+            .padding(all = 16.dp)
+            .fillMaxWidth(),
+    ) {
+        OutlinedTextField(
+            value = otp,
+            onValueChange = { otp = it },
+            label = { Text("One-Time-Password") },
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(content = {
+            Button(
+                onClick = {
+                    loading = true
+                    scope.launch {
+                        CoroutineScope(IO).launch {
+                            // TODO: Submit OTP Verification Request. ECJ20240325
+                            loading = false
+                        }
+                    }
+                }
+            ) {
+                Text(text = "Log In Using One Time Password")
+            }
+        }
+        )
+    }
+}
+
+@Composable
 fun UserNamePasswordInput(
     login: suspend (String, String) -> Boolean
 ) {
@@ -587,7 +655,8 @@ fun LoginPreview() {
     Column {
         LoginView(
             login = { _, _ -> run { return@LoginView true } },
-            submitOtpRequest = { _, _ -> null },
+            submitOtpDeliveryRequest = { _, _ -> null },
+            loginViaOtpVerificationRequest = { _, _ -> false },
             shouldShowBack = true,
             backAction = {}
         )
@@ -596,11 +665,27 @@ fun LoginPreview() {
 
 @Preview
 @Composable
-fun LoginViewUsernameAndOtpPreview() {
+fun LoginViewUsernameAndOtpVerificationMethodPreview() {
     Column {
         LoginView(
             login = { _, _ -> run { return@LoginView true } },
-            submitOtpRequest = { _, _ -> null },
+            submitOtpDeliveryRequest = { _, _ -> null },
+            loginViaOtpVerificationRequest = { _, _ -> false },
+            shouldShowBack = true,
+            backAction = {},
+            identityFlowLayoutType = InitializePasswordLessLoginViaOtp
+        )
+    }
+}
+
+@Preview
+@Composable
+fun LoginViewOtpPreview() {
+    Column {
+        LoginView(
+            login = { _, _ -> run { return@LoginView true } },
+            submitOtpDeliveryRequest = { _, _ -> null },
+            loginViaOtpVerificationRequest = { _, _ -> false },
             shouldShowBack = true,
             backAction = {},
             identityFlowLayoutType = LoginViaUsernameAndOtp
