@@ -72,7 +72,7 @@ class MainApplication : Application() {
         //
         // TODO: Revert this change to enable the assertions. ECJ20240314
         //
-        val reCaptchaSiteKeyId = "6Lc3vVwpAAAAAL9noKtP5yACufTp5Tu7lIxqLmzQ"
+        val reCaptchaSiteKeyId = "6Ld_OqQpAAAAAGbdINbQquAYCGoy0g6Kv_VQZLvC"
         val googleCloudProjectId = "mobile-apps-team-sfdc"
         val isReCaptchaEnterprise = true
 
@@ -103,12 +103,12 @@ class MainApplication : Application() {
 
     companion object {
         private const val FEATURE_APP_USES_KOTLIN = "KT"
-        internal const val TAG = "AndroidNativeLoginTemplate"
+        private const val TAG = "AndroidNativeLoginTemplate"
 
         // region Google reCAPTCHA Integration
 
         /** The reCAPTCHA client used to obtain reCAPTCHA tokens when needed for Salesforce Headless Identity API requests. */
-        internal var recaptchaClient: RecaptchaClient? = null
+        private var recaptchaClient: RecaptchaClient? = null
 
         /**
          * Initializes the Google reCAPTCHA client.
@@ -144,20 +144,18 @@ class MainApplication : Application() {
          */
         internal fun executeLoginAction(
             completion: (String?) -> Unit
-        ) {
-            CoroutineScope(Default).launch {
-                recaptchaClient?.execute(LOGIN)
-                    ?.onSuccess { token ->
-                        completion(token)
-                    }?.onFailure { exception ->
-                        SalesforceSDKLogger.e(
-                            TAG,
-                            "Could not obtain a reCAPTCHA token due to error.",
-                            exception
-                        )
-                        completion(null)
-                    }
-            }
+        ) = CoroutineScope(Default).launch {
+            recaptchaClient?.execute(LOGIN)
+                ?.onSuccess { token ->
+                    completion(token)
+                }?.onFailure { exception ->
+                    SalesforceSDKLogger.e(
+                        TAG,
+                        "Could not obtain a reCAPTCHA token due to error.",
+                        exception
+                    )
+                    completion(null)
+                }
         }
     }
 }
