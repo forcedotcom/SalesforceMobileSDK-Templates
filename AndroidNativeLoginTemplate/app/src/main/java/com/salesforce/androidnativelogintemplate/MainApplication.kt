@@ -28,16 +28,19 @@ package com.salesforce.androidnativelogintemplate
 
 import android.app.Application
 import com.google.android.material.color.DynamicColors
+import com.google.android.recaptcha.Recaptcha
+import com.google.android.recaptcha.RecaptchaAction.Companion.LOGIN
+import com.google.android.recaptcha.RecaptchaClient
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
+import com.salesforce.androidsdk.util.SalesforceSDKLogger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Default
+import kotlinx.coroutines.launch
 
 /**
  * Application class for our application.
  */
 class MainApplication : Application() {
-
-    companion object {
-        private const val FEATURE_APP_USES_KOTLIN = "KT"
-    }
 
     override fun onCreate() {
         super.onCreate()
@@ -57,7 +60,36 @@ class MainApplication : Application() {
         check(clientId != "your-client-id") { "Please add your Native Login client id." }
         check(redirectUri != "your-redirect-uri") { "Please add your Native Login redirect uri." }
         check(loginUrl != "your-community-url") { "Please add your Native Login community url." }
-        MobileSyncSDKManager.getInstance().useNativeLogin(clientId, redirectUri, loginUrl)
+
+        //
+        // Fill in the values below from the Google Cloud project reCAPTCHA
+        // settings.  Note that only enterprise reCAPTCHA requires the reCAPTCHA
+        // Site Key Id and Google Cloud Project Id.
+        //
+        // When using non-enterprise reCAPTCHA, set reCAPTCHA Site Key Id and
+        // Google Cloud Project Id to nil along with a false value for the
+        // enterprise parameter.
+        //
+        val reCaptchaSiteKeyId = "your-recaptcha-site-key-id"
+        val googleCloudProjectId = "your-google-cloud-project-id"
+        val isReCaptchaEnterprise = true
+
+        check(clientId != "your-recaptcha-site-key-id") { "Please add your Google Cloud reCAPTCHA Site Key Id." }
+        check(redirectUri != "your-google-cloud-project-id") { "Please add your Google Cloud Project Id." }
+
+        initializeRecaptchaClient(
+            application = this,
+            reCaptchaSiteKeyId = reCaptchaSiteKeyId
+        )
+
+        MobileSyncSDKManager.getInstance().useNativeLogin(
+            consumerKey = clientId,
+            callbackUrl = redirectUri,
+            communityUrl = loginUrl,
+            googleCloudProjectId = googleCloudProjectId,
+            reCaptchaSiteKeyId = reCaptchaSiteKeyId,
+            isReCaptchaEnterprise = isReCaptchaEnterprise
+        )
 
         /*
 		 * Un-comment the line below to enable push notifications in this app.
@@ -65,5 +97,63 @@ class MainApplication : Application() {
 		 * Add your Firebase 'google-services.json' file to the 'app' folder of your project.
 		 */
         // MobileSyncSDKManager.getInstance().pushNotificationReceiver = pnInterface
+    }
+
+    companion object {
+        private const val FEATURE_APP_USES_KOTLIN = "KT"
+        private const val TAG = "AndroidNativeLoginTemplate"
+
+        // region Google reCAPTCHA Integration
+
+        /** The reCAPTCHA client used to obtain reCAPTCHA tokens when needed for Salesforce Headless Identity API requests. */
+        private var recaptchaClient: RecaptchaClient? = null
+
+        /**
+         * Initializes the Google reCAPTCHA client.
+         * @param application The Android application
+         * @param reCaptchaSiteKeyId The Google Cloud project reCAPTCHA Key's "Id"
+         * as shown in Google Cloud Console under "Products & Solutions", "Security"
+         * and "reCAPTCHA Enterprise"
+         */
+        private fun initializeRecaptchaClient(
+            application: Application,
+            @Suppress("SameParameterValue") reCaptchaSiteKeyId: String
+        ) {
+            CoroutineScope(Default).launch {
+                Recaptcha.getClient(
+                    application,
+                    reCaptchaSiteKeyId
+                ).onSuccess { client ->
+                    recaptchaClient = client
+                }.onFailure { exception ->
+                    SalesforceSDKLogger.e(
+                        TAG,
+                        "Cannot get reCAPTCHA client due to an error.",
+                        exception
+                    )
+                }
+            }
+        }
+
+        /**
+         * Executes the Google reCAPTCHA client for a new login action token.
+         * @param completion The function to invoke with the new token or null
+         * if the token could not be obtained
+         */
+        internal fun executeLoginAction(
+            completion: (String?) -> Unit
+        ) = CoroutineScope(Default).launch {
+            recaptchaClient?.execute(LOGIN)
+                ?.onSuccess { token ->
+                    completion(token)
+                }?.onFailure { exception ->
+                    SalesforceSDKLogger.e(
+                        TAG,
+                        "Could not obtain a reCAPTCHA token due to error.",
+                        exception
+                    )
+                    completion(null)
+                }
+        }
     }
 }
