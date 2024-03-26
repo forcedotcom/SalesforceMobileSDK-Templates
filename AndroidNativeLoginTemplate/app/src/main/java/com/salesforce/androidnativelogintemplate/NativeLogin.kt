@@ -96,9 +96,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.salesforce.androidnativelogintemplate.MainApplication.Companion.executeLoginAction
-import com.salesforce.androidnativelogintemplate.NativeLogin.IdentityFlowLayoutType.InitializePasswordLessLoginViaOtp
-import com.salesforce.androidnativelogintemplate.NativeLogin.IdentityFlowLayoutType.LoginViaUsernameAndOtp
-import com.salesforce.androidnativelogintemplate.NativeLogin.IdentityFlowLayoutType.LoginViaUsernamePassword
+import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType
+import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.InitializePasswordLessLoginViaOtp
+import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.LoginViaUsernameAndOtp
+import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.LoginViaUsernamePassword
 import com.salesforce.androidnativelogintemplate.R.drawable.radio_button_checked_24px
 import com.salesforce.androidnativelogintemplate.R.drawable.radio_button_unchecked_24px
 import com.salesforce.androidnativelogintemplate.R.drawable.sf__salesforce_logo
@@ -119,7 +120,7 @@ import kotlinx.coroutines.runBlocking
 
 class NativeLogin : ComponentActivity() {
 
-    private val viewModel: LoginViewModel by viewModels()
+    private val viewModel: NativeLoginViewModel by viewModels()
 
     private lateinit var nativeLoginManager: NativeLoginManager
 
@@ -175,19 +176,6 @@ class NativeLogin : ComponentActivity() {
                             }
 
                             return@LoginView true
-                        },
-                        submitOtpDeliveryRequest = { username, otpVerificationMethod -> String
-                            return@LoginView submitOtpDeliveryRequest(
-                                username = username,
-                                otpVerificationMethod = otpVerificationMethod
-                            )
-                        },
-                        loginViaOtpVerificationRequest = { otp, otpIdentifier, otpVerificationMethod -> Boolean
-                            return@LoginView submitOtpVerificationRequest(
-                                otp,
-                                otpIdentifier,
-                                otpVerificationMethod
-                            )
                         },
                         handleWebviewFallbackResult = handleWebviewFallbackResult,
                         webviewLoginIntent = nativeLoginManager.getFallbackWebAuthenticationIntent(),
@@ -328,49 +316,30 @@ class NativeLogin : ComponentActivity() {
     }
 
     /**
-     * Layouts for the available Salesforce identity flows.
-     */
-    enum class IdentityFlowLayoutType {
-
-        /** A layout to initialize password-less login via one-time-passcode request. */
-        InitializePasswordLessLoginViaOtp,
-
-        /** A layout for authorization code and credentials flow via username and previously requested one-time-passcode. */
-        LoginViaUsernameAndOtp,
-
-        /** A layout for authorization code and credentials flow via username and password. */
-        LoginViaUsernamePassword
-    }
-
-    /**
      * A layout for the login view, including navigation between layouts for the
      * available identity flows.
      * @param login A function for login via username and password
-     * @param submitOtpDeliveryRequest A function to submit the initialize password-
-     * less login via username and one-time-password
-     * @param loginViaOtpVerificationRequest A function to login via a previously
-     * requested one-time-password
      * @param handleWebviewFallbackResult An activity for fallback to web login
      * @param shouldShowBack An option to show the back button which cancels login
      * @param backAction A function for the back action which cancels login
      * @param identityFlowLayoutType Optionally, a specific initial identity flow
-     * layout type.  Defaults to login via username and password.  This is intended
-     * for preview support
+     * layout type.  Defaults to null and the view model value is used.  This is
+     * intended for preview support
      */
     @Composable
     fun LoginView(
         login: suspend (String, String) -> Boolean,
-        submitOtpDeliveryRequest: suspend (String, OtpVerificationMethod) -> String?,
-        loginViaOtpVerificationRequest: suspend (String, String, OtpVerificationMethod) -> Boolean,
         handleWebviewFallbackResult: ActivityResultLauncher<Intent>? = null,
         webviewLoginIntent: Intent? = null,
         shouldShowBack: Boolean = false,
         backAction: () -> Unit,
-        identityFlowLayoutType: IdentityFlowLayoutType = LoginViaUsernamePassword
+        identityFlowLayoutType: IdentityFlowLayoutType? = null
     ) {
 
         // The layout type for the user's active identity flow, such as registration, forgot password or login
-        var identityFlowLayoutTypeActive by remember { mutableStateOf(identityFlowLayoutType) }
+        val identityFlowLayoutTypeActive = runCatching { // This view model reference is guarded to support previews, which don't have view model access.
+            viewModel.identifyFlowlayoutType.value
+        }.getOrNull() ?: identityFlowLayoutType ?: LoginViaUsernamePassword
 
         LoginTheme {
             Scaffold(
@@ -434,16 +403,9 @@ class NativeLogin : ComponentActivity() {
                         when (identityFlowLayoutTypeActive) {
                             LoginViaUsernamePassword -> UserNamePasswordInput(login)
 
-                            InitializePasswordLessLoginViaOtp -> UserNameOtpInput { username, otpVerificationMethod ->
-                                val otpIdentifierNew = submitOtpDeliveryRequest(username, otpVerificationMethod)
-                                // Before returning the new OTP identifier, in this scope navigate to the login via OTP layout if applicable.
-                                if (otpIdentifierNew != null) {
-                                    identityFlowLayoutTypeActive = LoginViaUsernameAndOtp
-                                }
-                                otpIdentifierNew
-                            }
+                            InitializePasswordLessLoginViaOtp -> UserNameOtpVerificationMethodInput()
 
-                            LoginViaUsernameAndOtp -> OtpInput(loginViaOtpVerificationRequest)
+                            LoginViaUsernameAndOtp -> OtpInput()
                         }
 
                         // Layout navigation buttons between the available identity flow layouts according to the current layout.
@@ -452,7 +414,7 @@ class NativeLogin : ComponentActivity() {
                                 // From the initial login via username and password layout, allow the user to switch to login via username and OTP.
                                 Button(
                                     onClick = {
-                                        identityFlowLayoutTypeActive = InitializePasswordLessLoginViaOtp
+                                        viewModel.identifyFlowlayoutType.value = InitializePasswordLessLoginViaOtp
                                     },
                                     modifier = Modifier.align(CenterHorizontally)
                                 ) { Text(text = "Use One Time Password Instead") }
@@ -462,7 +424,7 @@ class NativeLogin : ComponentActivity() {
                                 // From all the other layouts, allow the user to cancel back to the initial username and password layout.
                                 Button(
                                     onClick = {
-                                        identityFlowLayoutTypeActive = LoginViaUsernamePassword
+                                        viewModel.identifyFlowlayoutType.value = LoginViaUsernamePassword
                                     },
                                     colors = buttonColors().copy(
                                         containerColor = LightGray,
@@ -481,9 +443,7 @@ class NativeLogin : ComponentActivity() {
     }
 
     @Composable
-    fun UserNameOtpInput(
-        submitOtpDeliveryRequest: suspend (String, OtpVerificationMethod) -> String?
-    ) {
+    fun UserNameOtpVerificationMethodInput() {
         var username by remember { mutableStateOf("") }
         val scope = rememberCoroutineScope()
         var loading by remember { mutableStateOf(false) }
@@ -552,10 +512,14 @@ class NativeLogin : ComponentActivity() {
                         loading = true
                         scope.launch {
                             CoroutineScope(IO).launch {
-                                viewModel.otpIdentifier.value = submitOtpDeliveryRequest(
+                                submitOtpDeliveryRequest(
                                     username,
                                     viewModel.otpVerificationMethod.value
-                                )
+                                )?.let { otpIdentifier ->
+                                    viewModel.otpIdentifier.value = otpIdentifier
+                                    viewModel.identifyFlowlayoutType.value = LoginViaUsernameAndOtp
+                                }
+
                                 loading = false
                             }
                         }
@@ -569,9 +533,7 @@ class NativeLogin : ComponentActivity() {
     }
 
     @Composable
-    fun OtpInput(
-        submitOtpVerificationRequest: suspend (String, String, OtpVerificationMethod) -> Boolean
-    ) {
+    fun OtpInput() {
         var otp by remember { mutableStateOf("") }
         val scope = rememberCoroutineScope()
         var loading by remember { mutableStateOf(false) }
@@ -718,8 +680,6 @@ class NativeLogin : ComponentActivity() {
         Column {
             LoginView(
                 login = { _, _ -> run { return@LoginView true } },
-                submitOtpDeliveryRequest = { _, _ -> null },
-                loginViaOtpVerificationRequest = { _, _, _ -> false },
                 shouldShowBack = true,
                 backAction = {}
             )
@@ -732,8 +692,6 @@ class NativeLogin : ComponentActivity() {
         Column {
             LoginView(
                 login = { _, _ -> run { return@LoginView true } },
-                submitOtpDeliveryRequest = { _, _ -> null },
-                loginViaOtpVerificationRequest = { _, _, _ -> false },
                 shouldShowBack = true,
                 backAction = {},
                 identityFlowLayoutType = InitializePasswordLessLoginViaOtp
@@ -747,8 +705,6 @@ class NativeLogin : ComponentActivity() {
         Column {
             LoginView(
                 login = { _, _ -> run { return@LoginView true } },
-                submitOtpDeliveryRequest = { _, _ -> null },
-                loginViaOtpVerificationRequest = { _, _, _ -> false },
                 shouldShowBack = true,
                 backAction = {},
                 identityFlowLayoutType = LoginViaUsernameAndOtp
