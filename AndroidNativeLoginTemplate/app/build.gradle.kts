@@ -12,6 +12,8 @@ dependencies {
     val composeBom = platform("androidx.compose:compose-bom:2024.02.00")
     implementation(composeBom)
     androidTestImplementation(composeBom)
+
+    implementation("androidx.activity:activity-ktx:1.8.2")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.foundation:foundation")
 
@@ -19,8 +21,8 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     debugImplementation("androidx.compose.ui:ui-tooling")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
-    implementation("com.google.android.recaptcha:recaptcha:18.5.0-beta01")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("com.google.android.recaptcha:recaptcha:18.5.0-beta02")
 }
 
 android {

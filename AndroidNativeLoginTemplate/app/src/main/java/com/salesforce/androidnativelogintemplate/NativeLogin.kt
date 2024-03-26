@@ -39,6 +39,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -94,10 +95,10 @@ import androidx.compose.ui.text.input.KeyboardType.Companion.Password
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.salesforce.androidnativelogintemplate.IdentityFlowLayoutType.InitializePasswordLessLoginViaOtp
-import com.salesforce.androidnativelogintemplate.IdentityFlowLayoutType.LoginViaUsernameAndOtp
-import com.salesforce.androidnativelogintemplate.IdentityFlowLayoutType.LoginViaUsernamePassword
 import com.salesforce.androidnativelogintemplate.MainApplication.Companion.executeLoginAction
+import com.salesforce.androidnativelogintemplate.NativeLogin.IdentityFlowLayoutType.InitializePasswordLessLoginViaOtp
+import com.salesforce.androidnativelogintemplate.NativeLogin.IdentityFlowLayoutType.LoginViaUsernameAndOtp
+import com.salesforce.androidnativelogintemplate.NativeLogin.IdentityFlowLayoutType.LoginViaUsernamePassword
 import com.salesforce.androidnativelogintemplate.R.drawable.radio_button_checked_24px
 import com.salesforce.androidnativelogintemplate.R.drawable.radio_button_unchecked_24px
 import com.salesforce.androidnativelogintemplate.R.drawable.sf__salesforce_logo
@@ -110,13 +111,16 @@ import com.salesforce.androidsdk.auth.interfaces.NativeLoginResult.InvalidUserna
 import com.salesforce.androidsdk.auth.interfaces.NativeLoginResult.Success
 import com.salesforce.androidsdk.auth.interfaces.NativeLoginResult.UnknownError
 import com.salesforce.androidsdk.auth.interfaces.OtpVerificationMethod
-import com.salesforce.androidsdk.auth.interfaces.OtpVerificationMethod.Sms
+import com.salesforce.androidsdk.auth.interfaces.OtpVerificationMethod.Email
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class NativeLogin : ComponentActivity() {
+
+    private val viewModel: LoginViewModel by viewModels()
+
     private lateinit var nativeLoginManager: NativeLoginManager
 
     // Start activity for result so we can close this activity if webview login is successful.
@@ -178,12 +182,16 @@ class NativeLogin : ComponentActivity() {
                                 otpVerificationMethod = otpVerificationMethod
                             )
                         },
-                        loginViaOtpVerificationRequest = { _, _ -> false
-                            // TODO: Submit OTP Verification Request. ECJ20240325
+                        loginViaOtpVerificationRequest = { otp, otpIdentifier, otpVerificationMethod -> Boolean
+                            return@LoginView submitOtpVerificationRequest(
+                                otp,
+                                otpIdentifier,
+                                otpVerificationMethod
+                            )
                         },
-                        handleWebviewFallbackResult,
-                        nativeLoginManager.getFallbackWebAuthenticationIntent(),
-                        nativeLoginManager.shouldShowBackButton,
+                        handleWebviewFallbackResult = handleWebviewFallbackResult,
+                        webviewLoginIntent = nativeLoginManager.getFallbackWebAuthenticationIntent(),
+                        shouldShowBack = nativeLoginManager.shouldShowBackButton,
                         backAction = { finish() },
                     )
                 }
@@ -268,427 +276,483 @@ class NativeLogin : ComponentActivity() {
             }
         }
     }
-}
 
-/**
- * Layouts for the available Salesforce identity flows.
- */
-enum class IdentityFlowLayoutType {
+    /**
+     * Submits a login via one-time-password verification request to the
+     * Salesforce Identity API authorization and token endpoints.
+     * @param otp The user-entered OTP
+     * @param otpIdentifier The OTP identifier provided by the Salesforce
+     * Identity API
+     * @param otpVerificationMethod The OTP verification method used to obtain
+     * the OTP identifier
+     * @return Boolean true if the authorization request is successful - false
+     * otherwise
+     */
+    private suspend fun submitOtpVerificationRequest(
+        otp: String,
+        otpIdentifier: String,
+        otpVerificationMethod: OtpVerificationMethod
+    ): Boolean {
 
-    /** A layout to initialize password-less login via one-time-passcode request. */
-    InitializePasswordLessLoginViaOtp,
+        // Submit the login via OTP verification request and respond to the result.
+        val otpVerificationResult = nativeLoginManager.submitPasswordlessAuthorizationRequest(
+            otp = otp,
+            otpIdentifier = otpIdentifier,
+            otpVerificationMethod = otpVerificationMethod
+        )
+        when (otpVerificationResult) {
+            InvalidUsername -> {
+                runOnUiThread { Toast.makeText(baseContext, "Invalid user name.", LENGTH_LONG).show() }
+                return false
+            }
 
-    /** A layout for authorization code and credentials flow via username and previously requested one-time-passcode. */
-    LoginViaUsernameAndOtp,
+            InvalidPassword -> {
+                runOnUiThread { Toast.makeText(baseContext, "Invalid password", LENGTH_LONG).show() }
+                return false
+            }
 
-    /** A layout for authorization code and credentials flow via username and password. */
-    LoginViaUsernamePassword
-}
+            InvalidCredentials -> {
+                runOnUiThread { Toast.makeText(baseContext, "Invalid credentials.", LENGTH_LONG).show() }
+                return false
+            }
 
-/**
- * A layout for the login view, including navigation between layouts for the
- * available identity flows.
- * @param login A function for login via username and password
- * @param submitOtpDeliveryRequest A function to submit the initialize password-
- * less login via username and one-time-password
- * @param loginViaOtpVerificationRequest A function to login via a previously
- * requested one-time-password
- * @param handleWebviewFallbackResult An activity for fallback to web login
- * @param shouldShowBack An option to show the back button which cancels login
- * @param backAction A function for the back action which cancels login
- * @param identityFlowLayoutType Optionally, a specific initial identity flow
- * layout type.  Defaults to login via username and password.  This is intended
- * for preview support
- */
-@Composable
-fun LoginView(
-    login: suspend (String, String) -> Boolean,
-    submitOtpDeliveryRequest: suspend (String, OtpVerificationMethod) -> String?,
-    loginViaOtpVerificationRequest: suspend (String, OtpVerificationMethod) -> Boolean,
-    handleWebviewFallbackResult: ActivityResultLauncher<Intent>? = null,
-    webviewLoginIntent: Intent? = null,
-    shouldShowBack: Boolean = false,
-    backAction: () -> Unit,
-    identityFlowLayoutType: IdentityFlowLayoutType = LoginViaUsernamePassword
-) {
+            UnknownError -> {
+                runOnUiThread { Toast.makeText(baseContext, "An error occurred.", LENGTH_LONG).show() }
+                return false
+            }
 
-    // The layout type for the user's active identity flow, such as registration, forgot password or login
-    var identityFlowLayoutTypeActive by remember { mutableStateOf(identityFlowLayoutType) }
+            Success -> {
+                return true
+            }
+        }
+    }
 
-    LoginTheme {
-        Scaffold(
-            topBar = {
-                Row(modifier = Modifier.statusBarsPadding()) {
+    /**
+     * Layouts for the available Salesforce identity flows.
+     */
+    enum class IdentityFlowLayoutType {
 
-                    // Back button should only be shown if there is a user already logged in.  But not
-                    // in the case of Biometric Authentication.
-                    if (shouldShowBack) {
-                        TextButton(onClick = { backAction() }) {
-                            Image(
-                                painter = painterResource(id = sf__action_back),
-                                colorFilter = ColorFilter.tint(colorScheme.primary),
-                                contentDescription = "Back",
-                                modifier = Modifier.padding(start = 16.dp)
-                            )
+        /** A layout to initialize password-less login via one-time-passcode request. */
+        InitializePasswordLessLoginViaOtp,
+
+        /** A layout for authorization code and credentials flow via username and previously requested one-time-passcode. */
+        LoginViaUsernameAndOtp,
+
+        /** A layout for authorization code and credentials flow via username and password. */
+        LoginViaUsernamePassword
+    }
+
+    /**
+     * A layout for the login view, including navigation between layouts for the
+     * available identity flows.
+     * @param login A function for login via username and password
+     * @param submitOtpDeliveryRequest A function to submit the initialize password-
+     * less login via username and one-time-password
+     * @param loginViaOtpVerificationRequest A function to login via a previously
+     * requested one-time-password
+     * @param handleWebviewFallbackResult An activity for fallback to web login
+     * @param shouldShowBack An option to show the back button which cancels login
+     * @param backAction A function for the back action which cancels login
+     * @param identityFlowLayoutType Optionally, a specific initial identity flow
+     * layout type.  Defaults to login via username and password.  This is intended
+     * for preview support
+     */
+    @Composable
+    fun LoginView(
+        login: suspend (String, String) -> Boolean,
+        submitOtpDeliveryRequest: suspend (String, OtpVerificationMethod) -> String?,
+        loginViaOtpVerificationRequest: suspend (String, String, OtpVerificationMethod) -> Boolean,
+        handleWebviewFallbackResult: ActivityResultLauncher<Intent>? = null,
+        webviewLoginIntent: Intent? = null,
+        shouldShowBack: Boolean = false,
+        backAction: () -> Unit,
+        identityFlowLayoutType: IdentityFlowLayoutType = LoginViaUsernamePassword
+    ) {
+
+        // The layout type for the user's active identity flow, such as registration, forgot password or login
+        var identityFlowLayoutTypeActive by remember { mutableStateOf(identityFlowLayoutType) }
+
+        LoginTheme {
+            Scaffold(
+                topBar = {
+                    Row(modifier = Modifier.statusBarsPadding()) {
+
+                        // Back button should only be shown if there is a user already logged in.  But not
+                        // in the case of Biometric Authentication.
+                        if (shouldShowBack) {
+                            TextButton(onClick = { backAction() }) {
+                                Image(
+                                    painter = painterResource(id = sf__action_back),
+                                    colorFilter = ColorFilter.tint(colorScheme.primary),
+                                    contentDescription = "Back",
+                                    modifier = Modifier.padding(start = 16.dp)
+                                )
+                            }
                         }
                     }
-                }
-            },
-            bottomBar = {
+                },
+                bottomBar = {
+                    Column(
+                        horizontalAlignment = CenterHorizontally,
+                        modifier = Modifier
+                            .navigationBarsPadding()
+                            .fillMaxWidth(),
+                    ) {
+                        // Fallback to web based authentication.
+                        TextButton(onClick = { handleWebviewFallbackResult?.launch(webviewLoginIntent) }) {
+                            Text(text = "Looking for Salesforce Log In?")
+                        }
+                    }
+                },
+            ) { innerPadding ->
                 Column(
                     horizontalAlignment = CenterHorizontally,
                     modifier = Modifier
+                        .verticalScroll(rememberScrollState(), reverseScrolling = true)
                         .navigationBarsPadding()
-                        .fillMaxWidth(),
+                        .padding(top = innerPadding.calculateTopPadding())
+                        .imePadding()
+                        .fillMaxSize(),
                 ) {
-                    // Fallback to web based authentication.
-                    TextButton(onClick = { handleWebviewFallbackResult?.launch(webviewLoginIntent) }) {
-                        Text(text = "Looking for Salesforce Log In?")
-                    }
-                }
-            },
-        ) { innerPadding ->
-            Column(
-                horizontalAlignment = CenterHorizontally,
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState(), reverseScrolling = true)
-                    .navigationBarsPadding()
-                    .padding(top = innerPadding.calculateTopPadding())
-                    .imePadding()
-                    .fillMaxSize(),
-            ) {
-                Spacer(modifier = Modifier.height(75.dp))
-                ElevatedCard(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .navigationBarsPadding()
-                        .widthIn(350.dp, 500.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
-                ) {
-                    Spacer(modifier = Modifier.height(25.dp))
-                    Image(
-                        painter = painterResource(id = sf__salesforce_logo),
-                        colorFilter = ColorFilter.tint(colorScheme.primary),
-                        contentDescription = "",
-                        modifier = Modifier.align(CenterHorizontally),
-                    )
-
-                    // Switch the layout to match the selected identity flow.
-                    when (identityFlowLayoutTypeActive) {
-                        LoginViaUsernamePassword -> UserNamePasswordInput(login)
-
-                        InitializePasswordLessLoginViaOtp -> UserNameOtpInput { username, otpVerificationMethod ->
-                            val otpIdentifier = submitOtpDeliveryRequest(username, otpVerificationMethod)
-                            // Before returning the new OTP identifier, in this scope navigate to the login via OTP layout if applicable.
-                            if (otpIdentifier != null) {
-                                identityFlowLayoutTypeActive = LoginViaUsernameAndOtp
-                            }
-                            otpIdentifier
-                        }
-
-                        LoginViaUsernameAndOtp -> OtpInput(loginViaOtpVerificationRequest)
-                    }
-
-                    // Layout navigation buttons between the available identity flow layouts according to the current layout.
-                    when (identityFlowLayoutTypeActive) {
-                        LoginViaUsernamePassword -> {
-                            // From the initial login via username and password layout, allow the user to switch to login via username and OTP.
-                            Button(
-                                onClick = {
-                                    identityFlowLayoutTypeActive = InitializePasswordLessLoginViaOtp
-                                },
-                                modifier = Modifier.align(CenterHorizontally)
-                            ) { Text(text = "Use One Time Password Instead") }
-                        }
-
-                        else -> {
-                            // From all the other layouts, allow the user to cancel back to the initial username and password layout.
-                            Button(
-                                onClick = {
-                                    identityFlowLayoutTypeActive = LoginViaUsernamePassword
-                                },
-                                colors = buttonColors().copy(
-                                    containerColor = LightGray,
-                                    contentColor = Red
-                                ),
-                                modifier = Modifier.align(CenterHorizontally)
-                            ) {
-                                Text(text = "Cancel")
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun UserNameOtpInput(
-    submitOtpRequest: suspend (String, OtpVerificationMethod) -> String?
-) {
-    var username by remember { mutableStateOf("") }
-    var otpVerificationMethod by remember { mutableStateOf(Sms) }
-    var otpIdentifier: String? by remember { mutableStateOf(null) }
-    val scope = rememberCoroutineScope()
-    var loading by remember { mutableStateOf(false) }
-
-    if (loading) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-        ) {
-            Column(modifier = Modifier.align(Center)) {
-                CircularProgressIndicator()
-            }
-        }
-    } else {
-        Spacer(modifier = Modifier.height(100.dp))
-    }
-
-    Column(
-        horizontalAlignment = CenterHorizontally,
-        verticalArrangement = SpaceAround,
-        modifier = Modifier
-            .padding(all = 16.dp)
-            .fillMaxWidth(),
-    ) {
-        OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("Username") },
-        )
-
-        Column {
-            OtpVerificationMethod.entries.forEach { otpVerificationMethodNext ->
-                Row(Modifier.clickable {
-                    otpVerificationMethod = otpVerificationMethodNext
-                }) {
-                    Image(
-                        painter = painterResource(
-                            id = when (otpVerificationMethodNext == otpVerificationMethod) {
-                                true -> radio_button_checked_24px
-                                false -> radio_button_unchecked_24px
-                            }
-                        ),
-                        colorFilter = ColorFilter.tint(colorScheme.primary),
-                        contentDescription = "",
-                        modifier = Modifier.align(CenterVertically),
-                    )
-                    Text(
-                        text = otpVerificationMethodNext.name,
+                    Spacer(modifier = Modifier.height(75.dp))
+                    ElevatedCard(
                         modifier = Modifier
-                            .padding(8.dp)
-                    )
-                }
-            }
-        }
+                            .padding(16.dp)
+                            .navigationBarsPadding()
+                            .widthIn(350.dp, 500.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+                    ) {
+                        Spacer(modifier = Modifier.height(25.dp))
+                        Image(
+                            painter = painterResource(id = sf__salesforce_logo),
+                            colorFilter = ColorFilter.tint(colorScheme.primary),
+                            contentDescription = "",
+                            modifier = Modifier.align(CenterHorizontally),
+                        )
 
-        Spacer(modifier = Modifier.height(16.dp))
+                        // Switch the layout to match the selected identity flow.
+                        when (identityFlowLayoutTypeActive) {
+                            LoginViaUsernamePassword -> UserNamePasswordInput(login)
 
-        Row(content = {
-            Button(
-                onClick = {
-                    loading = true
-                    scope.launch {
-                        CoroutineScope(IO).launch {
-                            otpIdentifier = submitOtpRequest(
-                                username,
-                                otpVerificationMethod
-                            )
-                            loading = false
+                            InitializePasswordLessLoginViaOtp -> UserNameOtpInput { username, otpVerificationMethod ->
+                                val otpIdentifierNew = submitOtpDeliveryRequest(username, otpVerificationMethod)
+                                // Before returning the new OTP identifier, in this scope navigate to the login via OTP layout if applicable.
+                                if (otpIdentifierNew != null) {
+                                    identityFlowLayoutTypeActive = LoginViaUsernameAndOtp
+                                }
+                                otpIdentifierNew
+                            }
+
+                            LoginViaUsernameAndOtp -> OtpInput(loginViaOtpVerificationRequest)
+                        }
+
+                        // Layout navigation buttons between the available identity flow layouts according to the current layout.
+                        when (identityFlowLayoutTypeActive) {
+                            LoginViaUsernamePassword -> {
+                                // From the initial login via username and password layout, allow the user to switch to login via username and OTP.
+                                Button(
+                                    onClick = {
+                                        identityFlowLayoutTypeActive = InitializePasswordLessLoginViaOtp
+                                    },
+                                    modifier = Modifier.align(CenterHorizontally)
+                                ) { Text(text = "Use One Time Password Instead") }
+                            }
+
+                            else -> {
+                                // From all the other layouts, allow the user to cancel back to the initial username and password layout.
+                                Button(
+                                    onClick = {
+                                        identityFlowLayoutTypeActive = LoginViaUsernamePassword
+                                    },
+                                    colors = buttonColors().copy(
+                                        containerColor = LightGray,
+                                        contentColor = Red
+                                    ),
+                                    modifier = Modifier.align(CenterHorizontally)
+                                ) {
+                                    Text(text = "Cancel")
+                                }
+                            }
                         }
                     }
                 }
-            ) {
-                Text(text = "Request One Time Password")
             }
         }
-        )
-    }
-}
-
-@Composable
-fun OtpInput(
-    submitOtpRequest: suspend (String, OtpVerificationMethod) -> Boolean
-) {
-    var otp by remember { mutableStateOf("") }
-    val scope = rememberCoroutineScope()
-    var loading by remember { mutableStateOf(false) }
-
-    if (loading) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-        ) {
-            Column(modifier = Modifier.align(Center)) {
-                CircularProgressIndicator()
-            }
-        }
-    } else {
-        Spacer(modifier = Modifier.height(100.dp))
     }
 
-    Column(
-        horizontalAlignment = CenterHorizontally,
-        verticalArrangement = SpaceAround,
-        modifier = Modifier
-            .padding(all = 16.dp)
-            .fillMaxWidth(),
+    @Composable
+    fun UserNameOtpInput(
+        submitOtpDeliveryRequest: suspend (String, OtpVerificationMethod) -> String?
     ) {
-        OutlinedTextField(
-            value = otp,
-            onValueChange = { otp = it },
-            label = { Text("One-Time-Password") },
-        )
+        var username by remember { mutableStateOf("") }
+        val scope = rememberCoroutineScope()
+        var loading by remember { mutableStateOf(false) }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        val otpVerificationMethod = runCatching { // This view model reference is guarded to support previews, which don't have view model access.
+            viewModel.otpVerificationMethod.value
+        }.getOrNull() ?: Email
 
-        Row(content = {
-            Button(
-                onClick = {
-                    loading = true
-                    scope.launch {
-                        CoroutineScope(IO).launch {
-                            // TODO: Submit OTP Verification Request. ECJ20240325
-                            loading = false
-                        }
+        if (loading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+            ) {
+                Column(modifier = Modifier.align(Center)) {
+                    CircularProgressIndicator()
+                }
+            }
+        } else {
+            Spacer(modifier = Modifier.height(100.dp))
+        }
+
+        Column(
+            horizontalAlignment = CenterHorizontally,
+            verticalArrangement = SpaceAround,
+            modifier = Modifier
+                .padding(all = 16.dp)
+                .fillMaxWidth(),
+        ) {
+            OutlinedTextField(
+                value = username,
+                onValueChange = { username = it },
+                label = { Text("Username") },
+            )
+
+            Column {
+                OtpVerificationMethod.entries.forEach { otpVerificationMethodNext ->
+                    Row(Modifier.clickable {
+                        viewModel.otpVerificationMethod.value = otpVerificationMethodNext
+                    }) {
+                        Image(
+                            painter = painterResource(
+                                id = when (otpVerificationMethodNext == otpVerificationMethod) {
+                                    true -> radio_button_checked_24px
+                                    false -> radio_button_unchecked_24px
+                                }
+                            ),
+                            colorFilter = ColorFilter.tint(colorScheme.primary),
+                            contentDescription = "",
+                            modifier = Modifier.align(CenterVertically),
+                        )
+                        Text(
+                            text = otpVerificationMethodNext.name,
+                            modifier = Modifier
+                                .padding(8.dp)
+                        )
                     }
                 }
-            ) {
-                Text(text = "Log In Using One Time Password")
             }
-        }
-        )
-    }
-}
 
-@Composable
-fun UserNamePasswordInput(
-    login: suspend (String, String) -> Boolean
-) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    val scope = rememberCoroutineScope()
-    var loading by remember { mutableStateOf(false) }
+            Spacer(modifier = Modifier.height(16.dp))
 
-    if (loading) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-        ) {
-            Column(modifier = Modifier.align(Center)) {
-                CircularProgressIndicator()
+            Row(content = {
+                Button(
+                    onClick = {
+                        loading = true
+                        scope.launch {
+                            CoroutineScope(IO).launch {
+                                viewModel.otpIdentifier.value = submitOtpDeliveryRequest(
+                                    username,
+                                    viewModel.otpVerificationMethod.value
+                                )
+                                loading = false
+                            }
+                        }
+                    }
+                ) {
+                    Text(text = "Request One Time Password")
+                }
             }
+            )
         }
-    } else {
-        Spacer(modifier = Modifier.height(100.dp))
     }
 
-    Column(
-        horizontalAlignment = CenterHorizontally,
-        verticalArrangement = SpaceAround,
-        modifier = Modifier
-            .padding(all = 16.dp)
-            .fillMaxWidth(),
+    @Composable
+    fun OtpInput(
+        submitOtpVerificationRequest: suspend (String, String, OtpVerificationMethod) -> Boolean
     ) {
-        OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("Username") },
-        )
+        var otp by remember { mutableStateOf("") }
+        val scope = rememberCoroutineScope()
+        var loading by remember { mutableStateOf(false) }
 
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = Password),
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(content = {
-            Button(
-                onClick = {
-                    loading = true
-                    scope.launch { loading = login(username, password) }
-                },
-                modifier = Modifier.width(150.dp),
+        if (loading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
             ) {
-                Text(text = "Login")
+                Column(modifier = Modifier.align(Center)) {
+                    CircularProgressIndicator()
+                }
             }
-        }
-        )
-    }
-}
-
-@Composable
-fun LoginTheme(composable: @Composable () -> Unit) {
-    val dynamicColors = SDK_INT >= S
-    val isDarkTheme = isSystemInDarkTheme()
-    val colorScheme = when {
-        dynamicColors && isDarkTheme -> {
-            dynamicDarkColorScheme(LocalContext.current)
+        } else {
+            Spacer(modifier = Modifier.height(100.dp))
         }
 
-        dynamicColors && !isDarkTheme -> {
-            dynamicLightColorScheme(LocalContext.current)
+        Column(
+            horizontalAlignment = CenterHorizontally,
+            verticalArrangement = SpaceAround,
+            modifier = Modifier
+                .padding(all = 16.dp)
+                .fillMaxWidth(),
+        ) {
+            OutlinedTextField(
+                value = otp,
+                onValueChange = { otp = it },
+                label = { Text("One-Time-Password") },
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(content = {
+                Button(
+                    onClick = {
+                        loading = true
+                        scope.launch {
+                            CoroutineScope(IO).launch IO@{
+                                submitOtpVerificationRequest(
+                                    otp,
+                                    viewModel.otpIdentifier.value ?: return@IO,
+                                    viewModel.otpVerificationMethod.value
+                                )
+                                loading = false
+                            }
+                        }
+                    }
+                ) {
+                    Text(text = "Log In Using One Time Password")
+                }
+            }
+            )
+        }
+    }
+
+    @Composable
+    fun UserNamePasswordInput(
+        login: suspend (String, String) -> Boolean
+    ) {
+        var username by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
+        val scope = rememberCoroutineScope()
+        var loading by remember { mutableStateOf(false) }
+
+        if (loading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+            ) {
+                Column(modifier = Modifier.align(Center)) {
+                    CircularProgressIndicator()
+                }
+            }
+        } else {
+            Spacer(modifier = Modifier.height(100.dp))
         }
 
-        !dynamicColors && isDarkTheme -> {
-            darkColorScheme()
+        Column(
+            horizontalAlignment = CenterHorizontally,
+            verticalArrangement = SpaceAround,
+            modifier = Modifier
+                .padding(all = 16.dp)
+                .fillMaxWidth(),
+        ) {
+            OutlinedTextField(
+                value = username,
+                onValueChange = { username = it },
+                label = { Text("Username") },
+            )
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Password") },
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = Password),
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(content = {
+                Button(
+                    onClick = {
+                        loading = true
+                        scope.launch { loading = login(username, password) }
+                    },
+                    modifier = Modifier.width(150.dp),
+                ) {
+                    Text(text = "Login")
+                }
+            }
+            )
+        }
+    }
+
+    @Composable
+    fun LoginTheme(composable: @Composable () -> Unit) {
+        val dynamicColors = SDK_INT >= S
+        val isDarkTheme = isSystemInDarkTheme()
+        val colorScheme = when {
+            dynamicColors && isDarkTheme -> {
+                dynamicDarkColorScheme(LocalContext.current)
+            }
+
+            dynamicColors && !isDarkTheme -> {
+                dynamicLightColorScheme(LocalContext.current)
+            }
+
+            !dynamicColors && isDarkTheme -> {
+                darkColorScheme()
+            }
+
+            else -> lightColorScheme()
         }
 
-        else -> lightColorScheme()
+        MaterialTheme(colorScheme = colorScheme, content = composable)
     }
 
-    MaterialTheme(colorScheme = colorScheme, content = composable)
-}
-
-@Preview
-@Composable
-fun LoginPreview() {
-    Column {
-        LoginView(
-            login = { _, _ -> run { return@LoginView true } },
-            submitOtpDeliveryRequest = { _, _ -> null },
-            loginViaOtpVerificationRequest = { _, _ -> false },
-            shouldShowBack = true,
-            backAction = {}
-        )
+    @Preview
+    @Composable
+    fun LoginPreview() {
+        Column {
+            LoginView(
+                login = { _, _ -> run { return@LoginView true } },
+                submitOtpDeliveryRequest = { _, _ -> null },
+                loginViaOtpVerificationRequest = { _, _, _ -> false },
+                shouldShowBack = true,
+                backAction = {}
+            )
+        }
     }
-}
 
-@Preview
-@Composable
-fun LoginViewUsernameAndOtpVerificationMethodPreview() {
-    Column {
-        LoginView(
-            login = { _, _ -> run { return@LoginView true } },
-            submitOtpDeliveryRequest = { _, _ -> null },
-            loginViaOtpVerificationRequest = { _, _ -> false },
-            shouldShowBack = true,
-            backAction = {},
-            identityFlowLayoutType = InitializePasswordLessLoginViaOtp
-        )
+    @Preview
+    @Composable
+    fun LoginViewInitializePasswordLessLoginViaOtpPreview() {
+        Column {
+            LoginView(
+                login = { _, _ -> run { return@LoginView true } },
+                submitOtpDeliveryRequest = { _, _ -> null },
+                loginViaOtpVerificationRequest = { _, _, _ -> false },
+                shouldShowBack = true,
+                backAction = {},
+                identityFlowLayoutType = InitializePasswordLessLoginViaOtp
+            )
+        }
     }
-}
 
-@Preview
-@Composable
-fun LoginViewOtpPreview() {
-    Column {
-        LoginView(
-            login = { _, _ -> run { return@LoginView true } },
-            submitOtpDeliveryRequest = { _, _ -> null },
-            loginViaOtpVerificationRequest = { _, _ -> false },
-            shouldShowBack = true,
-            backAction = {},
-            identityFlowLayoutType = LoginViaUsernameAndOtp
-        )
+    @Preview
+    @Composable
+    fun LoginViewLoginViaUsernameAndOtpPreview() {
+        Column {
+            LoginView(
+                login = { _, _ -> run { return@LoginView true } },
+                submitOtpDeliveryRequest = { _, _ -> null },
+                loginViaOtpVerificationRequest = { _, _, _ -> false },
+                shouldShowBack = true,
+                backAction = {},
+                identityFlowLayoutType = LoginViaUsernameAndOtp
+            )
+        }
     }
 }
