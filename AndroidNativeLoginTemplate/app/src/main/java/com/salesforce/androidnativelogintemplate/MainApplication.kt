@@ -53,9 +53,9 @@ class MainApplication : Application() {
          * Fill in the values below from the connected app that was created for Native Login and
          * the url of your Experience Cloud community.
          */
-        val clientId = "3MVG9CEn_O3jvv0wTqRT0Le6tmzX.EQ9ZvtHL1TG3gHFV.4IvKZyXw5SgdiVPi61mXrpu40mCOhKevEfYNMOm"
-        val redirectUri = "https://msdk-enhanced-dev-ed.my.site.com/services/oauth2/echo"
-        val loginUrl = "https://msdk-enhanced-dev-ed.my.site.com/headless"
+        val clientId = "your-client-id"
+        val redirectUri = "your-redirect-uri"
+        val loginUrl = "your-community-url"
 
         check(clientId != "your-client-id") { "Please add your Native Login client id." }
         check(redirectUri != "your-redirect-uri") { "Please add your Native Login redirect uri." }
@@ -70,10 +70,8 @@ class MainApplication : Application() {
         // Google Cloud Project Id to nil along with a false value for the
         // enterprise parameter.
         //
-        // TODO: Revert this change to enable the assertions. ECJ20240314
-        //
-        val reCaptchaSiteKeyId = "6Ld_OqQpAAAAAGbdINbQquAYCGoy0g6Kv_VQZLvC"
-        val googleCloudProjectId = "mobile-apps-team-sfdc"
+        val reCaptchaSiteKeyId = "your-recaptcha-site-key-id"
+        val googleCloudProjectId = "your-google-cloud-project-id"
         val isReCaptchaEnterprise = true
 
         check(clientId != "your-recaptcha-site-key-id") { "Please add your Google Cloud reCAPTCHA Site Key Id." }
