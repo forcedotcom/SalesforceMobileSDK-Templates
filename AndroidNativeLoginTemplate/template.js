@@ -48,6 +48,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var templateMainActivityFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativelogintemplate', 'MainActivity.kt');
     var templateMainApplicationFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativelogintemplate', 'MainApplication.kt');
     var templateNativeLoginFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativelogintemplate', 'NativeLogin.kt');
+    var templateNativeLoginViewModelFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativelogintemplate', 'NativeLoginViewModel.kt');
 
     //
     // Replace in files
@@ -57,7 +58,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     replaceInFiles(templateAppName, config.appname, [templatePackageJsonFile, templateSettingsGradle, templateStringsXmlFile]);
 
     // package name
-    replaceInFiles(templatePackageName, config.packagename, [templateBuildGradleFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile, templateNativeLoginFile]);
+    replaceInFiles(templatePackageName, config.packagename, [templateBuildGradleFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile, templateNativeLoginFile, templateNativeLoginViewModelFile]);
     
     //
     // Rename/move files
@@ -65,13 +66,16 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var tmpPathActivityFile = path.join('app', 'src', 'MainActivity.kt');
     var tmpPathApplicationFile = path.join('app', 'src', 'MainApplication.kt');
     var tmpPathNativeLoginFile = path.join('app', 'src', 'NativeLogin.kt')
+    var tmpPathNativeLoginViewModelFile = path.join('app', 'src', 'NativeLoginViewModel.kt')
     moveFile(templateMainActivityFile, tmpPathActivityFile);
     moveFile(templateMainApplicationFile, tmpPathApplicationFile);
     moveFile(templateNativeLoginFile, tmpPathNativeLoginFile);
+    moveFile(templateNativeLoginViewModelFile, tmpPathNativeLoginViewModelFile);
     removeFile(path.join('app', 'src', 'main', 'java', 'com'));
     moveFile(tmpPathActivityFile, path.join.apply(null, ['app', 'src', 'main', 'java'].concat(config.packagename.split('.')).concat(['MainActivity.kt'])));
     moveFile(tmpPathApplicationFile, path.join.apply(null, ['app', 'src', 'main', 'java'].concat(config.packagename.split('.')).concat(['MainApplication.kt'])));
     moveFile(tmpPathNativeLoginFile, path.join.apply(null, ['app', 'src', 'main', 'java'].concat(config.packagename.split('.')).concat(['NativeLogin.kt'])));
+    moveFile(tmpPathNativeLoginViewModelFile, path.join.apply(null, ['app', 'src', 'main', 'java'].concat(config.packagename.split('.')).concat(['NativeLoginViewModel.kt'])));
 
     //
     // Run install.js
