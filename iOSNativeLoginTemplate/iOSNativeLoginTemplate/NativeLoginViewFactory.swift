@@ -53,8 +53,6 @@ class NativeLoginTemplateHostingController<Content>: UIHostingController<Content
         // navigation bar that is redundant with the SwiftUI navigation in the
         // template app, so hide it.
         //
-        // TODO: See if this should be resolved in SFMSDK. ECJ20240516
-        //
         navigationController.setNavigationBarHidden(true, animated: true)
     }
 }
