@@ -436,6 +436,7 @@ class NativeLogin : ComponentActivity() {
                                 }
                             }
                         }
+                        Spacer(modifier = Modifier.height(25.dp))
                     }
                 }
             }
