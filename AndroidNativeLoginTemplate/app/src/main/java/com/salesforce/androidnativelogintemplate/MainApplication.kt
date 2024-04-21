@@ -65,6 +65,8 @@ class MainApplication : Application() {
         MobileSyncSDKManager.getInstance().useNativeLogin(clientId, redirectUri, loginUrl)
 
         /*
+         * To setup Password-less login:
+         *
          * Un-comment the code block below and fill in the values from the
          * the Google Cloud project reCAPTCHA settings.  Note that only enterprise
          * reCAPTCHA requires the reCAPTCHA Site Key Id and Google Cloud Project Id.
