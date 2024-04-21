@@ -87,21 +87,21 @@ struct NativeLoginView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(.gray.opacity(0.25))
-                    .frame(width: 300, height: 470)
+                    .frame(width: 300, height: 500)
                     .padding(.top, 0)
                 
                 VStack {
                     Image(.msdkPhone)
                         .resizable()
                         .frame(width: 150, height: 150)
-                        .padding(.bottom, 50)
+                        .padding(.bottom, 20)
                         .shadow(color: .black, radius: 3)
                         .blur(radius: 0.0)
                     
                     if isAuthenticating {
                         ProgressView()
                     } else {
-                        Spacer().frame(width: 20, height: 20)
+                        Spacer().frame(height: 35)
                     }
                     
                     if !errorMessage.isEmpty {
@@ -123,7 +123,7 @@ struct NativeLoginView: View {
                             .buttonStyle(.borderless)
                             .autocapitalization(.none)
                             .frame(maxWidth: 250)
-                            .padding(.top, 25)
+                            .padding(.top)
                             .zIndex(2.0)
                         
                         SecureField("Password", text: $password)
@@ -171,8 +171,9 @@ struct NativeLoginView: View {
                             }.frame(minWidth: 150)
                         }
                         .buttonStyle(.bordered)
-                        .tint(.blue)
+                        .tint(colorScheme == .dark ? .white : .blue)
                         .zIndex(2.0)
+                        .padding(.bottom, 25)
                         
                         Button {
                             identityFlowLayoutType = .InitializePasswordLessLoginViaOtp
@@ -180,7 +181,7 @@ struct NativeLoginView: View {
                             Text("Use One Time Password Instead").frame(minWidth: 150)
                         }
                         .buttonStyle(.bordered)
-                        .tint(.blue)
+                        .tint(colorScheme == .dark ? .white : .blue)
                         .zIndex(2.0)
                         
                     case .InitializePasswordLessLoginViaOtp:
@@ -213,7 +214,7 @@ struct NativeLoginView: View {
                             }.frame(minWidth: 150)
                         }
                         .buttonStyle(.bordered)
-                        .tint(.blue)
+                        .tint(colorScheme == .dark ? .white : .blue)
                         .zIndex(2.0)
                         
                         Button {
@@ -246,7 +247,7 @@ struct NativeLoginView: View {
                             }.frame(minWidth: 150)
                         }
                         .buttonStyle(.bordered)
-                        .tint(.blue)
+                        .tint(colorScheme == .dark ? .white : .blue)
                         .zIndex(2.0)
                         
                         Button {
@@ -266,7 +267,7 @@ struct NativeLoginView: View {
             // Fallback to webview based authentication.
             Button("Looking for Salesforce Log In?") {
                 SalesforceManager.shared.nativeLoginManager().fallbackToWebAuthentication()
-            }
+            }.tint(colorScheme == .dark ? .white : .blue)
         }.background(Gradient(colors: [.blue, .cyan, .green]).opacity(0.6))
             .blur(radius: isAuthenticating ? 2.0 : 0.0)
     }
