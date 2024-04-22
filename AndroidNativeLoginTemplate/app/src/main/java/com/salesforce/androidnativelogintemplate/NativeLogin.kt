@@ -84,25 +84,29 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.input.KeyboardType.Companion.Password
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.salesforce.androidnativelogintemplate.MainApplication.Companion.executeLoginAction
-import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType
-import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.InitializePasswordLessLoginViaOtp
-import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.LoginViaUsernameAndOtp
-import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.LoginViaUsernamePassword
-import com.salesforce.androidnativelogintemplate.R.drawable.radio_button_checked_24px
-import com.salesforce.androidnativelogintemplate.R.drawable.radio_button_unchecked_24px
-import com.salesforce.androidnativelogintemplate.R.drawable.sf__salesforce_logo
+import com.salesforce.androidnativelogin.MainApplication.Companion.executeLoginAction
+import com.salesforce.androidnativelogin.NativeLoginViewModel.IdentityFlowLayoutType
+import com.salesforce.androidnativelogin.NativeLoginViewModel.IdentityFlowLayoutType.InitializePasswordLessLoginViaOtp
+import com.salesforce.androidnativelogin.NativeLoginViewModel.IdentityFlowLayoutType.LoginViaUsernameAndOtp
+import com.salesforce.androidnativelogin.NativeLoginViewModel.IdentityFlowLayoutType.LoginViaUsernamePassword
+import com.salesforce.androidnativelogin.R.drawable.radio_button_checked_24px
+import com.salesforce.androidnativelogin.R.drawable.radio_button_unchecked_24px
+import com.salesforce.androidnativelogin.R.drawable.sf__salesforce_logo
 import com.salesforce.androidsdk.R.drawable.sf__action_back
 import com.salesforce.androidsdk.app.SalesforceSDKManager
 import com.salesforce.androidsdk.auth.interfaces.NativeLoginManager
@@ -326,11 +330,12 @@ class NativeLogin : ComponentActivity() {
      * layout type.  Defaults to null and the view model value is used.  This is
      * intended for preview support
      */
+    @OptIn(ExperimentalComposeUiApi::class)
     @Composable
     fun LoginView(
         login: suspend (String, String) -> Boolean,
         handleWebviewFallbackResult: ActivityResultLauncher<Intent>? = null,
-        webviewLoginIntent: Intent? = null,
+        webviewLoginIntent: Intent,
         shouldShowBack: Boolean = false,
         backAction: () -> Unit,
         identityFlowLayoutType: IdentityFlowLayoutType? = null
@@ -343,6 +348,10 @@ class NativeLogin : ComponentActivity() {
 
         LoginTheme {
             Scaffold(
+                modifier = Modifier.semantics {
+                    // Only needed for UI Testing
+                    testTagsAsResourceId = true
+                },
                 topBar = {
                     Row(modifier = Modifier.statusBarsPadding()) {
 
@@ -436,6 +445,7 @@ class NativeLogin : ComponentActivity() {
                                 }
                             }
                         }
+                        Spacer(modifier = Modifier.height(25.dp))
                     }
                 }
             }
@@ -624,6 +634,7 @@ class NativeLogin : ComponentActivity() {
                 value = username,
                 onValueChange = { username = it },
                 label = { Text("Username") },
+                modifier = Modifier.testTag("username"),
             )
 
             OutlinedTextField(
@@ -632,6 +643,7 @@ class NativeLogin : ComponentActivity() {
                 label = { Text("Password") },
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = Password),
+                modifier = Modifier.testTag("password"),
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -642,7 +654,7 @@ class NativeLogin : ComponentActivity() {
                         loading = true
                         scope.launch { loading = login(username, password) }
                     },
-                    modifier = Modifier.width(150.dp),
+                    modifier = Modifier.width(150.dp).testTag("Login"),
                 ) {
                     Text(text = "Login")
                 }
@@ -680,6 +692,7 @@ class NativeLogin : ComponentActivity() {
         Column {
             LoginView(
                 login = { _, _ -> run { return@LoginView true } },
+                webviewLoginIntent = Intent(),
                 shouldShowBack = true,
                 backAction = {}
             )
@@ -692,6 +705,7 @@ class NativeLogin : ComponentActivity() {
         Column {
             LoginView(
                 login = { _, _ -> run { return@LoginView true } },
+                webviewLoginIntent = Intent(),
                 shouldShowBack = true,
                 backAction = {},
                 identityFlowLayoutType = InitializePasswordLessLoginViaOtp
@@ -705,6 +719,7 @@ class NativeLogin : ComponentActivity() {
         Column {
             LoginView(
                 login = { _, _ -> run { return@LoginView true } },
+                webviewLoginIntent = Intent(),
                 shouldShowBack = true,
                 backAction = {},
                 identityFlowLayoutType = LoginViaUsernameAndOtp

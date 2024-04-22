@@ -53,38 +53,50 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         assert(redirectUri != "your-redirect-uri", "Please add your Native Login redirect uri.")
         assert(loginUrl != "your-community-url", "Please add your Native Login community url.")
         
+        // Used to create a View Controller from SwiftUI.
+        let nativeLoginViewController = NativeLoginViewFactory.create()
+        
+        // This line tells the SDK the app intends to use Native Login.
+        SalesforceManager.shared.useNativeLogin(withConsumerKey: clientId,
+                                                callbackUrl: redirectUri,
+                                                communityUrl: loginUrl,
+                                                nativeLoginViewController: nativeLoginViewController,
+                                                scene:scene)
+        
         //
-        // Fill in the values below from the Google Cloud project reCAPTCA
-        // settings.  Note that only enterprise reCAPTCHA requires the reCAPTCHA
+        // To setup Password-less login:
+        //
+        // Un-comment the code block below and fill in the values from the Google Cloud project
+        // reCAPTCA settings.  Note that only enterprise reCAPTCHA requires the reCAPTCHA
         // Site Key Id and Google Cloud Project Id.
         //
         // When using non-enterprise reCAPTCHA, set reCAPTCHA Site Key Id and
         // Google Cloud Project Id to nil along with a false value for the
         // enterprise parameter.
         //
-        let reCaptchaSiteKeyId = "your-recaptcha-site-key-id"
-        let googleCloudProjectId = "your-google-cloud-project-id"
-        let isReCaptchaEnterprise = true
-        
-        assert(clientId != "your-recaptcha-site-key-id", "Please add your Google Cloud reCAPTCHA Site Key Id.")
-        assert(redirectUri != "your-google-cloud-project-id", "Please add your Google Cloud Project Id.")
-        
-        let recaptchaClientObservable = ReCaptchaClientObservable(reCaptchaSiteKey: reCaptchaSiteKeyId)
-        self.recaptchaClientObservable = recaptchaClientObservable
-        
-        // Used to create a View Controller from SwiftUI.
-        let nativeLoginViewController = NativeLoginViewFactory.create(
-            reCaptchaClientObservable: recaptchaClientObservable)
-
-        // This line tells the SDK the app intends to use Native Login.
-        SalesforceManager.shared.useNativeLogin(withConsumerKey: clientId,
-                                                callbackUrl: redirectUri,
-                                                communityUrl: loginUrl,
-                                                reCaptchaSiteKeyId: reCaptchaSiteKeyId,
-                                                googleCloudProjectId: googleCloudProjectId,
-                                                isReCaptchaEnterprise: isReCaptchaEnterprise,
-                                                nativeLoginViewController: nativeLoginViewController,
-                                                scene:scene)
+//        let reCaptchaSiteKeyId = "your-recaptcha-site-key-id"
+//        let googleCloudProjectId = "your-google-cloud-project-id"
+//        let isReCaptchaEnterprise = true
+//
+//        assert(reCaptchaSiteKeyId != "your-recaptcha-site-key-id", "Please add your Google Cloud reCAPTCHA Site Key Id.")
+//        assert(googleCloudProjectId != "your-google-cloud-project-id", "Please add your Google Cloud Project Id.")
+//
+//        let recaptchaClientObservable = ReCaptchaClientObservable(reCaptchaSiteKey: reCaptchaSiteKeyId)
+//        self.recaptchaClientObservable = recaptchaClientObservable
+//
+//        // Used to create a View Controller from SwiftUI.
+//        let nativeLoginViewController = NativeLoginViewFactory.create(
+//            reCaptchaClientObservable: recaptchaClientObservable)
+//
+//        // This line tells the SDK the app intends to use Password-less Native Login.
+//        SalesforceManager.shared.useNativeLogin(withConsumerKey: clientId,
+//                                                callbackUrl: redirectUri,
+//                                                communityUrl: loginUrl,
+//                                                reCaptchaSiteKeyId: reCaptchaSiteKeyId,
+//                                                googleCloudProjectId: googleCloudProjectId,
+//                                                isReCaptchaEnterprise: isReCaptchaEnterprise,
+//                                                nativeLoginViewController: nativeLoginViewController,
+//                                                scene:scene)
         
         AuthHelper.registerBlock(forCurrentUserChangeNotifications: {
             self.resetViewState {
