@@ -79,8 +79,8 @@ class MainApplication : Application() {
 //        val googleCloudProjectId = "your-google-cloud-project-id"
 //        val isReCaptchaEnterprise = true
 //
-//        check(clientId != "your-recaptcha-site-key-id") { "Please add your Google Cloud reCAPTCHA Site Key Id." }
-//        check(redirectUri != "your-google-cloud-project-id") { "Please add your Google Cloud Project Id." }
+//        check(reCaptchaSiteKeyId != "your-recaptcha-site-key-id") { "Please add your Google Cloud reCAPTCHA Site Key Id." }
+//        check(googleCloudProjectId != "your-google-cloud-project-id") { "Please add your Google Cloud Project Id." }
 //
 //        initializeRecaptchaClient(
 //            application = this,
