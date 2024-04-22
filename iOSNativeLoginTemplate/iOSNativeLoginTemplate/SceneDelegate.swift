@@ -78,8 +78,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        let googleCloudProjectId = "your-google-cloud-project-id"
 //        let isReCaptchaEnterprise = true
 //
-//        assert(clientId != "your-recaptcha-site-key-id", "Please add your Google Cloud reCAPTCHA Site Key Id.")
-//        assert(redirectUri != "your-google-cloud-project-id", "Please add your Google Cloud Project Id.")
+//        assert(reCaptchaSiteKeyId != "your-recaptcha-site-key-id", "Please add your Google Cloud reCAPTCHA Site Key Id.")
+//        assert(googleCloudProjectId != "your-google-cloud-project-id", "Please add your Google Cloud Project Id.")
 //
 //        let recaptchaClientObservable = ReCaptchaClientObservable(reCaptchaSiteKey: reCaptchaSiteKeyId)
 //        self.recaptchaClientObservable = recaptchaClientObservable
