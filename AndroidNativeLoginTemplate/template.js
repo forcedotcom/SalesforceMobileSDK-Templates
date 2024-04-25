@@ -37,7 +37,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
 
     // Values in template
     var templateAppName = 'AndroidNativeLoginTemplate';
-    var templatePackageName = 'com.salesforce.androidnativelogintemplate';
+    var templatePackageName = 'com.salesforce.androidnativelogin';
 
     // Key files
     var templatePackageJsonFile = 'package.json';
@@ -45,10 +45,10 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var templateBuildGradleFile = path.join('app', 'build.gradle.kts');
     var templateStringsXmlFile = path.join('app', 'src', 'main', 'res', 'values', 'strings.xml');
     var templateBootconfigFile = path.join('app', 'src', 'main', 'res', 'values', 'bootconfig.xml');
-    var templateMainActivityFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativelogintemplate', 'MainActivity.kt');
-    var templateMainApplicationFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativelogintemplate', 'MainApplication.kt');
-    var templateNativeLoginFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativelogintemplate', 'NativeLogin.kt');
-    var templateNativeLoginViewModelFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativelogintemplate', 'NativeLoginViewModel.kt');
+    var templateMainActivityFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativelogin', 'MainActivity.kt');
+    var templateMainApplicationFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativelogin', 'MainApplication.kt');
+    var templateNativeLoginFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativelogin', 'NativeLogin.kt');
+    var templateNativeLoginViewModelFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativelogin', 'NativeLoginViewModel.kt');
 
     //
     // Replace in files
@@ -59,7 +59,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
 
     // package name
     replaceInFiles(templatePackageName, config.packagename, [templateBuildGradleFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile, templateNativeLoginFile, templateNativeLoginViewModelFile]);
-    
+
     //
     // Rename/move files
     //
