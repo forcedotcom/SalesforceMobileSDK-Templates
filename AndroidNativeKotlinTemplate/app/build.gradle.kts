@@ -6,17 +6,17 @@ plugins {
 }
 
 dependencies {
-    implementation("com.salesforce.mobilesdk:MobileSync:11.1.0")
+    implementation("com.salesforce.mobilesdk:MobileSync:12.0.0")
 }
 
 android {
     namespace = "com.salesforce.androidnativekotlintemplate"
 
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
-        minSdk = 24
-        targetSdk = 33
+        targetSdk = 34
+        minSdk = 26
     }
 
     buildTypes {
@@ -25,26 +25,24 @@ android {
         }
     }
 
-    sourceSets {
-
-        getByName("main") {
-            manifest.srcFile("AndroidManifest.xml")
-            java.srcDirs(arrayOf("src"))
-            resources.srcDirs(arrayOf("src"))
-            aidl.srcDirs(arrayOf("src"))
-            renderscript.srcDirs(arrayOf("src"))
-            res.srcDirs(arrayOf("res"))
-            assets.srcDirs(arrayOf("assets"))
-        }
-    }
-    packagingOptions {
+    packaging {
         resources {
             excludes += setOf("META-INF/LICENSE", "META-INF/LICENSE.txt", "META-INF/DEPENDENCIES", "META-INF/NOTICE")
         }
+    }
+
+    buildFeatures {
+        renderScript = true
+        aidl = true
+        buildConfig = true
     }
 }
 
 repositories {
     google()
     mavenCentral()
+}
+
+kotlin {
+    jvmToolchain(17)
 }

@@ -47,9 +47,9 @@ interface Record {
 
 interface Props {
 }
-  
+
 interface State {
-    data : Record[] 
+    data : Record[]
 }
 
 class ContactListScreen extends React.Component<Props, State> {
@@ -57,7 +57,7 @@ class ContactListScreen extends React.Component<Props, State> {
         super(props);
         this.state = {data: []};
     }
-    
+
     componentDidMount() {
         var that = this;
         oauth.getAuthCredentials(
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
 
 const Stack = createStackNavigator();
 
-export const App = function() {
+function App(): JSX.Element {
     return (
         <NavigationContainer>
           <Stack.Navigator>
@@ -115,3 +115,5 @@ export const App = function() {
         </NavigationContainer>
     );
 }
+
+export default App;

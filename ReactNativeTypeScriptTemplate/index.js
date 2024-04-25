@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-present, salesforce.com, inc.
+ * Copyright (c) 2023-present, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -25,7 +25,7 @@
  */
 
 import { AppRegistry } from 'react-native';
-import { App } from './app.tsx';
+import App from './app.tsx';
 
 
 AppRegistry.registerComponent('ReactNativeTypeScriptTemplate', () => App);
