@@ -101,11 +101,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.salesforce.androidnativelogintemplate.MainApplication.Companion.executeLoginAction
 import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType
+import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.CompletePasswordLessLogin
 import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.CompletePasswordReset
+import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.Login
 import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.StartPasswordLessLogin
 import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.StartPasswordReset
-import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.CompletePasswordLessLogin
-import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.Login
 import com.salesforce.androidnativelogintemplate.R.drawable.radio_button_checked_24px
 import com.salesforce.androidnativelogintemplate.R.drawable.radio_button_unchecked_24px
 import com.salesforce.androidnativelogintemplate.R.drawable.sf__salesforce_logo
@@ -348,7 +348,7 @@ class NativeLogin : ComponentActivity() {
         }
 
         // Submit the start password-less login request and respond to the result.
-        val startPasswordLessLoginResult = nativeLoginManager.startPasswordLessAuthorization(
+        val startPasswordLessLoginResult = nativeLoginManager.submitOtpRequest(
             username = username,
             reCaptchaToken = reCaptchaToken ?: return null,
             otpVerificationMethod = otpVerificationMethod
@@ -398,7 +398,7 @@ class NativeLogin : ComponentActivity() {
     ): Boolean {
 
         // Submit the complete password-less login request and respond to the result.
-        val completePasswordLessLoginResult = nativeLoginManager.completePasswordLessAuthorization(
+        val completePasswordLessLoginResult = nativeLoginManager.submitPasswordlessAuthorizationRequest(
             otp = otp,
             otpIdentifier = otpIdentifier,
             otpVerificationMethod = otpVerificationMethod
