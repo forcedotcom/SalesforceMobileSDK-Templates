@@ -101,15 +101,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.salesforce.androidnativelogintemplate.MainApplication.Companion.executeLoginAction
 import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType
-import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.InitializePasswordLessLoginViaOtp
-import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.LoginViaUsernameAndOtp
-import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.LoginViaUsernamePassword
+import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.CompletePasswordLessLogin
+import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.CompletePasswordReset
+import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.Login
+import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.StartPasswordLessLogin
+import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.StartPasswordReset
 import com.salesforce.androidnativelogintemplate.R.drawable.radio_button_checked_24px
 import com.salesforce.androidnativelogintemplate.R.drawable.radio_button_unchecked_24px
 import com.salesforce.androidnativelogintemplate.R.drawable.sf__salesforce_logo
 import com.salesforce.androidsdk.R.drawable.sf__action_back
 import com.salesforce.androidsdk.app.SalesforceSDKManager
 import com.salesforce.androidsdk.auth.interfaces.NativeLoginManager
+import com.salesforce.androidsdk.auth.interfaces.NativeLoginResult
 import com.salesforce.androidsdk.auth.interfaces.NativeLoginResult.InvalidCredentials
 import com.salesforce.androidsdk.auth.interfaces.NativeLoginResult.InvalidPassword
 import com.salesforce.androidsdk.auth.interfaces.NativeLoginResult.InvalidUsername
@@ -151,7 +154,8 @@ class NativeLogin : ComponentActivity() {
                     // If we don't SalesforceSDKManager.getInstance() will complain it has not be setup.
                     LoginView(
                         // Pass this inline login function to be executed within the composable.
-                        login = { username, password -> Boolean
+                        login = { username, password ->
+                            Boolean
                             // Call login and handle results.
                             when (val result = nativeLoginManager.login(username, password)) {
                                 InvalidUsername -> {
@@ -205,19 +209,14 @@ class NativeLogin : ComponentActivity() {
     }
 
     /**
-     * Submits a one-time-password delivery request to the Salesforce Identity
-     * API initialize headless login endpoint.
+     * Submits a start password reset request to the Salesforce Identity
+     * API forgot password endpoint.
      * @param username The user-entered username
-     * @param otpVerificationMethod The user-selected OTP verification method
-     * the OTP will be delivered to
-     * @return The OTP identifier provided by the Salesforce Identity API or
-     * null if one could not be obtained.  A toast will already have been shown
-     * if null is returned.
+     * @return A native login result
      */
-    private suspend fun submitOtpDeliveryRequest(
-        username: String,
-        otpVerificationMethod: OtpVerificationMethod
-    ): String? {
+    private suspend fun submitStartPasswordResetDeliveryRequest(
+        username: String
+    ): NativeLoginResult? {
 
         // Obtain a new login action reCAPTCHA token.
         var reCaptchaToken: String? = null
@@ -236,13 +235,12 @@ class NativeLogin : ComponentActivity() {
             }.join()
         }
 
-        // Submit the OTP delivery request and respond to the result.
-        val otpRequestResult = nativeLoginManager.submitOtpRequest(
+        // Submit the start password reset request and respond to the result.
+        val startPasswordResetResult = nativeLoginManager.startPasswordReset(
             username = username,
-            reCaptchaToken = reCaptchaToken ?: return null,
-            otpVerificationMethod = otpVerificationMethod
+            reCaptchaToken = reCaptchaToken ?: return null
         )
-        when (otpRequestResult.nativeLoginResult) {
+        when (startPasswordResetResult) {
             InvalidUsername -> {
                 runOnUiThread { Toast.makeText(baseContext, "Invalid user name.", LENGTH_LONG).show() }
                 return null
@@ -264,14 +262,127 @@ class NativeLogin : ComponentActivity() {
             }
 
             Success -> {
-                return otpRequestResult.otpIdentifier
+                return startPasswordResetResult
             }
         }
     }
 
     /**
-     * Submits a login via one-time-password verification request to the
-     * Salesforce Identity API authorization and token endpoints.
+     * Submits a complete password reset request to the Salesforce Identity
+     * API forgot password endpoint.
+     * @param username The Salesforce username
+     * @param otp The user-entered one-time-password previously delivered to the
+     * user by the Salesforce Identity API forgot password endpoint
+     * @param newPassword The user-entered new password
+     * @return A native login result
+     */
+    private suspend fun submitCompletePasswordPasswordRequest(
+        username: String,
+        otp: String,
+        newPassword: String
+    ): NativeLoginResult? {
+
+        // Submit the complete password reset request and respond to the result.
+        val completePasswordResetResult = nativeLoginManager.completePasswordReset(
+            username = username,
+            otp = otp,
+            newPassword = newPassword
+        )
+        when (completePasswordResetResult) {
+            InvalidUsername -> {
+                runOnUiThread { Toast.makeText(baseContext, "Invalid user name.", LENGTH_LONG).show() }
+                return null
+            }
+
+            InvalidPassword -> {
+                runOnUiThread { Toast.makeText(baseContext, "Invalid password", LENGTH_LONG).show() }
+                return null
+            }
+
+            InvalidCredentials -> {
+                runOnUiThread { Toast.makeText(baseContext, "Invalid credentials.", LENGTH_LONG).show() }
+                return null
+            }
+
+            UnknownError -> {
+                runOnUiThread { Toast.makeText(baseContext, "An error occurred.", LENGTH_LONG).show() }
+                return null
+            }
+
+            Success -> {
+                return completePasswordResetResult
+            }
+        }
+    }
+
+    /**
+     * Submits a start password-less login request to the Salesforce Identity
+     * API initialize headless login endpoint.
+     * @param username The user-entered username
+     * @param otpVerificationMethod The user-selected OTP verification method
+     * the OTP will be delivered to
+     * @return The OTP identifier provided by the Salesforce Identity API or
+     * null if one could not be obtained.  A toast will already have been shown
+     * if null is returned.
+     */
+    private suspend fun submitStartPasswordLessLoginRequest(
+        username: String,
+        otpVerificationMethod: OtpVerificationMethod
+    ): String? {
+
+        // Obtain a new login action reCAPTCHA token.
+        var reCaptchaToken: String? = null
+        runBlocking {
+            executeLoginAction { reCaptchaTokenNew ->
+                when {
+                    reCaptchaTokenNew != null -> reCaptchaToken = reCaptchaTokenNew
+                    else -> runOnUiThread {
+                        Toast.makeText(
+                            baseContext,
+                            "A reCAPTCHA login action token could not be obtained.  Try again.",
+                            LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }.join()
+        }
+
+        // Submit the start password-less login request and respond to the result.
+        val startPasswordLessLoginResult = nativeLoginManager.submitOtpRequest(
+            username = username,
+            reCaptchaToken = reCaptchaToken ?: return null,
+            otpVerificationMethod = otpVerificationMethod
+        )
+        when (startPasswordLessLoginResult.nativeLoginResult) {
+            InvalidUsername -> {
+                runOnUiThread { Toast.makeText(baseContext, "Invalid user name.", LENGTH_LONG).show() }
+                return null
+            }
+
+            InvalidPassword -> {
+                runOnUiThread { Toast.makeText(baseContext, "Invalid password", LENGTH_LONG).show() }
+                return null
+            }
+
+            InvalidCredentials -> {
+                runOnUiThread { Toast.makeText(baseContext, "Invalid credentials.", LENGTH_LONG).show() }
+                return null
+            }
+
+            UnknownError -> {
+                runOnUiThread { Toast.makeText(baseContext, "An error occurred.", LENGTH_LONG).show() }
+                return null
+            }
+
+            Success -> {
+                return startPasswordLessLoginResult.otpIdentifier
+            }
+        }
+    }
+
+    /**
+     * Submits a complete password-less login request to the Salesforce Identity
+     * API authorization and token endpoints.
      * @param otp The user-entered OTP
      * @param otpIdentifier The OTP identifier provided by the Salesforce
      * Identity API
@@ -280,19 +391,19 @@ class NativeLogin : ComponentActivity() {
      * @return Boolean true if the authorization request is successful - false
      * otherwise
      */
-    private suspend fun submitOtpVerificationRequest(
+    private suspend fun submitCompletePasswordLessLoginRequest(
         otp: String,
         otpIdentifier: String,
         otpVerificationMethod: OtpVerificationMethod
     ): Boolean {
 
-        // Submit the login via OTP verification request and respond to the result.
-        val otpVerificationResult = nativeLoginManager.submitPasswordlessAuthorizationRequest(
+        // Submit the complete password-less login request and respond to the result.
+        val completePasswordLessLoginResult = nativeLoginManager.submitPasswordlessAuthorizationRequest(
             otp = otp,
             otpIdentifier = otpIdentifier,
             otpVerificationMethod = otpVerificationMethod
         )
-        when (otpVerificationResult) {
+        when (completePasswordLessLoginResult) {
             InvalidUsername -> {
                 runOnUiThread { Toast.makeText(baseContext, "Invalid user name.", LENGTH_LONG).show() }
                 return false
@@ -344,7 +455,7 @@ class NativeLogin : ComponentActivity() {
         // The layout type for the user's active identity flow, such as registration, forgot password or login
         val identityFlowLayoutTypeActive = runCatching { // This view model reference is guarded to support previews, which don't have view model access.
             viewModel.identifyFlowlayoutType.value
-        }.getOrNull() ?: identityFlowLayoutType ?: LoginViaUsernamePassword
+        }.getOrNull() ?: identityFlowLayoutType ?: Login
 
         LoginTheme {
             Scaffold(
@@ -410,30 +521,42 @@ class NativeLogin : ComponentActivity() {
 
                         // Switch the layout to match the selected identity flow.
                         when (identityFlowLayoutTypeActive) {
-                            LoginViaUsernamePassword -> UserNamePasswordInput(login)
+                            StartPasswordReset -> StartPasswordResetInput()
 
-                            InitializePasswordLessLoginViaOtp -> UserNameOtpVerificationMethodInput()
+                            CompletePasswordReset -> CompletePasswordResetInput()
 
-                            LoginViaUsernameAndOtp -> OtpInput()
+                            Login -> UserNamePasswordInput(login)
+
+                            StartPasswordLessLogin -> StartPasswordLessLoginInput()
+
+                            CompletePasswordLessLogin -> CompletePasswordLessLoginInput()
                         }
 
                         // Layout navigation buttons between the available identity flow layouts according to the current layout.
                         when (identityFlowLayoutTypeActive) {
-                            LoginViaUsernamePassword -> {
-                                // From the initial login via username and password layout, allow the user to switch to login via username and OTP.
+                            Login -> {
+                                // Allow the user to switch to login via username and OTP.
                                 Button(
                                     onClick = {
-                                        viewModel.identifyFlowlayoutType.value = InitializePasswordLessLoginViaOtp
+                                        viewModel.identifyFlowlayoutType.value = StartPasswordLessLogin
                                     },
                                     modifier = Modifier.align(CenterHorizontally)
                                 ) { Text(text = "Use One Time Password Instead") }
+
+                                // Allow the user to switch to reset password via username and OTP.
+                                Button(
+                                    onClick = {
+                                        viewModel.identifyFlowlayoutType.value = StartPasswordReset
+                                    },
+                                    modifier = Modifier.align(CenterHorizontally)
+                                ) { Text(text = "Reset Password") }
                             }
 
                             else -> {
                                 // From all the other layouts, allow the user to cancel back to the initial username and password layout.
                                 Button(
                                     onClick = {
-                                        viewModel.identifyFlowlayoutType.value = LoginViaUsernamePassword
+                                        viewModel.identifyFlowlayoutType.value = Login
                                     },
                                     colors = buttonColors().copy(
                                         containerColor = LightGray,
@@ -453,7 +576,160 @@ class NativeLogin : ComponentActivity() {
     }
 
     @Composable
-    fun UserNameOtpVerificationMethodInput() {
+    fun StartPasswordResetInput() {
+        var username by remember { mutableStateOf("") }
+        val scope = rememberCoroutineScope()
+        var loading by remember { mutableStateOf(false) }
+
+        if (loading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+            ) {
+                Column(modifier = Modifier.align(Center)) {
+                    CircularProgressIndicator()
+                }
+            }
+        } else {
+            Spacer(modifier = Modifier.height(100.dp))
+        }
+
+        Column(
+            horizontalAlignment = CenterHorizontally,
+            verticalArrangement = SpaceAround,
+            modifier = Modifier
+                .padding(all = 16.dp)
+                .fillMaxWidth(),
+        ) {
+            OutlinedTextField(
+                value = username,
+                onValueChange = {
+                    username = it // TODO: Could username be removed? ECJ20240508
+                    viewModel.usernameForCompletePasswordReset.value = it
+                },
+                label = { Text("Username") },
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(content = {
+                Button(
+                    onClick = {
+                        loading = true
+                        scope.launch {
+                            CoroutineScope(IO).launch {
+                                submitStartPasswordResetDeliveryRequest(
+                                    username
+                                )?.let {
+                                    viewModel.identifyFlowlayoutType.value = CompletePasswordReset
+                                }
+
+                                loading = false
+                            }
+                        }
+                    }
+                ) {
+                    Text(text = "Request One Time Password")
+                }
+            }
+            )
+        }
+    }
+
+    @Composable
+    fun CompletePasswordResetInput() {
+        var otp by remember { mutableStateOf("") }
+        var newPassword by remember { mutableStateOf("") }
+        val scope = rememberCoroutineScope()
+        var loading by remember { mutableStateOf(false) }
+
+        if (loading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+            ) {
+                Column(modifier = Modifier.align(Center)) {
+                    CircularProgressIndicator()
+                }
+            }
+        } else {
+            Spacer(modifier = Modifier.height(100.dp))
+        }
+
+        Column(
+            horizontalAlignment = CenterHorizontally,
+            verticalArrangement = SpaceAround,
+            modifier = Modifier
+                .padding(all = 16.dp)
+                .fillMaxWidth(),
+        ) {
+            Text(viewModel.usernameForCompletePasswordReset.value ?: "")
+
+            OutlinedTextField(
+                value = otp,
+                onValueChange = { otp = it },
+                label = { Text("One-Time-Password") },
+            )
+
+            OutlinedTextField(
+                value = newPassword,
+                onValueChange = { newPassword = it },
+                label = { Text("New Password") },
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = Password),
+                modifier = Modifier.testTag("newPassword"),
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(content = {
+                Button(
+                    onClick = {
+                        loading = true
+                        scope.launch {
+                            CoroutineScope(IO).launch IO@{
+                                when (submitCompletePasswordPasswordRequest(
+                                    viewModel.usernameForCompletePasswordReset.value ?: return@IO,
+                                    otp,
+                                    newPassword
+                                )) {
+                                    Success -> {
+                                        viewModel.identifyFlowlayoutType.value = Login
+                                        runOnUiThread {
+                                            Toast.makeText(
+                                                baseContext,
+                                                "Password reset successfully.  Log in using the new password.",
+                                                LENGTH_LONG
+                                            ).show()
+                                        }
+                                    }
+
+                                    else -> {
+                                        runOnUiThread {
+                                            Toast.makeText(
+                                                baseContext,
+                                                "Password could not be reset.  Try again.",
+                                                LENGTH_LONG
+                                            ).show()
+                                        }
+                                    }
+                                }
+                                loading = false
+                            }
+                        }
+                    }
+                ) {
+                    Text(text = "Reset Password")
+                }
+            }
+            )
+        }
+    }
+
+    @Composable
+    fun StartPasswordLessLoginInput() {
         var username by remember { mutableStateOf("") }
         val scope = rememberCoroutineScope()
         var loading by remember { mutableStateOf(false) }
@@ -522,12 +798,12 @@ class NativeLogin : ComponentActivity() {
                         loading = true
                         scope.launch {
                             CoroutineScope(IO).launch {
-                                submitOtpDeliveryRequest(
+                                submitStartPasswordLessLoginRequest(
                                     username,
                                     viewModel.otpVerificationMethod.value
                                 )?.let { otpIdentifier ->
                                     viewModel.otpIdentifier.value = otpIdentifier
-                                    viewModel.identifyFlowlayoutType.value = LoginViaUsernameAndOtp
+                                    viewModel.identifyFlowlayoutType.value = CompletePasswordLessLogin
                                 }
 
                                 loading = false
@@ -543,7 +819,7 @@ class NativeLogin : ComponentActivity() {
     }
 
     @Composable
-    fun OtpInput() {
+    fun CompletePasswordLessLoginInput() {
         var otp by remember { mutableStateOf("") }
         val scope = rememberCoroutineScope()
         var loading by remember { mutableStateOf(false) }
@@ -583,7 +859,7 @@ class NativeLogin : ComponentActivity() {
                         loading = true
                         scope.launch {
                             CoroutineScope(IO).launch IO@{
-                                submitOtpVerificationRequest(
+                                submitCompletePasswordLessLoginRequest(
                                     otp,
                                     viewModel.otpIdentifier.value ?: return@IO,
                                     viewModel.otpVerificationMethod.value
@@ -654,7 +930,9 @@ class NativeLogin : ComponentActivity() {
                         loading = true
                         scope.launch { loading = login(username, password) }
                     },
-                    modifier = Modifier.width(150.dp).testTag("Login"),
+                    modifier = Modifier
+                        .width(150.dp)
+                        .testTag("Login"),
                 ) {
                     Text(text = "Login")
                 }
@@ -708,7 +986,7 @@ class NativeLogin : ComponentActivity() {
                 webviewLoginIntent = Intent(),
                 shouldShowBack = true,
                 backAction = {},
-                identityFlowLayoutType = InitializePasswordLessLoginViaOtp
+                identityFlowLayoutType = StartPasswordLessLogin
             )
         }
     }
@@ -722,7 +1000,7 @@ class NativeLogin : ComponentActivity() {
                 webviewLoginIntent = Intent(),
                 shouldShowBack = true,
                 backAction = {},
-                identityFlowLayoutType = LoginViaUsernameAndOtp
+                identityFlowLayoutType = CompletePasswordLessLogin
             )
         }
     }
