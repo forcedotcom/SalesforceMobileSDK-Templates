@@ -53,16 +53,16 @@ class MainApplication : Application() {
          * Fill in the values below from the connected app that was created for Native Login and
          * the url of your Experience Cloud community.
          */
-        val clientId = "3MVG9CEn_O3jvv0wTqRT0Le6tmzX.EQ9ZvtHL1TG3gHFV.4IvKZyXw5SgdiVPi61mXrpu40mCOhKevEfYNMOm"
-        val redirectUri = "https://msdk-enhanced-dev-ed.my.site.com/services/oauth2/echo"
-        val loginUrl = "https://msdk-enhanced-dev-ed.my.site.com/headless"
+        val clientId = "your-client-id"
+        val redirectUri = "your-redirect-uri"
+        val loginUrl = "your-community-url"
 
         check(clientId != "your-client-id") { "Please add your Native Login client id." }
         check(redirectUri != "your-redirect-uri") { "Please add your Native Login redirect uri." }
         check(loginUrl != "your-community-url") { "Please add your Native Login community url." }
 
         // Register Username / Password Native Login
-//        MobileSyncSDKManager.getInstance().useNativeLogin(clientId, redirectUri, loginUrl)
+        MobileSyncSDKManager.getInstance().useNativeLogin(clientId, redirectUri, loginUrl)
 
         /*
          * To setup Password-less login:
@@ -75,27 +75,27 @@ class MainApplication : Application() {
          * Google Cloud Project Id to nil along with a false value for the
          * enterprise parameter.
          */
-        val reCaptchaSiteKeyId = "6LdTAMcpAAAAAPW85J7yFVhF6xigQjrUqU4JRfkM"
-        val googleCloudProjectId = "mobile-apps-team-sfdc"
-        val isReCaptchaEnterprise = true
-
-        check(reCaptchaSiteKeyId != "your-recaptcha-site-key-id") { "Please add your Google Cloud reCAPTCHA Site Key Id." }
-        check(googleCloudProjectId != "your-google-cloud-project-id") { "Please add your Google Cloud Project Id." }
-
-        initializeRecaptchaClient(
-            application = this,
-            reCaptchaSiteKeyId = reCaptchaSiteKeyId
-        )
-
-        // Register Password-less Native Login
-        MobileSyncSDKManager.getInstance().useNativeLogin(
-            consumerKey = clientId,
-            callbackUrl = redirectUri,
-            communityUrl = loginUrl,
-            googleCloudProjectId = googleCloudProjectId,
-            reCaptchaSiteKeyId = reCaptchaSiteKeyId,
-            isReCaptchaEnterprise = isReCaptchaEnterprise
-        )
+//        val reCaptchaSiteKeyId = "your-recaptcha-site-key-id"
+//        val googleCloudProjectId = "your-google-cloud-project-id"
+//        val isReCaptchaEnterprise = true
+//
+//        check(reCaptchaSiteKeyId != "your-recaptcha-site-key-id") { "Please add your Google Cloud reCAPTCHA Site Key Id." }
+//        check(googleCloudProjectId != "your-google-cloud-project-id") { "Please add your Google Cloud Project Id." }
+//
+//        initializeRecaptchaClient(
+//            application = this,
+//            reCaptchaSiteKeyId = reCaptchaSiteKeyId
+//        )
+//
+//        // Register Password-less Native Login
+//        MobileSyncSDKManager.getInstance().useNativeLogin(
+//            consumerKey = clientId,
+//            callbackUrl = redirectUri,
+//            communityUrl = loginUrl,
+//            googleCloudProjectId = googleCloudProjectId,
+//            reCaptchaSiteKeyId = reCaptchaSiteKeyId,
+//            isReCaptchaEnterprise = isReCaptchaEnterprise
+//        )
 
         /*
 		 * Un-comment the line below to enable push notifications in this app.
