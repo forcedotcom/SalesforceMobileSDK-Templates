@@ -195,8 +195,8 @@ class NativeLogin : ComponentActivity() {
     }
 
     /**
-     * Submits a start password reset request to the Salesforce Identity
-     * API forgot password endpoint.
+     * Submits a start registration request to the Salesforce Identity API
+     * registration endpoint.
      * @param email The user-entered email address
      * @param firstName The user-entered first name
      * @param lastName The user-entered last name
@@ -204,7 +204,7 @@ class NativeLogin : ComponentActivity() {
      * @param newPassword The user-entered new password
      * @param otpVerificationMethod The user-selected OTP verification method
      * the OTP will be delivered to
-     * @return A native login result
+     * @return The request identifier provided by the Salesforce Identity API
      */
     private suspend fun submitStartRegistrationRequest(
         email: String,
@@ -215,7 +215,7 @@ class NativeLogin : ComponentActivity() {
         otpVerificationMethod: OtpVerificationMethod
     ): String? {
 
-        // Obtain a new login action reCAPTCHA token.
+        // Obtain a new signup action reCAPTCHA token.
         var reCaptchaToken: String? = null
         runBlocking {
             executeReCaptchaAction(SIGNUP) { reCaptchaTokenNew ->
