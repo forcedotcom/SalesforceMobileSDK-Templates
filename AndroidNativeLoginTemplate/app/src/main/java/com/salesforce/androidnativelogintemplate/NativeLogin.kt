@@ -611,27 +611,6 @@ class NativeLogin : ComponentActivity() {
                 },
                 label = { Text("Email") },
             )
-            OutlinedTextField(
-                value = email,
-                onValueChange = {
-                    email = it
-                },
-                label = { Text("Email") },
-            )
-            OutlinedTextField(
-                value = email,
-                onValueChange = {
-                    email = it
-                },
-                label = { Text("Email") },
-            )
-            OutlinedTextField(
-                value = email,
-                onValueChange = {
-                    email = it
-                },
-                label = { Text("Email") },
-            )
 
             OutlinedTextField(
                 value = firstName,
