@@ -26,7 +26,6 @@
  */
 package com.salesforce.androidnativelogintemplate
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.S
@@ -143,7 +142,7 @@ class NativeLogin : ComponentActivity() {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
 
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.resultCode == RESULT_OK) {
             finish()
         }
     }
@@ -493,14 +492,14 @@ class NativeLogin : ComponentActivity() {
                         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
                     ) {
                         Spacer(modifier = Modifier.height(25.dp))
-//                        if (identityFlowLayoutTypeActive != StartRegistration) {
+                        if (identityFlowLayoutTypeActive != StartRegistration) {
                             Image(
                                 painter = painterResource(id = sf__salesforce_logo),
                                 colorFilter = ColorFilter.tint(colorScheme.primary),
                                 contentDescription = "",
                                 modifier = Modifier.align(CenterHorizontally),
                             )
-//                        }
+                        }
 
                         // Switch the layout to match the selected identity flow.
                         when (identityFlowLayoutTypeActive) {
