@@ -29,7 +29,7 @@ package com.salesforce.androidnativelogintemplate
 import android.app.Application
 import com.google.android.material.color.DynamicColors
 import com.google.android.recaptcha.Recaptcha
-import com.google.android.recaptcha.RecaptchaAction.Companion.LOGIN
+import com.google.android.recaptcha.RecaptchaAction
 import com.google.android.recaptcha.RecaptchaClient
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.androidsdk.util.SalesforceSDKLogger
@@ -142,14 +142,17 @@ class MainApplication : Application() {
         }
 
         /**
-         * Executes the Google reCAPTCHA client for a new login action token.
+         * Executes the Google reCAPTCHA client for a new token for the
+         * specified action.
+         * @param reCaptchaAction A Google reCAPTCHA SDK reCAPTCHA action
          * @param completion The function to invoke with the new token or null
          * if the token could not be obtained
          */
-        internal fun executeLoginAction(
+        internal fun executeReCaptchaAction(
+            reCaptchaAction: RecaptchaAction,
             completion: (String?) -> Unit
         ) = CoroutineScope(Default).launch {
-            recaptchaClient?.execute(LOGIN)
+            recaptchaClient?.execute(reCaptchaAction)
                 ?.onSuccess { token ->
                     completion(token)
                 }?.onFailure { exception ->

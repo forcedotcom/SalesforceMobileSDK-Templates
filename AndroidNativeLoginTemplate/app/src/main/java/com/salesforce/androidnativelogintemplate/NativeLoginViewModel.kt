@@ -28,6 +28,12 @@ class NativeLoginViewModel : ViewModel() {
      */
     enum class IdentityFlowLayoutType {
 
+        /** A layout to start a user registration */
+        StartRegistration,
+
+        /** A layout to complete a user registration */
+        CompleteRegistration,
+
         /** A layout to start a password reset */
         StartPasswordReset,
 

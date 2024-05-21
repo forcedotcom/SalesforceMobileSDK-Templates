@@ -26,7 +26,6 @@
  */
 package com.salesforce.androidnativelogintemplate
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.S
@@ -44,6 +43,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement.SpaceAround
+import androidx.compose.foundation.layout.Arrangement.SpaceEvenly
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -99,13 +99,18 @@ import androidx.compose.ui.text.input.KeyboardType.Companion.Password
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.salesforce.androidnativelogintemplate.MainApplication.Companion.executeLoginAction
+import com.google.android.recaptcha.RecaptchaAction.Companion.LOGIN
+import com.google.android.recaptcha.RecaptchaAction.Companion.SIGNUP
+import com.google.android.recaptcha.RecaptchaAction.Companion.custom
+import com.salesforce.androidnativelogintemplate.MainApplication.Companion.executeReCaptchaAction
 import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType
 import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.CompletePasswordLessLogin
 import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.CompletePasswordReset
+import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.CompleteRegistration
 import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.Login
 import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.StartPasswordLessLogin
 import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.StartPasswordReset
+import com.salesforce.androidnativelogintemplate.NativeLoginViewModel.IdentityFlowLayoutType.StartRegistration
 import com.salesforce.androidnativelogintemplate.R.drawable.radio_button_checked_24px
 import com.salesforce.androidnativelogintemplate.R.drawable.radio_button_unchecked_24px
 import com.salesforce.androidnativelogintemplate.R.drawable.sf__salesforce_logo
@@ -114,6 +119,7 @@ import com.salesforce.androidsdk.app.SalesforceSDKManager
 import com.salesforce.androidsdk.auth.interfaces.NativeLoginManager
 import com.salesforce.androidsdk.auth.interfaces.NativeLoginResult
 import com.salesforce.androidsdk.auth.interfaces.NativeLoginResult.InvalidCredentials
+import com.salesforce.androidsdk.auth.interfaces.NativeLoginResult.InvalidEmail
 import com.salesforce.androidsdk.auth.interfaces.NativeLoginResult.InvalidPassword
 import com.salesforce.androidsdk.auth.interfaces.NativeLoginResult.InvalidUsername
 import com.salesforce.androidsdk.auth.interfaces.NativeLoginResult.Success
@@ -136,7 +142,7 @@ class NativeLogin : ComponentActivity() {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
 
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.resultCode == RESULT_OK) {
             finish()
         }
     }
@@ -157,33 +163,13 @@ class NativeLogin : ComponentActivity() {
                         login = { username, password ->
                             Boolean
                             // Call login and handle results.
-                            when (val result = nativeLoginManager.login(username, password)) {
-                                InvalidUsername -> {
-                                    Toast.makeText(baseContext, result.name, LENGTH_LONG).show()
-                                    return@LoginView false
-                                }
-
-                                InvalidPassword -> {
-                                    Toast.makeText(baseContext, result.name, LENGTH_LONG).show()
-                                    return@LoginView false
-                                }
-
-                                InvalidCredentials -> {
-                                    Toast.makeText(baseContext, result.name, LENGTH_LONG).show()
-                                    return@LoginView false
-                                }
-
-                                UnknownError -> {
-                                    Toast.makeText(baseContext, result.name, LENGTH_LONG).show()
-                                    return@LoginView false
-                                }
-
-                                Success -> {
-                                    finish()
-                                }
-                            }
-
-                            return@LoginView true
+                            return@LoginView nativeLoginManager.login(
+                                username,
+                                password
+                            ).mapResultTo(
+                                success = true,
+                                failure = false
+                            )
                         },
                         handleWebviewFallbackResult = handleWebviewFallbackResult,
                         webviewLoginIntent = nativeLoginManager.getFallbackWebAuthenticationIntent(),
@@ -209,25 +195,103 @@ class NativeLogin : ComponentActivity() {
     }
 
     /**
+     * Submits a start registration request to the Salesforce Identity API
+     * registration endpoint.
+     * @param email The user-entered email address
+     * @param firstName The user-entered first name
+     * @param lastName The user-entered last name
+     * @param username The user-entered username
+     * @param newPassword The user-entered new password
+     * @param otpVerificationMethod The user-selected OTP verification method
+     * the OTP will be delivered to
+     * @return The request identifier provided by the Salesforce Identity API
+     */
+    private suspend fun submitStartRegistrationRequest(
+        email: String,
+        firstName: String,
+        lastName: String,
+        username: String,
+        newPassword: String,
+        otpVerificationMethod: OtpVerificationMethod
+    ): String? {
+
+        // Obtain a new signup action reCAPTCHA token.
+        var reCaptchaToken: String? = null
+        runBlocking {
+            executeReCaptchaAction(SIGNUP) { reCaptchaTokenNew ->
+                when {
+                    reCaptchaTokenNew != null -> reCaptchaToken = reCaptchaTokenNew
+                    else -> runOnUiThread {
+                        Toast.makeText(
+                            baseContext,
+                            "A reCAPTCHA signup action token could not be obtained.  Try again.",
+                            LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }.join()
+        }
+
+        // Submit the start registration request and respond to the result.
+        val startRegistrationResult = nativeLoginManager.startRegistration(
+            email = email,
+            firstName = firstName,
+            lastName = lastName,
+            username = username,
+            newPassword = newPassword,
+            reCaptchaToken = reCaptchaToken ?: return null,
+            otpVerificationMethod = otpVerificationMethod
+        )
+        return startRegistrationResult.nativeLoginResult.mapResultTo(
+            success = startRegistrationResult.requestIdentifier,
+            failure = null
+        )
+    }
+
+    /**
+     * Submits a complete registration request to the Salesforce Identity API
+     * authorization and token endpoints.
+     * @param otp The user-entered one-time-password
+     * @param requestIdentifier The request identifier provided by the Salesforce
+     * Identity API
+     * @param otpVerificationMethod The OTP verification method used to obtain
+     * the request identifier
+     * @return Boolean true if the authorization request is successful - false
+     * otherwise
+     */
+    private suspend fun submitCompleteRegistrationRequest(
+        otp: String,
+        requestIdentifier: String,
+        otpVerificationMethod: OtpVerificationMethod
+    ) = nativeLoginManager.completeRegistration(
+        otp = otp,
+        requestIdentifier = requestIdentifier,
+        otpVerificationMethod = otpVerificationMethod
+    ).mapResultTo(
+        success = true,
+        failure = false
+    )
+
+    /**
      * Submits a start password reset request to the Salesforce Identity
      * API forgot password endpoint.
      * @param username The user-entered username
      * @return A native login result
      */
-    private suspend fun submitStartPasswordResetDeliveryRequest(
+    private suspend fun submitStartPasswordResetRequest(
         username: String
     ): NativeLoginResult? {
 
         // Obtain a new login action reCAPTCHA token.
         var reCaptchaToken: String? = null
         runBlocking {
-            executeLoginAction { reCaptchaTokenNew ->
+            executeReCaptchaAction(custom("forgot_password")) { reCaptchaTokenNew ->
                 when {
                     reCaptchaTokenNew != null -> reCaptchaToken = reCaptchaTokenNew
                     else -> runOnUiThread {
                         Toast.makeText(
                             baseContext,
-                            "A reCAPTCHA login action token could not be obtained.  Try again.",
+                            "A reCAPTCHA forgot password action token could not be obtained.  Try again.",
                             LENGTH_LONG
                         ).show()
                     }
@@ -240,31 +304,10 @@ class NativeLogin : ComponentActivity() {
             username = username,
             reCaptchaToken = reCaptchaToken ?: return null
         )
-        when (startPasswordResetResult) {
-            InvalidUsername -> {
-                runOnUiThread { Toast.makeText(baseContext, "Invalid user name.", LENGTH_LONG).show() }
-                return null
-            }
-
-            InvalidPassword -> {
-                runOnUiThread { Toast.makeText(baseContext, "Invalid password", LENGTH_LONG).show() }
-                return null
-            }
-
-            InvalidCredentials -> {
-                runOnUiThread { Toast.makeText(baseContext, "Invalid credentials.", LENGTH_LONG).show() }
-                return null
-            }
-
-            UnknownError -> {
-                runOnUiThread { Toast.makeText(baseContext, "An error occurred.", LENGTH_LONG).show() }
-                return null
-            }
-
-            Success -> {
-                return startPasswordResetResult
-            }
-        }
+        return startPasswordResetResult.mapResultTo(
+            success = startPasswordResetResult,
+            failure = null
+        )
     }
 
     /**
@@ -276,7 +319,7 @@ class NativeLogin : ComponentActivity() {
      * @param newPassword The user-entered new password
      * @return A native login result
      */
-    private suspend fun submitCompletePasswordPasswordRequest(
+    private suspend fun submitCompletePasswordResetRequest(
         username: String,
         otp: String,
         newPassword: String
@@ -288,31 +331,10 @@ class NativeLogin : ComponentActivity() {
             otp = otp,
             newPassword = newPassword
         )
-        when (completePasswordResetResult) {
-            InvalidUsername -> {
-                runOnUiThread { Toast.makeText(baseContext, "Invalid user name.", LENGTH_LONG).show() }
-                return null
-            }
-
-            InvalidPassword -> {
-                runOnUiThread { Toast.makeText(baseContext, "Invalid password", LENGTH_LONG).show() }
-                return null
-            }
-
-            InvalidCredentials -> {
-                runOnUiThread { Toast.makeText(baseContext, "Invalid credentials.", LENGTH_LONG).show() }
-                return null
-            }
-
-            UnknownError -> {
-                runOnUiThread { Toast.makeText(baseContext, "An error occurred.", LENGTH_LONG).show() }
-                return null
-            }
-
-            Success -> {
-                return completePasswordResetResult
-            }
-        }
+        return completePasswordResetResult.mapResultTo(
+            success = completePasswordResetResult,
+            failure = null
+        )
     }
 
     /**
@@ -333,7 +355,7 @@ class NativeLogin : ComponentActivity() {
         // Obtain a new login action reCAPTCHA token.
         var reCaptchaToken: String? = null
         runBlocking {
-            executeLoginAction { reCaptchaTokenNew ->
+            executeReCaptchaAction(LOGIN) { reCaptchaTokenNew ->
                 when {
                     reCaptchaTokenNew != null -> reCaptchaToken = reCaptchaTokenNew
                     else -> runOnUiThread {
@@ -353,31 +375,10 @@ class NativeLogin : ComponentActivity() {
             reCaptchaToken = reCaptchaToken ?: return null,
             otpVerificationMethod = otpVerificationMethod
         )
-        when (startPasswordLessLoginResult.nativeLoginResult) {
-            InvalidUsername -> {
-                runOnUiThread { Toast.makeText(baseContext, "Invalid user name.", LENGTH_LONG).show() }
-                return null
-            }
-
-            InvalidPassword -> {
-                runOnUiThread { Toast.makeText(baseContext, "Invalid password", LENGTH_LONG).show() }
-                return null
-            }
-
-            InvalidCredentials -> {
-                runOnUiThread { Toast.makeText(baseContext, "Invalid credentials.", LENGTH_LONG).show() }
-                return null
-            }
-
-            UnknownError -> {
-                runOnUiThread { Toast.makeText(baseContext, "An error occurred.", LENGTH_LONG).show() }
-                return null
-            }
-
-            Success -> {
-                return startPasswordLessLoginResult.otpIdentifier
-            }
-        }
+        return startPasswordLessLoginResult.nativeLoginResult.mapResultTo(
+            success = startPasswordLessLoginResult.otpIdentifier,
+            failure = null
+        )
     }
 
     /**
@@ -403,31 +404,10 @@ class NativeLogin : ComponentActivity() {
             otpIdentifier = otpIdentifier,
             otpVerificationMethod = otpVerificationMethod
         )
-        when (completePasswordLessLoginResult) {
-            InvalidUsername -> {
-                runOnUiThread { Toast.makeText(baseContext, "Invalid user name.", LENGTH_LONG).show() }
-                return false
-            }
-
-            InvalidPassword -> {
-                runOnUiThread { Toast.makeText(baseContext, "Invalid password", LENGTH_LONG).show() }
-                return false
-            }
-
-            InvalidCredentials -> {
-                runOnUiThread { Toast.makeText(baseContext, "Invalid credentials.", LENGTH_LONG).show() }
-                return false
-            }
-
-            UnknownError -> {
-                runOnUiThread { Toast.makeText(baseContext, "An error occurred.", LENGTH_LONG).show() }
-                return false
-            }
-
-            Success -> {
-                return true
-            }
-        }
+        return completePasswordLessLoginResult.mapResultTo(
+            success = true,
+            failure = false
+        )
     }
 
     /**
@@ -512,15 +492,21 @@ class NativeLogin : ComponentActivity() {
                         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
                     ) {
                         Spacer(modifier = Modifier.height(25.dp))
-                        Image(
-                            painter = painterResource(id = sf__salesforce_logo),
-                            colorFilter = ColorFilter.tint(colorScheme.primary),
-                            contentDescription = "",
-                            modifier = Modifier.align(CenterHorizontally),
-                        )
+                        if (identityFlowLayoutTypeActive != StartRegistration) {
+                            Image(
+                                painter = painterResource(id = sf__salesforce_logo),
+                                colorFilter = ColorFilter.tint(colorScheme.primary),
+                                contentDescription = "",
+                                modifier = Modifier.align(CenterHorizontally),
+                            )
+                        }
 
                         // Switch the layout to match the selected identity flow.
                         when (identityFlowLayoutTypeActive) {
+                            StartRegistration -> StartRegistrationInput()
+
+                            CompleteRegistration -> CompleteRegistrationInput()
+
                             StartPasswordReset -> StartPasswordResetInput()
 
                             CompletePasswordReset -> CompletePasswordResetInput()
@@ -550,6 +536,14 @@ class NativeLogin : ComponentActivity() {
                                     },
                                     modifier = Modifier.align(CenterHorizontally)
                                 ) { Text(text = "Reset Password") }
+
+                                // Allow the user to switch to registration
+                                Button(
+                                    onClick = {
+                                        viewModel.identifyFlowlayoutType.value = StartRegistration
+                                    },
+                                    modifier = Modifier.align(CenterHorizontally)
+                                ) { Text(text = "Register") }
                             }
 
                             else -> {
@@ -576,8 +570,142 @@ class NativeLogin : ComponentActivity() {
     }
 
     @Composable
-    fun StartPasswordResetInput() {
+    fun StartRegistrationInput() {
+        var email by remember { mutableStateOf("") }
+        var firstName by remember { mutableStateOf("") }
+        var lastName by remember { mutableStateOf("") }
         var username by remember { mutableStateOf("") }
+        var newPassword by remember { mutableStateOf("") }
+        val scope = rememberCoroutineScope()
+        var loading by remember { mutableStateOf(false) }
+
+        val otpVerificationMethod = runCatching { // This view model reference is guarded to support previews, which don't have view model access.
+            viewModel.otpVerificationMethod.value
+        }.getOrNull() ?: Email
+
+        if (loading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+            ) {
+                Column(modifier = Modifier.align(Center)) {
+                    CircularProgressIndicator()
+                }
+            }
+        } else {
+            Spacer(modifier = Modifier.height(0.dp))
+        }
+
+        Column(
+            horizontalAlignment = CenterHorizontally,
+            verticalArrangement = SpaceAround,
+            modifier = Modifier
+                .padding(all = 8.dp)
+                .fillMaxWidth(),
+        ) {
+            OutlinedTextField(
+                value = email,
+                onValueChange = {
+                    email = it
+                },
+                label = { Text("Email") },
+            )
+
+            OutlinedTextField(
+                value = firstName,
+                onValueChange = {
+                    firstName = it
+                },
+                label = { Text("First Name") }
+            )
+
+            OutlinedTextField(
+                value = lastName,
+                onValueChange = {
+                    lastName = it
+                },
+                label = { Text("Last Name") }
+            )
+
+            OutlinedTextField(
+                value = username,
+                onValueChange = {
+                    username = it
+                },
+                label = { Text("Username") },
+            )
+
+            OutlinedTextField(
+                value = newPassword,
+                onValueChange = { newPassword = it },
+                label = { Text("Password") },
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = Password),
+                modifier = Modifier.testTag("newPassword"),
+            )
+
+            Row(horizontalArrangement = SpaceEvenly) {
+                OtpVerificationMethod.entries.forEach { otpVerificationMethodNext ->
+                    Row(Modifier.clickable {
+                        viewModel.otpVerificationMethod.value = otpVerificationMethodNext
+                    }) {
+                        Image(
+                            painter = painterResource(
+                                id = when (otpVerificationMethodNext == otpVerificationMethod) {
+                                    true -> radio_button_checked_24px
+                                    false -> radio_button_unchecked_24px
+                                }
+                            ),
+                            colorFilter = ColorFilter.tint(colorScheme.primary),
+                            contentDescription = "",
+                            modifier = Modifier.align(CenterVertically),
+                        )
+                        Text(
+                            text = otpVerificationMethodNext.name,
+                            modifier = Modifier
+                                .padding(8.dp)
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(content = {
+                Button(
+                    onClick = {
+                        loading = true
+                        scope.launch {
+                            CoroutineScope(IO).launch {
+                                submitStartRegistrationRequest(
+                                    email,
+                                    firstName,
+                                    lastName,
+                                    username,
+                                    newPassword,
+                                    viewModel.otpVerificationMethod.value
+                                )?.let { requestIdentifier ->
+                                    viewModel.otpIdentifier.value = requestIdentifier
+                                    viewModel.identifyFlowlayoutType.value = CompletePasswordLessLogin
+                                }
+                                viewModel.identifyFlowlayoutType.value = CompleteRegistration
+                            }
+
+                            loading = false
+                        }
+                    }
+                ) {
+                    Text(text = "Request One Time Password")
+                }
+            }
+            )
+        }
+    }
+
+    @Composable
+    fun CompleteRegistrationInput() {
+        var otp by remember { mutableStateOf("") }
         val scope = rememberCoroutineScope()
         var loading by remember { mutableStateOf(false) }
 
@@ -603,9 +731,65 @@ class NativeLogin : ComponentActivity() {
                 .fillMaxWidth(),
         ) {
             OutlinedTextField(
-                value = username,
+                value = otp,
+                onValueChange = { otp = it },
+                label = { Text("One-Time-Password") },
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(content = {
+                Button(
+                    onClick = {
+                        loading = true
+                        scope.launch {
+                            CoroutineScope(IO).launch IO@{
+                                submitCompleteRegistrationRequest(
+                                    otp,
+                                    viewModel.otpIdentifier.value ?: return@IO,
+                                    viewModel.otpVerificationMethod.value
+                                )
+                                loading = false
+                            }
+                        }
+                    }
+                ) {
+                    Text(text = "Complete Registration")
+                }
+            }
+            )
+        }
+    }
+
+    @Composable
+    fun StartPasswordResetInput() {
+        val scope = rememberCoroutineScope()
+        var loading by remember { mutableStateOf(false) }
+
+        if (loading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+            ) {
+                Column(modifier = Modifier.align(Center)) {
+                    CircularProgressIndicator()
+                }
+            }
+        } else {
+            Spacer(modifier = Modifier.height(100.dp))
+        }
+
+        Column(
+            horizontalAlignment = CenterHorizontally,
+            verticalArrangement = SpaceAround,
+            modifier = Modifier
+                .padding(all = 16.dp)
+                .fillMaxWidth(),
+        ) {
+            OutlinedTextField(
+                value = viewModel.usernameForCompletePasswordReset.value ?: "",
                 onValueChange = {
-                    username = it // TODO: Could username be removed? ECJ20240508
                     viewModel.usernameForCompletePasswordReset.value = it
                 },
                 label = { Text("Username") },
@@ -618,9 +802,9 @@ class NativeLogin : ComponentActivity() {
                     onClick = {
                         loading = true
                         scope.launch {
-                            CoroutineScope(IO).launch {
-                                submitStartPasswordResetDeliveryRequest(
-                                    username
+                            CoroutineScope(IO).launch IO@{
+                                submitStartPasswordResetRequest(
+                                    viewModel.usernameForCompletePasswordReset.value ?: return@IO
                                 )?.let {
                                     viewModel.identifyFlowlayoutType.value = CompletePasswordReset
                                 }
@@ -690,7 +874,7 @@ class NativeLogin : ComponentActivity() {
                         loading = true
                         scope.launch {
                             CoroutineScope(IO).launch IO@{
-                                when (submitCompletePasswordPasswordRequest(
+                                when (submitCompletePasswordResetRequest(
                                     viewModel.usernameForCompletePasswordReset.value ?: return@IO,
                                     otp,
                                     newPassword
@@ -765,7 +949,7 @@ class NativeLogin : ComponentActivity() {
                 label = { Text("Username") },
             )
 
-            Column {
+            Row(horizontalArrangement = SpaceEvenly) {
                 OtpVerificationMethod.entries.forEach { otpVerificationMethodNext ->
                     Row(Modifier.clickable {
                         viewModel.otpVerificationMethod.value = otpVerificationMethodNext
@@ -1004,4 +1188,63 @@ class NativeLogin : ComponentActivity() {
             )
         }
     }
+
+    @Preview
+    @Composable
+    fun LoginViewStartRegistrationPreview() {
+        Column {
+            LoginView(
+                login = { _, _ -> run { return@LoginView true } },
+                webviewLoginIntent = Intent(),
+                shouldShowBack = true,
+                backAction = {},
+                identityFlowLayoutType = StartRegistration
+            )
+        }
+    }
+
+    // region Private Utilities
+
+    /**
+     * Maps a native login result to either the provided success or failure
+     * value.  A toast is also displayed for failure.
+     * @param success The value to return for successful native login results
+     * @param failure The value to return for native login results other than
+     * success
+     * @return The success value for successful native login results - The
+     * failure result otherwise
+     */
+    private fun <MappedType> NativeLoginResult.mapResultTo(
+        success: MappedType,
+        failure: MappedType
+    ): MappedType = when (this) {
+        InvalidEmail -> {
+            runOnUiThread { Toast.makeText(baseContext, "Invalid email address.", LENGTH_LONG).show() }
+            failure
+        }
+
+        InvalidUsername -> {
+            runOnUiThread { Toast.makeText(baseContext, "Invalid user name.", LENGTH_LONG).show() }
+            failure
+        }
+
+        InvalidPassword -> {
+            runOnUiThread { Toast.makeText(baseContext, "Invalid password", LENGTH_LONG).show() }
+            failure
+        }
+
+        InvalidCredentials -> {
+            runOnUiThread { Toast.makeText(baseContext, "Invalid credentials.", LENGTH_LONG).show() }
+            failure
+        }
+
+        UnknownError -> {
+            runOnUiThread { Toast.makeText(baseContext, "An error occurred.", LENGTH_LONG).show() }
+            failure
+        }
+
+        Success -> success
+    }
+
+    // endregion
 }
