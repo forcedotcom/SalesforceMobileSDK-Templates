@@ -40,7 +40,7 @@ class MainApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        MobileSyncSDKManager.initNative(applicationContext, MainActivity::class.java)
+        MobileSyncSDKManager.initNative(applicationContext, MainActivity::class.java, LoginActivity::class.java)
         MobileSyncSDKManager.getInstance().registerUsedAppFeature(FEATURE_APP_USES_KOTLIN)
 
         /*

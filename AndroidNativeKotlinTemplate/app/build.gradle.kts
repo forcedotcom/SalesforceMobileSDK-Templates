@@ -7,6 +7,8 @@ plugins {
 
 dependencies {
     implementation("com.salesforce.mobilesdk:MobileSync:12.2.0")
+    implementation("com.google.zxing:core:3.4.1")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 }
 
 android {

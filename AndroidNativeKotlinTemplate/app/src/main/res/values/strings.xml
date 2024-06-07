@@ -8,4 +8,7 @@
 	<string name="fetch_contacts_button">Fetch Contacts</string>
 	<string name="fetch_accounts_button">Fetch Accounts</string>
 	<string name="clear_button">Clear</string>
+
+	<string name="login_with_qr">Log In with QR</string>
+
 </resources>
