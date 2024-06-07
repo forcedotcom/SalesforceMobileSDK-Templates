@@ -57,5 +57,7 @@ class MainApplication : Application() {
 		 * Add your Firebase 'google-services.json' file to the 'app' folder of your project.
 		 */
         // MobileSyncSDKManager.getInstance().pushNotificationReceiver = pnInterface
+
+        MobileSyncSDKManager.getInstance().isQRLoginFlowEnabled = true
     }
 }
