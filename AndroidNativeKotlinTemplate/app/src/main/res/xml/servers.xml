@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<servers>
+    <server name="SDB 6" url="https://mobilesdkatsdb6.test1.my.pc-rnd.salesforce.com/"/>
+</servers>
