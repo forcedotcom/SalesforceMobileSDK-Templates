@@ -26,6 +26,7 @@
 //  WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import SwiftUI
+import SalesforceSDKCore
 
 struct ReadView: View {
     var contact: ContactSObjectData
@@ -110,6 +111,7 @@ struct ContactDetailView: View {
                 self.viewModel.deleteButtonTapped()
                 self.dismissAction()
             }
+            .padding(20)
         }.onAppear {
             self.onAppearAction()
         }
@@ -164,12 +166,22 @@ struct DeleteButton: View {
         Button(action: {
             self.action()
         }, label: {
-            Text(label)
+            Label(
+                title: { Text(label) },
+                icon: { Image(systemName: "trash") }
+            )
             .frame(width: 350, height: 50, alignment: .center)
-            .background(buttonBackground())
+            // all of the above is for both Vision and iOS
+            #if os(visionOS) //changes only for VisionOS
+            .foregroundColor(.red)
+            #else //changes only for iOS
             .foregroundColor(.white)
+            .background(buttonBackground())
             .overlay(RoundedRectangle(cornerRadius: 5).stroke(buttonBackground(), lineWidth: 1))
-            .padding([.bottom], 10)
+            .padding(5)
+            #endif
+            
+
         }).disabled(isDisabled)
     }
 }
