@@ -36,9 +36,32 @@ struct NativeLoginView: View {
     
     /// The layout type for the user's active identity flow, such as registration, forgot password or login
     @State private var identityFlowLayoutType = IdentityFlowLayoutType.LoginViaUsernamePassword
+
+    // mark: Start Registration
     
-    /// An error message displayed to the user.  Note this is used by multiple layout types
-    @State private var errorMessage = ""
+    /// Start Registration: The user's entered first name.
+    @State private var firstName = ""
+    
+    /// Start Registration: The user's entered last name.
+    @State private var lastName = ""
+    
+    /// Start Registration: The user's entered email address.
+    @State private var email = ""
+    
+    // mark: Complete Registration
+    
+    /// Complete Registration:  The request identifier returned by the Salesforce Identity API's initialize registration endpoint
+    @State private var requestIdentifier: String? = nil
+    
+    // mark: User Messaging
+    
+    /// Indicates if the message displayed to the user is informational or an error.  Note this is used by multiple layout types
+    @State private var isMessageError = false
+    
+    /// A message displayed to the user.  Note this is used by multiple layout types
+    @State private var messageText = ""
+    
+    // mark: Common User Interface State
     
     /// An option to display indicators when an identity action is in progress. Note this is used by multiple layout types
     @State private var isAuthenticating = false
@@ -87,14 +110,14 @@ struct NativeLoginView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(.gray.opacity(0.25))
-                    .frame(width: 300, height: 500)
+                    .frame(width: 300, height: 650)
                     .padding(.top, 0)
                 
                 VStack {
                     Image(.msdkPhone)
                         .resizable()
-                        .frame(width: 150, height: 150)
-                        .padding(.bottom, 20)
+                        .frame(width: 100, height: 100)
+                        .padding(.bottom, 10)
                         .shadow(color: .black, radius: 3)
                         .blur(radius: 0.0)
                     
@@ -104,9 +127,14 @@ struct NativeLoginView: View {
                         Spacer().frame(height: 35)
                     }
                     
-                    if !errorMessage.isEmpty {
-                        Text(errorMessage)
-                            .foregroundStyle(.red)
+                    if !messageText.isEmpty {
+                        Text(messageText)
+                            .foregroundStyle({switch(isMessageError) {
+                            case true:
+                                return Color.red
+                            default:
+                                return Color.blue
+                            }}())
                             .frame(width: 250, height: 50)
                     } else {
                         Spacer().frame(width: 250, height: 65)
@@ -139,7 +167,7 @@ struct NativeLoginView: View {
                         
                         Button {
                             Task {
-                                errorMessage = ""
+                                messageReset()
                                 isAuthenticating = true
                                 
                                 // Login
@@ -149,16 +177,19 @@ struct NativeLoginView: View {
                                 
                                 switch result {
                                 case .invalidCredentials:
-                                    errorMessage = "Please check your username and password."
+                                    errorMessage("Please check your username and password.")
+                                    break
+                                case .invalidEmail:
+                                    errorMessage("Invalid email address.")
                                     break
                                 case .invalidUsername:
-                                    errorMessage = "Username format is incorrect."
+                                    errorMessage("Username format is incorrect.")
                                     break
                                 case .invalidPassword:
-                                    errorMessage = "Invalid password."
+                                    errorMessage("Invalid password.")
                                     break
                                 case .unknownError:
-                                    errorMessage = "An unknown error has occurred."
+                                    errorMessage("An unknown error has occurred.")
                                     break
                                 case .success:
                                     password = ""
@@ -176,7 +207,7 @@ struct NativeLoginView: View {
                         .padding(.bottom, 25)
                         
                         Button {
-                            identityFlowLayoutType = .InitializePasswordLessLoginViaOtp
+                            navigate(.InitializePasswordLessLoginViaOtp)
                         } label: {
                             Text("Use One Time Password Instead").frame(minWidth: 150)
                         }
@@ -184,6 +215,222 @@ struct NativeLoginView: View {
                         .tint(colorScheme == .dark ? .white : .blue)
                         .zIndex(2.0)
                         
+                        Button {
+                            navigate(.StartPasswordReset)
+                        } label: {
+                            Text("Reset Password").frame(minWidth: 150)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(colorScheme == .dark ? .white : .blue)
+                        .zIndex(2.0)
+                        
+                        Button {
+                            navigate(.StartUserRegistration)
+                        } label: {
+                            Text("Register").frame(minWidth: 150)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(colorScheme == .dark ? .white : .blue)
+                        .zIndex(2.0)
+                        
+                    case .StartUserRegistration:
+                        TextField("Email", text: $email)
+                            .autocapitalization(.none)
+                            .buttonStyle(.borderless)
+                            .disableAutocorrection(true)
+                            .foregroundColor(.blue)
+                            .frame(maxWidth: 250)
+                            .multilineTextAlignment(.center)
+                            .padding(.top, 25)
+                            .zIndex(2.0)
+                        
+                        TextField("First Name", text: $firstName)
+                            .autocapitalization(.none)
+                            .buttonStyle(.borderless)
+                            .disableAutocorrection(true)
+                            .foregroundColor(.blue)
+                            .frame(maxWidth: 250)
+                            .multilineTextAlignment(.center)
+                            .padding(.top, 25)
+                            .zIndex(2.0)
+                        
+                        TextField("Last Name", text: $lastName)
+                            .autocapitalization(.none)
+                            .buttonStyle(.borderless)
+                            .disableAutocorrection(true)
+                            .foregroundColor(.blue)
+                            .frame(maxWidth: 250)
+                            .multilineTextAlignment(.center)
+                            .padding(.top, 25)
+                            .zIndex(2.0)
+                        
+                        TextField("Username", text: $username)
+                            .autocapitalization(.none)
+                            .buttonStyle(.borderless)
+                            .disableAutocorrection(true)
+                            .foregroundColor(.blue)
+                            .frame(maxWidth: 250)
+                            .multilineTextAlignment(.center)
+                            .padding(.top, 25)
+                            .zIndex(2.0)
+                        
+                        SecureField("Password", text: $password)
+                            .foregroundColor(.blue)
+                            .disableAutocorrection(true)
+                            .multilineTextAlignment(.center)
+                            .buttonStyle(.borderless)
+                            .autocapitalization(.none)
+                            .frame(maxWidth: 250)
+                            .padding(.bottom)
+                            .padding(.top, 25)
+                            .zIndex(2.0)
+                        
+                        Picker(
+                            "OTP Verification Method",
+                            selection: $otpVerificationMethod) {
+                                Text("Email").tag(OtpVerificationMethod.email)
+                                Text("SMS").tag(OtpVerificationMethod.sms)
+                            }
+                            .frame(maxWidth: 250)
+                            .zIndex(2.0)
+
+                        Button {
+                            onRequestOtpForRegistrationTapped()
+                        } label: {
+                            HStack {
+                                Image(systemName: "lock")
+                                Text("Request One-Time-Password")
+                            }.frame(minWidth: 150)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(colorScheme == .dark ? .white : .blue)
+                        .zIndex(2.0)
+                        
+                        Button {
+                            layoutReset()
+                        } label: {
+                            Text("Cancel").frame(minWidth: 150)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.red)
+                        .zIndex(2.0)
+
+                    case .CompleteUserRegistration:
+                        TextField("One-Time-Password", text: $otp)
+                            .autocapitalization(.none)
+                            .buttonStyle(.borderless)
+                            .disableAutocorrection(true)
+                            .foregroundColor(.blue)
+                            .frame(maxWidth: 250)
+                            .multilineTextAlignment(.center)
+                            .padding(.top, 25)
+                            .zIndex(2.0)
+
+                        Button {
+                            onCompleteRegistrationTapped()
+                        } label: {
+                            HStack {
+                                Image(systemName: "lock")
+                                Text("Complete Registration")
+                            }.frame(minWidth: 150)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(colorScheme == .dark ? .white : .blue)
+                        .zIndex(2.0)
+                        
+                        Button {
+                            layoutReset()
+                        } label: {
+                            Text("Cancel").frame(minWidth: 150)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.red)
+                        .zIndex(2.0)
+                        
+                    case .StartPasswordReset:
+                        // Layout to start password reset.
+                        TextField("Username", text: $username)
+                            .autocapitalization(.none)
+                            .buttonStyle(.borderless)
+                            .disableAutocorrection(true)
+                            .foregroundColor(.blue)
+                            .frame(maxWidth: 250)
+                            .multilineTextAlignment(.center)
+                            .padding(.top, 25)
+                            .zIndex(2.0)
+
+                        Button {
+                            onRequestOtpForResetPasswordTapped()
+                        } label: {
+                            HStack {
+                                Image(systemName: "key.radiowaves.forward")
+                                Text("Request One Time Password")
+                            }.frame(minWidth: 150)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(colorScheme == .dark ? .white : .blue)
+                        .zIndex(2.0)
+                        
+                        Button {
+                            layoutReset()
+                        } label: {
+                            Text("Cancel").frame(minWidth: 150)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.red)
+                        .zIndex(2.0)
+                        
+                    case .CompletePasswordReset:
+                        // Layout to complete password reset.
+                        Text($username.wrappedValue)
+                            .foregroundColor(.blue)
+                            .frame(maxWidth: 250)
+                            .multilineTextAlignment(.center)
+                            .padding(.top, 25)
+                            .zIndex(2.0)
+                        
+                        TextField("One-Time-Password", text: $otp)
+                            .autocapitalization(.none)
+                            .buttonStyle(.borderless)
+                            .disableAutocorrection(true)
+                            .foregroundColor(.blue)
+                            .frame(maxWidth: 250)
+                            .multilineTextAlignment(.center)
+                            .padding(.top, 25)
+                            .zIndex(2.0)
+                        
+                        SecureField("New Password", text: $password)
+                            .foregroundColor(.blue)
+                            .disableAutocorrection(true)
+                            .multilineTextAlignment(.center)
+                            .buttonStyle(.borderless)
+                            .autocapitalization(.none)
+                            .frame(maxWidth: 250)
+                            .padding(.bottom)
+                            .padding(.top, 10)
+                            .zIndex(2.0)
+
+                        Button {
+                            onResetPasswordTapped()
+                        } label: {
+                            HStack {
+                                Image(systemName: "lock")
+                                Text("Reset Password")
+                            }.frame(minWidth: 150)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(colorScheme == .dark ? .white : .blue)
+                        .zIndex(2.0)
+                        
+                        Button {
+                            layoutReset()
+                        } label: {
+                            Text("Cancel").frame(minWidth: 150)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.red)
+                        .zIndex(2.0)
+
                     case .InitializePasswordLessLoginViaOtp:
                         // Layout to initialize password-less login by requesting a one-time-passcode.
                         TextField("Username", text: $username)
@@ -218,7 +465,7 @@ struct NativeLoginView: View {
                         .zIndex(2.0)
                         
                         Button {
-                            identityFlowLayoutType = .LoginViaUsernamePassword
+                            layoutReset()
                         } label: {
                             Text("Cancel").frame(minWidth: 150)
                         }
@@ -251,7 +498,7 @@ struct NativeLoginView: View {
                         .zIndex(2.0)
                         
                         Button {
-                            identityFlowLayoutType = .LoginViaUsernamePassword
+                            layoutReset()
                         } label: {
                             Text("Cancel").frame(minWidth: 150)
                         }
@@ -271,14 +518,203 @@ struct NativeLoginView: View {
         }.background(Gradient(colors: [.blue, .cyan, .green]).opacity(0.6))
             .blur(radius: isAuthenticating ? 2.0 : 0.0)
     }
+
+    /// Submits a start registration request to the Salesforce Identity API forgot password endpoint.
+    private func onRequestOtpForRegistrationTapped() {
+        // Reset the message.
+        messageReset()
+        
+        // Show the progress indicator.
+        isAuthenticating = true
+        
+        // Execute for a new reCAPTCHA token.
+        reCaptchaClientObservable.reCaptchaClient?.execute(
+            withAction: .signup
+        ) {reCaptchaExecuteResult, error in
+            
+            // Guard for the new reCAPTCHA token.
+            guard let reCaptchaToken = reCaptchaExecuteResult else {
+                SalesforceLogger.e(AppDelegate.self, message: "Could not obtain a reCAPTCHA signup action token due to error with description '\(error?.localizedDescription ?? "(A description wasn't provided.)")'.")
+                return
+            }
+            
+            // Submit the request and act on the response.
+            Task {
+                // Submit the request.
+                let result = await SalesforceManager.shared.nativeLoginManager()
+                    .startRegistration(
+                        email: email,
+                        firstName: firstName,
+                        lastName: lastName,
+                        username: username,
+                        newPassword: password,
+                        reCaptchaToken: reCaptchaToken,
+                        otpVerificationMethod: otpVerificationMethod)
+                
+                // Clear the progresss indicator.
+                isAuthenticating = false
+                
+                // Act on the response.
+                switch result.nativeLoginResult {
+                    
+                case .invalidCredentials:
+                    errorMessage("Check your username and password.")
+                    break
+                    
+                case .invalidEmail:
+                    errorMessage("Invalid email address.")
+                    break
+                    
+                case .invalidPassword:
+                    errorMessage("Invalid password.")
+                    break
+                    
+                case .invalidUsername:
+                    errorMessage("Invalid username.")
+                    break
+                    
+                case .unknownError:
+                    errorMessage("An error occurred.")
+                    break
+                    
+                case .success:
+                    requestIdentifier = result.requestIdentifier
+                    navigate(.CompleteUserRegistration)
+                }
+            }
+        }
+    }
+    
+    /// Submits a complete registration request to the Salesforce Identity API registration endpoint.
+    private func onCompleteRegistrationTapped() {
+        // Reset the message.
+        messageReset()
+        
+        // Show the progress indicator.
+        isAuthenticating = true
+        
+        // Submit the request and act on the response.
+        Task {
+            // Submit the request.
+            guard let requestIdentifier = requestIdentifier else { return }
+            let result = await SalesforceManager.shared.nativeLoginManager()
+                .completeRegistration(
+                    otp: otp,
+                    requestIdentifier: requestIdentifier,
+                    otpVerificationMethod: otpVerificationMethod)
+            
+            // Clear the progresss indicator.
+            isAuthenticating = false
+            
+            switch result {
+            case .success:
+                layoutReset()
+                break
+            default:
+                errorMessage("An error occurred.")
+            }
+        }
+    }
+
+    
+    /// Submits a start password reset request to the Salesforce Identity API forgot password endpoint.
+    private func onRequestOtpForResetPasswordTapped() {
+        // Reset the message.
+        messageReset()
+        
+        // Show the progress indicator.
+        isAuthenticating = true
+        
+        // Execute for a new reCAPTCHA token.
+        reCaptchaClientObservable.reCaptchaClient?.execute(
+            withAction: .init(customAction: "forgot_password")
+        ) {reCaptchaExecuteResult, error in
+            
+            // Guard for the new reCAPTCHA token.
+            guard let reCaptchaToken = reCaptchaExecuteResult else {
+                SalesforceLogger.e(AppDelegate.self, message: "Could not obtain a reCAPTCHA forgot password action token due to error with description '\(error?.localizedDescription ?? "(A description wasn't provided.)")'.")
+                return
+            }
+            
+            // Submit the request and act on the response.
+            Task {
+                // Submit the request.
+                let result = await SalesforceManager.shared.nativeLoginManager()
+                    .startPasswordReset(
+                        username: username,
+                        reCaptchaToken: reCaptchaToken)
+                
+                // Clear the progresss indicator.
+                isAuthenticating = false
+                
+                // Act on the response.
+                switch result {
+                    
+                case .invalidCredentials:
+                    errorMessage("Check your username and password.")
+                    break
+                    
+                case .invalidEmail:
+                    errorMessage("Invalid email address.")
+                    break
+                    
+                case .invalidPassword:
+                    errorMessage("Invalid password.")
+                    break
+                    
+                case .invalidUsername:
+                    errorMessage("Invalid username.")
+                    break
+                    
+                case .unknownError:
+                    errorMessage("An error occurred.")
+                    break
+                    
+                case .success:
+                    navigate(.CompletePasswordReset)
+                }
+            }
+        }
+    }
+    
+    /// Submits a complete password reset request to the Salesforce Identity API forgot password endpoint.
+    private func onResetPasswordTapped() {
+        // Reset the message.
+        messageReset()
+        
+        // Show the progress indicator.
+        isAuthenticating = true
+        
+        // Submit the request and act on the response.
+        Task {
+            // Submit the request.
+            let result = await SalesforceManager.shared.nativeLoginManager()
+                .completePasswordReset(
+                    username: username,
+                    otp: otp,
+                    newPassword: password)
+            
+            // Clear the progresss indicator.
+            isAuthenticating = false
+            
+            switch result {
+            case .success:
+                layoutReset()
+                message("Password reset successfully.  Log in using the new password.")
+                break
+            default:
+                errorMessage("An error occurred.")
+            }
+        }
+    }
     
     ///
     /// Submits the OTP delivery request when the request button is tapped.  This submits a request to the
     /// `init/passwordless/login`endpoint and opens the submit OTP verification view on success.
     ///
     private func onRequestOtpTapped() {
-        // Reset the error message if needed.
-        errorMessage = ""
+        // Reset the message.
+        messageReset()
         
         // Show the progress indicator.
         isAuthenticating = true
@@ -288,7 +724,7 @@ struct NativeLoginView: View {
             
             // Guard for the new reCAPTCHA token.
             guard let reCaptchaToken = reCaptchaExecuteResult else {
-                SalesforceLogger.e(AppDelegate.self, message: "Could not obtain a reCAPTCHA token due to error with description '\(error?.localizedDescription ?? "(A description wasn't provided.)")'.")
+                SalesforceLogger.e(AppDelegate.self, message: "Could not obtain a reCAPTCHA login action token due to error with description '\(error?.localizedDescription ?? "(A description wasn't provided.)")'.")
                 return
             }
             
@@ -308,19 +744,23 @@ struct NativeLoginView: View {
                 switch result.nativeLoginResult {
                     
                 case .invalidCredentials:
-                    errorMessage = "Check your username and password."
+                    errorMessage("Check your username and password.")
+                    break
+                    
+                case .invalidEmail:
+                    errorMessage("Invalid email address.")
                     break
                     
                 case .invalidPassword:
-                    errorMessage = "Invalid password."
+                    errorMessage("Invalid password.")
                     break
                     
                 case .invalidUsername:
-                    errorMessage = "Invalid username."
+                    errorMessage("Invalid username.")
                     break
                     
                 case .unknownError:
-                    errorMessage = "An error occurred."
+                    errorMessage("An error occurred.")
                     break
                     
                 case .success:
@@ -329,7 +769,7 @@ struct NativeLoginView: View {
                     
                     // Switch to the OTP submission layout.
                     otpIdentifier = otpIdentifierResult
-                    identityFlowLayoutType = .LoginViaUsernameAndOtp
+                    navigate(.LoginViaUsernameAndOtp)
                 }
             }
         }
@@ -347,8 +787,8 @@ struct NativeLoginView: View {
         
         guard let otpIdentifier = otpIdentifier else { return }
         
-        // Reset the error message if needed.
-        errorMessage = ""
+        // Reset the message.
+        messageReset()
         
         // Show the progress indicator.
         isAuthenticating = true
@@ -367,21 +807,73 @@ struct NativeLoginView: View {
             
             switch result {
             case .success:
-                // Switch back to the initial login layout.
-                identityFlowLayoutType = .LoginViaUsernamePassword
+                navigate(.LoginViaUsernamePassword)
                 break
             default:
-                errorMessage = "An error occurred."
+                errorMessage("An error occurred.")
             }
         }
     }
     
+    // mark: Private User Messsaging Utilities
+    
+    /// Sets the error message displayed to the user.
+    private func errorMessage(_ text: String) {
+        messageReset()
+        
+        messageText = text
+        isMessageError = true
+    }
+    
+    /// Resets the message state.
+    private func messageReset() {
+        messageText = ""
+        isMessageError = false
+    }
+    
+    /// Sets the informational message displayed to the user.
+    private func message(_ text: String) {
+        messageReset()
+        
+        messageText = text
+    }
+    
+    // mark: Private Navigation Utilities
+    
+    /// Resets to the initial layout.
+    private func layoutReset() {
+        otp = ""
+        otpIdentifier = ""
+        otpVerificationMethod = .sms
+        password = ""
+        username = ""
+        
+        navigate(.LoginViaUsernamePassword)
+    }
+    
+    /// Navigates to the specified layout.
+    private func navigate(_ identityFlowLayoutType: IdentityFlowLayoutType) {
+        messageReset()
+        self.identityFlowLayoutType = identityFlowLayoutType
+    }
 }
 
 ///
 /// Layouts for the available Salesforce identity flows.
 ///
 enum IdentityFlowLayoutType {
+    
+    /// A layout to start the user registration flow.
+    case StartUserRegistration
+    
+    /// A layout to complete the user registration flow.
+    case CompleteUserRegistration
+    
+    /// A layout to start the password reset flow.
+    case StartPasswordReset
+    
+    /// A layout to complete the password reset flow.
+    case CompletePasswordReset
     
     /// A layout to initialize password-less login via one-time-passcode request.
     case InitializePasswordLessLoginViaOtp
