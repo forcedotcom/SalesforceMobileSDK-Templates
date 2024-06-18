@@ -37,7 +37,7 @@ struct NativeLoginView: View {
     @EnvironmentObject var reCaptchaClientObservable: ReCaptchaClientObservable
     
     /// The layout type for the user's active identity flow, such as registration, forgot password or login
-    @State private var identityFlowLayoutType = IdentityFlowLayoutType.LoginViaUsernamePassword
+    @State private var identityFlowLayoutType = IdentityFlowLayoutType.Login
     
     // MARK: Start Registration Properties
     
@@ -147,7 +147,7 @@ struct NativeLoginView: View {
                     // Switch the layout to match the selected identity flow.
                     switch(identityFlowLayoutType) {
                         
-                    case .LoginViaUsernamePassword:
+                    case .Login:
                         TextField("Username", text: $username)
                             .foregroundColor(.blue)
                             .disableAutocorrection(true)
@@ -196,7 +196,7 @@ struct NativeLoginView: View {
                         .padding(.bottom, 25)
                         
                         Button {
-                            navigate(.InitializePasswordLessLoginViaOtp)
+                            navigate(.StartPasswordLessLogin)
                         } label: {
                             Text("Use One Time Password Instead").frame(minWidth: 150)
                         }
@@ -214,7 +214,7 @@ struct NativeLoginView: View {
                         .zIndex(2.0)
                         
                         Button {
-                            navigate(.StartUserRegistration)
+                            navigate(.StartRegistration)
                         } label: {
                             Text("Register").frame(minWidth: 150)
                         }
@@ -222,7 +222,7 @@ struct NativeLoginView: View {
                         .tint(colorScheme == .dark ? .white : .blue)
                         .zIndex(2.0)
                         
-                    case .StartUserRegistration:
+                    case .StartRegistration:
                         TextField("Email", text: $email)
                             .autocapitalization(.none)
                             .buttonStyle(.borderless)
@@ -304,7 +304,7 @@ struct NativeLoginView: View {
                         .tint(.red)
                         .zIndex(2.0)
                         
-                    case .CompleteUserRegistration:
+                    case .CompleteRegistration:
                         TextField("One-Time-Password", text: $otp)
                             .autocapitalization(.none)
                             .buttonStyle(.borderless)
@@ -420,7 +420,7 @@ struct NativeLoginView: View {
                         .tint(.red)
                         .zIndex(2.0)
                         
-                    case .InitializePasswordLessLoginViaOtp:
+                    case .StartPasswordLessLogin:
                         // Layout to initialize password-less login by requesting a one-time-passcode.
                         TextField("Username", text: $username)
                             .autocapitalization(.none)
@@ -462,7 +462,7 @@ struct NativeLoginView: View {
                         .tint(.red)
                         .zIndex(2.0)
                         
-                    case .LoginViaUsernameAndOtp:
+                    case .CompletePasswordLessLogin:
                         // Layout for password-less login by submitting a previously requested one-time-passcode.
                         TextField("One Time Password", text: $otp)
                             .autocapitalization(.none)
@@ -548,7 +548,7 @@ struct NativeLoginView: View {
                 // Act on the response.
                 unwrapResult(result.nativeLoginResult) {
                     requestIdentifier = result.requestIdentifier
-                    navigate(.CompleteUserRegistration)
+                    navigate(.CompleteRegistration)
                 }
             }
         }
@@ -697,7 +697,7 @@ struct NativeLoginView: View {
                     
                     // Switch to the OTP submission layout.
                     otpIdentifier = otpIdentifierResult
-                    navigate(.LoginViaUsernameAndOtp)
+                    navigate(.CompletePasswordLessLogin)
                 }
             }
         }
@@ -735,7 +735,7 @@ struct NativeLoginView: View {
             
             switch result {
             case .success:
-                navigate(.LoginViaUsernamePassword)
+                navigate(.Login)
                 break
             default:
                 errorMessage("An error occurred.")
@@ -805,7 +805,7 @@ struct NativeLoginView: View {
         password = ""
         username = ""
         
-        navigate(.LoginViaUsernamePassword)
+        navigate(.Login)
     }
     
     /// Navigates to the specified layout.
@@ -821,10 +821,10 @@ struct NativeLoginView: View {
 enum IdentityFlowLayoutType {
     
     /// A layout to start the user registration flow.
-    case StartUserRegistration
+    case StartRegistration
     
     /// A layout to complete the user registration flow.
-    case CompleteUserRegistration
+    case CompleteRegistration
     
     /// A layout to start the password reset flow.
     case StartPasswordReset
@@ -833,13 +833,13 @@ enum IdentityFlowLayoutType {
     case CompletePasswordReset
     
     /// A layout to initialize password-less login via one-time-passcode request.
-    case InitializePasswordLessLoginViaOtp
+    case StartPasswordLessLogin
     
     /// A layout for authorization code and credentials flow via username and previously requested one-time-passcode.
-    case LoginViaUsernameAndOtp
+    case CompletePasswordLessLogin
     
     /// A layout for authorization code and credentials flow via username and password
-    case LoginViaUsernamePassword
+    case Login
 }
 
 #Preview {
