@@ -174,28 +174,13 @@ struct NativeLoginView: View {
                                 messageReset()
                                 isAuthenticating = true
                                 
-                                // Login
+                                // Login.
                                 let result = await SalesforceManager.shared.nativeLoginManager()
                                     .login(username: username, password: password)
-                                self.isAuthenticating = false
+                                isAuthenticating = false
                                 
-                                switch result {
-                                case .invalidCredentials:
-                                    errorMessage("Please check your username and password.")
-                                    break
-                                case .invalidEmail:
-                                    errorMessage("Invalid email address.")
-                                    break
-                                case .invalidUsername:
-                                    errorMessage("Username format is incorrect.")
-                                    break
-                                case .invalidPassword:
-                                    errorMessage("Invalid password.")
-                                    break
-                                case .unknownError:
-                                    errorMessage("An unknown error has occurred.")
-                                    break
-                                case .success:
+                                // Act on the response.
+                                unwrapResult(result) {
                                     password = ""
                                 }
                             }
@@ -561,29 +546,7 @@ struct NativeLoginView: View {
                 isAuthenticating = false
                 
                 // Act on the response.
-                switch result.nativeLoginResult {
-                    
-                case .invalidCredentials:
-                    errorMessage("Check your username and password.")
-                    break
-                    
-                case .invalidEmail:
-                    errorMessage("Invalid email address.")
-                    break
-                    
-                case .invalidPassword:
-                    errorMessage("Invalid password.")
-                    break
-                    
-                case .invalidUsername:
-                    errorMessage("Invalid username.")
-                    break
-                    
-                case .unknownError:
-                    errorMessage("An error occurred.")
-                    break
-                    
-                case .success:
+                unwrapResult(result.nativeLoginResult) {
                     requestIdentifier = result.requestIdentifier
                     navigate(.CompleteUserRegistration)
                 }
@@ -655,29 +618,7 @@ struct NativeLoginView: View {
                 isAuthenticating = false
                 
                 // Act on the response.
-                switch result {
-                    
-                case .invalidCredentials:
-                    errorMessage("Check your username and password.")
-                    break
-                    
-                case .invalidEmail:
-                    errorMessage("Invalid email address.")
-                    break
-                    
-                case .invalidPassword:
-                    errorMessage("Invalid password.")
-                    break
-                    
-                case .invalidUsername:
-                    errorMessage("Invalid username.")
-                    break
-                    
-                case .unknownError:
-                    errorMessage("An error occurred.")
-                    break
-                    
-                case .success:
+                unwrapResult(result) {
                     navigate(.CompletePasswordReset)
                 }
             }
@@ -750,29 +691,7 @@ struct NativeLoginView: View {
                 isAuthenticating = false
                 
                 // Act on the response.
-                switch result.nativeLoginResult {
-                    
-                case .invalidCredentials:
-                    errorMessage("Check your username and password.")
-                    break
-                    
-                case .invalidEmail:
-                    errorMessage("Invalid email address.")
-                    break
-                    
-                case .invalidPassword:
-                    errorMessage("Invalid password.")
-                    break
-                    
-                case .invalidUsername:
-                    errorMessage("Invalid username.")
-                    break
-                    
-                case .unknownError:
-                    errorMessage("An error occurred.")
-                    break
-                    
-                case .success:
+                unwrapResult(result.nativeLoginResult) {
                     // Verify parameters.
                     guard let otpIdentifierResult = result.otpIdentifier else { return }
                     
@@ -845,6 +764,35 @@ struct NativeLoginView: View {
         messageReset()
         
         messageText = text
+    }
+    
+    /// Unwraps a native login result to a success outcome or sets an appropriate error user message.
+    /// - Parameters:
+    ///   - result: The native login result
+    ///   - onSuccess: The success outcome
+    private func unwrapResult(
+        _ result: NativeLoginResult,
+        onSuccess: () -> ())
+    {
+        switch result {
+        case .invalidCredentials:
+            errorMessage("Please check your username and password.")
+            break
+        case .invalidEmail:
+            errorMessage("Invalid email address.")
+            break
+        case .invalidUsername:
+            errorMessage("Username format is incorrect.")
+            break
+        case .invalidPassword:
+            errorMessage("Invalid password.")
+            break
+        case .unknownError:
+            errorMessage("An unknown error has occurred.")
+            break
+        case .success:
+            onSuccess()
+        }
     }
     
     // MARK: Private Navigation Utilities
