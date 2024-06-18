@@ -31,55 +31,61 @@ import SalesforceSDKCore
 struct NativeLoginView: View {
     @Environment(\.colorScheme) var colorScheme
     
+    // MARK: reCAPTCHA Properties
+    
     /// The reCAPTCHA client used to obtain reCAPTCHA tokens when needed for Salesforce Headless Identity API requests
     @EnvironmentObject var reCaptchaClientObservable: ReCaptchaClientObservable
     
     /// The layout type for the user's active identity flow, such as registration, forgot password or login
     @State private var identityFlowLayoutType = IdentityFlowLayoutType.LoginViaUsernamePassword
-
-    // mark: Start Registration
+    
+    // MARK: Start Registration Properties
     
     /// Start Registration: The user's entered first name.
     @State private var firstName = ""
     
-    /// Start Registration: The user's entered last name.
-    @State private var lastName = ""
-    
     /// Start Registration: The user's entered email address.
     @State private var email = ""
     
-    // mark: Complete Registration
+    /// Start Registration: The user's entered last name.
+    @State private var lastName = ""
+    
+    // MARK: Complete Registration
     
     /// Complete Registration:  The request identifier returned by the Salesforce Identity API's initialize registration endpoint
     @State private var requestIdentifier: String? = nil
     
-    // mark: User Messaging
+    // MARK: Password-Less Login Via One-Time-Passcode Properties
     
-    /// Indicates if the message displayed to the user is informational or an error.  Note this is used by multiple layout types
+    /// Password-Less Login Via One-Time-Passcode: The user's chosen OTP verification method of email or SMS
+    @State private var otpVerificationMethod = OtpVerificationMethod.sms
+    
+    // MARK: User Messaging
+    
+    /// User Messaging: Indicates if the message displayed to the user is informational or an error.  Note this is used by multiple layout types
     @State private var isMessageError = false
     
-    /// A message displayed to the user.  Note this is used by multiple layout types
+    /// User Messaging: A message displayed to the user.  Note this is used by multiple layout types
     @State private var messageText = ""
     
-    // mark: Common User Interface State
+    // MARK: Common User Interface State
     
     /// An option to display indicators when an identity action is in progress. Note this is used by multiple layout types
     @State private var isAuthenticating = false
     
-    /// The user's entered username.  Note this is used by multiple layout types
-    @State private var username = ""
+    /// The user's entered one-time-passcode. Note this is used by multiple layout types
+    @State private var otp = ""
+    
+    /// The OTP identifier returned by the Salesforce Identity API's initialize headless login endpoint. Note this is used by multiple layout types
+    @State private var otpIdentifier: String? = nil
     
     /// The user's entered password.  Note this is used by multiple layout types
     @State private var password = ""
     
-    /// Password-Less Login Via One-Time-Passcode: The user's entered one-time-passcode
-    @State private var otp = ""
+    /// The user's entered username.  Note this is used by multiple layout types
+    @State private var username = ""
     
-    /// Password-Less Login Via One-Time-Passcode:  The OTP identifier returned by the Salesforce Identity API's initialize headless login endpoint
-    @State private var otpIdentifier: String? = nil
-    
-    /// Password-Less Login Via One-Time-Passcode: The user's chosen OTP verification method of email or SMS
-    @State private var otpVerificationMethod = OtpVerificationMethod.sms
+    // MARK: Layout
     
     var body: some View {
         VStack {
@@ -293,7 +299,7 @@ struct NativeLoginView: View {
                             }
                             .frame(maxWidth: 250)
                             .zIndex(2.0)
-
+                        
                         Button {
                             onRequestOtpForRegistrationTapped()
                         } label: {
@@ -314,7 +320,7 @@ struct NativeLoginView: View {
                         .buttonStyle(.bordered)
                         .tint(.red)
                         .zIndex(2.0)
-
+                        
                     case .CompleteUserRegistration:
                         TextField("One-Time-Password", text: $otp)
                             .autocapitalization(.none)
@@ -325,7 +331,7 @@ struct NativeLoginView: View {
                             .multilineTextAlignment(.center)
                             .padding(.top, 25)
                             .zIndex(2.0)
-
+                        
                         Button {
                             onCompleteRegistrationTapped()
                         } label: {
@@ -358,7 +364,7 @@ struct NativeLoginView: View {
                             .multilineTextAlignment(.center)
                             .padding(.top, 25)
                             .zIndex(2.0)
-
+                        
                         Button {
                             onRequestOtpForResetPasswordTapped()
                         } label: {
@@ -409,7 +415,7 @@ struct NativeLoginView: View {
                             .padding(.bottom)
                             .padding(.top, 10)
                             .zIndex(2.0)
-
+                        
                         Button {
                             onResetPasswordTapped()
                         } label: {
@@ -430,7 +436,7 @@ struct NativeLoginView: View {
                         .buttonStyle(.bordered)
                         .tint(.red)
                         .zIndex(2.0)
-
+                        
                     case .InitializePasswordLessLoginViaOtp:
                         // Layout to initialize password-less login by requesting a one-time-passcode.
                         TextField("Username", text: $username)
@@ -518,7 +524,9 @@ struct NativeLoginView: View {
         }.background(Gradient(colors: [.blue, .cyan, .green]).opacity(0.6))
             .blur(radius: isAuthenticating ? 2.0 : 0.0)
     }
-
+    
+    // MARK: User Registration Actions
+    
     /// Submits a start registration request to the Salesforce Identity API forgot password endpoint.
     private func onRequestOtpForRegistrationTapped() {
         // Reset the message.
@@ -615,7 +623,8 @@ struct NativeLoginView: View {
             }
         }
     }
-
+    
+    // MARK: Passsword Reset User Actions
     
     /// Submits a start password reset request to the Salesforce Identity API forgot password endpoint.
     private func onRequestOtpForResetPasswordTapped() {
@@ -707,6 +716,8 @@ struct NativeLoginView: View {
             }
         }
     }
+    
+    // MARK: Password-Less Login User Actions
     
     ///
     /// Submits the OTP delivery request when the request button is tapped.  This submits a request to the
@@ -815,7 +826,7 @@ struct NativeLoginView: View {
         }
     }
     
-    // mark: Private User Messsaging Utilities
+    // MARK: Private User Messsaging Utilities
     
     /// Sets the error message displayed to the user.
     private func errorMessage(_ text: String) {
@@ -838,7 +849,7 @@ struct NativeLoginView: View {
         messageText = text
     }
     
-    // mark: Private Navigation Utilities
+    // MARK: Private Navigation Utilities
     
     /// Resets to the initial layout.
     private func layoutReset() {
