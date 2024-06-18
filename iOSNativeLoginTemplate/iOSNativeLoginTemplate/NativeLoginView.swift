@@ -592,6 +592,9 @@ struct NativeLoginView: View {
         // Reset the message.
         messageReset()
         
+        // Clear the user's previous password entry.
+        password = ""
+        
         // Show the progress indicator.
         isAuthenticating = true
         
@@ -762,8 +765,8 @@ struct NativeLoginView: View {
     
     /// Resets the message state.
     private func messageReset() {
-        messageText = ""
         isMessageError = false
+        messageText = ""
     }
     
     /// Unwraps a native login result to a success outcome or sets an appropriate error user message.
