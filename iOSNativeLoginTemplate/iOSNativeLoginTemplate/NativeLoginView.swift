@@ -55,11 +55,6 @@ struct NativeLoginView: View {
     /// Complete Registration:  The request identifier returned by the Salesforce Identity API's initialize registration endpoint
     @State private var requestIdentifier: String? = nil
     
-    // MARK: Password-Less Login Via One-Time-Passcode Properties
-    
-    /// Password-Less Login Via One-Time-Passcode: The user's chosen OTP verification method of email or SMS
-    @State private var otpVerificationMethod = OtpVerificationMethod.sms
-    
     // MARK: User Messaging
     
     /// User Messaging: Indicates if the message displayed to the user is informational or an error.  Note this is used by multiple layout types
@@ -78,6 +73,9 @@ struct NativeLoginView: View {
     
     /// The OTP identifier returned by the Salesforce Identity API's initialize headless login endpoint. Note this is used by multiple layout types
     @State private var otpIdentifier: String? = nil
+    
+    /// Password-Less Login Via One-Time-Passcode: The user's chosen OTP verification method of email or SMS
+    @State private var otpVerificationMethod = OtpVerificationMethod.sms
     
     /// The user's entered password.  Note this is used by multiple layout types
     @State private var password = ""
