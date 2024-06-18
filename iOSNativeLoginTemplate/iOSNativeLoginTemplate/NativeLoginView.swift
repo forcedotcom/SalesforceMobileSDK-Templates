@@ -753,17 +753,17 @@ struct NativeLoginView: View {
         isMessageError = true
     }
     
-    /// Resets the message state.
-    private func messageReset() {
-        messageText = ""
-        isMessageError = false
-    }
-    
     /// Sets the informational message displayed to the user.
     private func message(_ text: String) {
         messageReset()
         
         messageText = text
+    }
+    
+    /// Resets the message state.
+    private func messageReset() {
+        messageText = ""
+        isMessageError = false
     }
     
     /// Unwraps a native login result to a success outcome or sets an appropriate error user message.
