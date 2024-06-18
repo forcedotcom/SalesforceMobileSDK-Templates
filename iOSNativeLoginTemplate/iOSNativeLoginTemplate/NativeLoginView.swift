@@ -181,7 +181,7 @@ struct NativeLoginView: View {
                                 
                                 // Act on the response.
                                 unwrapResult(result) {
-                                    password = ""
+                                    layoutReset()
                                 }
                             }
                         } label: {
@@ -735,7 +735,7 @@ struct NativeLoginView: View {
             
             switch result {
             case .success:
-                navigate(.Login)
+                layoutReset()
                 break
             default:
                 errorMessage("An error occurred.")
