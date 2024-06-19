@@ -149,25 +149,10 @@ struct NativeLoginView: View {
                         
                     case .Login:
                         TextField("Username", text: $username)
-                            .foregroundColor(.blue)
-                            .disableAutocorrection(true)
-                            .multilineTextAlignment(.center)
-                            .buttonStyle(.borderless)
-                            .autocapitalization(.none)
-                            .frame(maxWidth: 250)
-                            .padding(.top)
-                            .zIndex(2.0)
+                            .loginTextField()
                         
                         SecureField("Password", text: $password)
-                            .foregroundColor(.blue)
-                            .disableAutocorrection(true)
-                            .multilineTextAlignment(.center)
-                            .buttonStyle(.borderless)
-                            .autocapitalization(.none)
-                            .frame(maxWidth: 250)
-                            .padding(.bottom)
-                            .padding(.top, 10)
-                            .zIndex(2.0)
+                            .loginSecureField()
                         
                         Button {
                             Task {
@@ -224,55 +209,19 @@ struct NativeLoginView: View {
                         
                     case .StartRegistration:
                         TextField("Email", text: $email)
-                            .autocapitalization(.none)
-                            .buttonStyle(.borderless)
-                            .disableAutocorrection(true)
-                            .foregroundColor(.blue)
-                            .frame(maxWidth: 250)
-                            .multilineTextAlignment(.center)
-                            .padding(.top, 25)
-                            .zIndex(2.0)
+                            .loginTextField()
                         
                         TextField("First Name", text: $firstName)
-                            .autocapitalization(.none)
-                            .buttonStyle(.borderless)
-                            .disableAutocorrection(true)
-                            .foregroundColor(.blue)
-                            .frame(maxWidth: 250)
-                            .multilineTextAlignment(.center)
-                            .padding(.top, 25)
-                            .zIndex(2.0)
+                            .loginTextField()
                         
                         TextField("Last Name", text: $lastName)
-                            .autocapitalization(.none)
-                            .buttonStyle(.borderless)
-                            .disableAutocorrection(true)
-                            .foregroundColor(.blue)
-                            .frame(maxWidth: 250)
-                            .multilineTextAlignment(.center)
-                            .padding(.top, 25)
-                            .zIndex(2.0)
+                            .loginTextField()
                         
                         TextField("Username", text: $username)
-                            .autocapitalization(.none)
-                            .buttonStyle(.borderless)
-                            .disableAutocorrection(true)
-                            .foregroundColor(.blue)
-                            .frame(maxWidth: 250)
-                            .multilineTextAlignment(.center)
-                            .padding(.top, 25)
-                            .zIndex(2.0)
+                            .loginTextField()
                         
                         SecureField("Password", text: $password)
-                            .foregroundColor(.blue)
-                            .disableAutocorrection(true)
-                            .multilineTextAlignment(.center)
-                            .buttonStyle(.borderless)
-                            .autocapitalization(.none)
-                            .frame(maxWidth: 250)
-                            .padding(.bottom)
-                            .padding(.top, 25)
-                            .zIndex(2.0)
+                            .loginSecureField()
                         
                         Picker(
                             "OTP Verification Method",
@@ -306,14 +255,7 @@ struct NativeLoginView: View {
                         
                     case .CompleteRegistration:
                         TextField("One-Time-Password", text: $otp)
-                            .autocapitalization(.none)
-                            .buttonStyle(.borderless)
-                            .disableAutocorrection(true)
-                            .foregroundColor(.blue)
-                            .frame(maxWidth: 250)
-                            .multilineTextAlignment(.center)
-                            .padding(.top, 25)
-                            .zIndex(2.0)
+                            .loginTextField()
                         
                         Button {
                             onCompleteRegistrationTapped()
@@ -339,14 +281,7 @@ struct NativeLoginView: View {
                     case .StartPasswordReset:
                         // Layout to start password reset.
                         TextField("Username", text: $username)
-                            .autocapitalization(.none)
-                            .buttonStyle(.borderless)
-                            .disableAutocorrection(true)
-                            .foregroundColor(.blue)
-                            .frame(maxWidth: 250)
-                            .multilineTextAlignment(.center)
-                            .padding(.top, 25)
-                            .zIndex(2.0)
+                            .loginTextField()
                         
                         Button {
                             onRequestOtpForResetPasswordTapped()
@@ -379,25 +314,10 @@ struct NativeLoginView: View {
                             .zIndex(2.0)
                         
                         TextField("One-Time-Password", text: $otp)
-                            .autocapitalization(.none)
-                            .buttonStyle(.borderless)
-                            .disableAutocorrection(true)
-                            .foregroundColor(.blue)
-                            .frame(maxWidth: 250)
-                            .multilineTextAlignment(.center)
-                            .padding(.top, 25)
-                            .zIndex(2.0)
+                            .loginTextField()
                         
                         SecureField("New Password", text: $password)
-                            .foregroundColor(.blue)
-                            .disableAutocorrection(true)
-                            .multilineTextAlignment(.center)
-                            .buttonStyle(.borderless)
-                            .autocapitalization(.none)
-                            .frame(maxWidth: 250)
-                            .padding(.bottom)
-                            .padding(.top, 10)
-                            .zIndex(2.0)
+                            .loginSecureField()
                         
                         Button {
                             onResetPasswordTapped()
@@ -423,14 +343,7 @@ struct NativeLoginView: View {
                     case .StartPasswordLessLogin:
                         // Layout to initialize password-less login by requesting a one-time-passcode.
                         TextField("Username", text: $username)
-                            .autocapitalization(.none)
-                            .buttonStyle(.borderless)
-                            .disableAutocorrection(true)
-                            .foregroundColor(.blue)
-                            .frame(maxWidth: 250)
-                            .multilineTextAlignment(.center)
-                            .padding(.top, 25)
-                            .zIndex(2.0)
+                            .loginTextField()
                         
                         Picker(
                             "OTP Verification Method",
@@ -465,14 +378,7 @@ struct NativeLoginView: View {
                     case .CompletePasswordLessLogin:
                         // Layout for password-less login by submitting a previously requested one-time-passcode.
                         TextField("One Time Password", text: $otp)
-                            .autocapitalization(.none)
-                            .buttonStyle(.borderless)
-                            .disableAutocorrection(true)
-                            .foregroundColor(.blue)
-                            .frame(maxWidth: 250)
-                            .multilineTextAlignment(.center)
-                            .padding(.top, 25)
-                            .zIndex(2.0)
+                            .loginTextField()
                         
                         Button {
                             onSubmitOtpTapped()
@@ -844,6 +750,39 @@ enum IdentityFlowLayoutType {
     /// A layout for authorization code and credentials flow via username and password
     case Login
 }
+
+// MARK: Private SwiftUI Utilities
+
+private struct LoginField: ViewModifier {
+    let paddingTop: CGFloat = 10
+    let paddingBottom: CGFloat = 10
+    
+    func body(content: Content) -> some View {
+        content
+            .foregroundColor(.blue)
+            .disableAutocorrection(true)
+            .multilineTextAlignment(.center)
+            .buttonStyle(.borderless)
+            .autocapitalization(.none)
+            .frame(maxWidth: 250)
+            .padding(.top, paddingTop)
+            .zIndex(2.0)
+    }
+}
+
+extension TextField {
+    func loginTextField() -> some View {
+            modifier(LoginField())
+        }
+}
+
+extension SecureField {
+    func loginSecureField() -> some View {
+            modifier(LoginField())
+        }
+}
+
+// MARK: Previews
 
 #Preview {
     NativeLoginView()
