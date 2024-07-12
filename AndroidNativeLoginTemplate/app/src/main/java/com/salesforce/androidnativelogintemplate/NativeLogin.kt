@@ -35,7 +35,6 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
 import android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT
 import androidx.activity.ComponentActivity
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -48,6 +47,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -57,9 +57,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.CardDefaults
@@ -149,7 +148,6 @@ class NativeLogin : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         nativeLoginManager = SalesforceSDKManager.getInstance().nativeLoginManager!!
 
         setContentView(
@@ -439,12 +437,16 @@ class NativeLogin : ComponentActivity() {
 
         LoginTheme {
             Scaffold(
-                modifier = Modifier.semantics {
-                    // Only needed for UI Testing
-                    testTagsAsResourceId = true
-                },
+                modifier = Modifier
+                    .imePadding()
+                    .navigationBarsPadding()
+                    .semantics {
+                        // Only needed for UI Testing
+                        testTagsAsResourceId = true
+                    }
+                    .statusBarsPadding(),
                 topBar = {
-                    Row(modifier = Modifier.statusBarsPadding()) {
+                    Row {
 
                         // Back button should only be shown if there is a user already logged in.  But not
                         // in the case of Biometric Authentication.
@@ -460,109 +462,101 @@ class NativeLogin : ComponentActivity() {
                         }
                     }
                 },
-                bottomBar = {
-                    Column(
-                        horizontalAlignment = CenterHorizontally,
-                        modifier = Modifier
-                            .navigationBarsPadding()
-                            .fillMaxWidth(),
-                    ) {
-                        // Fallback to web based authentication.
-                        TextButton(onClick = { handleWebviewFallbackResult?.launch(webviewLoginIntent) }) {
-                            Text(text = "Looking for Salesforce Log In?")
-                        }
-                    }
-                },
             ) { innerPadding ->
-                Column(
+                LazyColumn(
                     horizontalAlignment = CenterHorizontally,
                     modifier = Modifier
-                        .verticalScroll(rememberScrollState(), reverseScrolling = true)
-                        .navigationBarsPadding()
-                        .padding(top = innerPadding.calculateTopPadding())
-                        .imePadding()
+                        .consumeWindowInsets(innerPadding)
                         .fillMaxSize(),
+                    contentPadding = innerPadding
                 ) {
-                    Spacer(modifier = Modifier.height(75.dp))
-                    ElevatedCard(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .navigationBarsPadding()
-                            .widthIn(350.dp, 500.dp),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
-                    ) {
-                        Spacer(modifier = Modifier.height(25.dp))
-                        if (identityFlowLayoutTypeActive != StartRegistration) {
+                    items(count = 1) {
+                        ElevatedCard(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .widthIn(350.dp, 500.dp),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+                        ) {
+                            Spacer(modifier = Modifier.height(25.dp))
                             Image(
                                 painter = painterResource(id = sf__salesforce_logo),
                                 colorFilter = ColorFilter.tint(colorScheme.primary),
                                 contentDescription = "",
                                 modifier = Modifier.align(CenterHorizontally),
                             )
-                        }
 
-                        // Switch the layout to match the selected identity flow.
-                        when (identityFlowLayoutTypeActive) {
-                            StartRegistration -> StartRegistrationInput()
+                            // Switch the layout to match the selected identity flow.
+                            when (identityFlowLayoutTypeActive) {
+                                StartRegistration -> StartRegistrationInput()
 
-                            CompleteRegistration -> CompleteRegistrationInput()
+                                CompleteRegistration -> CompleteRegistrationInput()
 
-                            StartPasswordReset -> StartPasswordResetInput()
+                                StartPasswordReset -> StartPasswordResetInput()
 
-                            CompletePasswordReset -> CompletePasswordResetInput()
+                                CompletePasswordReset -> CompletePasswordResetInput()
 
-                            Login -> UserNamePasswordInput(login)
+                                Login -> UserNamePasswordInput(login)
 
-                            StartPasswordLessLogin -> StartPasswordLessLoginInput()
+                                StartPasswordLessLogin -> StartPasswordLessLoginInput()
 
-                            CompletePasswordLessLogin -> CompletePasswordLessLoginInput()
-                        }
-
-                        // Layout navigation buttons between the available identity flow layouts according to the current layout.
-                        when (identityFlowLayoutTypeActive) {
-                            Login -> {
-                                // Allow the user to switch to login via username and OTP.
-                                Button(
-                                    onClick = {
-                                        viewModel.identifyFlowlayoutType.value = StartPasswordLessLogin
-                                    },
-                                    modifier = Modifier.align(CenterHorizontally)
-                                ) { Text(text = "Use One Time Password Instead") }
-
-                                // Allow the user to switch to reset password via username and OTP.
-                                Button(
-                                    onClick = {
-                                        viewModel.identifyFlowlayoutType.value = StartPasswordReset
-                                    },
-                                    modifier = Modifier.align(CenterHorizontally)
-                                ) { Text(text = "Reset Password") }
-
-                                // Allow the user to switch to registration
-                                Button(
-                                    onClick = {
-                                        viewModel.identifyFlowlayoutType.value = StartRegistration
-                                    },
-                                    modifier = Modifier.align(CenterHorizontally)
-                                ) { Text(text = "Register") }
+                                CompletePasswordLessLogin -> CompletePasswordLessLoginInput()
                             }
 
-                            else -> {
-                                // From all the other layouts, allow the user to cancel back to the initial username and password layout.
-                                Button(
-                                    onClick = {
-                                        viewModel.identifyFlowlayoutType.value = Login
-                                    },
-                                    colors = buttonColors().copy(
-                                        containerColor = LightGray,
-                                        contentColor = Red
-                                    ),
-                                    modifier = Modifier.align(CenterHorizontally)
-                                ) {
-                                    Text(text = "Cancel")
+                            // Layout navigation buttons between the available identity flow layouts according to the current layout.
+                            when (identityFlowLayoutTypeActive) {
+                                Login -> {
+                                    // Allow the user to switch to login via username and OTP.
+                                    Button(
+                                        onClick = {
+                                            viewModel.identifyFlowlayoutType.value = StartPasswordLessLogin
+                                        },
+                                        modifier = Modifier.align(CenterHorizontally)
+                                    ) { Text(text = "Use One Time Password Instead") }
+
+                                    // Allow the user to switch to reset password via username and OTP.
+                                    Button(
+                                        onClick = {
+                                            viewModel.identifyFlowlayoutType.value = StartPasswordReset
+                                        },
+                                        modifier = Modifier.align(CenterHorizontally)
+                                    ) { Text(text = "Reset Password") }
+
+                                    // Allow the user to switch to registration
+                                    Button(
+                                        onClick = {
+                                            viewModel.identifyFlowlayoutType.value = StartRegistration
+                                        },
+                                        modifier = Modifier.align(CenterHorizontally)
+                                    ) { Text(text = "Register") }
+                                }
+
+                                else -> {
+                                    // From all the other layouts, allow the user to cancel back to the initial username and password layout.
+                                    Button(
+                                        onClick = {
+                                            viewModel.identifyFlowlayoutType.value = Login
+                                        },
+                                        colors = buttonColors().copy(
+                                            containerColor = LightGray,
+                                            contentColor = Red
+                                        ),
+                                        modifier = Modifier.align(CenterHorizontally)
+                                    ) {
+                                        Text(text = "Cancel")
+                                    }
                                 }
                             }
+                            Spacer(modifier = Modifier.height(25.dp))
                         }
-                        Spacer(modifier = Modifier.height(25.dp))
+
+
+                        // Fallback to web based authentication.
+                        TextButton(
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = { handleWebviewFallbackResult?.launch(webviewLoginIntent) }
+                        ) {
+                            Text(text = "Looking for Salesforce Log In?")
+                        }
                     }
                 }
             }
