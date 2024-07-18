@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	android:versionCode="1"
-	android:versionName="1.0"
-	android:installLocation="internalOnly">
+    android:installLocation="internalOnly"
+    android:versionCode="1"
+    android:versionName="1.0">
 
-	<application android:icon="@drawable/sf__icon"
-	    android:label="@string/app_name"
-		android:name=".MainApplication"
-		android:manageSpaceActivity="com.salesforce.androidsdk.ui.ManageSpaceActivity">
+    <application
+        android:name=".MainApplication"
+        android:icon="@drawable/sf__icon"
+        android:label="@string/app_name"
+        android:manageSpaceActivity="com.salesforce.androidsdk.ui.ManageSpaceActivity">
 
-		<!-- Launcher screen -->
-		<activity android:name=".MainActivity"
-		    android:label="@string/app_name"
-			android:theme="@style/SalesforceSDK"
-            android:exported="true">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
-		</activity>
+        <!-- Launcher screen -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/SalesforceSDK">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <!-- Login activity -->
         <activity android:name="com.salesforce.androidnativekotlintemplate.LoginActivity"
@@ -27,16 +29,18 @@
             android:launchMode="singleTask"
             android:exported="true">
 
-		<!-- Login with QR -->
-			<intent-filter>
-				<data android:scheme="mobileapp"
-					android:host="android"
-					android:path="/login/qr" />
-				<action android:name="android.intent.action.VIEW" />
-				<category android:name="android.intent.category.BROWSABLE" />
-				<category android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
-		</activity>
+            <!-- Login with QR -->
+            <intent-filter>
+                <data
+                    android:host="android"
+                    android:path="/login/qr"
+                    android:scheme="mobileapp" />
+                <action android:name="android.intent.action.VIEW" />
 
-	</application>
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+    </application>
 </manifest>
