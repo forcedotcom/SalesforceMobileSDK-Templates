@@ -11,6 +11,5 @@
 
     <!-- Text for the "Log In With QR" button -->
     <!-- Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes -->
-    <string name="login_with_qr">Log In with QR</string>
-
+    <!-- <string name="login_with_qr">Log In with QR</string> -->
 </resources>

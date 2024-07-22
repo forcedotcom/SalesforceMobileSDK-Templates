@@ -23,25 +23,36 @@
         </activity>
 
         <!-- Login activity -->
+        <!--
+            To enable browser based authentication, uncomment the lines below and replace
+            'scheme', 'host' and 'path' with their corresponding values from your connected app.
+
+            For example, if the callback URL of your connected app is
+            "testsfdc:///mobilesdk/detect/oauth/done",
+            'scheme' would be "testsfdc", 'host' would be "*" since it doesn't exist, and
+            'path' would be "/mobilesdk/detect/oauth/done".
+
+            If the callback URL is "sfdc://login.salesforce.com/oauth/done",
+            'scheme' would be "sfdc", 'host' would be "login.salesforce.com",
+            and 'path' would be "/oauth/done".
+        -->
         <!-- Use `android:name="com.salesforce.androidnativekotlintemplate.QrCodeEnabledLoginActivity"` when enabling log in via Salesforce UI Bridge API generated QR codes -->
-        <activity
-            android:name="com.salesforce.androidnativekotlintemplate.QrCodeEnabledLoginActivity"
-            android:theme="@style/SalesforceSDK"
-            android:launchMode="singleTask"
-            android:exported="true">
+<!--        <activity-->
+<!--            android:name="com.salesforce.androidnativekotlintemplate.QrCodeEnabledLoginActivity"-->
+<!--            android:theme="@style/SalesforceSDK"-->
+<!--            android:launchMode="singleTask"-->
+<!--            android:exported="true">-->
 
-            <!-- Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes -->
-            <intent-filter>
-                <data
-                    android:host="android"
-                    android:path="/login/qr"
-                    android:scheme="mobileapp" />
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
+<!--            &lt;!&ndash; Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes &ndash;&gt;-->
+<!--            &lt;!&ndash; <intent-filter>&ndash;&gt;-->
+<!--            &lt;!&ndash;     <data&ndash;&gt;-->
+<!--            &lt;!&ndash;         android:host="android"&ndash;&gt;-->
+<!--            &lt;!&ndash;         android:path="/login/qr"&ndash;&gt;-->
+<!--            &lt;!&ndash;         android:scheme="mobileapp" />&ndash;&gt;-->
+<!--            &lt;!&ndash;     <action android:name="android.intent.action.VIEW" />&ndash;&gt;-->
+<!--            &lt;!&ndash;     <category android:name="android.intent.category.BROWSABLE" />&ndash;&gt;-->
+<!--            &lt;!&ndash;     <category android:name="android.intent.category.DEFAULT" />&ndash;&gt;-->
+<!--            &lt;!&ndash; </intent-filter>&ndash;&gt;-->
+<!--        </activity>-->
     </application>
 </manifest>

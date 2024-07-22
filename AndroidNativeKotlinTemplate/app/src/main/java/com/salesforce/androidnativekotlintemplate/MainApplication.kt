@@ -49,7 +49,7 @@ class MainApplication : Application() {
              *
              */
             // Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes
-            QrCodeEnabledLoginActivity::class.java)
+            /*QrCodeEnabledLoginActivity::class.java*/)
         MobileSyncSDKManager.getInstance().registerUsedAppFeature(FEATURE_APP_USES_KOTLIN)
 
         /*
@@ -69,6 +69,6 @@ class MainApplication : Application() {
 
         // Enable login via Salesforce UI Bridge API generated QR code.
         // Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes
-        MobileSyncSDKManager.getInstance().isQrCodeLoginEnabled = true
+        // MobileSyncSDKManager.getInstance().isQrCodeLoginEnabled = true
     }
 }
