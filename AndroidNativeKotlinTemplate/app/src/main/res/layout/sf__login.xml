@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-
+<!-- This override layout adds a "Log In With QR" button to enable log in via Salesforce UI Bridge API generated QR codes -->
+<!-- Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/sf__auth_container_phone"
     android:layout_width="match_parent"
