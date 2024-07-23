@@ -18,10 +18,10 @@ end
 project 'ReactNativeTemplate.xcodeproj'
 target 'ReactNativeTemplate' do
   source 'https://cdn.cocoapods.org/'
-  config = use_native_modules!
+  $config = use_native_modules!
 
   use_react_native!(
-    :path => config[:reactNativePath],
+    :path => $config[:reactNativePath],
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
@@ -44,7 +44,7 @@ post_install do |installer|
   # React native post install
   react_native_post_install(
       installer,
-      config[:reactNativePath],
+      $config[:reactNativePath],
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
   )
