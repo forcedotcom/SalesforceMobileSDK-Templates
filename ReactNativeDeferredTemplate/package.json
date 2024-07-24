@@ -11,6 +11,7 @@
     "SalesforceMobileSDK-iOS": "https://github.com/forcedotcom/SalesforceMobileSDK-iOS.git#dev"
   },
   "dependencies": {
+    "@babel/plugin-transform-private-property-in-object": "^7.24.7",	
     "@react-native-masked-view/masked-view": "^0.3.0",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/stack": "^6.3.20",
