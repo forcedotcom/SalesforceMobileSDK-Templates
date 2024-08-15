@@ -78,7 +78,7 @@ class ContactDetailViewModel: ObservableObject {
     }
     
     func deleteButtonTitle() -> String {
-        return isLocallyDeleted() ? "Undelete Contact" : "Delete Contact"
+        return isLocallyDeleted() ? "Undelete" : "Delete"
     }
 
     func deleteButtonTapped() {
