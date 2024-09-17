@@ -18,13 +18,17 @@
 		4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */; };
 		4FD6C4A01B755242002F9F90 /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C49D1B755242002F9F90 /* InitialViewController.swift */; };
 		69B48C322AD4E7AD0026AEC6 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 69B48C312AD4E7AD0026AEC6 /* PrivacyInfo.xcprivacy */; };
-		B7168FBC1FACC6F900A48DB5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */; };
+		8A7D16C2D3B653B9C7BC8413 /* Pods_iOSNativeSwiftTemplate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E4923BCE151D652A2E314ED /* Pods_iOSNativeSwiftTemplate.framework */; };
 		B73B520D234FA65F001B069B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73B520C234FA65F001B069B /* SceneDelegate.swift */; };
 		B77BD8A321125B510036B284 /* bootconfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = B77BD8A221125B510036B284 /* bootconfig.plist */; };
-		CEA8CA041F071B2300448B51 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEA8CA031F071B2300448B51 /* Images.xcassets */; };
+		D35055542C879DD500DCDC31 /* LoginTypeSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D35055532C879DD500DCDC31 /* LoginTypeSelectionViewController.swift */; };
+		D3848AE42C82351300A78C0A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D3848AE22C82351300A78C0A /* Images.xcassets */; };
+		D3848AE52C82351400A78C0A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D3848AE32C82351300A78C0A /* LaunchScreen.storyboard */; };
+		D3848AE92C82392600A78C0A /* QrCodeScanController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3848AE82C82392600A78C0A /* QrCodeScanController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		42BEE51B49F5BAD7CCCD23AB /* Pods-iOSNativeSwiftTemplate.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOSNativeSwiftTemplate.debug.xcconfig"; path = "Target Support Files/Pods-iOSNativeSwiftTemplate/Pods-iOSNativeSwiftTemplate.debug.xcconfig"; sourceTree = "<group>"; };
 		4F13E936237DD5D9005BCAE9 /* ContactDetailsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactDetailsView.swift; sourceTree = "<group>"; };
 		4F13E937237DD5D9005BCAE9 /* ContactsForAccountModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactsForAccountModel.swift; sourceTree = "<group>"; };
 		4F13E938237DD5D9005BCAE9 /* ContactsForAccountListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactsForAccountListView.swift; sourceTree = "<group>"; };
@@ -39,10 +43,14 @@
 		4FD6C49D1B755242002F9F90 /* InitialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitialViewController.swift; sourceTree = "<group>"; };
 		4FF12F8A1DCA91F5004D9EF9 /* iOSNativeSwiftTemplate.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iOSNativeSwiftTemplate.entitlements; sourceTree = "<group>"; };
 		69B48C312AD4E7AD0026AEC6 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = "../mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/LaunchScreen.storyboard"; sourceTree = "<group>"; };
+		83C576D5B3530B7210E42288 /* Pods-iOSNativeSwiftTemplate.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOSNativeSwiftTemplate.release.xcconfig"; path = "Target Support Files/Pods-iOSNativeSwiftTemplate/Pods-iOSNativeSwiftTemplate.release.xcconfig"; sourceTree = "<group>"; };
+		9E4923BCE151D652A2E314ED /* Pods_iOSNativeSwiftTemplate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOSNativeSwiftTemplate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B73B520C234FA65F001B069B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		B77BD8A221125B510036B284 /* bootconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = bootconfig.plist; sourceTree = "<group>"; };
-		CEA8CA031F071B2300448B51 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/Images.xcassets"; sourceTree = SOURCE_ROOT; };
+		D35055532C879DD500DCDC31 /* LoginTypeSelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginTypeSelectionViewController.swift; sourceTree = "<group>"; };
+		D3848AE22C82351300A78C0A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "../../../SalesforceMobileSDK-iOS/shared/resources/Images.xcassets"; sourceTree = "<group>"; };
+		D3848AE32C82351300A78C0A /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = "../../../SalesforceMobileSDK-iOS/shared/resources/LaunchScreen.storyboard"; sourceTree = "<group>"; };
+		D3848AE82C82392600A78C0A /* QrCodeScanController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrCodeScanController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,19 +58,37 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A7D16C2D3B653B9C7BC8413 /* Pods_iOSNativeSwiftTemplate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		231DD8297D85560CF8533961 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				42BEE51B49F5BAD7CCCD23AB /* Pods-iOSNativeSwiftTemplate.debug.xcconfig */,
+				83C576D5B3530B7210E42288 /* Pods-iOSNativeSwiftTemplate.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		38A3D00284A22BBDCDF04290 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9E4923BCE151D652A2E314ED /* Pods_iOSNativeSwiftTemplate.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		4F13E944237DD626005BCAE9 /* SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
-				B73B520C234FA65F001B069B /* SceneDelegate.swift */,
 				4F13E939237DD5D9005BCAE9 /* AccountsListView.swift */,
-				4F13E938237DD5D9005BCAE9 /* ContactsForAccountListView.swift */,
 				4F13E936237DD5D9005BCAE9 /* ContactDetailsView.swift */,
+				4F13E938237DD5D9005BCAE9 /* ContactsForAccountListView.swift */,
+				B73B520C234FA65F001B069B /* SceneDelegate.swift */,
 			);
 			name = SwiftUI;
 			sourceTree = "<group>";
@@ -71,8 +97,8 @@
 			isa = PBXGroup;
 			children = (
 				4F13E946237DD72E005BCAE9 /* AccountsListModel.swift */,
-				4F13E937237DD5D9005BCAE9 /* ContactsForAccountModel.swift */,
 				4F13E93A237DD5D9005BCAE9 /* ContactDetailModel.swift */,
+				4F13E937237DD5D9005BCAE9 /* ContactsForAccountModel.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -80,7 +106,9 @@
 		4FD6C46B1B754AF1002F9F90 = {
 			isa = PBXGroup;
 			children = (
+				38A3D00284A22BBDCDF04290 /* Frameworks */,
 				4FD6C4761B754AF1002F9F90 /* iOSNativeSwiftTemplate */,
+				231DD8297D85560CF8533961 /* Pods */,
 				4FD6C4751B754AF1002F9F90 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -96,9 +124,9 @@
 		4FD6C4761B754AF1002F9F90 /* iOSNativeSwiftTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				4FF12F8A1DCA91F5004D9EF9 /* iOSNativeSwiftTemplate.entitlements */,
 				4FD6C4A11B755265002F9F90 /* Classes */,
 				4FD6C4771B754AF1002F9F90 /* Supporting Files */,
+				4FF12F8A1DCA91F5004D9EF9 /* iOSNativeSwiftTemplate.entitlements */,
 			);
 			path = iOSNativeSwiftTemplate;
 			sourceTree = "<group>";
@@ -106,13 +134,13 @@
 		4FD6C4771B754AF1002F9F90 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				B77BD8A221125B510036B284 /* bootconfig.plist */,
+				D3848AE22C82351300A78C0A /* Images.xcassets */,
+				4FD6C4781B754AF1002F9F90 /* Info.plist */,
+				D3848AE32C82351300A78C0A /* LaunchScreen.storyboard */,
 				69B48C312AD4E7AD0026AEC6 /* PrivacyInfo.xcprivacy */,
 				4F13E941237DD5EE005BCAE9 /* userstore.json */,
 				4F13E940237DD5EE005BCAE9 /* usersyncs.json */,
-				B77BD8A221125B510036B284 /* bootconfig.plist */,
-				B7168FBB1FACC6F900A48DB5 /* LaunchScreen.storyboard */,
-				CEA8CA031F071B2300448B51 /* Images.xcassets */,
-				4FD6C4781B754AF1002F9F90 /* Info.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -120,10 +148,12 @@
 		4FD6C4A11B755265002F9F90 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				4F13E944237DD626005BCAE9 /* SwiftUI */,
 				4F13E945237DD62D005BCAE9 /* Models */,
-				4FD6C49D1B755242002F9F90 /* InitialViewController.swift */,
+				4F13E944237DD626005BCAE9 /* SwiftUI */,
 				4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */,
+				4FD6C49D1B755242002F9F90 /* InitialViewController.swift */,
+				D35055532C879DD500DCDC31 /* LoginTypeSelectionViewController.swift */,
+				D3848AE82C82392600A78C0A /* QrCodeScanController.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -135,9 +165,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4FD6C4931B754AF1002F9F90 /* Build configuration list for PBXNativeTarget "iOSNativeSwiftTemplate" */;
 			buildPhases = (
+				469B1AB89DC48EAD107F5D36 /* [CP] Check Pods Manifest.lock */,
 				4FD6C4701B754AF1002F9F90 /* Sources */,
 				4FD6C4711B754AF1002F9F90 /* Frameworks */,
 				4FD6C4721B754AF1002F9F90 /* Resources */,
+				D39806A3A492C535683B691F /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -193,15 +225,57 @@
 			buildActionMask = 2147483647;
 			files = (
 				69B48C322AD4E7AD0026AEC6 /* PrivacyInfo.xcprivacy in Resources */,
+				D3848AE42C82351300A78C0A /* Images.xcassets in Resources */,
 				4F13E943237DD5EE005BCAE9 /* userstore.json in Resources */,
+				D3848AE52C82351400A78C0A /* LaunchScreen.storyboard in Resources */,
 				B77BD8A321125B510036B284 /* bootconfig.plist in Resources */,
 				4F13E942237DD5EE005BCAE9 /* usersyncs.json in Resources */,
-				CEA8CA041F071B2300448B51 /* Images.xcassets in Resources */,
-				B7168FBC1FACC6F900A48DB5 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		469B1AB89DC48EAD107F5D36 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-iOSNativeSwiftTemplate-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D39806A3A492C535683B691F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-iOSNativeSwiftTemplate/Pods-iOSNativeSwiftTemplate-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-iOSNativeSwiftTemplate/Pods-iOSNativeSwiftTemplate-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-iOSNativeSwiftTemplate/Pods-iOSNativeSwiftTemplate-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		4FD6C4701B754AF1002F9F90 /* Sources */ = {
@@ -209,9 +283,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				B73B520D234FA65F001B069B /* SceneDelegate.swift in Sources */,
+				D3848AE92C82392600A78C0A /* QrCodeScanController.swift in Sources */,
 				4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */,
 				4F13E93B237DD5D9005BCAE9 /* ContactDetailsView.swift in Sources */,
 				4F13E947237DD72E005BCAE9 /* AccountsListModel.swift in Sources */,
+				D35055542C879DD500DCDC31 /* LoginTypeSelectionViewController.swift in Sources */,
 				4F13E93C237DD5D9005BCAE9 /* ContactsForAccountModel.swift in Sources */,
 				4F13E93F237DD5D9005BCAE9 /* ContactDetailModel.swift in Sources */,
 				4F13E93D237DD5D9005BCAE9 /* ContactsForAccountListView.swift in Sources */,
@@ -333,9 +409,11 @@
 		};
 		4FD6C4941B754AF1002F9F90 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 42BEE51B49F5BAD7CCCD23AB /* Pods-iOSNativeSwiftTemplate.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = iOSNativeSwiftTemplate/iOSNativeSwiftTemplate.entitlements;
+				DEVELOPMENT_TEAM = XD7TD9S6ZU;
 				INFOPLIST_FILE = iOSNativeSwiftTemplate/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -343,6 +421,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "-DSIGNPOST_ENABLED";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.${PRODUCT_NAME:rfc1034identifier}";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.salesforce.iOSNativeTemplate;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "iOSNativeSwiftTemplate/Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -351,15 +430,18 @@
 		};
 		4FD6C4951B754AF1002F9F90 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83C576D5B3530B7210E42288 /* Pods-iOSNativeSwiftTemplate.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = iOSNativeSwiftTemplate/iOSNativeSwiftTemplate.entitlements;
+				DEVELOPMENT_TEAM = XD7TD9S6ZU;
 				INFOPLIST_FILE = iOSNativeSwiftTemplate/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.salesforce.${PRODUCT_NAME:rfc1034identifier}";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.salesforce.iOSNativeTemplate;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "iOSNativeSwiftTemplate/Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

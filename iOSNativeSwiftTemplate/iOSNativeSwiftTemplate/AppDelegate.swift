@@ -34,6 +34,9 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
     override init() {
         super.init()
         MobileSyncSDKManager.initializeSDK()
+        UserAccountManager.shared.loginViewControllerConfig.loginViewControllerCreationBlock = {
+            return LoginTypeSelectionViewController()
+        }
     }
     
     // MARK: UISceneSession Lifecycle
