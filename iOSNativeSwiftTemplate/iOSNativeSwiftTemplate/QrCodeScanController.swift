@@ -154,14 +154,14 @@ class QrCodeScanController: UIViewController {
 
 // MARK: - A/V Capture Metadata Output Objects Delegate Implementation
 
-fileprivate let lock = NSLock()
+/** A lock to ensure only a single QR code is captured. */
+fileprivate let onQrCodeCaptureLock = NSLock()
 
 extension QrCodeScanController: AVCaptureMetadataOutputObjectsDelegate {
         
     func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
 
-        guard lock.try() else { return }
-
+        guard onQrCodeCaptureLock.try() else { return }
         
         // Guard for QR metadata objects.
         guard let metadataObject = metadataObjects.first as? AVMetadataMachineReadableCodeObject,
@@ -170,8 +170,8 @@ extension QrCodeScanController: AVCaptureMetadataOutputObjectsDelegate {
               qrCodePayloadString.starts(with: "mobileapp://") else { return }
         
         // Deliver the first QR code when it is captured.
-        DispatchQueue.global().asyncAfter(deadline: .now() + 5) {
-            lock.unlock()
+        DispatchQueue.global().async {
+            onQrCodeCaptureLock.unlock()
             self.onQrCodeCaptured?(qrCodePayloadString)
             self.onQrCodeCaptured = nil
         }
