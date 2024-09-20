@@ -3,8 +3,28 @@
 //  iOSNativeSwiftTemplate
 //
 //  Created by Eric Johnson on 9/3/24.
-//  Copyright © 2024 iOSNativeSwiftTemplateOrganizationName. All rights reserved.
 //
+//  Copyright (c) 2024-present, salesforce.com, inc. All rights reserved.
+//
+//  Redistribution and use of this software in source and binary forms, with or without modification,
+//  are permitted provided that the following conditions are met:
+//  * Redistributions of source code must retain the above copyright notice, this list of conditions
+//  and the following disclaimer.
+//  * Redistributions in binary form must reproduce the above copyright notice, this list of
+//  conditions and the following disclaimer in the documentation and/or other materials provided
+//  with the distribution.
+//  * Neither the name of salesforce.com, inc. nor the names of its contributors may be used to
+//  endorse or promote products derived from this software without specific prior written
+//  permission of salesforce.com, inc.
+//
+//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+//  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+//  FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+//  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+//  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+//  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+//  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+//  WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import Foundation
 import SalesforceSDKCore
@@ -26,7 +46,6 @@ class LoginTypeSelectionViewController: SalesforceLoginViewController {
             self,
             action: #selector(loginWithQrCodeButtonTapped),
             for: .touchUpInside)
-        loginWithQrCodeButton.backgroundColor = UIColor.purple
         loginWithQrCodeButton.setTitle("Log In With QR Code", for: .normal)
         
         view.addSubview(loginWithQrCodeButton)
@@ -40,7 +59,7 @@ class LoginTypeSelectionViewController: SalesforceLoginViewController {
         super.updateViewConstraints()
         
         // Replace legacy super view layout with a comparable constraint layout including the Log In With QR Code button.
-        self.view.translatesAutoresizingMaskIntoConstraints = true
+        view.translatesAutoresizingMaskIntoConstraints = true
         
         if let oauthView = oauthView {
             oauthView.translatesAutoresizingMaskIntoConstraints = false
@@ -48,7 +67,7 @@ class LoginTypeSelectionViewController: SalesforceLoginViewController {
             oauthView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
             oauthView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
             
-            if let biometricButton = self.biometricButton {
+            if let biometricButton = biometricButton {
                 biometricButton.translatesAutoresizingMaskIntoConstraints = false
                 biometricButton.topAnchor.constraint(equalTo: oauthView.bottomAnchor, constant: 22.0).isActive = true
                 loginWithQrCodeButton.topAnchor.constraint(equalTo: biometricButton.bottomAnchor, constant: 22.0).isActive = true
@@ -72,8 +91,7 @@ class LoginTypeSelectionViewController: SalesforceLoginViewController {
         qrCodeScanController.onQrCodeCaptured = { qrCodePayloadString in
          
             // Login using the QR code payload.
-            print("🤘🏻 \(qrCodePayloadString)")
-            let _ = self.loginFromQrCode(loginQrCodeContent: qrCodePayloadString)
+            let _ = loginFromQrCode(loginQrCodeContent: qrCodePayloadString)
         }
         present(qrCodeScanController, animated: true)
     }
