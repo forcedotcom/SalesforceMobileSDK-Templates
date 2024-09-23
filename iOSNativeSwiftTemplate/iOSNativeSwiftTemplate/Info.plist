@@ -28,6 +28,8 @@
 	<string>1.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>This app requires camera usage permissions to capture QR codes for log in.</string>
 	<key>SFDCOAuthLoginHost</key>
 	<string>login.salesforce.com</string>
 	<key>UIApplicationSceneManifest</key>
@@ -66,7 +68,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>NSCameraUsageDescription</key>
-	<string>This app requires camera usage permissions to capture QR codes for log in.</string>
 </dict>
 </plist>

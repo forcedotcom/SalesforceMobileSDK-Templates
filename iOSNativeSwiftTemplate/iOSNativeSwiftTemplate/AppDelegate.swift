@@ -36,10 +36,10 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
         MobileSyncSDKManager.initializeSDK()
         
         // Uncomment when disabling log in via Salesforce UI Bridge API generated QR codes
-        // MobileSyncSDKManager.shared.isQrCodeLoginEnabled = true
-        // UserAccountManager.shared.loginViewControllerConfig.loginViewControllerCreationBlock = {
-        //    return LoginTypeSelectionViewController()
-        // }
+         MobileSyncSDKManager.shared.isQrCodeLoginEnabled = true
+         UserAccountManager.shared.loginViewControllerConfig.loginViewControllerCreationBlock = {
+            return LoginTypeSelectionViewController()
+         }
     }
     
     // MARK: UISceneSession Lifecycle

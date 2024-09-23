@@ -46,7 +46,7 @@ class LoginTypeSelectionViewController: SalesforceLoginViewController {
             self,
             action: #selector(loginWithQrCodeButtonTapped),
             for: .touchUpInside)
-        loginWithQrCodeButton.setTitle("Log In With QR Code", for: .normal)
+        loginWithQrCodeButton.setTitle("Log In with QR Code", for: .normal)
         
         view.addSubview(loginWithQrCodeButton)
     }
@@ -68,15 +68,22 @@ class LoginTypeSelectionViewController: SalesforceLoginViewController {
             oauthView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
             
             if let biometricButton = biometricButton {
+                biometricButton.layer.borderColor = UIColor.white.cgColor
+                biometricButton.layer.borderWidth = 2.0
                 biometricButton.translatesAutoresizingMaskIntoConstraints = false
                 biometricButton.topAnchor.constraint(equalTo: oauthView.bottomAnchor, constant: 22.0).isActive = true
+                biometricButton.widthAnchor.constraint(equalToConstant: 250.0).isActive = true
+                biometricButton.heightAnchor.constraint(equalToConstant: 44.0).isActive = true
+                biometricButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
                 loginWithQrCodeButton.topAnchor.constraint(equalTo: biometricButton.bottomAnchor, constant: 22.0).isActive = true
             } else {
                 loginWithQrCodeButton.topAnchor.constraint(equalTo: oauthView.bottomAnchor, constant: 22.0).isActive = true
             }
             
+            loginWithQrCodeButton.layer.borderColor = UIColor.white.cgColor
+            loginWithQrCodeButton.layer.borderWidth = 2.0
             loginWithQrCodeButton.translatesAutoresizingMaskIntoConstraints = false
-            loginWithQrCodeButton.widthAnchor.constraint(equalToConstant: 200.0).isActive = true
+            loginWithQrCodeButton.widthAnchor.constraint(equalToConstant: 250.0).isActive = true
             loginWithQrCodeButton.heightAnchor.constraint(equalToConstant: 44.0).isActive = true
             loginWithQrCodeButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
             loginWithQrCodeButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -22.0).isActive = true

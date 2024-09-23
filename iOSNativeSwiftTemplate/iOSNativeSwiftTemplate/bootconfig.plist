@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>remoteAccessConsumerKey</key>
-	<string>3MVG98dostKihXN53TYStBIiS8FC2a3tE3XhGId0hQ37iQjF0xe4fxMSb2mFaWZn9e3GiLs1q67TNlyRji.Xw</string>
+	<string>3MVG9.AgwtoIvERSd8i8lePrqfnKG_MM7P9KAJ4g53iaPA4EN8zUt3__o.8YA_hCeRn_kGR.Xe9I9_pnsFuAW</string>
 	<key>oauthRedirectURI</key>
-	<string>testsfdc:///mobilesdk/detect/oauth/done</string>
+	<string>mobilesdk://android/pn/tester</string>
 	<key>oauthScopes</key>
 	<array>
 		<string>web</string>
