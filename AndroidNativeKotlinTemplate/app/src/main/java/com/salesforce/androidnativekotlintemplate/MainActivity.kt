@@ -26,12 +26,18 @@
  */
 package com.salesforce.androidnativekotlintemplate
 
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
+import com.salesforce.androidnativekotlintemplate.R.id.root
 import com.salesforce.androidsdk.app.SalesforceSDKManager
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.androidsdk.rest.ApiVersionStrings
@@ -61,6 +67,18 @@ class MainActivity : SalesforceActivity() {
 
         // Setup view
         setContentView(R.layout.main)
+
+        // Fix UI being drawn behind status and navigation bars on Android 15
+        if (SDK_INT > UPSIDE_DOWN_CAKE) {
+            ViewCompat.setOnApplyWindowInsetsListener(findViewById(root)) { listenerView, windowInsets ->
+                val insets = windowInsets.getInsets(
+                    WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+                )
+
+                listenerView.updatePadding(insets.left, insets.top, insets.right, insets.bottom)
+                WindowInsetsCompat.CONSUMED
+            }
+        }
     }
 
     override fun onResume() {
