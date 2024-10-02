@@ -34,6 +34,9 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
     override init() {
         super.init()
         MobileSyncSDKManager.initializeSDK()
+        
+        // Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes.
+        // self.setupQrCodeLogin()
     }
     
     // MARK: UISceneSession Lifecycle
@@ -71,6 +74,13 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
             if let error = error {
                 SalesforceLogger.e(AppDelegate.self, message: "Push notification authorization error: \(error)")
             }
+        }
+    }
+    
+    private func setupQrCodeLogin() {
+        MobileSyncSDKManager.shared.isQrCodeLoginEnabled = true
+        UserAccountManager.shared.loginViewControllerConfig.loginViewControllerCreationBlock = {
+            return LoginTypeSelectionViewController()
         }
     }
     
