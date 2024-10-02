@@ -226,13 +226,13 @@ class SObjectDataManager: ObservableObject {
     let kSyncUpName = "syncUpContacts"
     private let kMaxQueryPageSize: UInt = 1000
     
-    var store: SmartStore
+    var store: SmartStore?
     var syncMgr: SyncManager
     var dataSpec: SObjectDataSpec
 
     init(dataSpec: SObjectDataSpec, userAccount: UserAccount) {
         syncMgr = SyncManager.sharedInstance(forUserAccount: userAccount)
-        store = SmartStore.shared(withName: SmartStore.defaultStoreName, forUserAccount: userAccount)!
+        store = SmartStore.shared(withName: SmartStore.defaultStoreName, forUserAccount: userAccount)
         self.dataSpec = dataSpec
         // Setup store and syncs if needed
         MobileSyncSDKManager.shared.setupUserStoreFromDefaultConfig()
@@ -292,7 +292,7 @@ class SObjectDataManager: ObservableObject {
                         completion(nil)
                         return
                     }
-                    try self?.store.upsert(entries: records, forSoupNamed: "contacts", withExternalIdPath: "Id")
+                    try self?.store?.upsert(entries: records, forSoupNamed: "contacts", withExternalIdPath: "Id")
                     self?.loadLocalData() // Keep list in sync
                 } catch {
                     MobileSyncLogger.e(SObjectDataManager.self, message: "Contact error: \(error)")
@@ -306,7 +306,7 @@ class SObjectDataManager: ObservableObject {
 
     func loadLocalData() {
         let sobjectsQuerySpec = QuerySpec.buildAllQuerySpec(soupName: dataSpec.soupName, orderPath: dataSpec.orderByFieldName, order: .ascending, pageSize: kMaxQueryPageSize)
-        store.publisher(for: sobjectsQuerySpec.smartSql)
+        store?.publisher(for: sobjectsQuerySpec.smartSql)
             .receive(on: RunLoop.main)
             .tryMap {
                 $0.map { (data) -> ContactSObjectData in
@@ -322,16 +322,17 @@ class SObjectDataManager: ObservableObject {
             .store(in: &cancellableSet)
     }
 
-    func createLocalData(_ newData: SObjectData?) {
-        guard let newData = newData else {
-            return
+    func createLocalData(_ newData: SObjectData?) -> [[AnyHashable: Any]]?  {
+        guard let newData = newData, let store = store else {
+            return nil
         }
         newData.updateSoup(forFieldName: kSyncTargetLocal, fieldValue: true)
         newData.updateSoup(forFieldName: kSyncTargetLocallyCreated, fieldValue: true)
         let sobjectSpec = type(of: newData).dataSpec()
-
-        store.upsert(entries: [newData.soupDict], forSoupNamed: (sobjectSpec?.soupName)!)
+        let result = store.upsert(entries: [newData.soupDict], forSoupNamed: (sobjectSpec?.soupName)!)
+        
         loadLocalData()
+        return result
     }
 
     func updateLocalData(_ updatedData: SObjectData?) {
@@ -342,12 +343,12 @@ class SObjectDataManager: ObservableObject {
         updatedData.updateSoup(forFieldName: kSyncTargetLocallyUpdated, fieldValue: true)
         let sobjectSpec = type(of: updatedData).dataSpec()
 
-        store.upsert(entries: [updatedData.soupDict], forSoupNamed: (sobjectSpec?.soupName)!)
+        store?.upsert(entries: [updatedData.soupDict], forSoupNamed: (sobjectSpec?.soupName)!)
         loadLocalData()
     }
 
     func deleteLocalData(_ dataToDelete: SObjectData?) {
-        guard let dataToDelete = dataToDelete else {
+        guard let dataToDelete = dataToDelete, let store = store else {
             return
         }
         dataToDelete.updateSoup(forFieldName: kSyncTargetLocal, fieldValue: true)
@@ -359,7 +360,7 @@ class SObjectDataManager: ObservableObject {
     }
 
     func undeleteLocalData(_ dataToUnDelete: SObjectData?) {
-        guard let dataToUnDelete = dataToUnDelete else {
+        guard let dataToUnDelete = dataToUnDelete, let store = store else {
             return
         }
         dataToUnDelete.updateSoup(forFieldName: kSyncTargetLocallyDeleted, fieldValue: false)
@@ -400,6 +401,9 @@ class SObjectDataManager: ObservableObject {
     }
 
     func clearLocalData() {
+        guard let store = store else {
+            return
+        }
         store.clearSoup(dataSpec.soupName)
         resetSync(kSyncDownName)
         resetSync(kSyncUpName)
@@ -460,7 +464,8 @@ class SObjectDataManager: ObservableObject {
 
     func countContacts() -> Int {
        var count = -1
-       if let querySpec = QuerySpec.buildSmartQuerySpec(smartSql: "select * from {\(dataSpec.soupName)}", pageSize: UInt.max) {
+       if let querySpec = QuerySpec.buildSmartQuerySpec(smartSql: "select * from {\(dataSpec.soupName)}", pageSize: UInt.max),
+        let store = store {
            do {
                count = try store.count(using:querySpec).intValue
            } catch {
@@ -472,15 +477,20 @@ class SObjectDataManager: ObservableObject {
     }
     
     private func resetSync(_ syncName: String) {
-        let sync = syncMgr.syncStatus(forName:syncName)
-        sync?.maxTimeStamp = -1
-        sync?.progress = 0
-        sync?.status = .new
-        sync?.totalSize = -1
-        sync?.save(store)
+        guard let sync = syncMgr.syncStatus(forName:syncName), let store = store else {
+            return
+        }
+        sync.maxTimeStamp = -1
+        sync.progress = 0
+        sync.status = .new
+        sync.totalSize = -1
+        sync.save(store)
     }
 
     private func localRecord(id: String) -> [String: Any]? {
+        guard let store = store else {
+            return nil
+        }
         let queryResult = store.query("select {\(dataSpec.soupName):_soup} from {\(dataSpec.soupName)} where {\(dataSpec.soupName):Id} = '\(id)'")
         switch queryResult {
         case .success(let results):
@@ -496,6 +506,9 @@ class SObjectDataManager: ObservableObject {
     }
     
     func localRecord(soupID: String) -> ContactSObjectData? {
+        guard let store = store else {
+            return nil
+        }
         let queryResult = store.query("select {\(dataSpec.soupName):_soup} from {\(dataSpec.soupName)} where {\(dataSpec.soupName):_soupEntryId} = '\(soupID)'")
         switch queryResult {
         case .success(let results):
