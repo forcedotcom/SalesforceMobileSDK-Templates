@@ -40,7 +40,16 @@ class MainApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        MobileSyncSDKManager.initNative(applicationContext, MainActivity::class.java)
+        MobileSyncSDKManager.initNative(
+            applicationContext,
+            MainActivity::class.java,
+            /*
+             * Enable login via Salesforce UI Bridge API generated QR code using
+             * a custom log in activity.
+             *
+             */
+            // Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes
+            /*QrCodeEnabledLoginActivity::class.java*/)
         MobileSyncSDKManager.getInstance().registerUsedAppFeature(FEATURE_APP_USES_KOTLIN)
 
         /*
@@ -57,5 +66,9 @@ class MainApplication : Application() {
 		 * Add your Firebase 'google-services.json' file to the 'app' folder of your project.
 		 */
         // MobileSyncSDKManager.getInstance().pushNotificationReceiver = pnInterface
+
+        // Enable login via Salesforce UI Bridge API generated QR code.
+        // Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes
+        // MobileSyncSDKManager.getInstance().isQrCodeLoginEnabled = true
     }
 }

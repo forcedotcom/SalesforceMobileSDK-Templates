@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	android:versionCode="1"
-	android:versionName="1.0"
-	android:installLocation="internalOnly">
+    android:installLocation="internalOnly"
+    android:versionCode="1"
+    android:versionName="1.0">
 
-	<application android:icon="@drawable/sf__icon"
-	    android:label="@string/app_name"
-		android:name=".MainApplication"
-		android:manageSpaceActivity="com.salesforce.androidsdk.ui.ManageSpaceActivity">
+    <application
+        android:name=".MainApplication"
+        android:icon="@drawable/sf__icon"
+        android:label="@string/app_name"
+        android:manageSpaceActivity="com.salesforce.androidsdk.ui.ManageSpaceActivity">
 
-		<!-- Launcher screen -->
-		<activity android:name=".MainActivity"
-		    android:label="@string/app_name"
-			android:theme="@style/SalesforceSDK"
-            android:exported="true">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
-		</activity>
+        <!-- Launcher screen -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/SalesforceSDK">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <!-- Login activity -->
         <!--
@@ -35,21 +36,23 @@
             'scheme' would be "sfdc", 'host' would be "login.salesforce.com",
             and 'path' would be "/oauth/done".
         -->
-        <!--
-        <activity android:name="com.salesforce.androidsdk.ui.LoginActivity"
-            android:theme="@style/SalesforceSDK"
-            android:launchMode="singleTask"
-            android:exported="true">
+        <!-- Use `android:name="com.salesforce.androidnativekotlintemplate.QrCodeEnabledLoginActivity"` when enabling log in via Salesforce UI Bridge API generated QR codes -->
+<!--        <activity-->
+<!--            android:name="com.salesforce.androidnativekotlintemplate.QrCodeEnabledLoginActivity"-->
+<!--            android:theme="@style/SalesforceSDK"-->
+<!--            android:launchMode="singleTask"-->
+<!--            android:exported="true">-->
 
-            <intent-filter>
-                <data android:scheme="testsfdc"
-                    android:host="*"
-                    android:path="/mobilesdk/detect/oauth/done" />
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        -->
-	</application>
+<!--            &lt;!&ndash; Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes &ndash;&gt;-->
+<!--            &lt;!&ndash; <intent-filter>&ndash;&gt;-->
+<!--            &lt;!&ndash;     <data&ndash;&gt;-->
+<!--            &lt;!&ndash;         android:host="android"&ndash;&gt;-->
+<!--            &lt;!&ndash;         android:path="/login/qr"&ndash;&gt;-->
+<!--            &lt;!&ndash;         android:scheme="mobileapp" />&ndash;&gt;-->
+<!--            &lt;!&ndash;     <action android:name="android.intent.action.VIEW" />&ndash;&gt;-->
+<!--            &lt;!&ndash;     <category android:name="android.intent.category.BROWSABLE" />&ndash;&gt;-->
+<!--            &lt;!&ndash;     <category android:name="android.intent.category.DEFAULT" />&ndash;&gt;-->
+<!--            &lt;!&ndash; </intent-filter>&ndash;&gt;-->
+<!--        </activity>-->
+    </application>
 </manifest>

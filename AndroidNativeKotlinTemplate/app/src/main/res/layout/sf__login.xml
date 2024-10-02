@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?><!-- This override layout adds a "Log In With QR" button to enable log in via Salesforce UI Bridge API generated QR codes -->
+<!-- Comment when disabling log in via Salesforce UI Bridge API generated QR codes -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/sf__auth_container_phone"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:windowDrawsSystemBarBackgrounds="true">
+
+    <ProgressBar
+        android:id="@+id/sf__loading_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
+    <WebView
+        android:id="@+id/sf__oauth_webview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none"
+        android:visibility="gone"
+        android:windowDrawsSystemBarBackgrounds="true" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/sf__idp_login_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/sf__primary_color_button"
+            android:onClick="onIDPLoginClick"
+            android:text="@string/sf__launch_idp"
+            android:textAllCaps="false"
+            android:textColor="?attr/sfColorSecondary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/sf__bio_login_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/sf__primary_color_button"
+            android:onClick="onBioAuthClick"
+            android:text="@string/sf__login_with_biometric"
+            android:textAllCaps="false"
+            android:textColor="?attr/sfColorSecondary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/qr_login_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/sf__primary_color_button"
+            android:onClick="onQRLoginClick"
+            android:text="@string/login_with_qr"
+            android:textAllCaps="false"
+            android:textColor="?attr/sfColorSecondary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+    </LinearLayout>
+</RelativeLayout>
