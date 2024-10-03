@@ -39,7 +39,17 @@ enum ContactConstants {
     static let kContactHomePhoneField    = "HomePhone"
 }
 
-class ContactSObjectData: SObjectData, Identifiable {
+class ContactSObjectData: SObjectData, Identifiable, Equatable {
+    static func == (lhs: ContactSObjectData, rhs: ContactSObjectData) -> Bool {
+        return lhs.firstName == rhs.firstName &&
+               lhs.lastName == rhs.lastName &&
+               lhs.title == rhs.title &&
+               lhs.mobilePhone == rhs.mobilePhone &&
+               lhs.email == rhs.email &&
+               lhs.department == rhs.department &&
+               lhs.homePhone == rhs.homePhone
+    }
+    
     var firstName: String? {
         get {
             return super.nonNullFieldValue(ContactConstants.kContactFirstNameField) as? String
@@ -112,8 +122,8 @@ class ContactSObjectData: SObjectData, Identifiable {
         }
     }
     
-    var id: NSNumber {
-        return super.nonNullFieldValue("_soupEntryId") as! NSNumber
+    var id: String {
+        return (super.nonNullFieldValue("_soupEntryId") as! NSNumber).stringValue
     }
     
     override init(soupDict: [String: Any]?) {

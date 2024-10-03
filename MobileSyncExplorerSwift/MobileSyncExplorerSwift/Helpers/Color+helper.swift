@@ -31,20 +31,8 @@ import UIKit
 import SwiftUI
 
 extension Color {
-    static var contactCellDeletedBackground: Color {
-        return Color(red: 194.0/255.0, green: 57.0/255.0, blue: 52.0/255.0).opacity(0.3)
-    }
-
     static var unreadNotificationBackground: Color {
         appBlue.opacity(0.1)
-    }
-
-    static var destructiveButton: Color {
-        return Color(UIColor.systemRed)
-    }
-
-    static var disabledDestructiveButton: Color {
-        destructiveButton.opacity(0.3)
     }
 
     static var secondaryLabelText: Color {

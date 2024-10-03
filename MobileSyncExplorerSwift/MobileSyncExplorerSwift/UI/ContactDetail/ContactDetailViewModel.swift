@@ -29,7 +29,8 @@ import SwiftUI
 
 class ContactDetailViewModel: ObservableObject {
     @Published var contact: ContactSObjectData
-    var isNewContact: Bool = false
+    @Published var isEditing = false
+    @Published var isNewContact: Bool = false
     var title: String
     private var sObjectDataManager: SObjectDataManager
 
@@ -40,7 +41,13 @@ class ContactDetailViewModel: ObservableObject {
         fetchContact(id: id)
     }
     
-    init(localId: String?, sObjectDataManager: SObjectDataManager) {
+    init(sObjectDataManager: SObjectDataManager) {
+        self._contact = Published(initialValue: ContactSObjectData())
+        self.sObjectDataManager = sObjectDataManager
+        self.title = ""
+    }
+    
+    init(localId: ContactSObjectData.ID?, sObjectDataManager: SObjectDataManager) {
         self.sObjectDataManager = sObjectDataManager
         self._contact = Published(initialValue: ContactSObjectData())
 
@@ -50,6 +57,7 @@ class ContactDetailViewModel: ObservableObject {
         } else {
             self.title = "New Contact"
             self.isNewContact = true
+            self.isEditing = true
         }
     }
 
@@ -68,7 +76,7 @@ class ContactDetailViewModel: ObservableObject {
         }
     }
 
-    func loadContact(id: String) {
+    func loadContact(id: ContactSObjectData.ID) {
         if let contact = sObjectDataManager.localRecord(soupID: id) {
             self.contact = contact
             self.title = ContactHelper.nameStringFromContact(firstName: contact.firstName, lastName: contact.lastName)
@@ -89,11 +97,15 @@ class ContactDetailViewModel: ObservableObject {
         }
     }
 
-    func saveButtonTapped() {
+    func saveButtonTapped() -> ContactSObjectData.ID? {
         if self.isNewContact {
-            sObjectDataManager.createLocalData(contact)
+            let result = sObjectDataManager.createLocalData(contact)
+            if let newContact = result?.first as? [String : Any] {
+                return ContactSObjectData(soupDict: newContact).id
+            }
         } else {
             sObjectDataManager.updateLocalData(contact)
         }
+        return nil
     }
 }
