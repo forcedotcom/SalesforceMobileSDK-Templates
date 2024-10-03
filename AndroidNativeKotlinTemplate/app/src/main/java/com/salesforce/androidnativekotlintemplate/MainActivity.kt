@@ -32,6 +32,8 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
+import com.salesforce.androidnativekotlintemplate.QrCodeEnabledLoginActivity.Companion.isQrCodeLoginIntent
+import com.salesforce.androidnativekotlintemplate.QrCodeEnabledLoginActivity.Companion.uiBridgeApiParametersFromQrCodeLoginUrl
 import com.salesforce.androidsdk.app.SalesforceSDKManager
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.androidsdk.rest.ApiVersionStrings
@@ -53,6 +55,11 @@ class MainActivity : SalesforceActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Check for and use the intent's QR code login URL if applicable.
+        if (isQrCodeLoginIntent(intent)) {
+            useQrCodeLoginUrl()
+        }
 
         // Set Theme
         val idDarkTheme = MobileSyncSDKManager.getInstance().isDarkTheme
@@ -156,4 +163,16 @@ class MainActivity : SalesforceActivity() {
             }
         })
     }
+
+    // region QR Code Login Via Salesforce Identity API UI Bridge Public Implementation
+
+    private fun useQrCodeLoginUrl() {
+        val uiBridgeApiParameters = uiBridgeApiParametersFromQrCodeLoginUrl(intent.data.toString())
+        SalesforceSDKManager.getInstance().apply {
+            frontDoorBridgeUrl = uiBridgeApiParameters?.frontdoorBridgeUrl
+            frontDoorBridgeCodeVerifier = uiBridgeApiParameters?.pkceCodeVerifier
+        }
+    }
+
+    // endregion
 }
