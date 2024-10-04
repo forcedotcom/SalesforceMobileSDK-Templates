@@ -32,8 +32,6 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
-import com.salesforce.androidnativekotlintemplate.QrCodeEnabledLoginActivity.Companion.isQrCodeLoginIntent
-import com.salesforce.androidnativekotlintemplate.QrCodeEnabledLoginActivity.Companion.uiBridgeApiParametersFromQrCodeLoginUrl
 import com.salesforce.androidsdk.app.SalesforceSDKManager
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.androidsdk.rest.ApiVersionStrings
@@ -41,6 +39,8 @@ import com.salesforce.androidsdk.rest.RestClient
 import com.salesforce.androidsdk.rest.RestClient.AsyncRequestCallback
 import com.salesforce.androidsdk.rest.RestRequest
 import com.salesforce.androidsdk.rest.RestResponse
+import com.salesforce.androidsdk.ui.LoginActivity.Companion.isQrCodeLoginIntent
+import com.salesforce.androidsdk.ui.LoginActivity.Companion.uiBridgeApiParametersFromQrCodeLoginUrl
 import com.salesforce.androidsdk.ui.SalesforceActivity
 import java.io.UnsupportedEncodingException
 import java.util.*
@@ -75,7 +75,7 @@ class MainActivity : SalesforceActivity() {
         findViewById<ViewGroup>(R.id.root).visibility = View.INVISIBLE
 
         // Create list adapter
-        listAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, ArrayList<String>())
+        listAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, ArrayList())
         findViewById<ListView>(R.id.contacts_list).adapter = listAdapter
 
         super.onResume()
@@ -145,7 +145,7 @@ class MainActivity : SalesforceActivity() {
                     try {
                         listAdapter!!.clear()
                         val records = result.asJSONObject().getJSONArray("records")
-                        for (i in 0..records.length() - 1) {
+                        for (i in 0..<records.length()) {
                             listAdapter!!.add(records.getJSONObject(i).getString("Name"))
                         }
                     } catch (e: Exception) {
