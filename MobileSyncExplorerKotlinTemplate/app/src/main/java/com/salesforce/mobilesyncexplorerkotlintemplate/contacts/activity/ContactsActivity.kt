@@ -34,7 +34,10 @@ import android.widget.Toast.LENGTH_SHORT
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toComposeRect
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -80,11 +83,10 @@ class ContactsActivity
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        vm = ViewModelProvider(this, vmFactory)
-            .get(DefaultContactsActivityViewModel::class.java)
-
+        vm = ViewModelProvider(this, vmFactory)[DefaultContactsActivityViewModel::class.java]
         salesforceActivityDelegate = SalesforceActivityDelegate(this).also { it.onCreate() }
 
         setContent {
@@ -96,17 +98,22 @@ class ContactsActivity
                     .toComposeRect()
                     .size
             }
-
             val windowSizeClasses = with(LocalDensity.current) {
                 windowSize.toDpSize().toWindowSizeClasses()
             }
+            val backgroundColor = if (SalesforceSDKManager.getInstance().isDarkTheme) DarkBackground else Purple40
 
             SalesforceMobileSDKAndroidTheme {
-                ContactsActivityContent(
-                    activityUiInteractor = vm,
-                    menuHandler = this,
-                    windowSizeClasses = windowSizeClasses
-                )
+                Box(modifier = Modifier
+                    .background(backgroundColor)
+                    .safeDrawingPadding()
+                ) {
+                    ContactsActivityContent(
+                        activityUiInteractor = vm,
+                        menuHandler = this@ContactsActivity,
+                        windowSizeClasses = windowSizeClasses
+                    )
+                }
             }
         }
 
