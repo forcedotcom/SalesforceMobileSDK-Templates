@@ -60,15 +60,15 @@
             android:visibility="gone" />
 
         <Button
-            android:id="@+id/qr_login_button"
+            android:id="@+id/qr_code_login_button"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/sf__primary_color_button"
-            android:onClick="onQRLoginClick"
-            android:text="@string/login_with_qr"
+            android:onClick="onLoginWithQrCodeTapped"
+            android:text="@string/login_with_qr_code"
             android:textAllCaps="false"
             android:textColor="?attr/sfColorSecondary"
             android:textSize="14sp"
