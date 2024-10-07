@@ -26,11 +26,20 @@
  */
 package com.salesforce.androidnativetemplate;
 
+import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE;
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.core.graphics.Insets;
+import androidx.core.view.OnApplyWindowInsetsListener;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.salesforce.androidsdk.app.SalesforceSDKManager;
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager;
@@ -65,6 +74,23 @@ public class MainActivity extends SalesforceActivity {
 
 		// Setup view
 		setContentView(R.layout.main);
+
+		// Fix UI being drawn behind status and navigation bars on Android 15
+		if (SDK_INT > UPSIDE_DOWN_CAKE) {
+            ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.root), new OnApplyWindowInsetsListener() {
+                @NonNull
+                @Override
+                public WindowInsetsCompat onApplyWindowInsets(@NonNull View v, @NonNull WindowInsetsCompat insets) {
+                    Insets mInsets = insets.getInsets(
+                            WindowInsetsCompat.Type.systemBars()
+                                    & WindowInsetsCompat.Type.displayCutout()
+                    );
+
+                    v.setPadding(mInsets.left, mInsets.top, mInsets.right, mInsets.bottom);
+                    return WindowInsetsCompat.CONSUMED;
+                }
+            });
+        }
 	}
 	
 	@Override 

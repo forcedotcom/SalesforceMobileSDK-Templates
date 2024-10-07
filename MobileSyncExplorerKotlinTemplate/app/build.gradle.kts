@@ -28,11 +28,11 @@ dependencies {
 android {
     namespace = "com.salesforce.mobilesyncexplorerkotlintemplate"
 
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.salesforce.mobilesyncexplorerkotlintemplate"
-        targetSdk = 34
+        targetSdk = 35
         minSdk = 26
         versionCode = 1
         versionName = "1.0"
