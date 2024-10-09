@@ -1,15 +1,23 @@
 package com.salesforce.androidnativekotlintemplate
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.net.Uri.parse
 import android.os.Bundle
 import android.view.View
 import android.view.View.VISIBLE
 import android.widget.Button
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.registerReceiver
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanIntentResult.parseActivityResult
 import com.journeyapps.barcodescanner.ScanOptions
 import com.salesforce.androidnativekotlintemplate.R.id.qr_code_login_button
+import com.salesforce.androidsdk.accounts.UserAccountManager.USER_SWITCH_INTENT_ACTION
 import com.salesforce.androidsdk.ui.LoginActivity
 
 /**
@@ -35,6 +43,29 @@ class QrCodeEnabledLoginActivity : LoginActivity() {
 
         // Find and show the layout's QR code login button.
         findViewById<Button>(qr_code_login_button).visibility = VISIBLE
+
+        // Create and register a broadcast intent receiver to finish this activity on successful authentication.
+        finishOnUserSwitchBroadcastReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent) {
+                /*
+                 * Note: When this activity starts the intent for main activity
+                 * after scanning the QR code, finishing prior to log in
+                 * completion would also finish the activities being used for
+                 * the in-progress log in.
+                 *
+                 * If the main activity intent could be started in such a way
+                 * that this activity could finish immediately after starting
+                 * the intent, this receiver wouldn't be needed.
+                 */
+                if (intent.action == USER_SWITCH_INTENT_ACTION) finish()
+            }
+        }
+        registerReceiver(
+            this,
+            finishOnUserSwitchBroadcastReceiver,
+            IntentFilter(USER_SWITCH_INTENT_ACTION),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
     }
 
     // endregion
@@ -56,6 +87,9 @@ class QrCodeEnabledLoginActivity : LoginActivity() {
     // endregion
     // region Private Implementation For QR Code Log In
 
+    /** A broadcast intent receiver to finish this activity on successful authentication. */
+    private var finishOnUserSwitchBroadcastReceiver: BroadcastReceiver? = null
+
     /** An activity result launcher that receives the scanned QR code and starts login */
     private var loginWithQrCodeActivityResultLauncher = registerForActivityResult(
         StartActivityForResult()
@@ -65,7 +99,12 @@ class QrCodeEnabledLoginActivity : LoginActivity() {
                 resultData.resultCode,
                 resultData.data
             ).contents?.let { qrCodeLoginUrl ->
-                loginWithFrontdoorBridgeUrlFromQrCode(qrCodeLoginUrl)
+                startActivity(Intent(
+                    this,
+                    MainActivity::class.java
+                ).apply {
+                    data = parse(qrCodeLoginUrl)
+                })
             }
         }
     }
