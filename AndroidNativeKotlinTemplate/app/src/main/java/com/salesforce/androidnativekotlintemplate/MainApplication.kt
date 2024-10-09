@@ -52,10 +52,9 @@ class MainApplication : Application() {
             /*
              * Enable login via Salesforce UI Bridge API generated QR code using
              * a custom log in activity.
-             *
              */
             // Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes
-            QrCodeEnabledLoginActivity::class.java
+            /*QrCodeEnabledLoginActivity::class.java*/
         )
         MobileSyncSDKManager.getInstance().registerUsedAppFeature(FEATURE_APP_USES_KOTLIN)
 
@@ -75,7 +74,7 @@ class MainApplication : Application() {
         // MobileSyncSDKManager.getInstance().pushNotificationReceiver = pnInterface
 
         /* Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes. */
-        setupQrCodeLogin()
+        //setupQrCodeLogin()
     }
 
     // endregion
@@ -94,13 +93,13 @@ class MainApplication : Application() {
      * When enabling log in via Salesforce UI Bridge API generated QR codes and using the reference QR
      * code log in URL format, the scheme for the expected QR code log in URL format.
      */
-    internal var qrCodeLoginUrlScheme = "mobileapp" //"your-qr-code-login-url-scheme"
+    internal var qrCodeLoginUrlScheme = "your-qr-code-login-url-scheme"
 
     /**
      * When enabling log in via Salesforce UI Bridge API generated QR codes and using the reference QR
      * code log in URL format, the host for the expected QR code log in URL format.
      */
-    internal var qrCodeLoginUrlHost = "android" //"your-qr-code-login-url-host"
+    internal var qrCodeLoginUrlHost = "your-qr-code-login-url-host"
 
     // region QR Code Login Via Salesforce Identity API UI Bridge Private Implementation
 
@@ -151,10 +150,10 @@ class MainApplication : Application() {
         check(qrCodeLoginUrlScheme != "your-qr-code-login-url-scheme") { "Please add your login QR code URL's scheme." }
         check(qrCodeLoginUrlHost != "your-qr-code-login-url-host") { "Please add your login QR code URL's host." }
         // The path, parameter names and JSON keys for the expected QR code log in URL format.
-//        qrCodeLoginUrlPath = "your-qr-code-login-url-path"
-//        qrCodeLoginUrlJsonParameterName = "your-qr-code-login-url-json-parameter-name"
-//        qrCodeLoginUrlJsonFrontdoorBridgeUrlKey = "your-qr-code-login-url-json-frontdoor-bridge-url-key"
-//        qrCodeLoginUrlJsonPkceCodeVerifierKey = "your-qr-code-login-url-json-pkce-code-verifier-key"
+        qrCodeLoginUrlPath = "your-qr-code-login-url-path"
+        qrCodeLoginUrlJsonParameterName = "your-qr-code-login-url-json-parameter-name"
+        qrCodeLoginUrlJsonFrontdoorBridgeUrlKey = "your-qr-code-login-url-json-frontdoor-bridge-url-key"
+        qrCodeLoginUrlJsonPkceCodeVerifierKey = "your-qr-code-login-url-json-pkce-code-verifier-key"
         check(qrCodeLoginUrlPath != "your-qr-code-login-url-path") { "Please add your login QR code URL's path." }
         check(qrCodeLoginUrlJsonParameterName != "your-qr-code-login-url-json-parameter-name") { "Please add your login QR code URL's UI Bridge API JSON query string parameter name." }
         check(qrCodeLoginUrlJsonFrontdoorBridgeUrlKey != "your-qr-code-login-url-json-frontdoor-bridge-url-key") { "Please add your login QR code URL's UI Bridge API JSON frontdoor bridge URL key." }

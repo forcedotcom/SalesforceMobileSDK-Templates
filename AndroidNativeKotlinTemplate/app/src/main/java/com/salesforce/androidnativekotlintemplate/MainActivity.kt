@@ -119,7 +119,7 @@ class MainActivity : SalesforceActivity() {
         buildRestClientOnResume = buildRestClientOnResumePreviousValue
     }
 
-    override fun onResume(client: RestClient?) {
+    override fun onResume(client: RestClient) {
         // Keeping reference to rest client
         this.client = client
 

@@ -36,7 +36,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
         MobileSyncSDKManager.initializeSDK()
         
         // Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes.
-        self.setupQrCodeLogin()
+        // self.setupQrCodeLogin()
     }
     
     // MARK: UISceneSession Lifecycle

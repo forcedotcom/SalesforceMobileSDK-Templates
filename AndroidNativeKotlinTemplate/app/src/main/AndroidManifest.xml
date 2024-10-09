@@ -23,13 +23,13 @@
 
             <!-- Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes -->
             <!-- This declares the app's support for QR code login deep links.  The scheme can be customized by the app to match any scheme used in the QR Code's URL -->
-            <intent-filter>
-                <data android:scheme="mobileapp" />
-                <action android:name="android.intent.action.VIEW" />
+<!--            <intent-filter>-->
+<!--                <data android:scheme="mobileapp" />-->
+<!--                <action android:name="android.intent.action.VIEW" />-->
 
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+<!--                <category android:name="android.intent.category.BROWSABLE" />-->
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--            </intent-filter>-->
         </activity>
 
         <!-- Login activity -->
@@ -47,10 +47,10 @@
             and 'path' would be "/oauth/done".
         -->
         <!-- Use `android:name="com.salesforce.androidnativekotlintemplate.QrCodeEnabledLoginActivity"` when enabling log in via Salesforce UI Bridge API generated QR codes -->
-        <activity
-            android:name="com.salesforce.androidnativekotlintemplate.QrCodeEnabledLoginActivity"
-            android:exported="true"
-            android:launchMode="singleTask"
-            android:theme="@style/SalesforceSDK" />
+<!--        <activity-->
+<!--            android:name="com.salesforce.androidsdk.ui.LoginActivity"-->
+<!--            android:exported="true"-->
+<!--            android:launchMode="singleTask"-->
+<!--            android:theme="@style/SalesforceSDK" />-->
     </application>
 </manifest>
