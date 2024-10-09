@@ -36,7 +36,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
         MobileSyncSDKManager.initializeSDK()
         
         // Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes.
-        // self.setupQrCodeLogin()
+        self.setupQrCodeLogin()
     }
     
     // MARK: UISceneSession Lifecycle
@@ -76,14 +76,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
             }
         }
     }
-    
-    private func setupQrCodeLogin() {
-        MobileSyncSDKManager.shared.isQrCodeLoginEnabled = true
-        UserAccountManager.shared.loginViewControllerConfig.loginViewControllerCreationBlock = {
-            return LoginTypeSelectionViewController()
-        }
-    }
-    
+        
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         // Uncomment the code below to register your device token with the push notification manager
 //        didRegisterForRemoteNotifications(deviceToken)
@@ -116,4 +109,96 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
     func enableIDPLoginFlowForURL(_ url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         return  UserAccountManager.shared.handleIdentityProviderResponse(from: url, with: options)
     }
+    
+    // MARK: - QR Code Login Via Salesforce Identity API UI Bridge Public Implementation
+    
+    /**
+     * When enabling log in via Salesforce UI Bridge API generated QR codes, choose to use the
+     * Salesforce Mobile SDK reference format for QR code log in URLs or an entirely custom format.
+     *
+     * If only one of the two formats is used, which is the most likely implementation for apps using this
+     * template, this variable and code related to the unused implementation could be removed.
+     */
+    let isQrCodeLoginUsingReferenceUrlFormat = true
+    
+    /**
+     * When enabling log in via Salesforce UI Bridge API generated QR codes and using the reference QR
+     * code log in URL format, the scheme for the expected QR code log in URL format.
+     */
+    let qrCodeLoginUrlScheme = "your-qr-code-login-url-scheme"
+    
+    /**
+     * When enabling log in via Salesforce UI Bridge API generated QR codes and using the reference QR
+     * code log in URL format, the host for the expected QR code log in URL format.
+     */
+    let qrCodeLoginUrlHost = "your-qr-code-login-url-host"
+    
+    
+    // MARK: - QR Code Login Via Salesforce Identity API UI Bridge Private Implementation
+    
+    /**
+     * Sets up QR code log in.
+     */
+    private func setupQrCodeLogin() {
+        
+        // Enable QR code log in.
+        MobileSyncSDKManager.shared.isQrCodeLoginEnabled = true
+        
+        // Specify a custom Salesforce Mobile SDK log in view controller which is a subclass of the default log in view and enables navigation to the log in QR code scan view.
+        UserAccountManager.shared.loginViewControllerConfig.loginViewControllerCreationBlock = {
+            return LoginTypeSelectionViewController()
+        }
+        
+        /*
+         * When enabling log in via Salesforce UI Bridge API generated QR codes
+         * and using the Salesforce Mobile SDK reference format for QR code log
+         * in URLs, specify values for the string placeholders in this method to
+         * control the parsing of QR code log in URLs. The required UI Bridge
+         * API parameters are the frontdoor URL and, for web server flow, the
+         * PKCE code verifier.
+         *
+         * Salesforce Mobile SDK doesn't require a specific format for the QR
+         * code log in URL.  The server-side code, such as an APEX class and
+         * Visualforce page, must generate a QR code URL that the app is
+         * prepared to be opened by and be able to parse the UI Bridge API
+         * parameters from.
+         *
+         * Apps may receive and parse an entirely custom URL format so long as
+         * the UI Bridge API parameters are delivered to the
+         * `loginWithFrontdoorBridgeUrl` method.
+         *
+         * As a convenience, Salesforce Mobile SDK accepts a reference QR code
+         * log in URL format.  URLs matching that format and using string values
+         * provided by the app can be provided to the
+         * `loginWithFrontdoorBridgeUrlFromQrCode` method and Salesforce Mobile
+         * SDK will retrieve the required UI Bridge API parameters
+         * automatically.
+         *
+         * The reference QR code log in URL format uses this structure where the
+         * PKCE code verifier must be URL-Safe Base64 encoded and the overall
+         * JSON content must be URL encoded:
+         * [scheme]://[host]/[path]?[json-parameter-name]={[frontdoor-bridge-url-key]=<>,[pkce-code-verifier-key]=<>}
+         *
+         * Any URL link scheme supported by the native platform may be used.
+         * This includes Android App Links and iOS Universal Links. Be certain
+         * to follow the latest security practices documented by the app's
+         * native platform.
+         *
+         * If using an entirely custom format for QR code log in URLs, the
+         * assignment of these strings can be safely removed.
+         */
+        // The scheme and host for the expected QR code log in URL format.
+        assert(qrCodeLoginUrlScheme != "your-qr-code-login-url-scheme", "Please add your login QR code URL's scheme.")
+        assert(qrCodeLoginUrlHost != "your-qr-code-login-url-host", "Please add your login QR code URL's host.")
+        // The path, parameter names and JSON keys for the expected QR code log in URL format.
+        SalesforceLoginViewController.qrCodeLoginUrlPath = "your-qr-code-login-url-path"
+        SalesforceLoginViewController.qrCodeLoginUrlJsonParameterName = "your-qr-code-login-url-json-parameter-name"
+        SalesforceLoginViewController.qrCodeLoginUrlJsonFrontdoorBridgeUrlKey = "your-qr-code-login-url-json-frontdoor-bridge-url-key"
+        SalesforceLoginViewController.qrCodeLoginUrlJsonPkceCodeVerifierKey = "your-qr-code-login-url-json-pkce-code-verifier-key"
+        assert(SalesforceLoginViewController.qrCodeLoginUrlPath != "your-qr-code-login-url-path", "Please add your login QR code URL's path.")
+        assert(SalesforceLoginViewController.qrCodeLoginUrlJsonParameterName != "your-qr-code-login-url-json-parameter-name", "Please add your login QR code URL's UI Bridge API JSON query string parameter name.")
+        assert(SalesforceLoginViewController.qrCodeLoginUrlJsonFrontdoorBridgeUrlKey != "your-qr-code-login-url-json-frontdoor-bridge-url-key", "Please add your login QR code URL's UI Bridge API JSON frontdoor bridge URL key.")
+        assert(SalesforceLoginViewController.qrCodeLoginUrlJsonPkceCodeVerifierKey != "your-qr-code-login-url-json-pkce-code-verifier-key", "Please add your login QR code URL's UI Bridge API JSON PKCE code verifier key.")
+    }
+    
 }
