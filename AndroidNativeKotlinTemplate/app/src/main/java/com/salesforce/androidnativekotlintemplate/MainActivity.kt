@@ -100,26 +100,13 @@ class MainActivity : SalesforceActivity() {
         findViewById<ListView>(R.id.contacts_list).adapter = listAdapter
 
         // Check for and use the intent's QR code login URL if applicable.
-        val buildRestClientOnResumePreviousValue = buildRestClientOnResume
-        if (isQrCodeLoginUrlIntent(intent ?: return)) {
-            /*
-             * Temporarily request the Salesforce Mobile SDK REST Client not be
-             * built on resume such that the default login activity will not
-             * display and conflict with the login activity for QR code log in.
-             *
-             * If the display of the default login activity was no longer a
-             * side-effect of getting the REST client, this variable could be
-             * removed.
-             */
-            buildRestClientOnResume = false
-            useQrCodeLogInUrl(intent.data ?: return)
-        }
+        // Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes
+        //intent.data?.let { useQrCodeLogInUrl(it) }
 
         super.onResume()
-        buildRestClientOnResume = buildRestClientOnResumePreviousValue
     }
 
-    override fun onResume(client: RestClient) {
+    override fun onResume(client: RestClient?) {
         // Keeping reference to rest client
         this.client = client
 
@@ -209,7 +196,13 @@ class MainActivity : SalesforceActivity() {
      * @param url The QR code log in URL
      */
     private fun useQrCodeLogInUrl(url: Uri) {
+        isBuildRestClientOnResumeEnabled = true
+
         val app = application as? MainApplication ?: return
+        if (!isQrCodeLoginUrlIntent(intent)) return
+
+        // While using a QR Code Login URL, disable the default login activity.
+        isBuildRestClientOnResumeEnabled = false
 
         // Use the specified QR code log in URL format.
         if (app.isQrCodeLoginUsingReferenceUrlFormat) {
