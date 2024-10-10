@@ -82,7 +82,7 @@ class MainApplication : Application() {
 
     /**
      * When enabling log in via Salesforce UI Bridge API generated QR codes, choose to use the
-     * Salesforce Mobile SDK reference format for QR code log in URLs or an entirely custom format.
+     * Salesforce Mobile SDK reference format for QR code login URLs or an entirely custom format.
      *
      * If only one of the two formats is used, which is the most likely implementation for apps using this
      * template, this variable and code related to the unused implementation could be removed.
@@ -91,20 +91,20 @@ class MainApplication : Application() {
 
     /**
      * When enabling log in via Salesforce UI Bridge API generated QR codes and using the reference QR
-     * code log in URL format, the scheme for the expected QR code log in URL format.
+     * code log in URL format, the scheme for the expected QR code login URL format.
      */
     internal var qrCodeLoginUrlScheme = "your-qr-code-login-url-scheme"
 
     /**
      * When enabling log in via Salesforce UI Bridge API generated QR codes and using the reference QR
-     * code log in URL format, the host for the expected QR code log in URL format.
+     * code log in URL format, the host for the expected QR code login URL format.
      */
     internal var qrCodeLoginUrlHost = "your-qr-code-login-url-host"
 
     // region QR Code Login Via Salesforce Identity API UI Bridge Private Implementation
 
     /**
-     * Sets up QR code log in.
+     * Sets up QR code login.
      */
     private fun setupQrCodeLogin() {
 
@@ -112,7 +112,7 @@ class MainApplication : Application() {
          * When enabling log in via Salesforce UI Bridge API generated QR codes
          * and using the Salesforce Mobile SDK reference format for QR code log
          * in URLs, specify values for the string placeholders in this method to
-         * control the parsing of QR code log in URLs. The required UI Bridge
+         * control the parsing of QR code login URLs. The required UI Bridge
          * API parameters are the frontdoor URL and, for web server flow, the
          * PKCE code verifier.
          *
@@ -133,7 +133,7 @@ class MainApplication : Application() {
          * SDK will retrieve the required UI Bridge API parameters
          * automatically.
          *
-         * The reference QR code log in URL format uses this structure where the
+         * The reference QR code login URL format uses this structure where the
          * PKCE code verifier must be URL-Safe Base64 encoded and the overall
          * JSON content must be URL encoded:
          * [scheme]://[host]/[path]?[json-parameter-name]={[frontdoor-bridge-url-key]=<>,[pkce-code-verifier-key]=<>}
@@ -143,7 +143,7 @@ class MainApplication : Application() {
          * to follow the latest security practices documented by the app's
          * native platform.
          *
-         * If using an entirely custom format for QR code log in URLs, the
+         * If using an entirely custom format for QR code login URLs, the
          * assignment of these strings can be safely removed.
          */
         // The scheme and host for the expected QR code log in URL format.

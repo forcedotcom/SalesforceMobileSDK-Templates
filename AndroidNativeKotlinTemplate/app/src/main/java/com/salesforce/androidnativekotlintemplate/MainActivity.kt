@@ -192,8 +192,8 @@ class MainActivity : SalesforceActivity() {
     // region QR Code Login Via Salesforce Identity API UI Bridge Public Implementation
 
     /**
-     * Validates and uses the intent's QR code log in URL.
-     * @param url The QR code log in URL
+     * Validates and uses the intent's QR code login URL.
+     * @param url The QR code login URL
      */
     private fun useQrCodeLogInUrl(url: Uri) {
         isBuildRestClientOnResumeEnabled = true
@@ -204,7 +204,7 @@ class MainActivity : SalesforceActivity() {
         // While using a QR Code Login URL, disable the default login activity.
         isBuildRestClientOnResumeEnabled = false
 
-        // Use the specified QR code log in URL format.
+        // Use the specified QR code login URL format.
         if (app.isQrCodeLoginUsingReferenceUrlFormat) {
 
             // Log in using `loginWithFrontdoorBridgeUrlFromQrCode` if applicable
@@ -213,7 +213,7 @@ class MainActivity : SalesforceActivity() {
                 || url.path != qrCodeLoginUrlPath
                 || !url.queryParameterNames.contains(qrCodeLoginUrlJsonParameterName)
             ) {
-                e(javaClass.name, "Invalid QR code log in URL.")
+                e(javaClass.name, "Invalid QR code login URL.")
                 return
             }
             startActivity(
@@ -234,7 +234,7 @@ class MainActivity : SalesforceActivity() {
              */
 
             /* To-do: Implement URL handling to retrieve UI Bridge API parameters */
-            /* To set up QR code log in using `loginWithFrontdoorBridgeUrlFromQrCode`, provide the scheme and host for the expected QR code log in URL format */
+            /* To set up QR code login using `loginWithFrontdoorBridgeUrlFromQrCode`, provide the scheme and host for the expected QR code login URL format */
             val frontdoorBridgeUrl = "your-qr-code-login-frontdoor-bridge-url"
             val pkceCodeVerifier = "your-qr-code-login-pkce-code-verifier"
             check(frontdoorBridgeUrl != "your-qr-code-login-frontdoor-bridge-url") { "Please implement your app's frontdoor bridge URL retrieval." }
@@ -250,7 +250,7 @@ class MainActivity : SalesforceActivity() {
             })
         }
 
-        // Clear the intent data so that the QR code log in URL is used only once.
+        // Clear the intent data so that the QR code login URL is used only once.
         intent.data = null
     }
 
