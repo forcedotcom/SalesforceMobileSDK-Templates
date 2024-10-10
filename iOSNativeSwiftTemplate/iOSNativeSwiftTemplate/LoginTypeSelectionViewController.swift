@@ -92,13 +92,13 @@ class LoginTypeSelectionViewController: SalesforceLoginViewController {
     
     @objc
     func loginWithQrCodeButtonTapped(_: Any?) {
-
+        
         // Present a QR code scan controller to capture the log in QR code.
         let qrCodeScanController = QrCodeScanController()
-        qrCodeScanController.onQrCodeCaptured = { qrCodePayloadString in
-         
-            // Login using the QR code payload.
-            let _ = self.loginFromQrCode(loginQrCodeContent: qrCodePayloadString)
+        qrCodeScanController.onQrCodeCaptured = { qrCodeLoginUrl in
+            
+            // Use the QR code login URL.
+            let _ = LoginTypeSelectionViewController.loginWithFrontdoorBridgeUrlFromQrCode(qrCodeLoginUrl)
         }
         present(qrCodeScanController, animated: true)
     }
