@@ -48,21 +48,9 @@
         -->
         <!-- Use `android:name="com.salesforce.androidnativekotlintemplate.QrCodeEnabledLoginActivity"` when enabling log in via Salesforce UI Bridge API generated QR codes -->
 <!--        <activity-->
-<!--            android:name="com.salesforce.androidnativekotlintemplate.QrCodeEnabledLoginActivity"-->
-<!--            android:theme="@style/SalesforceSDK"-->
+<!--            android:name="com.salesforce.androidsdk.ui.LoginActivity"-->
+<!--            android:exported="true"-->
 <!--            android:launchMode="singleTask"-->
-<!--            android:exported="true">-->
-
-<!--            &lt;!&ndash; Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes &ndash;&gt;-->
-<!--            &lt;!&ndash; <intent-filter>&ndash;&gt;-->
-<!--            &lt;!&ndash;     <data&ndash;&gt;-->
-<!--            &lt;!&ndash;         android:host="android"&ndash;&gt;-->
-<!--            &lt;!&ndash;         android:path="/login/qr"&ndash;&gt;-->
-<!--            &lt;!&ndash;         android:scheme="mobileapp" />&ndash;&gt;-->
-<!--            &lt;!&ndash;     <action android:name="android.intent.action.VIEW" />&ndash;&gt;-->
-<!--            &lt;!&ndash;     <category android:name="android.intent.category.BROWSABLE" />&ndash;&gt;-->
-<!--            &lt;!&ndash;     <category android:name="android.intent.category.DEFAULT" />&ndash;&gt;-->
-<!--            &lt;!&ndash; </intent-filter>&ndash;&gt;-->
-<!--        </activity>-->
+<!--            android:theme="@style/SalesforceSDK" />-->
     </application>
 </manifest>
