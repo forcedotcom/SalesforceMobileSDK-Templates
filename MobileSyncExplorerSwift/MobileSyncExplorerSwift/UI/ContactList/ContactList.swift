@@ -51,8 +51,17 @@ struct ContactListView: View {
                 }
                 .listStyle(.plain)
                 .searchable(text: $searchTerm)
-                .navigationBarTitle("Contacts")
-                .navigationBarItems(trailing: NavBarButtons(viewModel: viewModel, notificationModel: notificationModel))
+                .navigationTitle("Contacts")
+                .toolbar(content: {
+                    ToolbarItemGroup(placement: UIDevice.current.userInterfaceIdiom == .pad ? .topBarLeading : .topBarTrailing) {
+                        Button(action: {
+                            viewModel.newContactSelected()
+                        }, label: { Image("plusButton").renderingMode(.template) })
+                        Button(action: {
+                            self.viewModel.syncUpDown()
+                        }, label: { Image("sync").renderingMode(.template) })
+                    }
+                })
             } detail: {
                 if let selectedRecord = viewModel.selectedRecord {
                     ContactDetailView(localId: selectedRecord, sObjectDataManager: self.viewModel.sObjectDataManager)
@@ -82,22 +91,6 @@ struct ContactListView: View {
             })) {
                 viewModel.selectedRecord = viewModel.sObjectDataManager.contacts.first?.id
             }
-        }
-    }
-}
-
-struct NavBarButtons: View {
-    @ObservedObject var viewModel: ContactListViewModel
-    @ObservedObject var notificationModel: NotificationListModel
-
-    var body: some View {
-        HStack {
-            Button(action: {
-                viewModel.newContactSelected()
-            }, label: { Image("plusButton").renderingMode(.template) })
-            Button(action: {
-                self.viewModel.syncUpDown()
-            }, label: { Image("sync").renderingMode(.template) })
         }
     }
 }
