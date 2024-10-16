@@ -47,6 +47,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var templateBootconfigFile = path.join('app', 'src', 'main', 'res', 'values', 'bootconfig.xml');
     var templateMainActivityFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativekotlintemplate', 'MainActivity.kt');
     var templateMainApplicationFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativekotlintemplate', 'MainApplication.kt');
+    var templateQrCodeEnabledLoginActivityFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativekotlintemplate', 'QrCodeEnabledLoginActivity.kt');
 
     //
     // Replace in files
@@ -56,18 +57,21 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     replaceInFiles(templateAppName, config.appname, [templatePackageJsonFile, templateSettingsGradle, templateStringsXmlFile]);
 
     // package name
-    replaceInFiles(templatePackageName, config.packagename, [templateBuildGradleFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile]);
-    
+    replaceInFiles(templatePackageName, config.packagename, [templateBuildGradleFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile, templateQrCodeEnabledLoginActivityFile]);
+
     //
     // Rename/move files
     //
     var tmpPathActivityFile = path.join('app', 'src', 'MainActivity.kt');
     var tmpPathApplicationFile = path.join('app', 'src', 'MainApplication.kt');
+    var tmpPathQrCodeEnabledLoginActivityFile = path.join('app', 'src', 'QrCodeEnabledLoginActivity.kt');
     moveFile(templateMainActivityFile, tmpPathActivityFile);
     moveFile(templateMainApplicationFile, tmpPathApplicationFile);
+    moveFile(templateQrCodeEnabledLoginActivityFile, tmpPathQrCodeEnabledLoginActivityFile);
     removeFile(path.join('app', 'src', 'main', 'java', 'com'));
     moveFile(tmpPathActivityFile, path.join.apply(null, ['app', 'src', 'main', 'java'].concat(config.packagename.split('.')).concat(['MainActivity.kt'])));
     moveFile(tmpPathApplicationFile, path.join.apply(null, ['app', 'src', 'main', 'java'].concat(config.packagename.split('.')).concat(['MainApplication.kt'])));
+    moveFile(tmpPathQrCodeEnabledLoginActivityFile, path.join.apply(null, ['app', 'src', 'main', 'java'].concat(config.packagename.split('.')).concat(['QrCodeEnabledLoginActivity.kt'])));
 
     //
     // Run install.js

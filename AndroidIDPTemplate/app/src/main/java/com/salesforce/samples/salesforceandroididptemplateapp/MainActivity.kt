@@ -26,6 +26,8 @@
  */
 package com.salesforce.samples.salesforceandroididptemplateapp
 
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -35,16 +37,26 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.TabHost
 import android.widget.Toast
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
+import com.salesforce.samples.salesforceandroididptemplateapp.R.id.root
 import com.salesforce.androidsdk.accounts.UserAccount
 import com.salesforce.androidsdk.accounts.UserAccountManager
 import com.salesforce.androidsdk.app.SalesforceSDKManager
 import com.salesforce.androidsdk.auth.idp.interfaces.IDPManager
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
+import com.salesforce.androidsdk.rest.ApiVersionStrings
 import com.salesforce.androidsdk.rest.RestClient
+import com.salesforce.androidsdk.rest.RestClient.AsyncRequestCallback
+import com.salesforce.androidsdk.rest.RestRequest
+import com.salesforce.androidsdk.rest.RestResponse
 import com.salesforce.androidsdk.ui.SalesforceActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.UnsupportedEncodingException
+import java.util.*
 
 /**
  * This activity represents the landing screen. It displays 2 tabs - 1 for apps
@@ -101,6 +113,18 @@ class MainActivity : SalesforceActivity() {
         // Setting click listeners for the list views.
         (usersListView as ListView).onItemClickListener = OnItemClickListener { _, _, position, _ -> handleUserListItemClick(position) }
         (appsListView as ListView).onItemClickListener = OnItemClickListener { _, _, position, _ -> handleAppsListItemClick(position) }
+
+        // Fix UI being drawn behind status and navigation bars on Android 15
+        if (SDK_INT > UPSIDE_DOWN_CAKE) {
+            ViewCompat.setOnApplyWindowInsetsListener(findViewById(root)) { listenerView, windowInsets ->
+                val insets = windowInsets.getInsets(
+                    WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+                )
+
+                listenerView.updatePadding(insets.left, insets.top, insets.right, insets.bottom)
+                WindowInsetsCompat.CONSUMED
+            }
+        }
     }
 
     override fun onResume() {

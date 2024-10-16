@@ -22,6 +22,8 @@
 		B73B520D234FA65F001B069B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73B520C234FA65F001B069B /* SceneDelegate.swift */; };
 		B77BD8A321125B510036B284 /* bootconfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = B77BD8A221125B510036B284 /* bootconfig.plist */; };
 		CEA8CA041F071B2300448B51 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEA8CA031F071B2300448B51 /* Images.xcassets */; };
+		D33B88412CA60F0E00892D80 /* LoginTypeSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33B883F2CA60F0E00892D80 /* LoginTypeSelectionViewController.swift */; };
+		D33B88422CA60F0E00892D80 /* QrCodeScanController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33B88402CA60F0E00892D80 /* QrCodeScanController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +45,8 @@
 		B73B520C234FA65F001B069B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		B77BD8A221125B510036B284 /* bootconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = bootconfig.plist; sourceTree = "<group>"; };
 		CEA8CA031F071B2300448B51 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/Images.xcassets"; sourceTree = SOURCE_ROOT; };
+		D33B883F2CA60F0E00892D80 /* LoginTypeSelectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginTypeSelectionViewController.swift; sourceTree = "<group>"; };
+		D33B88402CA60F0E00892D80 /* QrCodeScanController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QrCodeScanController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +124,8 @@
 		4FD6C4A11B755265002F9F90 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				D33B883F2CA60F0E00892D80 /* LoginTypeSelectionViewController.swift */,
+				D33B88402CA60F0E00892D80 /* QrCodeScanController.swift */,
 				4F13E944237DD626005BCAE9 /* SwiftUI */,
 				4F13E945237DD62D005BCAE9 /* Models */,
 				4FD6C49D1B755242002F9F90 /* InitialViewController.swift */,
@@ -209,8 +215,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				B73B520D234FA65F001B069B /* SceneDelegate.swift in Sources */,
+				D33B88422CA60F0E00892D80 /* QrCodeScanController.swift in Sources */,
 				4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */,
 				4F13E93B237DD5D9005BCAE9 /* ContactDetailsView.swift in Sources */,
+				D33B88412CA60F0E00892D80 /* LoginTypeSelectionViewController.swift in Sources */,
 				4F13E947237DD72E005BCAE9 /* AccountsListModel.swift in Sources */,
 				4F13E93C237DD5D9005BCAE9 /* ContactsForAccountModel.swift in Sources */,
 				4F13E93F237DD5D9005BCAE9 /* ContactDetailModel.swift in Sources */,

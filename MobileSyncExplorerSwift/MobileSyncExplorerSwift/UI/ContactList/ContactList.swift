@@ -139,14 +139,14 @@ struct ContactCell: View {
                     .foregroundColor(.secondaryLabelText)
             }
             Spacer()
-            if SObjectDataManager.dataLocallyUpdated(contact) {
+            if contact.locallyUpdated {
                 Image(systemName: "arrow.2.circlepath").foregroundColor(.appBlue)
             }
-            if SObjectDataManager.dataLocallyCreated(contact) {
+            if contact.locallyCreatd {
                 Image(systemName: "plus")
                     .foregroundColor(.green)
             }
-            if SObjectDataManager.dataLocallyDeleted(contact) {
+            if contact.locallyDeleted {
                 Image(systemName: "trash").foregroundColor(.red)
             }
         }

@@ -29,6 +29,10 @@ if (fs.existsSync(targetDir)) {
     execSync('git clone --branch ' + branch + ' --single-branch --depth 1 ' + repoUrl + ' ' + targetDir, {stdio:[0,1,2]});
 }
 
+console.log('Adding .xcode.env');
+const nodePath = execSync('command -v node', { encoding: 'utf-8' }).trim();
+execSync(`echo export NODE_BINARY=${nodePath} > .xcode.env`, {stdio:[0,1,2], cwd:'ios'});
+
 console.log('Installing pod dependencies');
 // XXX remove following line once RNVectorIcons.podspec is fixed
 replaceTextInFile('./node_modules/react-native-vector-icons/RNVectorIcons.podspec', "s.dependency 'React'", "s.dependency 'React-Core'")
