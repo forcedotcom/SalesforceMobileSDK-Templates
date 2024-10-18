@@ -26,6 +26,7 @@
  */
 package com.salesforce.samples.mobilesyncexplorerreactnative;
 
+import android.os.Bundle;
 import com.salesforce.androidsdk.reactnative.ui.SalesforceReactActivity;
 
 public class MainActivity extends SalesforceReactActivity {
