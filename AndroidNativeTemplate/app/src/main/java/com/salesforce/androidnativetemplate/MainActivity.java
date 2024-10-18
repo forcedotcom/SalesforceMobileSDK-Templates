@@ -83,7 +83,7 @@ public class MainActivity extends SalesforceActivity {
                 public WindowInsetsCompat onApplyWindowInsets(@NonNull View v, @NonNull WindowInsetsCompat insets) {
                     Insets mInsets = insets.getInsets(
                             WindowInsetsCompat.Type.systemBars()
-                                    & WindowInsetsCompat.Type.displayCutout()
+                                    | WindowInsetsCompat.Type.displayCutout()
                     );
 
                     v.setPadding(mInsets.left, mInsets.top, mInsets.right, mInsets.bottom);
