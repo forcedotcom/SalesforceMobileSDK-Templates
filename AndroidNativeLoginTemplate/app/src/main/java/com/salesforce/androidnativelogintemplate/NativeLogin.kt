@@ -35,6 +35,7 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
 import android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT
 import androidx.activity.ComponentActivity
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -147,6 +148,7 @@ class NativeLogin : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         nativeLoginManager = SalesforceSDKManager.getInstance().nativeLoginManager!!
 

@@ -31,8 +31,31 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        
+    // MARK: - UISceneDelegate Implementation
+    
+    func scene(_ scene: UIScene,
+               openURLContexts urlContexts: Set<UIOpenURLContext>)
+    {
+  
+        // Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes.
+        /*
+         * Note: The app's Info.plist must be updated with the URL type, scheme
+         * and any other desired options to support custom URL scheme deep links
+         * for the QR login code.  It is possible to use universal links for
+         * this also so long as the app is configured, the UI bridge API
+         * parameters are obtained and passed to
+         * LoginTypeSelectionViewController.loginWithFrontdoorBridgeUrl
+         */
+//        // When the app process was running and receives a custom URL scheme deep link, use login QR code if applicable.
+//        if let urlContext = urlContexts.first {
+//            useQrCodeLogInUrl(urlContext.url)
+//        }
+    }
+    
+    func scene(_ scene: UIScene,
+               willConnectTo session: UISceneSession,
+               options connectionOptions: UIScene.ConnectionOptions)
+    {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         self.window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         self.window?.windowScene = windowScene
@@ -42,6 +65,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                self.setupRootViewController()
            }
         })
+        
+        // Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes.
+        // When the app process was not running and receives a custom URL scheme deep link, use login QR code if applicable.
+//        if let urlContext = connectionOptions.urlContexts.first {
+//            useQrCodeLogInUrl(urlContext.url)
+//        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -76,7 +105,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // to restore the scene back to its current state.
     }
     
-    // MARK: - Private methods
+    // MARK: - Private Methods
+    
    func initializeAppViewState() {
        if (!Thread.isMainThread) {
            DispatchQueue.main.async {
@@ -109,4 +139,56 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
        }
        postResetBlock()
    }
+    
+    // MARK: - QR Code Login Via Salesforce Identity API UI Bridge Private Implementation
+    
+    /**
+     * Validates and uses a QR code log in URL.
+     * - Parameters
+     *   - url: The URL to validate and use as a QR code log in URL
+     */
+    private func useQrCodeLogInUrl(_ url: URL) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        // Use the specified QR code log in URL format.
+        if (appDelegate.isQrCodeLoginUsingReferenceUrlFormat) {
+            
+            // Log in using `loginWithFrontdoorBridgeUrlFromQrCode` if applicable
+            guard let components = NSURLComponents(
+                url: url,
+                resolvingAgainstBaseURL: true),
+                  let scheme = components.scheme,
+                  scheme == appDelegate.qrCodeLoginUrlScheme,
+                  let host = components.host,
+                  host == appDelegate.qrCodeLoginUrlHost,
+                  let path = components.path,
+                  path == SalesforceLoginViewController.qrCodeLoginUrlPath,
+                  let queryItems = components.queryItems,
+                  let _ = queryItems.first(where: { $0.name == SalesforceLoginViewController.qrCodeLoginUrlJsonParameterName })?.value else {
+                SFSDKCoreLogger().e(classForCoder, message: "Invalid QR code log in URL.")
+                return
+            }
+            let _ = LoginTypeSelectionViewController.loginWithFrontdoorBridgeUrlFromQrCode(url.absoluteString)
+        } else {
+            
+            /*
+             * When using `loginWithFrontdoorBridgeUrl` and an entirely custom
+             * QR code login URL format, set
+             * `isAppExpectedReferenceQrCodeLoginUrlFormat` to `false` (or
+             * remove it entirely) and implement URL handling in this block
+             * before calling `loginWithFrontdoorBridgeUrl`.
+             */
+            
+            /* To-do: Implement URL handling to retrieve UI Bridge API parameters */
+            /* To set up QR code log in using `loginWithFrontdoorBridgeUrlFromQrCode`, provide the scheme and host for the expected QR code log in URL format */
+            let frontdoorBridgeUrl = "your-qr-code-login-frontdoor-bridge-url"
+            let pkceCodeVerifier = "your-qr-code-login-pkce-code-verifier"
+            assert(frontdoorBridgeUrl != "your-qr-code-login-frontdoor-bridge-url", "Please implement your app's frontdoor bridge URL retrieval.")
+            assert(pkceCodeVerifier != "your-qr-code-login-pkce-code-verifier", "Please add your app's PKCE code verifier retrieval if web server flow is used.")
+            let _ = LoginTypeSelectionViewController.loginWithFrontdoorBridgeUrl(
+                frontdoorBridgeUrl,
+                pkceCodeVerifier: pkceCodeVerifier
+            )
+        }
+    }
 }

@@ -6,16 +6,20 @@ plugins {
 }
 
 dependencies {
-    implementation("com.salesforce.mobilesdk:MobileSync:12.1.1")
+    implementation("com.salesforce.mobilesdk:MobileSync:12.2.0")
+    // Comment when disabling log in via Salesforce UI Bridge API generated QR codes
+    implementation("com.google.zxing:core:3.5.3")
+    // Comment when disabling log in via Salesforce UI Bridge API generated QR codes
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 }
 
 android {
     namespace = "com.salesforce.androidnativekotlintemplate"
 
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
-        targetSdk = 34
+        targetSdk = 35
         minSdk = 26
     }
 
@@ -27,7 +31,12 @@ android {
 
     packaging {
         resources {
-            excludes += setOf("META-INF/LICENSE", "META-INF/LICENSE.txt", "META-INF/DEPENDENCIES", "META-INF/NOTICE")
+            excludes += setOf(
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/DEPENDENCIES",
+                "META-INF/NOTICE"
+            )
         }
     }
 

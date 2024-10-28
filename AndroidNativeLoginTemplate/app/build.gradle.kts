@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    implementation("com.salesforce.mobilesdk:MobileSync:12.1.1")
+    implementation("com.salesforce.mobilesdk:MobileSync:12.2.0")
     implementation("com.google.android.material:material:1.11.0")
 
     val composeBom = platform("androidx.compose:compose-bom:2024.02.00")
@@ -28,10 +28,10 @@ dependencies {
 android {
     namespace = "com.salesforce.androidnativelogintemplate"
 
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
-        targetSdk = 34
+        targetSdk = 35
         minSdk = 26
     }
 

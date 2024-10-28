@@ -6,16 +6,16 @@ plugins {
 }
 
 dependencies {
-    implementation("com.salesforce.mobilesdk:MobileSync:12.1.1")
+    implementation("com.salesforce.mobilesdk:MobileSync:12.2.0")
 }
 
 android {
     namespace = "com.salesforce.samples.salesforceandroididptemplateapp"
 
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
-        targetSdk = 34
+        targetSdk = 35
         minSdk = 26
     }
 

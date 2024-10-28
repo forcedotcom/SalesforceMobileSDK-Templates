@@ -34,7 +34,12 @@ import android.widget.Toast.LENGTH_SHORT
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toComposeRect
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -47,6 +52,8 @@ import com.salesforce.androidsdk.smartstore.ui.SmartStoreInspectorActivity
 import com.salesforce.androidsdk.ui.SalesforceActivityDelegate
 import com.salesforce.androidsdk.ui.SalesforceActivityInterface
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.toWindowSizeClasses
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.DarkBackground
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.Purple40
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -80,11 +87,10 @@ class ContactsActivity
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        vm = ViewModelProvider(this, vmFactory)
-            .get(DefaultContactsActivityViewModel::class.java)
-
+        vm = ViewModelProvider(this, vmFactory)[DefaultContactsActivityViewModel::class.java]
         salesforceActivityDelegate = SalesforceActivityDelegate(this).also { it.onCreate() }
 
         setContent {
@@ -96,17 +102,22 @@ class ContactsActivity
                     .toComposeRect()
                     .size
             }
-
             val windowSizeClasses = with(LocalDensity.current) {
                 windowSize.toDpSize().toWindowSizeClasses()
             }
+            val backgroundColor = if (SalesforceSDKManager.getInstance().isDarkTheme) DarkBackground else Purple40
 
             SalesforceMobileSDKAndroidTheme {
-                ContactsActivityContent(
-                    activityUiInteractor = vm,
-                    menuHandler = this,
-                    windowSizeClasses = windowSizeClasses
-                )
+                Box(modifier = Modifier
+                    .background(backgroundColor)
+                    .safeDrawingPadding()
+                ) {
+                    ContactsActivityContent(
+                        activityUiInteractor = vm,
+                        menuHandler = this@ContactsActivity,
+                        windowSizeClasses = windowSizeClasses
+                    )
+                }
             }
         }
 

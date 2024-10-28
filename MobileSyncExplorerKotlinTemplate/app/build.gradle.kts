@@ -14,7 +14,7 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation("androidx.window:window:1.2.0")
 
-    implementation("com.salesforce.mobilesdk:MobileSync:12.1.1")
+    implementation("com.salesforce.mobilesdk:MobileSync:12.2.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -28,11 +28,11 @@ dependencies {
 android {
     namespace = "com.salesforce.mobilesyncexplorerkotlintemplate"
 
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.salesforce.mobilesyncexplorerkotlintemplate"
-        targetSdk = 34
+        targetSdk = 35
         minSdk = 26
         versionCode = 1
         versionName = "1.0"

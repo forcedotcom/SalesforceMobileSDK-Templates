@@ -19,5 +19,9 @@ post_install do |installer|
   # Comment the following if you do not want the SDK to emit signpost events for instrumentation. Signposts are  enabled for non release version of the app.
   signposts_post_install(installer)
 
+
+  # Comment the follow if you don't want to support visionOS
+  vision_os_post_install(installer)
+
   mobile_sdk_post_install(installer)
 end

@@ -7,8 +7,8 @@
     "test": "jest"
   },
   "sdkDependencies": {
-    "SalesforceMobileSDK-Android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#v12.1.1",
-    "SalesforceMobileSDK-iOS": "https://github.com/forcedotcom/SalesforceMobileSDK-iOS.git#v12.1.1"
+    "SalesforceMobileSDK-Android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#dev",
+    "SalesforceMobileSDK-iOS": "https://github.com/forcedotcom/SalesforceMobileSDK-iOS.git#dev"
   },
   "dependencies": {
     "@babel/plugin-transform-private-property-in-object": "^7.24.7",	
@@ -17,9 +17,9 @@
     "@react-navigation/stack": "^6.3.20",
     "create-react-class": "^15.7.0",
     "react": "18.2.0",
-    "react-native": "0.74.3",
+    "react-native": "0.74.5",
     "react-native-elements": "^3.4.3",
-    "react-native-force": "git+https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#v12.1.1",
+    "react-native-force": "git+https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#dev",
     "react-native-gesture-handler": "^2.14.0",
     "react-native-safe-area-context": "^4.10.8",
     "react-native-screens": "^3.30.1",
@@ -29,10 +29,10 @@
     "@babel/core": "^7.20.0",
     "@babel/preset-env": "^7.20.0",
     "@babel/runtime": "^7.20.0",
-    "@react-native/babel-preset": "0.74.85",
-    "@react-native/eslint-config": "0.74.85",
-    "@react-native/metro-config": "0.74.85",
-    "@react-native/typescript-config": "0.74.85",
+    "@react-native/babel-preset": "0.74.87",
+    "@react-native/eslint-config": "0.74.87",
+    "@react-native/metro-config": "0.74.87",
+    "@react-native/typescript-config": "0.74.87",
     "@types/react": "^18.2.6",
     "@types/react-test-renderer": "^18.0.0",
     "babel-jest": "^29.6.3",

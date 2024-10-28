@@ -5,6 +5,6 @@
     <string name="oauthRedirectURI">testsfdc:///mobilesdk/detect/oauth/done</string>
     <string-array name="oauthScopes">
         <item>api</item>
-	<item>web</item>
+        <item>web</item>
     </string-array>
 </resources>
