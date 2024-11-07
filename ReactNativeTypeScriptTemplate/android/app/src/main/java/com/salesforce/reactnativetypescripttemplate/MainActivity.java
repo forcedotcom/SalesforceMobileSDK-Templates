@@ -26,9 +26,16 @@
  */
 package com.salesforce.reactnativetypescripttemplate;
 
+import android.os.Bundle;
 import com.salesforce.androidsdk.reactnative.ui.SalesforceReactActivity;
 
 public class MainActivity extends SalesforceReactActivity {
+
+	//react-native-screens override
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(null);
+	}
 
     /**
      *
