@@ -33,7 +33,7 @@ android {
     defaultConfig {
         applicationId = "com.salesforce.mobilesyncexplorerkotlintemplate"
         targetSdk = 35
-        minSdk = 26
+        minSdk = 28
         versionCode = 1
         versionName = "1.0"
 
