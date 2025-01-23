@@ -140,10 +140,6 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
      * Sets up QR code log in.
      */
     private func setupQrCodeLogin() {
-        
-        // Enable QR code log in.
-        MobileSyncSDKManager.shared.isQrCodeLoginEnabled = true
-        
         // Specify a custom Salesforce Mobile SDK log in view controller which is a subclass of the default log in view and enables navigation to the log in QR code scan view.
         UserAccountManager.shared.loginViewControllerConfig.loginViewControllerCreationBlock = {
             return LoginTypeSelectionViewController()
