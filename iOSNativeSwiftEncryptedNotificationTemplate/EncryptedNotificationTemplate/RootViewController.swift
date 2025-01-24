@@ -35,26 +35,14 @@ class RootViewController: UITableViewController {
         super.loadView()
         self.title = "Mobile SDK Sample App"
         let request = RestClient.shared.request(forQuery: "SELECT Name FROM Contact LIMIT 10", apiVersion: SFRestDefaultAPIVersion)
-        
-        RestClient.shared.send(request: request) { [weak self] (result) in
-            switch result {
-                case .success(let response):
-                    self?.handleSuccess(response: response, request: request)
-                case .failure(let error):
-                     SalesforceLogger.d(RootViewController.self, message:"Error invoking: \(request) , \(error)")
+        Task {
+            do {
+                let response = try await RestClient.shared.send(request: request)
+                handleSuccess(response: response, request: request)
+            } catch {
+                SalesforceLogger.d(RootViewController.self, message:"Error invoking: \(request) , \(error)")
             }
         }
-  
-        //NOTE: An alternative way of consuming the response
-        //RestClient.shared.send(request: request) { [weak self] (result) in
-        //   do {
-        //      try self?.handleSuccess(response: result.get(),request: request)
-        //   }
-        //   catch(let error) {
-        //       SalesforceLogger.d(RootViewController.self, message:"Error invoking: \(request) , \(error)")
-        //   }
-        //}
-    
     }
     
     func handleSuccess(response: RestResponse, request: RestRequest) {
