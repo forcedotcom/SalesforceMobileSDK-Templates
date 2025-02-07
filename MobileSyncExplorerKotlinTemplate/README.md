@@ -12,7 +12,7 @@ encouraged to use this template as a starting point and adapt it for your app's 
 Some key features are:
 
 - Full support for Kotlin Coroutines with all MSDK data operations
-- UI designed for flexibile layouts using Jetpack Compose
+- UI designed for flexible layouts using Jetpack Compose
 - An extensible solution for bridging between Salesforce Object JSON and Kotlin data classes
 - All written in Kotlin!
 

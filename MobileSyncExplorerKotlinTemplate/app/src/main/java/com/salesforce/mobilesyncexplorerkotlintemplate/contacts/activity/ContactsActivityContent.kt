@@ -31,11 +31,37 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.BottomAppBar
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.FabPosition
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -43,7 +69,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.salesforce.mobilesyncexplorerkotlintemplate.R
-import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.*
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.content_desc_add_contact
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.content_desc_cancel_edit
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.content_desc_item_deleted_locally
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.content_desc_item_saved_locally
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.content_desc_item_synced
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.content_desc_menu
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.content_desc_not_saved
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.cta_inspect_db
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.cta_logout
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.cta_search
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.cta_switch_user
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.cta_sync
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.label_contacts
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsComponentClickHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ContactDetailsUiState
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ui.ContactDetailsComponentFormContent
@@ -57,7 +95,13 @@ import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.listcomponent.ui
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectRecord
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.salesforceobject.SObjectSyncState
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.components.LoadingOverlay
-import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.*
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.EditableTextFieldUiState
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.FormattedStringRes
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.SObjectUiSyncState
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.WINDOW_SIZE_COMPACT_CUTOFF_DP
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.WINDOW_SIZE_MEDIUM_CUTOFF_DP
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.WindowSizeClass
+import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.state.WindowSizeClasses
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.MIN_TOUCH_TARGET_SIZE_DP
 import com.salesforce.mobilesyncexplorerkotlintemplate.core.ui.theme.SalesforceMobileSDKAndroidTheme
 import com.salesforce.mobilesyncexplorerkotlintemplate.model.contacts.ContactObject
@@ -90,6 +134,7 @@ fun ContactsActivityContent(
             listClickHandler = activityUiInteractor.listClickHandler,
             menuHandler = menuHandler
         )
+
         ContactsActivityContentLayout.ListDetail -> ListDetail(
             activityUiState = activityUiState,
             detailsUiState = detailsUiState,
@@ -126,6 +171,7 @@ private fun SinglePane(
             componentClickHandler = detailsClickHandler,
             menuHandler = menuHandler
         )
+
         else -> ContactsListSinglePaneComponent(
             uiState = listUiState,
             showLoading = showLoading,
@@ -737,7 +783,6 @@ class PreviewActivityVm(
 ) : ContactsActivityUiInteractor {
     override val activityUiState: StateFlow<ContactsActivityUiState> =
         MutableStateFlow(activityState)
-    val uiStateValue get() = activityUiState.value
 
     private val detailsVm = PreviewDetailsComponentVm(detailsState)
     private val listVm = PreviewListVm(listState)

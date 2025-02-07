@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 plugins {
     android
     `kotlin-android`
@@ -7,6 +5,7 @@ plugins {
 
 dependencies {
     implementation("com.salesforce.mobilesdk:MobileSync:13.0.0")
+    implementation("androidx.compose.runtime:runtime-android:1.7.7")
     // Comment when disabling log in via Salesforce UI Bridge API generated QR codes
     implementation("com.google.zxing:core:3.5.3")
     // Comment when disabling log in via Salesforce UI Bridge API generated QR codes

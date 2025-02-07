@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 plugins {
     android
     `kotlin-android`
@@ -7,13 +5,13 @@ plugins {
 
 dependencies {
     implementation("com.salesforce.mobilesdk:MobileSync:13.0.0")
-    implementation("com.google.android.material:material:1.11.0")
+    implementation("com.google.android.material:material:1.12.0")
 
     val composeBom = platform("androidx.compose:compose-bom:2024.02.00")
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
-    implementation("androidx.activity:activity-ktx:1.8.2")
+    implementation("androidx.activity:activity-ktx:1.10.0")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.foundation:foundation")
 
@@ -22,7 +20,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation("com.google.android.recaptcha:recaptcha:18.5.0-beta02")
+    implementation("com.google.android.recaptcha:recaptcha:18.6.1")
 }
 
 android {

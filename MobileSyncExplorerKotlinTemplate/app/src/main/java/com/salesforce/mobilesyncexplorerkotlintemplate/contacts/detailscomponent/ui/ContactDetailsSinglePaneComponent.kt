@@ -27,11 +27,28 @@
 package com.salesforce.mobilesyncexplorerkotlintemplate.contacts.detailscomponent.ui
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.material.*
+import androidx.compose.material.BottomAppBar
+import androidx.compose.material.FabPosition
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -40,7 +57,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.salesforce.mobilesyncexplorerkotlintemplate.R.drawable.ic_undo
-import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.*
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.content_desc_add_contact
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.content_desc_back
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.cta_delete
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.cta_edit
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.cta_save
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.cta_undelete
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.label_contact_department
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.label_contact_first_name
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.label_contact_last_name
+import com.salesforce.mobilesyncexplorerkotlintemplate.R.string.label_contact_title
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.ContactsActivityMenuButton
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.ContactsActivityMenuHandler
 import com.salesforce.mobilesyncexplorerkotlintemplate.contacts.activity.PREVIEW_CONTACTS_ACTIVITY_MENU_HANDLER
@@ -130,7 +156,7 @@ private fun RowScope.ContactDetailsTopAppBarSinglePane(
 ) {
     IconButton(onClick = onUpClick) {
         Icon(
-            Icons.Default.ArrowBack,
+            Icons.AutoMirrored.Filled.ArrowBack,
             contentDescription = stringResource(id = content_desc_back)
         )
     }
@@ -204,6 +230,7 @@ private fun ContactDetailsFab(
                     }
             }
         }
+
         is ContactDetailsUiState.NoContactSelected -> FloatingActionButton(
             onClick = handler::createClick,
             modifier = modifier
