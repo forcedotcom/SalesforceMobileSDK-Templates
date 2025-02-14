@@ -63,16 +63,9 @@ class QrCodeEnabledLoginActivity : LoginActivity() {
             ContextCompat.RECEIVER_NOT_EXPORTED
         )
 
-        // Add the Log In With QR Code additional button.
-        viewModel.additionalBottomBarButtons.run {
-            val button = LoginAdditionalButton(login_with_qr_code) { onLoginWithQrCodeTapped() }
-            val buttons = value.toMutableList()
-            if (buttons.find { it.title == button.title } == null) {
-                buttons.add(
-                    button
-                )
-            }
-            value = buttons
+        // Add the Log In With QR Code custom button.
+        viewModel.customBottomBarButton.value = LoginAdditionalButton(login_with_qr_code) {
+            onLoginWithQrCodeTapped()
         }
     }
 
