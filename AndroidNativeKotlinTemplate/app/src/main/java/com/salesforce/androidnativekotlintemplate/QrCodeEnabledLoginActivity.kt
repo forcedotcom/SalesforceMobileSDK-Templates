@@ -4,19 +4,19 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.net.Uri.parse
 import android.os.Bundle
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.registerReceiver
+import androidx.core.net.toUri
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanIntentResult.parseActivityResult
 import com.journeyapps.barcodescanner.ScanOptions
 import com.salesforce.androidnativekotlintemplate.R.string.login_with_qr_code
 import com.salesforce.androidsdk.accounts.UserAccountManager.USER_SWITCH_INTENT_ACTION
 import com.salesforce.androidsdk.ui.LoginActivity
-import com.salesforce.androidsdk.ui.LoginViewModel.LoginAdditionalButton
+import com.salesforce.androidsdk.ui.LoginViewModel.BottomBarButton
 
 /**
  * A subclass of Salesforce Mobile SDK's login activity that enables log in via
@@ -64,7 +64,7 @@ class QrCodeEnabledLoginActivity : LoginActivity() {
         )
 
         // Add the Log In With QR Code custom button.
-        viewModel.customBottomBarButton.value = LoginAdditionalButton(login_with_qr_code) {
+        viewModel.customBottomBarButton.value = BottomBarButton(getString(login_with_qr_code)) {
             onLoginWithQrCodeTapped()
         }
     }
@@ -101,7 +101,7 @@ class QrCodeEnabledLoginActivity : LoginActivity() {
                     this,
                     MainActivity::class.java
                 ).apply {
-                    data = parse(qrCodeLoginUrl)
+                    data = qrCodeLoginUrl.toUri()
                 })
             }
         }
