@@ -13,7 +13,7 @@ import androidx.core.net.toUri
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanIntentResult.parseActivityResult
 import com.journeyapps.barcodescanner.ScanOptions
-import com.salesforce.androidnativekotlin.R.string.login_with_qr_code
+import com.salesforce.androidnativekotlintemplate.R.string.login_with_qr_code
 import com.salesforce.androidsdk.accounts.UserAccountManager.USER_SWITCH_INTENT_ACTION
 import com.salesforce.androidsdk.ui.LoginActivity
 import com.salesforce.androidsdk.ui.LoginViewModel.BottomBarButton
