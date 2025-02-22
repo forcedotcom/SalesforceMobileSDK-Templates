@@ -71,8 +71,8 @@ class MainActivity : SalesforceActivity() {
         super.onCreate(savedInstanceState)
 
         // Set Theme
-        val idDarkTheme = MobileSyncSDKManager.getInstance().isDarkTheme
-        setTheme(if (idDarkTheme) R.style.SalesforceSDK_Dark else R.style.SalesforceSDK)
+        val isDarkTheme = MobileSyncSDKManager.getInstance().isDarkTheme
+        setTheme(if (isDarkTheme) R.style.SalesforceSDK_Dark else R.style.SalesforceSDK)
         MobileSyncSDKManager.getInstance().setViewNavigationVisibility(this)
 
         // Setup view
@@ -214,6 +214,7 @@ class MainActivity : SalesforceActivity() {
                 || !url.queryParameterNames.contains(qrCodeLoginUrlJsonParameterName)
             ) {
                 e(javaClass.name, "Invalid QR code login URL.")
+                isBuildRestClientOnResumeEnabled = true
                 return
             }
             startActivity(
