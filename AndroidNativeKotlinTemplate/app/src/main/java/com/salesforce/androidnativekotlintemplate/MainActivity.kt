@@ -37,8 +37,11 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
-import androidx.core.view.ViewCompat
+import androidx.activity.enableEdgeToEdge
+import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsCompat.Type.displayCutout
+import androidx.core.view.WindowInsetsCompat.Type.systemBars
 import androidx.core.view.updatePadding
 import com.salesforce.androidnativekotlintemplate.R.id.root
 import com.salesforce.androidsdk.app.SalesforceSDKManager
@@ -80,9 +83,10 @@ class MainActivity : SalesforceActivity() {
 
         // Fix UI being drawn behind status and navigation bars on Android 15
         if (SDK_INT > UPSIDE_DOWN_CAKE) {
-            ViewCompat.setOnApplyWindowInsetsListener(findViewById(root)) { listenerView, windowInsets ->
+            enableEdgeToEdge()
+            setOnApplyWindowInsetsListener(findViewById(root)) { listenerView, windowInsets ->
                 val insets = windowInsets.getInsets(
-                    WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+                    systemBars() or displayCutout()
                 )
 
                 listenerView.updatePadding(insets.left, insets.top, insets.right, insets.bottom)
@@ -119,7 +123,7 @@ class MainActivity : SalesforceActivity() {
 
      * @param v
      */
-    @Suppress("UNUSED_PARAMETER")
+    @Suppress("UNUSED", "UNUSED_PARAMETER")
     fun onLogoutClick(v: View) {
         SalesforceSDKManager.getInstance().logout(this)
     }
@@ -195,6 +199,7 @@ class MainActivity : SalesforceActivity() {
      * Validates and uses the intent's QR code login URL.
      * @param url The QR code login URL
      */
+    @Suppress("KotlinConstantConditions", "UNUSED")
     private fun useQrCodeLogInUrl(url: Uri) {
         isBuildRestClientOnResumeEnabled = true
 

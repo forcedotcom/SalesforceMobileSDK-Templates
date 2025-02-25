@@ -37,6 +37,7 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.TabHost
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -116,6 +117,7 @@ class MainActivity : SalesforceActivity() {
 
         // Fix UI being drawn behind status and navigation bars on Android 15
         if (SDK_INT > UPSIDE_DOWN_CAKE) {
+            enableEdgeToEdge()
             ViewCompat.setOnApplyWindowInsetsListener(findViewById(root)) { listenerView, windowInsets ->
                 val insets = windowInsets.getInsets(
                     WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
@@ -138,12 +140,16 @@ class MainActivity : SalesforceActivity() {
         findViewById<ViewGroup>(R.id.root).visibility = View.VISIBLE
 
         // Displays list of users available.
-        usersListView?.adapter = ArrayAdapter(this,
-                android.R.layout.simple_selectable_list_item, buildListOfUsers())
+        usersListView?.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_selectable_list_item, buildListOfUsers()
+        )
 
         // Displays list of apps available.
-        appsListView?.adapter = ArrayAdapter(this, android.R.layout.simple_selectable_list_item,
-                arrayListOf(MOBILE_SYNC_EXPLORER, REST_EXPLORER, ACCOUNT_EDITOR))
+        appsListView?.adapter = ArrayAdapter(
+            this, android.R.layout.simple_selectable_list_item,
+            arrayListOf(MOBILE_SYNC_EXPLORER, REST_EXPLORER, ACCOUNT_EDITOR)
+        )
     }
 
     private fun buildListOfUsers(): List<String> {
@@ -194,7 +200,7 @@ class MainActivity : SalesforceActivity() {
         if (spAppPackageName != null) {
             SalesforceSDKManager.getInstance().idpManager?.let { idpManager ->
                 idpManager.kickOffIDPInitiatedLoginFlow(this, spAppPackageName,
-                    object:IDPManager.StatusUpdateCallback {
+                    object : IDPManager.StatusUpdateCallback {
                         override fun onStatusUpdate(status: IDPManager.Status) {
                             Log.d(TAG, "Got update ${status}")
                             CoroutineScope(Dispatchers.Main).launch {
