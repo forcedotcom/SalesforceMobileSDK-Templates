@@ -142,7 +142,7 @@ struct ContactCell: View {
             if contact.locallyUpdated {
                 Image(systemName: "arrow.2.circlepath").foregroundColor(.appBlue)
             }
-            if contact.locallyCreatd {
+            if contact.locallyCreated {
                 Image(systemName: "plus")
                     .foregroundColor(.green)
             }

@@ -1,12 +1,10 @@
-@file:Suppress("UnstableApiUsage")
-
 plugins {
     android
     `kotlin-android`
 }
 
 dependencies {
-    implementation("com.salesforce.mobilesdk:MobileSync:12.2.0")
+    implementation("com.salesforce.mobilesdk:MobileSync:13.0.0")
 }
 
 android {
@@ -16,7 +14,7 @@ android {
 
     defaultConfig {
         targetSdk = 35
-        minSdk = 26
+        minSdk = 28
     }
 
     buildTypes {

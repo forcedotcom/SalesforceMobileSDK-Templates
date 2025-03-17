@@ -60,13 +60,6 @@
     },
     {
 
-        "path": "HybridLwcTemplate",
-        "description": "Basic hybrid application using Lightning Web Components",
-        "appType": "hybrid_lwc",
-        "platforms": ["android", "ios"]
-    },
-    {
-
         "path": "ReactNativeTemplate",
         "description": "Basic React Native application",
         "appType": "react_native",

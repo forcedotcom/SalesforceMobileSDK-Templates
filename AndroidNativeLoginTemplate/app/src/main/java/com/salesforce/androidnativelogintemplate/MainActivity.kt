@@ -34,6 +34,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -70,6 +71,7 @@ class MainActivity : SalesforceActivity() {
 
         // Fix UI being drawn behind status and navigation bars on Android 15
         if (SDK_INT > UPSIDE_DOWN_CAKE) {
+            enableEdgeToEdge()
             ViewCompat.setOnApplyWindowInsetsListener(findViewById(root)) { listenerView, windowInsets ->
                 val insets = windowInsets.getInsets(
                     WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
@@ -167,9 +169,11 @@ class MainActivity : SalesforceActivity() {
 
             override fun onError(exception: Exception) {
                 runOnUiThread {
-                    Toast.makeText(this@MainActivity,
-                            this@MainActivity.getString(R.string.sf__generic_error, exception.toString()),
-                            Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        this@MainActivity,
+                        this@MainActivity.getString(R.string.sf__generic_error, exception.toString()),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         })

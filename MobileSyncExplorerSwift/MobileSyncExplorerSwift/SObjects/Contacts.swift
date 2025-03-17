@@ -48,12 +48,12 @@ class ContactSObjectData: SObjectData, Identifiable, Equatable {
             lhs.email == rhs.email &&
             lhs.department == rhs.department &&
             lhs.homePhone == rhs.homePhone &&
-            lhs.locallyCreatd == rhs.locallyCreatd &&
+            lhs.locallyCreated == rhs.locallyCreated &&
             lhs.locallyDeleted == rhs.locallyDeleted &&
             lhs.locallyUpdated == rhs.locallyUpdated
     }
     
-    var locallyCreatd: Bool {
+    var locallyCreated: Bool {
         get {
             return SObjectDataManager.dataLocallyCreated(self)
         }
