@@ -27,21 +27,52 @@
 package com.salesforce.androidnativekotlintemplate
 
 import android.app.Application
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.util.Log
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.registerReceiver
+import com.salesforce.androidnativekotlintemplate.PushNotificationsAdapter.Companion.NOTIFICATION_EXTRAS_KEY_SALESFORCE_ACTIONABLE_NOTIFICATION_ACTION_KEY
+import com.salesforce.androidnativekotlintemplate.PushNotificationsAdapter.Companion.NOTIFICATION_EXTRAS_KEY_SALESFORCE_ACTIONABLE_NOTIFICATION_ID
+import com.salesforce.androidsdk.app.SalesforceSDKManager
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.androidsdk.ui.LoginActivity.Companion.qrCodeLoginUrlJsonFrontdoorBridgeUrlKey
 import com.salesforce.androidsdk.ui.LoginActivity.Companion.qrCodeLoginUrlJsonParameterName
 import com.salesforce.androidsdk.ui.LoginActivity.Companion.qrCodeLoginUrlJsonPkceCodeVerifierKey
 import com.salesforce.androidsdk.ui.LoginActivity.Companion.qrCodeLoginUrlPath
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Default
+import kotlinx.coroutines.launch
 
 /**
  * Application class for our application.
  */
 class MainApplication : Application() {
 
+    // region Companion
+
     companion object {
         private const val FEATURE_APP_USES_KOTLIN = "KT"
+
+        // region Notifications: Broadcast Intent Actions
+
+        /** A broadcast intent action to invoke Salesforce notification actions */
+        /* Actionable Notifications Template: When not using [PushNotificationsAdapter] and Actionable Notifications, this could be removed. */
+        internal const val BROADCAST_INTENT_ACTION_INVOKE_SALESFORCE_NOTIFICATION_ACTION = "BROADCAST_INTENT_ACTION_INVOKE_SALESFORCE_NOTIFICATION_ACTION"
+
+        // endregion
     }
 
+    // endregion
+    // region Notifications: Broadcast Intent Receiver
+
+    /** A broadcast intent receiver for invoking Salesforce actionable notification actions */
+    /* Actionable Notifications Template: When not using [PushNotificationsAdapter] and Actionable Notifications, this could be removed. */
+    private var invokeNotificationActionBroadcastIntentReceiver: BroadcastReceiver? = null
+
+    // endregion
     // region Activity Implementation
 
     override fun onCreate() {
@@ -72,6 +103,23 @@ class MainApplication : Application() {
 		 * Add your Firebase 'google-services.json' file to the 'app' folder of your project.
 		 */
         // MobileSyncSDKManager.getInstance().pushNotificationReceiver = pnInterface
+        /*
+         * As an alternative to providing a custom `PushNotificationInterface`,
+         * in the previous lines, uncomment the following line to use a
+         * default implementation which also handles Salesforce actionable
+         * notifications.
+         */
+        // MobileSyncSDKManager.getInstance().pushNotificationReceiver = PushNotificationsAdapter()
+
+        // Register an Android broadcast intent receiver to respond to invocation of notification actions.
+        val invokeNotificationActionBroadcastIntentReceiver: BroadcastReceiver = InvokeNotificationActionBroadcastIntentReceiver()
+        registerReceiver(
+            this,
+            invokeNotificationActionBroadcastIntentReceiver,
+            IntentFilter(BROADCAST_INTENT_ACTION_INVOKE_SALESFORCE_NOTIFICATION_ACTION),
+            ContextCompat.RECEIVER_EXPORTED
+        )
+        this.invokeNotificationActionBroadcastIntentReceiver = invokeNotificationActionBroadcastIntentReceiver
 
         /* Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes. */
         //setupQrCodeLogin()
@@ -101,6 +149,7 @@ class MainApplication : Application() {
      */
     internal var qrCodeLoginUrlHost = "your-qr-code-login-url-host"
 
+    // endregion
     // region QR Code Login Via Salesforce Identity API UI Bridge Private Implementation
 
     /**
@@ -154,6 +203,7 @@ class MainApplication : Application() {
         qrCodeLoginUrlJsonParameterName = "your-qr-code-login-url-json-parameter-name"
         qrCodeLoginUrlJsonFrontdoorBridgeUrlKey = "your-qr-code-login-url-json-frontdoor-bridge-url-key"
         qrCodeLoginUrlJsonPkceCodeVerifierKey = "your-qr-code-login-url-json-pkce-code-verifier-key"
+        @Suppress("KotlinConstantConditions")
         check(qrCodeLoginUrlPath != "your-qr-code-login-url-path") { "Please add your login QR code URL's path." }
         check(qrCodeLoginUrlJsonParameterName != "your-qr-code-login-url-json-parameter-name") { "Please add your login QR code URL's UI Bridge API JSON query string parameter name." }
         check(qrCodeLoginUrlJsonFrontdoorBridgeUrlKey != "your-qr-code-login-url-json-frontdoor-bridge-url-key") { "Please add your login QR code URL's UI Bridge API JSON frontdoor bridge URL key." }
@@ -161,4 +211,39 @@ class MainApplication : Application() {
     }
 
     // endregion
+    // region Push Notification Broadcast Intent Receivers
+
+    /**
+     * A broadcast intent receiver to invoke notification actions.
+     * Actionable Notifications: This intent receiver is used to invoke the
+     * matching Salesforce Actionable Notification Action when a notification
+     * action is selected by the user.
+     */
+    /* Actionable Notifications Template: When not using [PushNotificationsAdapter] and Actionable Notifications, this could be removed. */
+    class InvokeNotificationActionBroadcastIntentReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            CoroutineScope(Default).launch {
+                val notificationId = intent.extras?.getString(NOTIFICATION_EXTRAS_KEY_SALESFORCE_ACTIONABLE_NOTIFICATION_ID) ?: return@launch
+                val actionKey = intent.extras?.getString(NOTIFICATION_EXTRAS_KEY_SALESFORCE_ACTIONABLE_NOTIFICATION_ACTION_KEY) ?: return@launch
+
+                /*
+                 * Actionable Notifications: The Salesforce SDK provides a
+                 * method to invoke the matching Salesforce Actionable
+                 * Notification Action when a notification action is selected by
+                 * the user.
+                 */
+                val notificationsActionsResponseBody = SalesforceSDKManager.getInstance().invokeServerNotificationAction(
+                    notificationId = notificationId,
+                    actionKey = actionKey
+                )
+
+                Log.i("AndroidNativeKotlinTemplate", "${notificationsActionsResponseBody?.message}")
+            }
+        }
+    }
+
+    // endregion
+    // region Push Notification Receiver
+
+
 }
