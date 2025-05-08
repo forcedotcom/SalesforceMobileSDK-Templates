@@ -51,7 +51,6 @@ import com.salesforce.androidnativekotlintemplate.R.raw.asf_api_client_transcrip
 import com.salesforce.androidsdk.app.SalesforceSDKManager
 import com.salesforce.androidsdk.auth.HttpAccess.DEFAULT
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
-import com.salesforce.androidsdk.rest.AgentforceSpeechFoundationsApiClient
 import com.salesforce.androidsdk.rest.ApiVersionStrings
 import com.salesforce.androidsdk.rest.RestClient
 import com.salesforce.androidsdk.rest.RestClient.AsyncRequestCallback
