@@ -178,7 +178,7 @@ class MainActivity : SalesforceActivity() {
                 null /* A null authorization token provider disables automatic token refresh on 400-series response status codes */
             )
 
-            startAsfApiClientTranscriptionsDemo(restClientCustomAccessToken /*restClientUnwrapped*/)
+            startAsfApiClientTranscriptionsDemo(restClientUnwrapped /*restClientCustomAccessToken*/)
         }
     }
 
@@ -335,6 +335,9 @@ class MainActivity : SalesforceActivity() {
         restClient: RestClient
     ) = CoroutineScope(Default).launch {
 
+        Log.i("AsfApiClientTranscriptionsDemo", "Waiting 61 seconds for JWT expiration before opening web socket...")
+        delay(61000)
+
         // Open the web socket.
         val webSocket = AgentforceSpeechFoundationsApiClient(
             apiHostName = "api.salesforce.com",
@@ -343,6 +346,7 @@ class MainActivity : SalesforceActivity() {
         ).openStreamingTranscriptionsWebSocket(AsfApiClientTranscriptionsDemoWebSocketListener())
 
         // Send the test audio file.
+        Log.i("AsfApiClientTranscriptionsDemo", "Sending audio to web socket...")
         sendAudioStream(
             webSocket,
             resources.openRawResource(asf_api_client_transcription_demo_input)
@@ -367,9 +371,10 @@ class MainActivity : SalesforceActivity() {
             val fullSizedChunk = ByteArray(chunkSize)
             arraycopy(chunk, 0, fullSizedChunk, 0, chunk.size)
 
+            Log.i("AsfApiClientTranscriptionsDemo", "Sending audio chunk $chunkStartOffset/$chunkEndOffset of ${bytes.size.toDouble()} then a 3 second delay to wait for JWT expiration...")
             webSocket.send(wrap(fullSizedChunk).toByteString())
 
-            delay(128)
+            delay(3000)
 
             chunkStartOffset += chunkSize
         }
