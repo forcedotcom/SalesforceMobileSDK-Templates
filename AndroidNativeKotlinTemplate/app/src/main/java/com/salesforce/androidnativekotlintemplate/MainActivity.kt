@@ -30,25 +30,32 @@ import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
 import android.net.Uri
 import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.TIRAMISU
 import android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.Type.displayCutout
 import androidx.core.view.WindowInsetsCompat.Type.systemBars
 import androidx.core.view.updatePadding
 import com.salesforce.androidnativekotlintemplate.R.id.root
+import com.salesforce.androidnativekotlintemplate.R.raw.asf_api_client_transcription_demo_input
 import com.salesforce.androidsdk.app.SalesforceSDKManager
+import com.salesforce.androidsdk.auth.HttpAccess.DEFAULT
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
+import com.salesforce.androidsdk.rest.AgentforceSpeechFoundationsApiClient
 import com.salesforce.androidsdk.rest.ApiVersionStrings
 import com.salesforce.androidsdk.rest.RestClient
 import com.salesforce.androidsdk.rest.RestClient.AsyncRequestCallback
+import com.salesforce.androidsdk.rest.RestClient.ClientInfo
 import com.salesforce.androidsdk.rest.RestRequest
 import com.salesforce.androidsdk.rest.RestResponse
 import com.salesforce.androidsdk.ui.LoginActivity
@@ -59,8 +66,26 @@ import com.salesforce.androidsdk.ui.LoginActivity.Companion.qrCodeLoginUrlJsonPa
 import com.salesforce.androidsdk.ui.LoginActivity.Companion.qrCodeLoginUrlPath
 import com.salesforce.androidsdk.ui.SalesforceActivity
 import com.salesforce.androidsdk.util.SalesforceSDKLogger.e
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Default
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.Response
+import okhttp3.WebSocket
+import okhttp3.WebSocketListener
+import okio.ByteString
+import okio.ByteString.Companion.toByteString
+import java.io.InputStream
 import java.io.UnsupportedEncodingException
+import java.lang.System.arraycopy
+import java.nio.ByteBuffer.allocate
+import java.nio.ByteBuffer.wrap
 import java.util.*
+import java.util.Arrays.copyOfRange
+import kotlin.math.min
+import kotlin.text.Charsets.UTF_8
 
 /**
  * Main activity
@@ -110,12 +135,52 @@ class MainActivity : SalesforceActivity() {
         super.onResume()
     }
 
+    @RequiresApi(TIRAMISU)
     override fun onResume(client: RestClient?) {
         // Keeping reference to rest client
         this.client = client
 
         // Show everything
         findViewById<ViewGroup>(root).visibility = View.VISIBLE
+
+        // Launch to ASF API client demo.
+        client?.let { restClientUnwrapped ->
+            // Use a custom REST client, optionally with a custom access token and access token refresh disabled.
+            val restClientCustomAccessToken = RestClient(
+                restClientUnwrapped.clientInfo.run /* Copy */ {
+                    ClientInfo(
+                        instanceUrl,
+                        loginUrl,
+                        identityUrl,
+                        accountName,
+                        username,
+                        userId,
+                        orgId + "_custom_access_token", // TODO: Inquire if there's another way to circumvent the cached OAuth interceptors in RestClient.setOAuthRefreshInterceptor(authToken). ECJ20250507
+                        communityId,
+                        communityUrl,
+                        firstName,
+                        lastName,
+                        displayName,
+                        email,
+                        photoUrl,
+                        thumbnailUrl,
+                        additionalOauthValues,
+                        lightningDomain,
+                        lightningSid,
+                        vfDomain,
+                        vfSid,
+                        contentDomain,
+                        contentSid,
+                        csrfToken
+                    )
+                },
+                restClientUnwrapped.authToken /* For testing just hard-code the current user's access token.  Any access can be provided here */,
+                DEFAULT,
+                null /* A null authorization token provider disables automatic token refresh on 400-series response status codes */
+            )
+
+            startAsfApiClientTranscriptionsDemo(restClientCustomAccessToken /*restClientUnwrapped*/)
+        }
     }
 
     /**
@@ -261,4 +326,123 @@ class MainActivity : SalesforceActivity() {
     }
 
     // endregion
+    // region Agentforce Speech Foundations API Client Demo
+
+    /**
+     * Starts the Agentforce Speech Foundations API client demo.
+     */
+    @RequiresApi(TIRAMISU)
+    private fun startAsfApiClientTranscriptionsDemo(
+        restClient: RestClient
+    ) = CoroutineScope(Default).launch {
+
+        // Open the web socket.
+        val webSocket = AgentforceSpeechFoundationsApiClient(
+            apiHostName = "api.salesforce.com",
+            modelName = "transcribeV1",
+            restClient = restClient,
+        ).openStreamingTranscriptionsWebSocket(AsfApiClientTranscriptionsDemoWebSocketListener())
+
+        // Send the test audio file.
+        sendAudioStream(
+            webSocket,
+            resources.openRawResource(asf_api_client_transcription_demo_input)
+        )
+    }
+
+    @RequiresApi(TIRAMISU)
+    private suspend fun sendAudioStream(
+        webSocket: WebSocket,
+        inputStreamPcm16KHzAudio: InputStream
+    ) = withContext(IO) {
+        val bytes = inputStreamPcm16KHzAudio.readAllBytes()
+
+        val chunkSize = 4096
+        var chunkStartOffset = 0
+        while (chunkStartOffset < bytes.size) {
+            val chunkEndOffset = min(
+                (chunkStartOffset + chunkSize).toDouble(),
+                bytes.size.toDouble()
+            ).toInt()
+            val chunk = copyOfRange(bytes, chunkStartOffset, chunkEndOffset)
+            val fullSizedChunk = ByteArray(chunkSize)
+            arraycopy(chunk, 0, fullSizedChunk, 0, chunk.size)
+
+            webSocket.send(wrap(fullSizedChunk).toByteString())
+
+            delay(128)
+
+            chunkStartOffset += chunkSize
+        }
+        webSocket.send(allocate(0).toByteString())
+    }
+
+    // endregion
 }
+
+// region Agentforce Speech Foundations API Client Demo Web Socket Listeners
+
+/**
+ * A websocket listener for the ASF API client transcriptions demo.
+ */
+private class AsfApiClientTranscriptionsDemoWebSocketListener : WebSocketListener() {
+
+    override fun onClosed(
+        webSocket: WebSocket,
+        code: Int,
+        reason: String,
+    ) {
+        super.onClosed(webSocket, code, reason)
+
+        Log.i("AsfApiClientTranscriptionsDemo", "Closed: '$code', '$reason'.")
+    }
+
+    override fun onClosing(
+        webSocket: WebSocket,
+        code: Int,
+        reason: String,
+    ) {
+        super.onClosing(webSocket, code, reason)
+
+        Log.i("AsfApiClientTranscriptionsDemo", "Closing: '$code', '$reason'.")
+    }
+
+    override fun onFailure(
+        webSocket: WebSocket,
+        t: Throwable,
+        response: Response?,
+    ) {
+        super.onFailure(webSocket, t, response)
+
+        Log.e("AsfApiClientTranscriptionsDemo", "Failure: '${response?.body?.string()}'.", t)
+    }
+
+    override fun onMessage(
+        webSocket: WebSocket,
+        text: String,
+    ) {
+        super.onMessage(webSocket, text)
+
+        Log.i("AsfApiClientTranscriptionsDemo", "Message: Text: '$text'.")
+    }
+
+    override fun onMessage(
+        webSocket: WebSocket,
+        bytes: ByteString,
+    ) {
+        super.onMessage(webSocket, bytes)
+
+        Log.i("AsfApiClientTranscriptionsDemo", "Message: Bytes: '${bytes.string(UTF_8)}'.")
+    }
+
+    override fun onOpen(
+        webSocket: WebSocket,
+        response: Response,
+    ) {
+        super.onOpen(webSocket, response)
+
+        Log.i("AsfApiClientTranscriptionsDemo", "Open: '${response.body?.string()}'.")
+    }
+}
+
+// endregion
