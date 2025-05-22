@@ -7,8 +7,8 @@
     "test": "jest"
   },
   "sdkDependencies": {
-    "SalesforceMobileSDK-Android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#v13.0.0",
-    "SalesforceMobileSDK-iOS": "https://github.com/forcedotcom/SalesforceMobileSDK-iOS.git#v13.0.0"
+    "SalesforceMobileSDK-Android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#v13.0.1",
+    "SalesforceMobileSDK-iOS": "https://github.com/forcedotcom/SalesforceMobileSDK-iOS.git#v13.0.1"
   },
   "dependencies": {
     "@babel/plugin-transform-private-property-in-object": "^7.24.7",	
@@ -17,7 +17,7 @@
     "@react-navigation/stack": "^6.3.20",
     "react": "18.2.0",
     "react-native": "0.74.7",
-    "react-native-force": "git+https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#v13.0.0",
+    "react-native-force": "git+https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#v13.0.1",
     "react-native-gesture-handler": "^2.14.0",
     "react-native-safe-area-context": "^4.10.8",
     "react-native-screens": "^3.30.1",
