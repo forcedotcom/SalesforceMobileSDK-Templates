@@ -26,16 +26,9 @@
 #import "AppDelegate.h"
 #import "InitialViewController.h"
 #import "RootViewController.h"
-#import <SalesforceSDKCore/SFSDKAppConfig.h>
-#import <SalesforceSDKCore/SFPushNotificationManager.h>
-#import <SalesforceSDKCore/SFDefaultUserManagementViewController.h>
-#import <SalesforceSDKCore/SalesforceSDKManager.h>
-#import <SalesforceSDKCore/SFUserAccountManager.h>
-#import <MobileSync/MobileSyncSDKManager.h>
-#import <MobileSync/SFSDKMobileSyncLogger.h>
-#import <SalesforceSDKCore/SFLoginViewController.h>
-#import <SalesforceSDKCore/SFSDKLoginViewControllerConfig.h>
-#import <SalesforceSDKCore/SFSDKAuthHelper.h>
+
+@import SalesforceSDKCore;
+@import MobileSync;
 
 @interface AppDelegate ()
 

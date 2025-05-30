@@ -24,10 +24,6 @@
 
 #import "RootViewController.h"
 
-#import <SalesforceSDKCommon/SFLogger.h>
-#import <SalesforceSDKCore/SFRestAPI.h>
-#import <SalesforceSDKCore/SFRestRequest.h>
-
 @implementation RootViewController
 
 @synthesize dataRows;

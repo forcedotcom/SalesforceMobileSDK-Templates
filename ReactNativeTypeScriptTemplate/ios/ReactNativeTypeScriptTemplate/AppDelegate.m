@@ -26,16 +26,10 @@
 #import "InitialViewController.h"
 #import <React/RCTRootView.h>
 #import <React/RCTBundleURLProvider.h>
-#import <SalesforceSDKCore/SFSDKAppConfig.h>
-#import <SalesforceSDKCore/SFPushNotificationManager.h>
-#import <SalesforceSDKCore/SFDefaultUserManagementViewController.h>
-#import <SalesforceSDKCore/SalesforceSDKManager.h>
-#import <SalesforceSDKCore/SFUserAccountManager.h>
-#import <SalesforceReact/SalesforceReactSDKManager.h>
-#import <SalesforceSDKCore/SFLoginViewController.h>
-#import <SalesforceReact/SFSDKReactLogger.h>
-#import <SalesforceSDKCore/SFSDKAuthHelper.h>
 #import <UserNotifications/UserNotifications.h>
+
+@import SalesforceReact;
+@import SalesforceSDKCore;
 
 @implementation AppDelegate
 
