@@ -4,7 +4,7 @@ require Pod::Executable.execute_command('node', ['-p',
     "react-native/scripts/react_native_pods.rb",
     {paths: [process.argv[1]]},
   )', __dir__]).strip
-require_relative '../../../SalesforceMobileSDK-iOS/mobilesdk_pods'
+require_relative '../mobile_sdk/SalesforceMobileSDK-iOS/mobilesdk_pods'
 
 platform :ios, '17.0'
 prepare_react_native_project!
@@ -26,7 +26,7 @@ target 'ReactNativeTemplate' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  use_mobile_sdk!(:path => '../../../SalesforceMobileSDK-iOS')
+  use_mobile_sdk!(:path => '../mobile_sdk/SalesforceMobileSDK-iOS')
   pod 'SalesforceReact', :path => '../node_modules/react-native-force'
 
   pre_install do |installer|
