@@ -45,7 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     window = UIWindow(frame: UIScreen.main.bounds)
     
     factory.startReactNative(
-      withModuleName: "ReactNativeTemplate79",
+      withModuleName: "ReactNativeTemplate",
       in: window,
       launchOptions: launchOptions
     )
@@ -134,7 +134,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     guard let jsCodeLocation = RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index") else { return }
     
     let rootView = RCTRootView.init(bundleURL: jsCodeLocation,
-                                    moduleName: "ReactNativeTemplate79",
+                                    moduleName: "ReactNativeTemplate",
                                     initialProperties: nil,
                                     launchOptions: launchOptions)
     rootView.backgroundColor = UIColor.init(red: 1, green: 1, blue: 1, alpha: 1)
