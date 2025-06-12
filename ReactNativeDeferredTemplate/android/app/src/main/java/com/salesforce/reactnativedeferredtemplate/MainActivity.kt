@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-present, salesforce.com, inc.
+ * Copyright (c) 2025-present, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -24,36 +24,39 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.salesforce.reactnativedeferredtemplate;
 
-import android.os.Bundle;
-import com.salesforce.androidsdk.reactnative.ui.SalesforceReactActivity;
+package com.salesforce.reactnativedeferredtemplate
 
-public class MainActivity extends SalesforceReactActivity {
+import android.os.Bundle
+import com.facebook.react.ReactActivityDelegate
+import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
+import com.facebook.react.defaults.DefaultReactActivityDelegate
+import com.salesforce.androidsdk.reactnative.ui.SalesforceReactActivity
 
-	//react-native-screens override
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(null);
-	}
+class MainActivity : SalesforceReactActivity() {
+
+    //react-native-screens override
+    @Override
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(null)
+    }
 
     /**
-     *
-     * @return true if you want login to happen when application launches
-     *         false otherwise
+     * Returns the name of the main component registered from JavaScript. This
+     * is used to schedule rendering of the component.
      */
-	@Override
-	public boolean shouldAuthenticate() {
-		return false;
-	}
+    override fun getMainComponentName() = "ReactNativeDeferredTemplate"
 
-	/**
-	 * Returns the name of the main component registered from JavaScript.
-	 * This is used to schedule rendering of the component.
-	 */
-	@Override
-	protected String getMainComponentName() {
-		return "ReactNativeDeferredTemplate";
-	}
+    /**
+     * Returns the instance of the [ReactActivityDelegate]. We use
+     * [DefaultReactActivityDelegate] which allows you to enable New
+     * Architecture with a single boolean flags [fabricEnabled]
+     */
+    override fun createReactActivityDelegate() = DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
+
+    /**
+     * Determines if login should occur on application launch or not.
+     * @return True for login to occur on application launch, false otherwise
+     */
+    override fun shouldAuthenticate() = false
 }
-

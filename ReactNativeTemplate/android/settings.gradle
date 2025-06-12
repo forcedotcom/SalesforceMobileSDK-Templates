@@ -9,7 +9,7 @@ project(':react-native-gesture-handler').projectDir = new File(rootProject.proje
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
 
-def salesforceMobileSdkRoot = new File('../mobile_sdk/SalesforceMobileSDK-Android')
+def salesforceMobileSdkRoot = new File('../../../SalesforceMobileSDK-Android')
 if (salesforceMobileSdkRoot.exists()) {
     includeBuild(salesforceMobileSdkRoot)
 }

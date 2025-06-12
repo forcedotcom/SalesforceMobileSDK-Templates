@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-present, salesforce.com, inc.
+ * Copyright (c) 2025-present, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -24,71 +24,75 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.salesforce.reactnativedeferredtemplate;
 
-import android.app.Application;
+package com.salesforce.reactnativedeferredtemplate
 
-import com.facebook.react.PackageList;
-import com.facebook.react.ReactApplication;
-import com.facebook.react.ReactNativeHost;
-import com.facebook.react.ReactPackage;
-import com.facebook.soloader.SoLoader;
-import com.salesforce.androidsdk.BuildConfig;
-import com.salesforce.androidsdk.reactnative.app.SalesforceReactSDKManager;
+import android.app.Application
+import com.facebook.react.PackageList
+import com.facebook.react.ReactApplication
+import com.facebook.react.ReactHost
+import com.facebook.react.ReactNativeHost
+import com.facebook.react.ReactPackage
+import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
+import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
+import com.facebook.react.defaults.DefaultReactNativeHost
+import com.facebook.react.soloader.OpenSourceMergedSoMapping
+import com.facebook.soloader.SoLoader
+import com.salesforce.androidsdk.reactnative.app.SalesforceReactSDKManager
 
-import java.util.List;
+class MainApplication : Application(), ReactApplication {
 
-/**
- * Application class for our application.
- */
-public class MainApplication extends Application implements ReactApplication {
+    override val reactNativeHost: ReactNativeHost =
+        object : DefaultReactNativeHost(this) {
+            override fun getPackages(): List<ReactPackage> =
+                PackageList(this).packages.apply {
+                    // Packages that cannot be autolinked yet can be added manually here, for example:
+                    // add(MyReactNativePackage())
+                    add(SalesforceReactSDKManager.getInstance().getReactPackage())
+                }
 
-	private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
-		@Override
-		public boolean getUseDeveloperSupport() {
-			return BuildConfig.DEBUG;
-		}
+            override fun getJSMainModuleName(): String = "index"
 
-		@Override
-		protected List<ReactPackage> getPackages() {
-			@SuppressWarnings("UnnecessaryLocalVariable")
-			List<ReactPackage> packages = new PackageList(this).getPackages();
-			// Packages that cannot be autolinked yet can be added manually here, for example:
-			// packages.add(new MyReactNativePackage());
-			packages.add(SalesforceReactSDKManager.getInstance().getReactPackage());
-			return packages;
-		}
+            override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
 
+            override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
+            override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
+        }
 
-		@Override
-		protected String getJSMainModuleName() {
-			return "index";
-		}
-	};
+    override val reactHost: ReactHost
+        get() = getDefaultReactHost(applicationContext, reactNativeHost)
 
-	@Override
-	public ReactNativeHost getReactNativeHost() {
-		return mReactNativeHost;
-	}
+    override fun onCreate() {
+        super.onCreate()
+        SoLoader.init(this, OpenSourceMergedSoMapping)
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            // If you opted-in for the New Architecture, we load the native entry point for this app.
+            load()
+        }
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		SoLoader.init(this, /* native exopackage */ false);
-		SalesforceReactSDKManager.initReactNative(getApplicationContext(), MainActivity.class);
-
-		/*
-         * Uncomment the following line to enable IDP login flow. This will allow the user to
-         * either authenticate using the current app or use a designated IDP app for login.
-         * Replace 'idpAppURIScheme' with the URI scheme of the IDP app meant to be used.
-         */
-		// SalesforceReactSDKManager.getInstance().setIDPAppURIScheme(idpAppURIScheme);
+        SalesforceReactSDKManager.initReactNative(getApplicationContext(), MainActivity::class.java)
 
         /*
-		 * Un-comment the line below to enable push notifications in this app.
-		 * Replace 'pnInterface' with your implementation of 'PushNotificationInterface'.
-		 * Add your Firebase 'google-services.json' file to the 'app' folder of your project.
-		 */
-        // SalesforceReactSDKManager.getInstance().setPushNotificationReceiver(pnInterface);
-	}
+         * Un-comment the following line to enable IDP login flow. This will
+         * allow the user to either authenticate using the current app or use a
+         * designated IDP app for login. Replace 'idpAppURIScheme' with the URI
+         * scheme of the IDP app meant to be used.
+         */
+        // SalesforceReactSDKManager.getInstance().setIDPAppURIScheme(idpAppURIScheme)
+
+        /*
+         * Un-comment the following line to enable push notifications in this
+         * app. Replace 'pnInterface' with your implementation of
+         * 'PushNotificationInterface'. Add your Firebase 'google-services.json'
+         * file to the 'app' folder of your project.
+         */
+//        SalesforceReactSDKManager.getInstance().pushNotificationReceiver = object : PushNotificationInterface {
+//            override fun onPushMessageReceived(data: Map<String?, String?>?) {
+//            }
+//
+//            override fun supplyFirebaseMessaging(): FirebaseMessaging? {
+//                return null
+//            }
+//        }
+    }
 }

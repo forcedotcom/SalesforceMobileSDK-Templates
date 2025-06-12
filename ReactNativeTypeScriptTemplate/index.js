@@ -24,8 +24,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { AppRegistry } from 'react-native';
+import {AppRegistry} from 'react-native';
 import App from './app.tsx';
-
 
 AppRegistry.registerComponent('ReactNativeTypeScriptTemplate', () => App);

@@ -25,4 +25,3 @@ execSync(`echo export NODE_BINARY=${nodePath} > .xcode.env`, {stdio:[0,1,2], cwd
 
 console.log('Installing pod dependencies');
 execSync('pod update', {stdio:[0,1,2], cwd:'ios'});
-
