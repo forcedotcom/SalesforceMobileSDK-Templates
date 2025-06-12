@@ -26,7 +26,7 @@ target 'ReactNativeTemplate' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  use_mobile_sdk!(:path => '../../../SalesforceMobileSDK-iOS')
+  use_mobile_sdk!(:path => '../mobile_sdk/SalesforceMobileSDK-iOS')
   pod 'SalesforceReact', :path => '../node_modules/react-native-force'
 
   pre_install do |installer|
