@@ -116,19 +116,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // Respond to any push notification registration errors here
   }
   
-  func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-    
-    // Uncomment following block to enable IDP login flow
-    // return enableIDPLoginFlow(forURL: url, options:options)
-    
-    return false
-  }
-  
-  private func enableIDPLoginFlow(forURL url:URL, options:(Dictionary<UIApplication.OpenURLOptionsKey, Any>)) -> Bool {
-    return UserAccountManager.shared.handleIdentityProviderResponse(from: url, with:options)
-  }
-  
-  
   private func setupRootViewController() {
     
     guard let jsCodeLocation = RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index") else { return }

@@ -73,14 +73,6 @@ class MainApplication : Application(), ReactApplication {
         SalesforceReactSDKManager.initReactNative(getApplicationContext(), MainActivity::class.java)
 
         /*
-         * Un-comment the following line to enable IDP login flow. This will
-         * allow the user to either authenticate using the current app or use a
-         * designated IDP app for login. Replace 'idpAppURIScheme' with the URI
-         * scheme of the IDP app meant to be used.
-         */
-        // SalesforceReactSDKManager.getInstance().setIDPAppURIScheme(idpAppURIScheme)
-
-        /*
          * Un-comment the following line to enable push notifications in this
          * app. Replace 'pnInterface' with your implementation of
          * 'PushNotificationInterface'. Add your Firebase 'google-services.json'
