@@ -3,6 +3,6 @@
   "version": "0.0.1",
   "private": true,
   "sdkDependencies": {
-    "SalesforceMobileSDK-Android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#dev"
+    "SalesforceMobileSDK-Android": "https://github.com/JohnsonEricAtSalesforce/SalesforceMobileSDK-Android.git#feature/w-16556387_reactnative_android-upgrade-to-react-native-0.79"
   }
 }
