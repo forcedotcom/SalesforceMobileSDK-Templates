@@ -64,7 +64,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         replaceInFiles(templateAppName, config.appname, [templatePackageJsonFile, templateIndexIosFile, templatePodfile, templateProjectFile, templateSchemeFile, templateEntitlementsFile, templateAppDelegateFile]);
 
         // package name
-        replaceInFiles(templatePackageName, config.packagename, [templateProjectFile, templateEntitlementsFile, templateProjectFile]);
+        replaceInFiles(templatePackageName, config.packagename, [templateProjectFile, templateEntitlementsFile]);
 
         // org name
         replaceInFiles(templateOrganization, config.organization, [templateProjectFile]);

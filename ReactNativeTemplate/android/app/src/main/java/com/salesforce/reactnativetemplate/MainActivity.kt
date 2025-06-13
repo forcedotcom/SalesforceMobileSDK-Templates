@@ -27,17 +27,17 @@
 
 package com.salesforce.reactnativetemplate
 
+import android.os.Bundle
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
 import com.salesforce.androidsdk.reactnative.ui.SalesforceReactActivity
-import android.os.Bundle
 
 class MainActivity : SalesforceReactActivity() {
 
     //react-native-screens override
     @Override
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(null)
     }
 

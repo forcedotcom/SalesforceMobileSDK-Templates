@@ -15,10 +15,10 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-project 'MobileSyncExplorerReactNative.xcodeproj'
 target 'MobileSyncExplorerReactNative' do
-  source 'https://cdn.cocoapods.org/'
   $config = use_native_modules!
+
+  use_frameworks! :linkage => :static
 
   use_react_native!(
     :path => $config[:reactNativePath],
@@ -35,10 +35,9 @@ pre_install do |installer|
   mobile_sdk_pre_install(installer)
 end
 
-
 post_install do |installer|
   # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
-  # Comment the following if you do not want the SDK to emit signpost events for instrumentation. Signposts are  enabled for non release version of the app.
+  # Comment the following if you do not want the SDK to emit signpost events for instrumentation. Signposts are enabled for non release version of the app.
   signposts_post_install(installer)
 
   # React native post install
