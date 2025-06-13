@@ -20,13 +20,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     // Need to use SalesforceReactSDKManager in Salesforce Mobile SDK apps using React Native
     SalesforceReactSDKManager.initializeSDK()
-    
-    // App Setup for any changes to the current authenticated user
-    AuthHelper.registerBlock(forCurrentUserChangeNotifications: ) {
-      self.resetViewState(postResetBlock: ) {
-        self.setupRootViewController()
-      }
-    }
   }
   
   func application(
@@ -44,12 +37,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     window = UIWindow(frame: UIScreen.main.bounds)
     
-    factory.startReactNative(
-      withModuleName: "ReactNativeTemplate",
-      in: window,
-      launchOptions: launchOptions
-    )
-    
     // If you wish to register for push notifications uncomment the line
     // below.  Note that if you want to receive push notifications from
     // Salesforce you will also need to implement the
@@ -62,7 +49,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     customizeLoginView()
     
     AuthHelper.loginIfRequired() {
-      //      self.setupRootViewController()
+      factory.startReactNative(
+        withModuleName: "ReactNativeTemplate",
+        in: self.window,
+        launchOptions: launchOptions
+      )
     }
     
     return true
@@ -114,32 +105,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
   func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: any Error) {
     // Respond to any push notification registration errors here
-  }
-  
-  private func setupRootViewController() {
-    
-    guard let jsCodeLocation = RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index") else { return }
-    
-    let rootView = RCTRootView.init(bundleURL: jsCodeLocation,
-                                    moduleName: "ReactNativeTemplate",
-                                    initialProperties: nil,
-                                    launchOptions: launchOptions)
-    rootView.backgroundColor = UIColor.init(red: 1, green: 1, blue: 1, alpha: 1)
-    
-    let rootViewController = UIViewController()
-    rootViewController.view = rootView
-    window?.rootViewController = rootViewController; // TODO: Why is this blank? ECJ20250605
-  }
-  
-  private func resetViewState(postResetBlock: @escaping () -> Void) {
-    
-    if (window?.rootViewController?.presentedViewController != nil) {
-      window?.rootViewController?.dismiss(animated: false) {
-        postResetBlock()
-      }
-    } else {
-      postResetBlock()
-    }
   }
 }
 
