@@ -24,8 +24,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { AppRegistry } from 'react-native';
-import { App } from './app.js';
-
+import {AppRegistry} from 'react-native';
+import {App} from './app.js';
 
 AppRegistry.registerComponent('ReactNativeTemplate', () => App);

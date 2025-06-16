@@ -1,29 +1,32 @@
-<?xml version="1.0" encoding="utf-8"?>
-
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.salesforce.reactnativetemplate"
-	android:versionCode="1"
-	android:versionName="1.0"
-	android:installLocation="internalOnly">
+    android:installLocation="internalOnly"
+    android:versionCode="1"
+    android:versionName="1.0">
 
-	<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
-	<application android:icon="@drawable/sf__icon"
-	    android:label="@string/app_name"
-		android:name=".MainApplication"
-		android:manageSpaceActivity="com.salesforce.androidsdk.ui.ManageSpaceActivity"
-		android:usesCleartextTraffic="true">
+    <application
+        android:name=".MainApplication"
+        android:allowBackup="false"
+        android:icon="@drawable/sf__icon"
+        android:label="@string/app_name"
+        android:manageSpaceActivity="com.salesforce.androidsdk.ui.ManageSpaceActivity"
+        android:supportsRtl="true">
 
-		<!-- Launcher screen -->
-		<activity android:name=".MainActivity"
-		    android:label="@string/app_name"
-			android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:exported="true">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
-		</activity>
+        <!-- Launcher screen -->
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <!-- Login activity -->
         <!--
@@ -40,22 +43,23 @@
             and 'path' would be "/oauth/done".
         -->
         <!--
-        <activity android:name="com.salesforce.androidsdk.ui.LoginActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        <activity
+            android:name="com.salesforce.androidsdk.ui.LoginActivity"
+            android:exported="true"
             android:launchMode="singleTask"
-            android:exported="true">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
             <intent-filter>
-                <data android:scheme="testsfdc"
+                <data
                     android:host="*"
-                    android:path="/mobilesdk/detect/oauth/done" />
+                    android:path="/mobilesdk/detect/oauth/done"
+                    android:scheme="testsfdc" />
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         -->
-
-        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
-	</application>
+    </application>
 </manifest>
