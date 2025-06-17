@@ -1,45 +1,35 @@
 plugins {
     android
     `kotlin-android`
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.21"
 }
 
 dependencies {
-    val composeVersion = "1.8.2"
-
     implementation("com.salesforce.mobilesdk:MobileSync:13.1.0")
     implementation("com.google.android.material:material:1.12.0")
 
-    implementation("androidx.activity:activity-ktx:1.10.1")
-
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation("com.google.android.recaptcha:recaptcha:18.7.1")
-
-    // Note: Compose dependencies are synchronized with the content in the Compose set up guide for easier migration to new versions.
-    val composeBom = platform("androidx.compose:compose-bom:2025.05.00")
+    val composeBom = platform("androidx.compose:compose-bom:2024.02.00")
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
-    implementation("androidx.compose.material3:material3:1.3.2")
+    implementation("androidx.activity:activity-ktx:1.10.1")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.foundation:foundation")
 
-    implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
-    debugImplementation("androidx.compose.ui:ui-tooling:$composeVersion")
+    // Android Studio Preview support
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    debugImplementation("androidx.compose.ui:ui-tooling")
 
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:$composeVersion")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:$composeVersion")
-
-    implementation("androidx.activity:activity-compose:1.10.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.1")
-    implementation("androidx.compose.runtime:runtime-livedata:$composeVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("com.google.android.recaptcha:recaptcha:18.6.1") // Update requires Kotlin 2.
 }
 
 android {
     namespace = "com.salesforce.androidnativelogintemplate"
 
-    compileSdk = 36
+    compileSdk = 35
 
     defaultConfig {
-        targetSdk = 36
+        targetSdk = 35
         minSdk = 28
     }
 
@@ -60,6 +50,11 @@ android {
         aidl = true
         buildConfig = true
         compose = true
+    }
+
+    @Suppress("UnstableApiUsage")
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.9"
     }
 }
 

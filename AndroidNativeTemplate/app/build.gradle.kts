@@ -10,10 +10,10 @@ dependencies {
 android {
     namespace = "com.salesforce.androidnativetemplate"
 
-    compileSdk = 36
+    compileSdk = 35
 
     defaultConfig {
-        targetSdk = 36
+        targetSdk = 35
         minSdk = 28
     }
 
