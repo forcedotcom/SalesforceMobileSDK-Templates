@@ -11,7 +11,7 @@ dependencies {
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
-    implementation("androidx.activity:activity-ktx:1.10.0")
+    implementation("androidx.activity:activity-ktx:1.10.1")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.foundation:foundation")
 
@@ -20,7 +20,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation("com.google.android.recaptcha:recaptcha:18.6.1")
+    implementation("com.google.android.recaptcha:recaptcha:18.6.1") // Update requires Kotlin 2.
 }
 
 android {
@@ -52,6 +52,7 @@ android {
         compose = true
     }
 
+    @Suppress("UnstableApiUsage")
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.9"
     }
