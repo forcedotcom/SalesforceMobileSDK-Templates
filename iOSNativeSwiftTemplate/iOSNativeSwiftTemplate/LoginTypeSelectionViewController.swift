@@ -98,7 +98,11 @@ class LoginTypeSelectionViewController: SalesforceLoginViewController {
         qrCodeScanController.onQrCodeCaptured = { qrCodeLoginUrl in
             
             // Use the QR code login URL.
-            let _ = LoginTypeSelectionViewController.loginWithFrontdoorBridgeUrlFromQrCode(qrCodeLoginUrl)
+            do {
+                let _ = try LoginTypeSelectionViewController.loginWithFrontdoorBridgeUrlFromQrCode(qrCodeLoginUrl)
+            } catch(let error) {
+                SalesforceLogger.e(SceneDelegate.self, message: "QR Code Log In Error: '\(error)'.")
+            }
         }
         present(qrCodeScanController, animated: true)
     }

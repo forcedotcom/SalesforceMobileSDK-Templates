@@ -31,8 +31,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     
-    var qrCodeLoginUrl: URL?
-    
     // MARK: - UISceneDelegate Implementation
     
     func scene(_ scene: UIScene,
@@ -70,9 +68,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         // Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes.
         // When the app process was not running and receives a custom URL scheme deep link, use login QR code if applicable.
-        if let urlContext = connectionOptions.urlContexts.first {
-            self.qrCodeLoginUrl = urlContext.url
-        }
+//        if let urlContext = connectionOptions.urlContexts.first {
+//            useQrCodeLogInUrl(urlContext.url)
+//        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -96,32 +94,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Called as the scene transitions from the background to the foreground.
         // Use this method to undo the changes made on entering the background.
         self.initializeAppViewState()
-        
-        // Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes.
-        // When the app process was not running and receives a custom URL scheme deep link, use login QR code if applicable.
-        if let qrCodeLoginUrl = self.qrCodeLoginUrl {
-            do {
-                try useQrCodeLogInUrl(qrCodeLoginUrl)
-            } catch {
-                let message = (error as? LoginError)?.message ?? "Cannot log in using QR Code."
-                let alertController = UIAlertController(
-                    title: "Error",
-                    message: message,
-                    preferredStyle: .alert)
-                alertController.addAction(UIAlertAction(title: "OK", style: .default) { _ in
-                    AuthHelper.loginIfRequired {
-                        self.setupRootViewController()
-                    }
-                })
-                self.window?.rootViewController?.present(
-                    alertController,
-                    animated: true
-                )
-            }
-        } else {
-            AuthHelper.loginIfRequired {
-                self.setupRootViewController()
-            }
+        AuthHelper.loginIfRequired {
+            self.setupRootViewController()
         }
     }
 
@@ -173,7 +147,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
      * - Parameters
      *   - url: The URL to validate and use as a QR code log in URL
      */
-    private func useQrCodeLogInUrl(_ url: URL) throws {
+    private func useQrCodeLogInUrl(_ url: URL) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         
         // Use the specified QR code log in URL format.
@@ -194,7 +168,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 SFSDKCoreLogger().e(classForCoder, message: "Invalid QR code log in URL.")
                 return
             }
-            let _ = try LoginTypeSelectionViewController.loginWithFrontdoorBridgeUrlFromQrCode(url.absoluteString)
+            do {
+                let _ = try LoginTypeSelectionViewController.loginWithFrontdoorBridgeUrlFromQrCode(url.absoluteString)
+            } catch(let error) {
+                SalesforceLogger.e(SceneDelegate.self, message: "QR Code Log In Error: '\(error)'.")
+            }
         } else {
             
             /*
@@ -211,10 +189,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             let pkceCodeVerifier = "your-qr-code-login-pkce-code-verifier"
             assert(frontdoorBridgeUrl != "your-qr-code-login-frontdoor-bridge-url", "Please implement your app's frontdoor bridge URL retrieval.")
             assert(pkceCodeVerifier != "your-qr-code-login-pkce-code-verifier", "Please add your app's PKCE code verifier retrieval if web server flow is used.")
-            let _ = try LoginTypeSelectionViewController.loginWithFrontdoorBridgeUrl(
-                frontdoorBridgeUrl,
-                pkceCodeVerifier: pkceCodeVerifier
-            )
+            
+            do {
+                let _ = try LoginTypeSelectionViewController.loginWithFrontdoorBridgeUrl(
+                    frontdoorBridgeUrl,
+                    pkceCodeVerifier: pkceCodeVerifier
+                )
+            } catch(let error) {
+                SalesforceLogger.e(SceneDelegate.self, message: "QR Code Log In Error: '\(error)'.")
+            }
         }
     }
 }
