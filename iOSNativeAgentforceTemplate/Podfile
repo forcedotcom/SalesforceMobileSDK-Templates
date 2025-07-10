@@ -1,0 +1,23 @@
+platform :ios, '18.0'
+
+project 'iOSNativeAgentforceTemplate.xcodeproj'
+target 'iOSNativeAgentforceTemplate' do
+  source 'https://github.com/forcedotcom/SalesforceMobileSDK-iOS-Specs.git' 
+  source 'https://cdn.cocoapods.org/'
+  use_frameworks!
+
+  pod 'AgentforceSDK'
+  pod 'AgentforceService'
+  pod 'SalesforceCache'
+
+  pod 'SalesforceSDKCore', '~> 13'
+  pod 'MobileSync'
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
+    end
+  end
+end
