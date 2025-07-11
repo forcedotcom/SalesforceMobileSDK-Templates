@@ -8,7 +8,7 @@ dependencies {
 }
 
 android {
-    namespace = "com.salesforce.androidnativeagentforcetemplate"
+    namespace = "com.salesforce.androidnativetemplate"
 
     compileSdk = 35
 
