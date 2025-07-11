@@ -119,5 +119,11 @@
         "description": "Sample application with a native login screen written in SwiftUI.",
         "appType": "native_swift",
         "platforms": ["ios"]
-    }    
+    },
+    {
+        "path": "AndroidNativeAgentforceTemplate",
+        "description": "Sample application using Agentforce Mobile SDK and Agentforce Service with a Mobile SDK Login.",
+        "appType": "native_kotlin",
+        "platforms": ["android"]
+    }
 ]

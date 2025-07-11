@@ -1,0 +1,42 @@
+[versions]
+# Build
+agp_version = "8.7.3"
+compileSdkVersion = "35"
+javaVersion = "17"
+# Kotlin version, must be compatible according to
+# https://developer.android.com/jetpack/androidx/releases/compose-kotlin
+kotlin_version = "2.1.10"
+minSdkVersion = "29"
+targetSdkVersion = "35"
+
+# Android
+appCompat = "1.3.1"
+constraintVersion = "2.1.3"
+fragmentVersion = "1.4.1"
+kotlinxSerializationJsonVersion = "1.6.3"
+lifecycleVersion = "2.3.1"
+materialVersion = "1.3.0"
+
+# ComposeBom
+composeCompilerVersion = "1.5.10"
+animationAndroidVersion = "1.8.3"
+
+[plugins]
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin_version" }
+
+[libraries]
+# Build
+androidGradle = { module = "com.android.tools.build:gradle", version.ref = "agp_version" }
+kotlinGradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin_version" }
+
+# Android
+supportAppCompat = { module = "androidx.appcompat:appcompat", version.ref = "appCompat" }
+constraintLayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintVersion" }
+fragment = { module = "androidx.fragment:fragment", version.ref = "fragmentVersion" }
+fragmentKtx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentVersion" }
+kotlinSerialization = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin_version" }
+kotlinSerializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJsonVersion" }
+lifecycleRuntime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleVersion" }
+material = { module = "com.google.android.material:material", version.ref = "materialVersion" }
+
+animationAndroid = { group = "androidx.compose.animation", name = "animation-android", version.ref = "animationAndroidVersion" }
