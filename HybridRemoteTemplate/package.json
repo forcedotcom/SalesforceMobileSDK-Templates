@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "sdkDependencies": {
-    "SalesforceMobileSDK-Shared": "https://github.com/forcedotcom/SalesforceMobileSDK-Shared.git#v13.0.1",
-    "SalesforceMobileSDK-Android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#v13.0.1"
+    "SalesforceMobileSDK-Shared": "https://github.com/forcedotcom/SalesforceMobileSDK-Shared.git#v13.0.2",
+    "SalesforceMobileSDK-Android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#v13.0.2"
   }
 }
