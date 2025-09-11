@@ -105,11 +105,4 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error ) {
         // Respond to any push notification registration errors here.
     }
-    
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey
- : Any] = [:]) -> Bool {
-        // Uncomment following block to enable IDP Login flow
-//        return self.enableIDPLoginFlowForURL(url, options: options)
-        return false
-    }
 }
