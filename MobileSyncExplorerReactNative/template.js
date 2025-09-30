@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-present, salesforce.com, inc.
+ * Copyright (c) 2023-present, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -54,7 +54,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         var templateProjectFile = path.join(templateProjectDir, 'project.pbxproj');
         var templateSchemeFile = path.join('ios', templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', templateAppName + '.xcscheme');
         var templateEntitlementsFile = path.join('ios', templateAppName, templateAppName + '.entitlements');
-        var templateAppDelegateFile = path.join('ios', templateAppName, 'AppDelegate.m');
+        var templateAppDelegateFile = path.join('ios', templateAppName, 'AppDelegate.swift');
 
         //
         // Replace in files
@@ -112,8 +112,8 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         var templateAppBuildGradleFile = path.join('android', 'app', 'build.gradle');
         var templateStringsXmlFile = path.join('android', 'app', 'src', 'main', 'res', 'values', 'strings.xml');
         var templateBootconfigFile = path.join('android', 'app', 'src', 'main', 'res', 'values', 'bootconfig.xml');
-        var templateMainActivityFile = path.join('android', 'app', 'src', 'main', 'java', 'com', 'salesforce', 'samples', 'mobilesyncexplorerreactnative', 'MainActivity.java');
-        var templateMainApplicationFile = path.join('android', 'app', 'src', 'main', 'java', 'com', 'salesforce', 'samples', 'mobilesyncexplorerreactnative', 'MainApplication.java');
+        var templateMainActivityFile = path.join('android', 'app', 'src', 'main', 'java', 'com', 'salesforce', 'samples', 'mobilesyncexplorerreactnative', 'MainActivity.kt');
+        var templateMainApplicationFile = path.join('android', 'app', 'src', 'main', 'java', 'com', 'salesforce', 'samples', 'mobilesyncexplorerreactnative', 'MainApplication.kt');
 
         //
         // Replace in files
@@ -128,14 +128,14 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         //
         // Rename/move/remove files
         //
-        var tmpPathActivityFile = path.join('android', 'app', 'src', 'MainActivity.java');
-        var tmpPathApplicationFile = path.join('android', 'app', 'src', 'MainApplication.java');
+        var tmpPathActivityFile = path.join('android', 'app', 'src', 'MainActivity.kt');
+        var tmpPathApplicationFile = path.join('android', 'app', 'src', 'MainApplication.kt');
         moveFile(templateMainActivityFile, tmpPathActivityFile);
         moveFile(templateMainApplicationFile, tmpPathApplicationFile);
         removeFile(path.join('android', 'app', 'src', 'main', 'java'));
         var srcDirArr = ['android', 'app', 'src', 'main', 'java'].concat(config.packagename.split('.'));
-        moveFile(tmpPathActivityFile, path.join.apply(null, srcDirArr.concat(['MainActivity.java'])));
-        moveFile(tmpPathApplicationFile, path.join.apply(null, srcDirArr.concat(['MainApplication.java'])));
+        moveFile(tmpPathActivityFile, path.join.apply(null, srcDirArr.concat(['MainActivity.kt'])));
+        moveFile(tmpPathApplicationFile, path.join.apply(null, srcDirArr.concat(['MainApplication.kt'])));
 
         //
         // Run install.js

@@ -1,32 +1,21 @@
 buildscript {
     ext {
+        buildToolsVersion = "35.0.0"
         minSdkVersion = 28
-        targetSdkVersion = 35        
-        compileSdk = 35
-
-        // We use NDK 23 which has both M1 support and is the side-by-side NDK version from AGP.
-        ndkVersion = "23.1.7779620"
+        compileSdkVersion = 36
+        targetSdkVersion = 36
+        ndkVersion = "27.1.12297006"
+        kotlinVersion = "2.0.21"
     }
-
-    // Work-around for "In order to compile Java 9+ source, please set compileSdkVersion to 30 or above" error in some React Native community libraries.
-    subprojects { subproject ->
-        afterEvaluate {
-            if ((subproject.plugins.hasPlugin('android') || subproject.plugins.hasPlugin('android-library')) && subproject.name == 'react-native-masked-view_masked-view') {
-                android {
-                    compileSdkVersion 35
-                }
-            }
-        }
-    }
-
     repositories {
         google()
         mavenCentral()
     }
-
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.6.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.24"
-        classpath "com.facebook.react:react-native-gradle-plugin"
+        classpath("com.android.tools.build:gradle:8.10.1")
+        classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.24")
     }
 }
+
+apply plugin: "com.facebook.react.rootproject"

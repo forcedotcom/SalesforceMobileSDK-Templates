@@ -4,8 +4,8 @@ plugins {
 }
 
 dependencies {
-    implementation("com.salesforce.mobilesdk:MobileSync:13.0.2")
-    implementation("androidx.compose.runtime:runtime-android:1.7.7")
+    implementation("com.salesforce.mobilesdk:MobileSync:13.1.0")
+    implementation("androidx.compose.runtime:runtime-android:1.8.2")
     // Comment when disabling log in via Salesforce UI Bridge API generated QR codes
     implementation("com.google.zxing:core:3.5.3")
     // Comment when disabling log in via Salesforce UI Bridge API generated QR codes
@@ -15,10 +15,10 @@ dependencies {
 android {
     namespace = "com.salesforce.androidnativekotlintemplate"
 
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
-        targetSdk = 35
+        targetSdk = 36
         minSdk = 28
     }
 

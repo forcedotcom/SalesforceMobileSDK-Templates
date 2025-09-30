@@ -7,35 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
-		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		4F3AFF401DC2C79E006FF6B0 /* InitialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F3AFF3E1DC2C79E006FF6B0 /* InitialViewController.m */; };
 		69BE96152AD533F4002E3F6C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 69BE96142AD533F4002E3F6C /* PrivacyInfo.xcprivacy */; };
+		B1F88593B8031421D7725FF3 /* Pods_MobileSyncExplorerReactNative.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 450E843622ABBAE605EA7430 /* Pods_MobileSyncExplorerReactNative.framework */; };
 		B7168FC01FACCB8A00A48DB5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7168FBF1FACCB8900A48DB5 /* LaunchScreen.storyboard */; };
 		B77BD8B1211363F70036B284 /* bootconfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = B77BD8B0211363F70036B284 /* bootconfig.plist */; };
 		CE6BC3F620F12070009E4AAE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F3AFF441DC2C8C8006FF6B0 /* Images.xcassets */; };
-		F82D7DA349881BDCDC7A44CA /* libPods-MobileSyncExplorerReactNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6919252FC5A12C953709275E /* libPods-MobileSyncExplorerReactNative.a */; };
+		D3349D372DFBCE49000F6F3D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3349D362DFBCE49000F6F3D /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0D8CDE8158AC70656CC3EE20 /* Pods-MobileSyncExplorerReactNative.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileSyncExplorerReactNative.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MobileSyncExplorerReactNative/Pods-MobileSyncExplorerReactNative.debug.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* MobileSyncExplorerReactNative.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MobileSyncExplorerReactNative.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = MobileSyncExplorerReactNative/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = MobileSyncExplorerReactNative/AppDelegate.m; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = MobileSyncExplorerReactNative/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = MobileSyncExplorerReactNative/main.m; sourceTree = "<group>"; };
+		450E843622ABBAE605EA7430 /* Pods_MobileSyncExplorerReactNative.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MobileSyncExplorerReactNative.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F086048236D0EFC0087150A /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		4F086049236D0EFC0087150A /* MaterialIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
-		4F3AFF3D1DC2C79E006FF6B0 /* InitialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InitialViewController.h; path = MobileSyncExplorerReactNative/InitialViewController.h; sourceTree = "<group>"; };
-		4F3AFF3E1DC2C79E006FF6B0 /* InitialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InitialViewController.m; path = MobileSyncExplorerReactNative/InitialViewController.m; sourceTree = "<group>"; };
 		4F3AFF441DC2C8C8006FF6B0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "../mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/Images.xcassets"; sourceTree = "<group>"; };
 		4FF12F8E1DCA93E2004D9EF9 /* MobileSyncExplorerReactNative.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = MobileSyncExplorerReactNative.entitlements; path = MobileSyncExplorerReactNative/MobileSyncExplorerReactNative.entitlements; sourceTree = "<group>"; };
-		6919252FC5A12C953709275E /* libPods-MobileSyncExplorerReactNative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MobileSyncExplorerReactNative.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		69BE96142AD533F4002E3F6C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		AE79D28E6E57F5B77FA24716 /* Pods-MobileSyncExplorerReactNative.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileSyncExplorerReactNative.release.xcconfig"; path = "Pods/Target Support Files/Pods-MobileSyncExplorerReactNative/Pods-MobileSyncExplorerReactNative.release.xcconfig"; sourceTree = "<group>"; };
 		B7168FBF1FACCB8900A48DB5 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = "../mobile_sdk/salesforcemobilesdk-ios/shared/resources/LaunchScreen.storyboard"; sourceTree = "<group>"; };
 		B77BD8B0211363F70036B284 /* bootconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = bootconfig.plist; path = MobileSyncExplorerReactNative/bootconfig.plist; sourceTree = "<group>"; };
 		CE46D5431E9C942C006E6537 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		D3349D362DFBCE49000F6F3D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = MobileSyncExplorerReactNative/AppDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,7 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F82D7DA349881BDCDC7A44CA /* libPods-MobileSyncExplorerReactNative.a in Frameworks */,
+				B1F88593B8031421D7725FF3 /* Pods_MobileSyncExplorerReactNative.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -73,10 +67,7 @@
 		4F3AFF421DC2C856006FF6B0 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				4F3AFF3D1DC2C79E006FF6B0 /* InitialViewController.h */,
-				4F3AFF3E1DC2C79E006FF6B0 /* InitialViewController.m */,
-				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
-				13B07FB01A68108700A75B9A /* AppDelegate.m */,
+				D3349D362DFBCE49000F6F3D /* AppDelegate.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -88,7 +79,6 @@
 				B77BD8B0211363F70036B284 /* bootconfig.plist */,
 				B7168FBF1FACCB8900A48DB5 /* LaunchScreen.storyboard */,
 				4F3AFF441DC2C8C8006FF6B0 /* Images.xcassets */,
-				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -127,7 +117,7 @@
 			isa = PBXGroup;
 			children = (
 				CE46D5431E9C942C006E6537 /* XCTest.framework */,
-				6919252FC5A12C953709275E /* libPods-MobileSyncExplorerReactNative.a */,
+				450E843622ABBAE605EA7430 /* Pods_MobileSyncExplorerReactNative.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -166,7 +156,7 @@
 				ORGANIZATIONNAME = SalesforceSamples;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1100;
+						LastSwiftMigration = 1640;
 						SystemCapabilities = {
 							com.apple.Keychain = {
 								enabled = 1;
@@ -281,9 +271,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4F3AFF401DC2C79E006FF6B0 /* InitialViewController.m in Sources */,
-				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
-				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				D3349D372DFBCE49000F6F3D /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -415,6 +403,14 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../node_modules/react-native/React/**",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers/react/nativemodule/core",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-Fabric/React_Fabric.framework/Headers/react/renderer/components/view/platform/cxx",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD = "";
@@ -429,6 +425,7 @@
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				USE_HERMES = true;
 			};
 			name = Debug;
@@ -480,6 +477,14 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../node_modules/react-native/React/**",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers/react/nativemodule/core",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-Fabric/React_Fabric.framework/Headers/react/renderer/components/view/platform/cxx",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD = "";

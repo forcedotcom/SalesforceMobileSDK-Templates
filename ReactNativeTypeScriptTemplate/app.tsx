@@ -91,6 +91,19 @@ class ContactListScreen extends React.Component<Props, State> {
     }
 }
 
+const Stack = createStackNavigator();
+
+function App(): React.JSX.Element {
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+	<Stack.Screen name="Mobile SDK Sample App" component={ContactListScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -103,17 +116,5 @@ const styles = StyleSheet.create({
         height: 44,
     }
 });
-
-const Stack = createStackNavigator();
-
-function App(): JSX.Element {
-    return (
-        <NavigationContainer>
-          <Stack.Navigator>
-            <Stack.Screen name="Mobile SDK Sample App" component={ContactListScreen} />
-          </Stack.Navigator>
-        </NavigationContainer>
-    );
-}
 
 export default App;
