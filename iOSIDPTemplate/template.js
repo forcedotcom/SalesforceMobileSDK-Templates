@@ -47,8 +47,8 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var templateProjectFile = path.join(templateProjectDir, 'project.pbxproj');
     var templateSchemeFile = path.join(templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', templateAppName + '.xcscheme');
     var templateEntitlementsFile = path.join(templateAppName, templateAppName + '.entitlements');
-    var templateBootconfigFile = path.join(config.appname, 'bootconfig.plist');
-    var templateInfoFile = path.join(config.appname, 'Info.plist');
+    var templateBootconfigFile = path.join(templateAppName, 'bootconfig.plist');
+    var templateInfoFile = path.join(templateAppName, 'Info.plist');
 
     //
     // Replace in files
@@ -93,7 +93,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Return paths of workspace and file with oauth config
     return {
         workspacePath: config.appname + ".xcworkspace",
-        bootconfigFile: templateBootconfigFile
+        bootconfigFile: path.join(config.appname, 'bootconfig.plist')
     };
 }
 

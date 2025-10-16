@@ -55,8 +55,8 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         var templateSchemeFile = path.join('ios', templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', templateAppName + '.xcscheme');
         var templateEntitlementsFile = path.join('ios', templateAppName, templateAppName + '.entitlements');
         var templateAppDelegateFile = path.join('ios', templateAppName, 'AppDelegate.swift');
-        var templateBootconfigFile = path.join('ios', config.appname, 'bootconfig.plist');
-        var templateInfoFile = path.join('ios', config.appname, 'Info.plist');
+        var templateBootconfigFile = path.join('ios', templateAppName, 'bootconfig.plist');
+        var templateInfoFile = path.join('ios', templateAppName, 'Info.plist');
 
         //
         // Replace in files
@@ -101,7 +101,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         // Return paths of workspace and file with oauth config
         result.push({
             workspacePath: path.join('ios', config.appname + '.xcworkspace'),
-            bootconfigFile: templateBootconfigFile,
+            bootconfigFile: path.join('ios', config.appname, 'bootconfig.plist'),
             platform: 'ios'
         });
     }
