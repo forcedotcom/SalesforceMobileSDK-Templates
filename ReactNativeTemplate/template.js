@@ -71,14 +71,6 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         // org name
         replaceInFiles(templateOrganization, config.organization, [templateProjectFile]);
 
-        //
-        // Rename/move files
-        //
-        moveFile(templateSchemeFile, path.join('ios', templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', config.appname + '.xcscheme'));
-        moveFile(templateEntitlementsFile, path.join('ios', templateAppName, config.appname + '.entitlements'));
-        moveFile(templateProjectDir, path.join('ios', config.appname + '.xcodeproj'));
-        moveFile(path.join('ios', templateAppName), path.join('ios', config.appname));
-
         // consumer key
         if (config.consumerkey && config.consumerkey !== '') {
             replaceInFiles('__INSERT_CONSUMER_KEY_HERE__', config.consumerkey, [templateBootconfigFile]);
@@ -92,6 +84,14 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         // login server
         var loginServer = (config.loginserver && config.loginserver !== '') ? config.loginserver.replace(/^https?:\/\//, '') : 'login.salesforce.com';
         replaceInFiles('__INSERT_DEFAULT_LOGIN_SERVER__', loginServer, [templateInfoFile]);
+
+        //
+        // Rename/move files
+        //
+        moveFile(templateSchemeFile, path.join('ios', templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', config.appname + '.xcscheme'));
+        moveFile(templateEntitlementsFile, path.join('ios', templateAppName, config.appname + '.entitlements'));
+        moveFile(templateProjectDir, path.join('ios', config.appname + '.xcodeproj'));
+        moveFile(path.join('ios', templateAppName), path.join('ios', config.appname));
 
         //
         // Run install.js
