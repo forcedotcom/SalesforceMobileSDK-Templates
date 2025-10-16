@@ -45,6 +45,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var templateBuildGradleFile = path.join('app', 'build.gradle.kts');
     var templateStringsXmlFile = path.join('app', 'src', 'main', 'res', 'values', 'strings.xml');
     var templateBootconfigFile = path.join('app', 'src', 'main', 'res', 'values', 'bootconfig.xml');
+    var templateServersFile = path.join('app', 'src', 'main', 'res', 'xml', 'servers.xml');
     var templateMainActivityFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'samples', 'salesforceandroididptemplateapp', 'MainActivity.kt');
     var templateMainApplicationFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'samples', 'salesforceandroididptemplateapp', 'MainApplication.kt');
 
@@ -58,6 +59,20 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // package name
     replaceInFiles(templatePackageName, config.packagename, [templateBuildGradleFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile]);
     
+    // consumer key
+    if (config.consumerkey && config.consumerkey !== '') {
+        replaceInFiles('__INSERT_CONSUMER_KEY_HERE__', config.consumerkey, [templateBootconfigFile]);
+    }
+
+    // callback URL
+    if (config.callbackurl && config.callbackurl !== '') {
+        replaceInFiles('__INSERT_CALLBACK_URL_HERE__', config.callbackurl, [templateBootconfigFile]);
+    }
+
+    // login server
+    var loginServer = (config.loginserver && config.loginserver !== '') ? config.loginserver : 'https://login.salesforce.com';
+    replaceInFiles('__INSERT_DEFAULT_LOGIN_SERVER__', loginServer, [templateServersFile]);
+
     //
     // Rename/move files
     //
@@ -74,11 +89,10 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     //
     require('./install');
 
-
     // Return paths of workspace and file with oauth config
     return {
         workspacePath: '',
-        bootconfigFile: path.join('app', 'src', 'main', 'res', 'values', 'bootconfig.xml')
+        bootconfigFile: templateBootconfigFile
     };
 }
 

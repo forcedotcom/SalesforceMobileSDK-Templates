@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<servers>
+    <server name="Default" url="__INSERT_DEFAULT_LOGIN_SERVER__" />
+</servers>
+

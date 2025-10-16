@@ -46,6 +46,8 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var templateProjectFile = path.join(templateProjectDir, 'project.pbxproj');
     var templateSchemeFile = path.join(templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', templateAppName + '.xcscheme');
     var templateEntitlementsFile = path.join(templateAppName, templateAppName + '.entitlements');
+    var templateBootconfigFile = path.join(config.appname, 'bootconfig.plist');
+    var templateInfoFile = path.join(config.appname, 'Info.plist');
 
     //
     // Replace in files
@@ -59,6 +61,20 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
 
     // org name
     replaceInFiles(templateOrganization, config.organization, [templateProjectFile]);
+
+    // consumer key
+    if (config.consumerkey && config.consumerkey !== '') {
+        replaceInFiles('__INSERT_CONSUMER_KEY_HERE__', config.consumerkey, [templateBootconfigFile]);
+    }
+
+    // callback URL
+    if (config.callbackurl && config.callbackurl !== '') {
+        replaceInFiles('__INSERT_CALLBACK_URL_HERE__', config.callbackurl, [templateBootconfigFile]);
+    }
+
+    // login server
+    var loginServer = (config.loginserver && config.loginserver !== '') ? config.loginserver.replace(/^https?:\/\//, '') : 'login.salesforce.com';
+    replaceInFiles('__INSERT_DEFAULT_LOGIN_SERVER__', loginServer, [templateInfoFile]);
 
     //
     // Rename/move files
@@ -76,7 +92,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Return paths of workspace and file with oauth config
     return {
         workspacePath: config.appname + ".xcodeproj",
-        bootconfigFile: path.join(config.appname, 'bootconfig.plist')
+        bootconfigFile: templateBootconfigFile
     };
 
 }
