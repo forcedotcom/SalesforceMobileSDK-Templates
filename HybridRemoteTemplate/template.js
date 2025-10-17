@@ -75,8 +75,12 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // login server for iOS
     if (config.platform.includes('ios')) {
         var loginServer = (config.loginserver && config.loginserver !== '') ? config.loginserver.replace(/^https?:\/\//, '') : 'login.salesforce.com';
-        replaceInFiles('<plist version="1.0">\n<dict>\n', 
-            '<plist version="1.0">\n<dict>\n\t<key>SFDCOAuthLoginHost</key>\n\t<string>' + loginServer + '</string>\n', [templateInfoFile]);
+        // Note: replaceInFiles processes line-by-line, so we need to do the replacement directly on the whole content
+        var fileContent = fs.readFileSync(templateInfoFile, 'utf8');
+        var searchPattern = /<plist version="1\.0">\s*<dict>\s*/;
+        var replacePattern = '<plist version="1.0">\n<dict>\n\t<key>SFDCOAuthLoginHost</key>\n\t<string>' + loginServer + '</string>\n\t';
+        var modifiedContent = fileContent.replace(searchPattern, replacePattern);
+        fs.writeFileSync(templateInfoFile, modifiedContent, 'utf8');        
     }
 
     //
