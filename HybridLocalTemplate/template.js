@@ -76,8 +76,13 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // login server for iOS
     if (config.platform.includes('ios')) {
         var loginServer = (config.loginserver && config.loginserver !== '') ? config.loginserver.replace(/^https?:\/\//, '') : 'login.salesforce.com';
+        console.log('DEBUG: About to modify plist file at path:', templateInfoFile);
+        console.log('DEBUG: File content BEFORE modification:');
+        console.log(fs.readFileSync(templateInfoFile, 'utf8'));
         replaceInFiles('<plist version="1.0">\n<dict>\n', 
             '<plist version="1.0">\n<dict>\n\t<key>SFDCOAuthLoginHost</key>\n\t<string>' + loginServer + '</string>\n', [templateInfoFile]);
+        console.log('DEBUG: File content AFTER modification:');
+        console.log(fs.readFileSync(templateInfoFile, 'utf8'));
     }
 
     //
