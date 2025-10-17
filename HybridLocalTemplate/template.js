@@ -77,10 +77,18 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     if (config.platform.includes('ios')) {
         var loginServer = (config.loginserver && config.loginserver !== '') ? config.loginserver.replace(/^https?:\/\//, '') : 'login.salesforce.com';
         console.log('DEBUG: About to modify plist file at path:', templateInfoFile);
+        var fileContent = fs.readFileSync(templateInfoFile, 'utf8');
         console.log('DEBUG: File content BEFORE modification:');
-        console.log(fs.readFileSync(templateInfoFile, 'utf8'));
-        replaceInFiles('<plist version="1.0">\n<dict>\n', 
-            '<plist version="1.0">\n<dict>\n\t<key>SFDCOAuthLoginHost</key>\n\t<string>' + loginServer + '</string>\n', [templateInfoFile]);
+        console.log(fileContent);
+        
+        // Use regex to match <plist version="1.0"> followed by whitespace, then <dict> followed by whitespace
+        var searchPattern = /<plist version="1\.0">\s*<dict>\s*/;
+        var replacePattern = '<plist version="1.0">\n<dict>\n\t<key>SFDCOAuthLoginHost</key>\n\t<string>' + loginServer + '</string>\n';
+        console.log('DEBUG: Search pattern:', searchPattern);
+        console.log('DEBUG: Pattern found in file:', searchPattern.test(fileContent));
+        console.log('DEBUG: Match details:', fileContent.match(searchPattern));
+        
+        replaceInFiles(searchPattern, replacePattern, [templateInfoFile]);
         console.log('DEBUG: File content AFTER modification:');
         console.log(fs.readFileSync(templateInfoFile, 'utf8'));
     }
