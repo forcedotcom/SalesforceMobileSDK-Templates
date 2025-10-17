@@ -103,6 +103,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     removeFile('package.json');
     removeFile('template.js');
     removeFile('install.js');
+    removeFile('servers.xml')
 
     // Return paths of workspace and file with oauth config
     return config.platform.split(',').map(platform => {
