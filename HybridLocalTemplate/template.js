@@ -89,6 +89,8 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         var msdkAndroidNewPath = path.join('platforms', 'android', 'mobile_sdk');
         var serversNewPath = path.join('platforms', 'android', 'app', 'src', 'main', 'res', 'xml', 'servers.xml');
 
+        console.log('Current directory:', process.cwd());
+        console.log('Directory contents:', require('child_process').execSync('ls -la').toString());
         if (fs.existsSync(msdkAndroidPath)) {
             fs.mkdirSync(msdkAndroidNewPath);
             moveFile(msdkAndroidPath, msdkAndroidNewPath);
@@ -107,7 +109,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     return config.platform.split(',').map(platform => {
         return {
             workspacePath: path.join('platforms', platform),
-            bootconfigFile: templateBootconfigFile,
+            bootconfigFile: path.join('www', 'bootconfig.json'),
             platform: platform
         };
     });
