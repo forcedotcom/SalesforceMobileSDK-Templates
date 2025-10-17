@@ -46,7 +46,7 @@
 		<string>com.salesforce.explorer.openDetail</string>
 	</array>
 	<key>SFDCOAuthLoginHost</key>
-	<string>login.salesforce.com</string>
+	<string>__INSERT_DEFAULT_LOGIN_SERVER__</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

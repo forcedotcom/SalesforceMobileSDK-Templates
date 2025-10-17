@@ -48,16 +48,59 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     //
     var theme = (config.platform.indexOf('ios') >= 0 ? 'ios' : 'android');
 
+    // Key files
+    var templateBootconfigFile = path.join('bootconfig.json');
+    var templateServersFile = path.join('servers.xml'); // android only
+    var templateInfoFile = path.join('..', 'platforms', 'ios', config.appname, config.appname + '-Info.plist'); // ios only
+
+    //
+    // Replace in files
+    //
+
+    // consumer key
+    if (config.consumerkey && config.consumerkey !== '') {
+        replaceInFiles('__INSERT_CONSUMER_KEY_HERE__', config.consumerkey, [templateBootconfigFile]);
+    }
+
+    // callback URL
+    if (config.callbackurl && config.callbackurl !== '') {
+        replaceInFiles('__INSERT_CALLBACK_URL_HERE__', config.callbackurl, [templateBootconfigFile]);
+    }
+
+    // login server for Android
+    if (config.platform.includes('android')) {
+        var loginServer = (config.loginserver && config.loginserver !== '') ? config.loginserver : 'https://login.salesforce.com';
+        replaceInFiles('__INSERT_DEFAULT_LOGIN_SERVER__', loginServer, [templateServersFile]);
+    }
+
+    // login server for iOS
+    if (config.platform.includes('ios')) {
+        var loginServer = (config.loginserver && config.loginserver !== '') ? config.loginserver.replace(/^https?:\/\//, '') : 'login.salesforce.com';
+        
+        
+        // Note: replaceInFiles processes line-by-line, so we need to do the replacement directly on the whole content
+        var fileContent = fs.readFileSync(templateInfoFile, 'utf8');
+        var searchPattern = /<plist version="1\.0">\s*<dict>\s*/;
+        var replacePattern = '<plist version="1.0">\n<dict>\n\t<key>SFDCOAuthLoginHost</key>\n\t<string>' + loginServer + '</string>\n\t';
+        var modifiedContent = fileContent.replace(searchPattern, replacePattern);
+        fs.writeFileSync(templateInfoFile, modifiedContent, 'utf8');        
+    }
+
     //
     // Move/remove some files
     //
     moveFile(path.join('mobile_sdk', 'SalesforceMobileSDK-Shared', 'libs', 'force.js'), 'force.js');
     if (config.platform.includes('android')) {
-        var msdkAndroidPath = path.join('mobile_sdk', 'SalesforceMobileSDK-Android')
+        var msdkAndroidPath = path.join('mobile_sdk', 'SalesforceMobileSDK-Android');
+        // NB: template.js is running inside the web directory
+        var msdkAndroidNewPath = path.join('..', 'platforms', 'android', 'mobile_sdk');
+        var serversNewPath = path.join('..', 'platforms', 'android', 'app', 'src', 'main', 'res', 'xml', 'servers.xml');
+
         if (fs.existsSync(msdkAndroidPath)) {
-            fs.mkdirSync('../platforms/android/mobile_sdk/');
-            moveFile(msdkAndroidPath, '../platforms/android/mobile_sdk/');
+            fs.mkdirSync(msdkAndroidNewPath);
+            moveFile(msdkAndroidPath, msdkAndroidNewPath);
         }
+        moveFile('servers.xml', serversNewPath);
     }
     moveFile(path.join('node_modules', 'ratchet-npm', 'dist', 'css', 'ratchet.min.css'), 'ratchet.css');
     moveFile(path.join('node_modules', 'ratchet-npm', 'dist', 'css', 'ratchet-theme-' + theme + '.min.css'), 'ratchet-theme.css');
@@ -66,6 +109,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     removeFile('package.json');
     removeFile('template.js');
     removeFile('install.js');
+    removeFile('servers.xml')
 
     // Return paths of workspace and file with oauth config
     return config.platform.split(',').map(platform => {

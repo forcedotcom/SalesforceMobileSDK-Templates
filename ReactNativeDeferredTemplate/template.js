@@ -55,6 +55,8 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         var templateSchemeFile = path.join('ios', templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', templateAppName + '.xcscheme');
         var templateEntitlementsFile = path.join('ios', templateAppName, templateAppName + '.entitlements');
         var templateAppDelegateFile = path.join('ios', templateAppName, 'AppDelegate.swift');
+        var templateBootconfigFile = path.join('ios', templateAppName, 'bootconfig.plist');
+        var templateInfoFile = path.join('ios', templateAppName, 'Info.plist');
 
         //
         // Replace in files
@@ -68,6 +70,20 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
 
         // org name
         replaceInFiles(templateOrganization, config.organization, [templateProjectFile]);
+
+        // consumer key
+        if (config.consumerkey && config.consumerkey !== '') {
+            replaceInFiles('__INSERT_CONSUMER_KEY_HERE__', config.consumerkey, [templateBootconfigFile]);
+        }
+
+        // callback URL
+        if (config.callbackurl && config.callbackurl !== '') {
+            replaceInFiles('__INSERT_CALLBACK_URL_HERE__', config.callbackurl, [templateBootconfigFile]);
+        }
+
+        // login server
+        var loginServer = (config.loginserver && config.loginserver !== '') ? config.loginserver.replace(/^https?:\/\//, '') : 'login.salesforce.com';
+        replaceInFiles('__INSERT_DEFAULT_LOGIN_SERVER__', loginServer, [templateInfoFile]);
 
         //
         // Rename/move files
@@ -112,6 +128,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         var templateAppBuildGradleFile = path.join('android', 'app', 'build.gradle');
         var templateStringsXmlFile = path.join('android', 'app', 'src', 'main', 'res', 'values', 'strings.xml');
         var templateBootconfigFile = path.join('android', 'app', 'src', 'main', 'res', 'values', 'bootconfig.xml');
+        var templateServersFile = path.join('android', 'app', 'src', 'main', 'res', 'xml', 'servers.xml');
         var templateMainActivityFile = path.join('android', 'app', 'src', 'main', 'java', 'com', 'salesforce', 'reactnativedeferredtemplate', 'MainActivity.kt');
         var templateMainApplicationFile = path.join('android', 'app', 'src', 'main', 'java', 'com', 'salesforce', 'reactnativedeferredtemplate', 'MainApplication.kt');
 
@@ -136,6 +153,20 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         var srcDirArr = ['android', 'app', 'src', 'main', 'java'].concat(config.packagename.split('.'));
         moveFile(tmpPathActivityFile, path.join.apply(null, srcDirArr.concat(['MainActivity.kt'])));
         moveFile(tmpPathApplicationFile, path.join.apply(null, srcDirArr.concat(['MainApplication.kt'])));
+
+        // consumer key
+        if (config.consumerkey && config.consumerkey !== '') {
+            replaceInFiles('__INSERT_CONSUMER_KEY_HERE__', config.consumerkey, [templateBootconfigFile]);
+        }
+
+        // callback URL
+        if (config.callbackurl && config.callbackurl !== '') {
+            replaceInFiles('__INSERT_CALLBACK_URL_HERE__', config.callbackurl, [templateBootconfigFile]);
+        }
+
+        // login server
+        var loginServer = (config.loginserver && config.loginserver !== '') ? config.loginserver : 'https://login.salesforce.com';
+        replaceInFiles('__INSERT_DEFAULT_LOGIN_SERVER__', loginServer, [templateServersFile]);
 
         //
         // Run install.js

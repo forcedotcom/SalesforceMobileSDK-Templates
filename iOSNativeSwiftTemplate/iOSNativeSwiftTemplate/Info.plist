@@ -31,7 +31,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>This app requires camera usage permissions to capture QR codes for log in.</string>
 	<key>SFDCOAuthLoginHost</key>
-	<string>login.salesforce.com</string>
+	<string>__INSERT_DEFAULT_LOGIN_SERVER__</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
