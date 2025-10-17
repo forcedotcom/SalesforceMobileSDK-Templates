@@ -3,14 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>remoteAccessConsumerKey</key>
-	<string>3MVG98dostKihXN53TYStBIiS8FC2a3tE3XhGId0hQ37iQjF0xe4fxMSb2mFaWZn9e3GiLs1q67TNlyRji.Xw</string>
+	<string>__INSERT_CONSUMER_KEY_HERE__</string>
 	<key>oauthRedirectURI</key>
-	<string>testsfdc:///mobilesdk/detect/oauth/done</string>
-	<key>oauthScopes</key>
-	<array>
-		<string>web</string>
-		<string>api</string>
-	</array>
+	<string>__INSERT_CALLBACK_URL_HERE__</string>
 	<key>shouldAuthenticate</key>
 	<false/>
 </dict>

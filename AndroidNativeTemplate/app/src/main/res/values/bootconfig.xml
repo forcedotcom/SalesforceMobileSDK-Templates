@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    <string name="remoteAccessConsumerKey">3MVG98dostKihXN53TYStBIiS8FC2a3tE3XhGId0hQ37iQjF0xe4fxMSb2mFaWZn9e3GiLs1q67TNlyRji.Xw</string>
-    <string name="oauthRedirectURI">testsfdc:///mobilesdk/detect/oauth/done</string>
-    <string-array name="oauthScopes">
-        <item>api</item>
-	<item>web</item>
-    </string-array>
+    <string name="remoteAccessConsumerKey">__INSERT_CONSUMER_KEY_HERE__</string>
+    <string name="oauthRedirectURI">__INSERT_CALLBACK_URL_HERE__</string>
 </resources>
