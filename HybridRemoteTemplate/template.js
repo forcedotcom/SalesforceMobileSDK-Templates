@@ -49,7 +49,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Key files
     var templateBootconfigFile = path.join('bootconfig.json');
     var templateServersFile = path.join('servers.xml'); // android only
-    var templateInfoFile = path.join('platforms', 'ios', config.appname, config.appname + '-Info.plist'); // ios only
+    var templateInfoFile = path.join('..', 'platforms', 'ios', config.appname, config.appname + '-Info.plist'); // ios only
 
     //
     // Replace in files
@@ -85,8 +85,9 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     moveFile(path.join('mobile_sdk', 'SalesforceMobileSDK-Shared', 'libs', 'force.js'), 'force.js');
     if (config.platform.includes('android')) {
         var msdkAndroidPath = path.join('mobile_sdk', 'SalesforceMobileSDK-Android');
-        var msdkAndroidNewPath = path.join('platforms', 'android', 'mobile_sdk');
-        var serversNewPath = path.join('platforms', 'android', 'app', 'src', 'main', 'res', 'xml', 'servers.xml');
+        // NB: template.js is running inside the web directory
+        var msdkAndroidNewPath = path.join('..', 'platforms', 'android', 'mobile_sdk');
+        var serversNewPath = path.join('..', 'platforms', 'android', 'app', 'src', 'main', 'res', 'xml', 'servers.xml');
 
         if (fs.existsSync(msdkAndroidPath)) {
             fs.mkdirSync(msdkAndroidNewPath);
