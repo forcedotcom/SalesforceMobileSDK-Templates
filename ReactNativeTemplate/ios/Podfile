@@ -35,7 +35,6 @@ target 'ReactNativeTemplate' do
   end
 
   post_install do |installer|
-    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     # Comment the following if you do not want the SDK to emit signpost events for instrumentation. Signposts are enabled for non release version of the app.
     signposts_post_install(installer)
 

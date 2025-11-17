@@ -11,6 +11,7 @@
         android:icon="@drawable/sf__icon"
         android:label="@string/app_name"
         android:manageSpaceActivity="com.salesforce.androidsdk.ui.ManageSpaceActivity"
+        android:usesCleartextTraffic="${usesCleartextTraffic}"
         android:supportsRtl="true">
 
         <!-- Launcher screen -->
