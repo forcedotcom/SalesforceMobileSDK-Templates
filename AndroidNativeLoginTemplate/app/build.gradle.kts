@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    implementation("com.salesforce.mobilesdk:MobileSync:13.1.0")
+    implementation("com.salesforce.mobilesdk:MobileSync:13.1.1")
     implementation("com.google.android.material:material:1.12.0")
 
     val composeBom = platform("androidx.compose:compose-bom:2024.02.00")

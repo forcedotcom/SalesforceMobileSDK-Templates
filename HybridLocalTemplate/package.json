@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "sdkDependencies": {
-    "SalesforceMobileSDK-Shared": "https://github.com/forcedotcom/SalesforceMobileSDK-Shared.git#v13.1.0",
-    "SalesforceMobileSDK-Android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#v13.1.0"
+    "SalesforceMobileSDK-Shared": "https://github.com/forcedotcom/SalesforceMobileSDK-Shared.git#v13.1.1",
+    "SalesforceMobileSDK-Android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#v13.1.1"
   },
   "dependencies": {
     "ratchet-npm": "2.0.4"
