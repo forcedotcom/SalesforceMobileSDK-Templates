@@ -36,7 +36,7 @@ jobs:
         run: |
           if [ -n "${{ inputs.templates }}" ]; then
             # Use provided template list
-            echo "templates=${{ inputs.templates }}" >> $GITHUB_OUTPUT
+            echo 'templates=${{ inputs.templates }}' >> $GITHUB_OUTPUT
           else
             # Generate list from templates.json filtered by iOS platform
             TEMPLATES=$(jq -c '[.[] | select(.platforms[] == "ios") | .path]' templates.json)
