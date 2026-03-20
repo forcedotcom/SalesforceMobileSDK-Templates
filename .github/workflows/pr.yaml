@@ -149,8 +149,6 @@ jobs:
   ios-pr:
     needs: detect-changed-templates
     if: needs.detect-changed-templates.outputs.has-changes == 'true'
-    strategy:
-      fail-fast: false
     uses: ./.github/workflows/ios-reusable-workflow.yaml
     with:
       is_pr: true
@@ -159,8 +157,6 @@ jobs:
   android-pr:
     needs: detect-changed-templates
     if: needs.detect-changed-templates.outputs.has-changes == 'true'
-    strategy:
-      fail-fast: false
     uses: ./.github/workflows/android-reusable-workflow.yaml
     with:
       is_pr: true
