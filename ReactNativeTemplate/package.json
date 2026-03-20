@@ -2,6 +2,7 @@
   "name": "ReactNativeTemplate",
   "version": "0.0.1",
   "private": true,
+  "test": "testing PR action",
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
