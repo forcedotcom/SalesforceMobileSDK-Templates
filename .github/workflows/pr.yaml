@@ -1,0 +1,202 @@
+name: Pull Request
+
+on:
+  pull_request_target:
+    branches: [dev, master]
+    paths:
+      - '*/install.js'
+      - '*/installios.js'
+      - '*/installandroid.js'
+      - '**/*.xcodeproj/**'
+      - '**/*.xcworkspace/**'
+      - '**/build.gradle'
+      - '**/build.gradle.kts'
+      - '**/settings.gradle'
+      - '**/package.json'
+      - '**/*.swift'
+      - '**/*.kt'
+      - '**/*.java'
+      - '**/*.m'
+      - '**/*.h'
+      - '**/*.js'
+      - '**/*.jsx'
+      - '**/*.ts'
+      - '**/*.tsx'
+      - 'templates.json'
+      - 'test_template.sh'
+
+jobs:
+  permission-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Write Permission
+        uses: octokit/request-action@v2.x
+        id: check_permissions
+        with:
+          route: GET /repos/${{ github.repository }}/collaborators/${{ github.triggering_actor }}/permission
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Validate Write Permission
+        run: |
+          permission=$(echo "${{ fromJson(steps.check_permissions.outputs.data).permission }}")
+          echo "User ${{ github.triggering_actor }} has permission: $permission"
+          if [[ "$permission" != "write" && "$permission" != "admin" ]]; then
+            echo "::error::User ${{ github.triggering_actor }} does not have sufficient permission (write or admin) to proceed. Someone from the team needs to rerun this workflow AFTER it has been deemed safe."
+            exit 1
+          fi
+
+  detect-changed-templates:
+    needs: permission-check
+    runs-on: ubuntu-latest
+    outputs:
+      templates: ${{ steps.set-templates.outputs.templates }}
+      has-changes: ${{ steps.set-templates.outputs.has-changes }}
+      test-all: ${{ steps.set-templates.outputs.test-all }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            **/install.js
+            **/installios.js
+            **/installandroid.js
+            **/*.xcodeproj/**
+            **/*.xcworkspace/**
+            **/build.gradle
+            **/build.gradle.kts
+            **/settings.gradle
+            **/package.json
+            **/*.swift
+            **/*.kt
+            **/*.java
+            **/*.m
+            **/*.h
+            **/*.js
+            **/*.jsx
+            **/*.ts
+            **/*.tsx
+            test_template.sh
+            templates.json
+          dir_names: true
+          json: true
+
+      - name: Determine changed templates
+        id: set-templates
+        run: |
+          # Store the JSON output and remove escaped quotes
+          CHANGED_FILES=$(echo '${{ steps.changed-files.outputs.all_changed_files }}' | sed 's/\\//g')
+          echo "Changed files: $CHANGED_FILES"
+
+          # Check if test script or templates.json changed (test all templates)
+          TEST_ALL=false
+          for file in $(jq -r '.[]' <<< "$CHANGED_FILES"); do
+            if [[ "$file" == "test_template.sh" ]] || [[ "$file" == "templates.json" ]]; then
+              TEST_ALL=true
+              echo "Core test file changed: $file"
+              break
+            fi
+          done
+
+          # Get list of all templates from templates.json
+          TEMPLATES=$(jq -r '.[].path' templates.json)
+
+          if [ "$TEST_ALL" = true ]; then
+            echo "test-all=true" >> $GITHUB_OUTPUT
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+            # Convert all templates to JSON array (compact format for GitHub Actions)
+            TEMPLATES_JSON=$(echo "$TEMPLATES" | jq -R . | jq -sc .)
+            echo "templates=$TEMPLATES_JSON" >> $GITHUB_OUTPUT
+            echo "Testing all templates due to core file changes"
+          else
+            # Extract template directories from changed files
+            CHANGED_TEMPLATES=()
+            for file in $(jq -r '.[]' <<< "$CHANGED_FILES"); do
+              # Get the first directory component
+              TEMPLATE_DIR=$(echo "$file" | cut -d'/' -f1)
+
+              # Check if it's a valid template
+              if echo "$TEMPLATES" | grep -q "^${TEMPLATE_DIR}$"; then
+                # Add to array if not already present
+                if [[ ! " ${CHANGED_TEMPLATES[@]} " =~ " ${TEMPLATE_DIR} " ]]; then
+                  CHANGED_TEMPLATES+=("$TEMPLATE_DIR")
+                fi
+              fi
+            done
+
+            echo "test-all=false" >> $GITHUB_OUTPUT
+
+            # Convert to JSON array (compact format for GitHub Actions)
+            if [ ${#CHANGED_TEMPLATES[@]} -gt 0 ]; then
+              TEMPLATES_JSON=$(printf '%s\n' "${CHANGED_TEMPLATES[@]}" | jq -R . | jq -sc .)
+              echo "templates=$TEMPLATES_JSON" >> $GITHUB_OUTPUT
+              echo "has-changes=true" >> $GITHUB_OUTPUT
+              echo "Templates to test: ${CHANGED_TEMPLATES[@]}"
+            else
+              echo "templates=[]" >> $GITHUB_OUTPUT
+              echo "has-changes=false" >> $GITHUB_OUTPUT
+              echo "No template changes detected"
+            fi
+          fi
+
+  ios-pr:
+    needs: detect-changed-templates
+    if: needs.detect-changed-templates.outputs.has-changes == 'true'
+    strategy:
+      fail-fast: false
+    uses: ./.github/workflows/ios-reusable-workflow.yaml
+    with:
+      is_pr: true
+      templates: ${{ needs.detect-changed-templates.outputs.templates }}
+
+  android-pr:
+    needs: detect-changed-templates
+    if: needs.detect-changed-templates.outputs.has-changes == 'true'
+    strategy:
+      fail-fast: false
+    uses: ./.github/workflows/android-reusable-workflow.yaml
+    with:
+      is_pr: true
+      templates: ${{ needs.detect-changed-templates.outputs.templates }}
+
+  pr-summary:
+    needs: [detect-changed-templates, ios-pr, android-pr]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: PR Summary
+        run: |
+          echo "## Template Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ needs.detect-changed-templates.outputs.has-changes }}" != "true" ]; then
+            echo "✓ No template changes detected - tests skipped" >> $GITHUB_STEP_SUMMARY
+            exit 0
+          fi
+
+          if [ "${{ needs.detect-changed-templates.outputs.test-all }}" == "true" ]; then
+            echo "ℹ️ Core files changed - testing all templates" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ Testing changed templates only" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Templates Tested" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo '${{ needs.detect-changed-templates.outputs.templates }}' | jq -r '.[]' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ needs.ios-pr.result }}" == "failure" ] || [ "${{ needs.android-pr.result }}" == "failure" ]; then
+            echo "❌ Some tests failed" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          else
+            echo "✅ All tests passed" >> $GITHUB_STEP_SUMMARY
+          fi

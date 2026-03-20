@@ -2,7 +2,6 @@
 *.xcworkspace/
 *~
 .DS_Store
-.github/
 .gradle/
 .idea/
 .metadata/
