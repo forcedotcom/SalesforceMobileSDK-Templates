@@ -26,8 +26,12 @@
  */
 package com.salesforce.androidnativelogintemplate
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build.VERSION.SDK_INT
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK
 import android.os.Build.VERSION_CODES.S
 import android.os.Build.VERSION_CODES.TIRAMISU
 import android.os.Bundle
@@ -148,6 +152,19 @@ class NativeLogin : FragmentActivity() {
         }
     }
 
+    private val deviceHasBiometrics by lazy {
+        BiometricManager.from(this).canAuthenticate(
+            /* authenticators = */ BIOMETRIC_STRONG or BIOMETRIC_WEAK
+        ) == BiometricManager.BIOMETRIC_SUCCESS
+    }
+
+    private val shouldShowBiometricPrompt: Boolean
+        get() {
+            return SalesforceSDKManager.getInstance().biometricAuthenticationManager?.run {
+                locked && deviceHasBiometrics && hasBiometricOptedIn()
+            } ?: false
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -185,7 +202,7 @@ class NativeLogin : FragmentActivity() {
                         },
                         biometricAuthenticationUsername = bioUsername,
                         reCaptchaEnabled = MainApplication.isReCaptchaEnabled,
-                        onBiometricLogin = if (bioUsername != null) {
+                        onBiometricLogin = if (shouldShowBiometricPrompt) {
                             { nativeLoginManager.presentBiometricAuth(this@NativeLogin) }
                         } else null,
                     )
@@ -224,8 +241,7 @@ class NativeLogin : FragmentActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (nativeLoginManager.biometricAuthenticationUsername != null) {
-            // Show bio auth button or auto-present
+        if (shouldShowBiometricPrompt) {
             nativeLoginManager.presentBiometricAuth(this)
         }
     }

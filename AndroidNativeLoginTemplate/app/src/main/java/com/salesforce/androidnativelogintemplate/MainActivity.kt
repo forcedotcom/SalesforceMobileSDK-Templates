@@ -26,9 +26,13 @@
  */
 package com.salesforce.androidnativelogintemplate
 
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE
 import android.os.Bundle
+import android.service.autofill.Validators.or
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -100,6 +104,20 @@ class MainActivity : SalesforceActivity() {
 
         // Show everything
         findViewById<ViewGroup>(R.id.root).visibility = View.VISIBLE
+    }
+
+    override fun onPostResume() {
+        super.onPostResume()
+
+        // Check if we should prompt for biometric opt-in
+        val deviceHasBiometrics = BiometricManager.from(this).canAuthenticate(
+            /* authenticators = */ BIOMETRIC_STRONG or BIOMETRIC_WEAK
+        ) == BiometricManager.BIOMETRIC_SUCCESS
+        MobileSyncSDKManager.getInstance().biometricAuthenticationManager?.run {
+            if (enabled && deviceHasBiometrics && !hasBiometricOptedIn()) {
+                presentOptInDialog(supportFragmentManager)
+            }
+        }
     }
 
     /**
