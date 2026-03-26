@@ -68,7 +68,7 @@ class MainApplication : Application() {
          * To setup Password-less login:
          *
          * Un-comment the code block below and fill in the values from the
-         * the Google Cloud project reCAPTCHA settings.  Note that only enterprise
+         * Google Cloud project reCAPTCHA settings.  Note that only enterprise
          * reCAPTCHA requires the reCAPTCHA Site Key Id and Google Cloud Project Id.
          *
          * When using non-enterprise reCAPTCHA, set reCAPTCHA Site Key Id and
@@ -113,6 +113,9 @@ class MainApplication : Application() {
 
         /** The reCAPTCHA client used to obtain reCAPTCHA tokens when needed for Salesforce Headless Identity API requests. */
         private var recaptchaClient: RecaptchaClient? = null
+
+        /** Whether reCAPTCHA has been configured and is available for use. */
+        val isReCaptchaEnabled: Boolean get() = recaptchaClient != null
 
         /**
          * Initializes the Google reCAPTCHA client.

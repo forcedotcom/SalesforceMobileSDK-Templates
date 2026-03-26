@@ -34,7 +34,6 @@ import android.os.Bundle
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
 import android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT
-import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -58,8 +57,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.CardDefaults
@@ -99,6 +99,7 @@ import androidx.compose.ui.text.input.KeyboardType.Companion.Password
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.FragmentActivity
 import com.google.android.recaptcha.RecaptchaAction.Companion.LOGIN
 import com.google.android.recaptcha.RecaptchaAction.Companion.SIGNUP
 import com.google.android.recaptcha.RecaptchaAction.Companion.custom
@@ -131,7 +132,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-class NativeLogin : ComponentActivity() {
+class NativeLogin : FragmentActivity() {
 
     private val viewModel: NativeLoginViewModel by viewModels()
 
@@ -151,6 +152,7 @@ class NativeLogin : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         nativeLoginManager = SalesforceSDKManager.getInstance().nativeLoginManager!!
+        val bioUsername = nativeLoginManager.biometricAuthenticationUsername
 
         setContentView(
             ComposeView(this).apply {
@@ -168,13 +170,24 @@ class NativeLogin : ComponentActivity() {
                                 password
                             ).mapResultTo(
                                 success = true,
-                                failure = false
+                                failure = false,
                             )
                         },
                         handleWebviewFallbackResult = handleWebviewFallbackResult,
                         webviewLoginIntent = nativeLoginManager.getFallbackWebAuthenticationIntent(),
                         shouldShowBack = nativeLoginManager.shouldShowBackButton,
-                        backAction = { finish() },
+                        backAction = {
+                            if (bioUsername != null) {
+                                moveTaskToBack(true)
+                            } else {
+                                finish()
+                            }
+                        },
+                        biometricAuthenticationUsername = bioUsername,
+                        reCaptchaEnabled = MainApplication.isReCaptchaEnabled,
+                        onBiometricLogin = if (bioUsername != null) {
+                            { nativeLoginManager.presentBiometricAuth(this@NativeLogin) }
+                        } else null,
                     )
                 }
             }
@@ -184,13 +197,36 @@ class NativeLogin : ComponentActivity() {
             onBackInvokedDispatcher.registerOnBackInvokedCallback(
                 PRIORITY_DEFAULT
             ) {
-                if (nativeLoginManager.shouldShowBackButton) {
+                if (nativeLoginManager.biometricAuthenticationUsername != null) {
+                    moveTaskToBack(true)
+                } else if (nativeLoginManager.shouldShowBackButton) {
                     when (SalesforceSDKManager.getInstance().userAccountManager.authenticatedUsers) {
                         null -> moveTaskToBack(false)
                         else -> finish()
                     }
                 }
             }
+        }
+    }
+
+    @SuppressLint("GestureBackNavigation")
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        if (nativeLoginManager.biometricAuthenticationUsername != null) {
+            moveTaskToBack(true)
+        } else if (nativeLoginManager.shouldShowBackButton) {
+            when (SalesforceSDKManager.getInstance().userAccountManager.authenticatedUsers) {
+                null -> moveTaskToBack(false)
+                else -> super.onBackPressed()
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (nativeLoginManager.biometricAuthenticationUsername != null) {
+            // Show bio auth button or auto-present
+            nativeLoginManager.presentBiometricAuth(this)
         }
     }
 
@@ -429,6 +465,9 @@ class NativeLogin : ComponentActivity() {
         webviewLoginIntent: Intent,
         shouldShowBack: Boolean = false,
         backAction: () -> Unit,
+        biometricAuthenticationUsername: String? = null,
+        reCaptchaEnabled: Boolean = true,
+        onBiometricLogin: (() -> Unit)? = null,
         identityFlowLayoutType: IdentityFlowLayoutType? = null
     ) {
 
@@ -465,14 +504,15 @@ class NativeLogin : ComponentActivity() {
                     }
                 },
             ) { innerPadding ->
-                LazyColumn(
-                    horizontalAlignment = CenterHorizontally,
+                Box(
+                    contentAlignment = Center,
                     modifier = Modifier
                         .consumeWindowInsets(innerPadding)
-                        .fillMaxSize(),
-                    contentPadding = innerPadding
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .verticalScroll(rememberScrollState())
                 ) {
-                    items(count = 1) {
+                    Column(horizontalAlignment = CenterHorizontally) {
                         ElevatedCard(
                             modifier = Modifier
                                 .padding(16.dp)
@@ -497,7 +537,7 @@ class NativeLogin : ComponentActivity() {
 
                                 CompletePasswordReset -> CompletePasswordResetInput()
 
-                                Login -> UserNamePasswordInput(login)
+                                Login -> UserNamePasswordInput(login, biometricAuthenticationUsername, onBiometricLogin)
 
                                 StartPasswordLessLogin -> StartPasswordLessLoginInput()
 
@@ -507,29 +547,31 @@ class NativeLogin : ComponentActivity() {
                             // Layout navigation buttons between the available identity flow layouts according to the current layout.
                             when (identityFlowLayoutTypeActive) {
                                 Login -> {
-                                    // Allow the user to switch to login via username and OTP.
-                                    Button(
-                                        onClick = {
-                                            viewModel.identifyFlowlayoutType.value = StartPasswordLessLogin
-                                        },
-                                        modifier = Modifier.align(CenterHorizontally)
-                                    ) { Text(text = "Use One Time Password Instead") }
+                                    if (reCaptchaEnabled) {
+                                        // Allow the user to switch to login via username and OTP.
+                                        Button(
+                                            onClick = {
+                                                viewModel.identifyFlowlayoutType.value = StartPasswordLessLogin
+                                            },
+                                            modifier = Modifier.align(CenterHorizontally)
+                                        ) { Text(text = "Use One Time Password Instead") }
 
-                                    // Allow the user to switch to reset password via username and OTP.
-                                    Button(
-                                        onClick = {
-                                            viewModel.identifyFlowlayoutType.value = StartPasswordReset
-                                        },
-                                        modifier = Modifier.align(CenterHorizontally)
-                                    ) { Text(text = "Reset Password") }
+                                        // Allow the user to switch to reset password via username and OTP.
+                                        Button(
+                                            onClick = {
+                                                viewModel.identifyFlowlayoutType.value = StartPasswordReset
+                                            },
+                                            modifier = Modifier.align(CenterHorizontally)
+                                        ) { Text(text = "Reset Password") }
 
-                                    // Allow the user to switch to registration
-                                    Button(
-                                        onClick = {
-                                            viewModel.identifyFlowlayoutType.value = StartRegistration
-                                        },
-                                        modifier = Modifier.align(CenterHorizontally)
-                                    ) { Text(text = "Register") }
+                                        // Allow the user to switch to registration
+                                        Button(
+                                            onClick = {
+                                                viewModel.identifyFlowlayoutType.value = StartRegistration
+                                            },
+                                            modifier = Modifier.align(CenterHorizontally)
+                                        ) { Text(text = "Register") }
+                                    }
                                 }
 
                                 else -> {
@@ -550,7 +592,6 @@ class NativeLogin : ComponentActivity() {
                             }
                             Spacer(modifier = Modifier.height(25.dp))
                         }
-
 
                         // Fallback to web based authentication.
                         TextButton(
@@ -1058,9 +1099,11 @@ class NativeLogin : ComponentActivity() {
 
     @Composable
     fun UserNamePasswordInput(
-        login: suspend (String, String) -> Boolean
+        login: suspend (String, String) -> Boolean,
+        biometricAuthenticationUsername: String? = null,
+        onBiometricLogin: (() -> Unit)? = null
     ) {
-        var username by remember { mutableStateOf("") }
+        var username by remember { mutableStateOf(biometricAuthenticationUsername ?: "") }
         var password by remember { mutableStateOf("") }
         val scope = rememberCoroutineScope()
         var loading by remember { mutableStateOf(false) }
@@ -1118,6 +1161,16 @@ class NativeLogin : ComponentActivity() {
                 }
             }
             )
+
+            if (onBiometricLogin != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(
+                    onClick = { onBiometricLogin() },
+                    modifier = Modifier.testTag("BiometricLogin"),
+                ) {
+                    Text(text = "Login with Biometrics")
+                }
+            }
         }
     }
 
