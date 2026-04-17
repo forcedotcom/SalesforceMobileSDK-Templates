@@ -27,6 +27,7 @@
 import React from 'react';
 import {
     Alert,
+    AppState,
     View,
     FlatList,
     Keyboard
@@ -73,8 +74,30 @@ class SearchScreen extends React.Component {
                     </View>
             )
         });
-        storeMgr.syncData();
         storeMgr.addStoreChangeListener(this.refresh);
+        this.trySyncData();
+
+        // On Android, the React Native bridge can mount before the Salesforce
+        // OAuth flow completes, so the initial syncData() fails with
+        // "No user account found".  Retry the sync when the app becomes
+        // active again (e.g. when the native login Activity dismisses).
+        this.appStateSubscription = AppState.addEventListener('change', (state) => {
+            if (state === 'active') {
+                this.trySyncData();
+            }
+        });
+    }
+
+    componentWillUnmount() {
+        if (this.appStateSubscription) {
+            this.appStateSubscription.remove();
+        }
+    }
+    
+    trySyncData() {
+        storeMgr.syncData().catch((err) => {
+            console.log(`syncData failed: ${JSON.stringify(err)}`);
+        });
     }
     
     refresh() {
