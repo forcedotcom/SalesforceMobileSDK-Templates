@@ -27,18 +27,30 @@
 
 package com.salesforce.samples.mobilesyncexplorerreactnative
 
+import android.os.Build
+import android.os.Bundle
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
 import com.salesforce.androidsdk.reactnative.ui.SalesforceReactActivity
-import android.os.Bundle
+import com.salesforce.androidsdk.rest.RestClient
 
 class MainActivity : SalesforceReactActivity() {
+
+    // Tracks whether this activity was paused (e.g. while the Salesforce
+    // LoginActivity is on top).  Used with setRestClient() to detect the
+    // fresh-login transition.
+    private var wasPaused = false
 
     //react-native-screens override
     @Override
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(null)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        wasPaused = true
     }
 
     /**
@@ -59,4 +71,29 @@ class MainActivity : SalesforceReactActivity() {
      * @return True for login to occur on application launch, false otherwise
      */
     override fun shouldAuthenticate() = true
+
+    /**
+     * On Android 12L-14 (API 32-34) with React Native 0.81+ bridgeless
+     * architecture, the ReactSurfaceView ends up sized 0x0 after the Salesforce
+     * LoginActivity dismisses, producing a black screen.  The SDK's
+     * restartReactNativeApp() path does not call back into this activity on
+     * the OAuth flow, so we hook setRestClient() instead.  When we detect the
+     * transition from "not logged in" to "logged in" after a pause (i.e. the
+     * user just completed OAuth on top of this activity), we force a clean
+     * activity recreate so React Native mounts fresh with the authenticated
+     * user and a properly measured surface.  Subsequent setRestClient() calls
+     * (e.g. on the recreated activity, or returning from background) take the
+     * "already logged in" branch and do not recreate, so there is no loop.
+     *
+     * TODO: Remove this workaround when the issue is fixed in Mobile SDK 14.0.
+     */
+    override fun setRestClient(restClient: RestClient?) {
+        val wasLoggedIn = getRestClient() != null
+        super.setRestClient(restClient)
+        val isBuggyApi = Build.VERSION.SDK_INT in Build.VERSION_CODES.S_V2..Build.VERSION_CODES.UPSIDE_DOWN_CAKE
+        if (isBuggyApi && wasPaused && !wasLoggedIn && restClient != null) {
+            wasPaused = false
+            recreate()
+        }
+    }
 }
