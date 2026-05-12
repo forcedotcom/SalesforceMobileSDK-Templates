@@ -2,8 +2,6 @@
 name: remove-template
 description: Remove a template from the Templates repository
 type: skill
-metadata:
-  internal: true
 ---
 
 # Remove Template from Templates Repository

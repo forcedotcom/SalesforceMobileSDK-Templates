@@ -2,8 +2,6 @@
 name: test-template
 description: Test templates with test_template.sh script
 type: skill
-metadata:
-  internal: true
 ---
 
 # Test Templates with test_template.sh

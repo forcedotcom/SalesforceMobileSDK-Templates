@@ -1,8 +1,6 @@
 ---
 name: test-sdk-consumer-skills
 description: End-to-end test harness for all SDK consumer skills. Creates 8 apps (4 iOS, 4 Android) in parallel, one per consumer skill, builds each, and reports results.
-metadata:
-  internal: true
 ---
 
 # Test SDK Consumer Skills

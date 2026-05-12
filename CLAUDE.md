@@ -597,11 +597,13 @@ This repository provides [Claude Code agent skills](https://code.claude.com/docs
 
 ### Consumer Skills
 
-Skills for **developers building apps with Mobile SDK** (SDK consumers). These are publicly installable:
+Skills for **developers building apps with Mobile SDK** (SDK consumers) live in [`./skills/`](./skills/) at the repo root, matching the convention used by `anthropics/skills`, `obra/superpowers`, and other top repos on skills.sh. They are publicly installable:
 
 ```bash
 npx skills add forcedotcom/SalesforceMobileSDK-Templates
 ```
+
+The `npx skills` CLI scans the root `./skills/` directory for subdirectories containing a `SKILL.md`.
 
 Available consumer skills:
 - `create-ios-app-with-mobile-sdk` - Create a new iOS Swift app from scratch with Mobile SDK
@@ -615,7 +617,7 @@ Available consumer skills:
 
 ### SDK Developer Skills (Internal)
 
-Skills for **developers working on Mobile SDK itself** (contributors, maintainers). These are marked `metadata.internal: true` and only loaded when the repo is open locally:
+Skills for **developers working on Mobile SDK itself** (contributors, maintainers) live in [`./.claude/skills/`](./.claude/skills/). They are auto-loaded by Claude Code when this repo is open locally, but ignored by `npx skills add` (which only scans the root `./skills/` directory):
 
 - `remove-template` - Remove a template from this repository
 - `test-template` - Test templates with `test_template.sh`
@@ -624,20 +626,23 @@ Skills for **developers working on Mobile SDK itself** (contributors, maintainer
 
 ### Maintaining Skills
 
-**IMPORTANT**: When adding, removing, or modifying skills in `.claude/skills/`, you MUST update `.claude/skills/README.md` to keep the skill inventory in sync. The README serves as the authoritative documentation for all available skills.
+**IMPORTANT**: Two skill directories, two READMEs:
+- Consumer skills live in `./skills/` — keep `./skills/README.md` in sync
+- SDK-developer skills live in `./.claude/skills/` — keep `./.claude/skills/README.md` in sync
 
 When adding a new skill:
-1. Create the skill directory and `SKILL.md` file
-2. Add an entry to the appropriate table in `.claude/skills/README.md`
-3. If it's a consumer skill, test it end-to-end before shipping (see testing section in README)
+1. Decide audience: consumer (root `./skills/`) or SDK-maintainer (`./.claude/skills/`)
+2. Create the skill directory and `SKILL.md` file in the right location
+3. Add an entry to the appropriate README table
+4. If it's a consumer skill, test it end-to-end before shipping (see testing section in `./skills/README.md`)
 
 When removing a skill:
 1. Delete the skill directory
-2. Remove the entry from `.claude/skills/README.md`
+2. Remove the entry from the appropriate README
 
 When modifying a skill:
 1. Update the `SKILL.md` file
-2. If the description changes, update the corresponding table entry in `.claude/skills/README.md`
+2. If the description changes, update the corresponding table entry in the appropriate README
 
 ## Related Documentation
 
