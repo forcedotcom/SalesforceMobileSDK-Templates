@@ -88,10 +88,10 @@ class MainApplication : Application() {
         // MobileSyncSDKManager.getInstance().idpAppPackageName = "com.salesforce.samples.salesforceandroididptemplateapp"
 
         /*
-		 * Un-comment the line below to enable push notifications in this app.
-		 * Replace 'pnInterface' with your implementation of 'PushNotificationInterface'.
-		 * Add your Firebase 'google-services.json' file to the 'app' folder of your project.
-		 */
+         * Un-comment the line below to enable push notifications in this app.
+         * Replace 'pnInterface' with your implementation of 'PushNotificationInterface'.
+         * Add your Firebase 'google-services.json' file to the 'app' folder of your project.
+         */
         // MobileSyncSDKManager.getInstance().pushNotificationReceiver = pnInterface
         /*
          * As an alternative to providing a custom `PushNotificationInterface`,
