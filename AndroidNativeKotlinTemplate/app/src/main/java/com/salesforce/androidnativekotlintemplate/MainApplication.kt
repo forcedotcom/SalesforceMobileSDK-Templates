@@ -66,13 +66,6 @@ class MainApplication : Application() {
     }
 
     // endregion
-    // region Notifications: Broadcast Intent Receiver
-
-    /** A broadcast intent receiver for invoking Salesforce actionable notification actions */
-    /* Actionable Notifications Template: When not using [PushNotificationsAdapter] and Actionable Notifications, this could be removed. */
-    private var invokeNotificationActionBroadcastIntentReceiver: BroadcastReceiver? = null
-
-    // endregion
     // region Activity Implementation
 
     override fun onCreate() {
@@ -112,14 +105,12 @@ class MainApplication : Application() {
         // MobileSyncSDKManager.getInstance().pushNotificationReceiver = PushNotificationsAdapter()
 
         // Register an Android broadcast intent receiver to respond to invocation of notification actions.
-        val invokeNotificationActionBroadcastIntentReceiver: BroadcastReceiver = InvokeNotificationActionBroadcastIntentReceiver()
         registerReceiver(
             this,
-            invokeNotificationActionBroadcastIntentReceiver,
+            InvokeNotificationActionBroadcastIntentReceiver(),
             IntentFilter(BROADCAST_INTENT_ACTION_INVOKE_SALESFORCE_NOTIFICATION_ACTION),
             ContextCompat.RECEIVER_NOT_EXPORTED
         )
-        this.invokeNotificationActionBroadcastIntentReceiver = invokeNotificationActionBroadcastIntentReceiver
 
         /* Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes. */
         //setupQrCodeLogin()
