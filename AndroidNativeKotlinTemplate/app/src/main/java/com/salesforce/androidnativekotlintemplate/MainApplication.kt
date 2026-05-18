@@ -104,13 +104,16 @@ class MainApplication : Application() {
          */
         // MobileSyncSDKManager.getInstance().pushNotificationReceiver = PushNotificationsAdapter()
 
-        // Register an Android broadcast intent receiver to respond to invocation of notification actions.
-        registerReceiver(
-            this,
-            InvokeNotificationActionBroadcastIntentReceiver(),
-            IntentFilter(BROADCAST_INTENT_ACTION_INVOKE_SALESFORCE_NOTIFICATION_ACTION),
-            ContextCompat.RECEIVER_NOT_EXPORTED
-        )
+        /*
+         * Actionable Notifications Template: Un-comment the line below to
+         * register the broadcast intent receiver for notification actions.
+         */
+        // registerReceiver(
+        //     this,
+        //     InvokeNotificationActionBroadcastIntentReceiver(),
+        //     IntentFilter(BROADCAST_INTENT_ACTION_INVOKE_SALESFORCE_NOTIFICATION_ACTION),
+        //     ContextCompat.RECEIVER_NOT_EXPORTED
+        // )
 
         /* Uncomment when enabling log in via Salesforce UI Bridge API generated QR codes. */
         //setupQrCodeLogin()
