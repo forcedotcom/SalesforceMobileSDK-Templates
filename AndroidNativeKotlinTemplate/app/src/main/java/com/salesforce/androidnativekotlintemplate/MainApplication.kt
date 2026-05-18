@@ -223,21 +223,25 @@ class MainApplication : Application() {
     class InvokeNotificationActionBroadcastIntentReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             CoroutineScope(Default).launch {
-                val notificationId = intent.extras?.getString(NOTIFICATION_EXTRAS_KEY_SALESFORCE_ACTIONABLE_NOTIFICATION_ID) ?: return@launch
-                val actionKey = intent.extras?.getString(NOTIFICATION_EXTRAS_KEY_SALESFORCE_ACTIONABLE_NOTIFICATION_ACTION_KEY) ?: return@launch
+                try {
+                    val notificationId = intent.extras?.getString(NOTIFICATION_EXTRAS_KEY_SALESFORCE_ACTIONABLE_NOTIFICATION_ID) ?: return@launch
+                    val actionKey = intent.extras?.getString(NOTIFICATION_EXTRAS_KEY_SALESFORCE_ACTIONABLE_NOTIFICATION_ACTION_KEY) ?: return@launch
 
-                /*
-                 * Actionable Notifications: The Salesforce SDK provides a
-                 * method to invoke the matching Salesforce Actionable
-                 * Notification Action when a notification action is selected by
-                 * the user.
-                 */
-                val notificationsActionsResponseBody = SalesforceSDKManager.getInstance().invokeServerNotificationAction(
-                    notificationId = notificationId,
-                    actionKey = actionKey
-                )
+                    /*
+                     * Actionable Notifications: The Salesforce SDK provides a
+                     * method to invoke the matching Salesforce Actionable
+                     * Notification Action when a notification action is selected by
+                     * the user.
+                     */
+                    val notificationsActionsResponseBody = SalesforceSDKManager.getInstance().invokeServerNotificationAction(
+                        notificationId = notificationId,
+                        actionKey = actionKey
+                    )
 
-                Log.i("AndroidNativeKotlinTemplate", "${notificationsActionsResponseBody?.message}")
+                    Log.i("AndroidNativeKotlinTemplate", "${notificationsActionsResponseBody?.message}")
+                } catch (e: Exception) {
+                    Log.e("AndroidNativeKotlinTemplate", "Failed to invoke notification action", e)
+                }
             }
         }
     }
