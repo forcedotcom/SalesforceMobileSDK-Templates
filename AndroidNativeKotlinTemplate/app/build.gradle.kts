@@ -1,6 +1,5 @@
 plugins {
     android
-    `kotlin-android`
 }
 
 dependencies {
@@ -43,13 +42,14 @@ android {
         aidl = true
         buildConfig = true
     }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 }
 
 repositories {
     google()
     mavenCentral()
-}
-
-kotlin {
-    jvmToolchain(17)
 }
