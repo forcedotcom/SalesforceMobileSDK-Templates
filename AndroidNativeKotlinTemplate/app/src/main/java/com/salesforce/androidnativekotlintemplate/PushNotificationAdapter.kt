@@ -39,7 +39,6 @@ import androidx.core.app.NotificationCompat.BigTextStyle
 import androidx.core.app.NotificationCompat.PRIORITY_DEFAULT
 import androidx.core.app.NotificationManagerCompat
 import com.salesforce.androidnativekotlintemplate.MainApplication.Companion.BROADCAST_INTENT_ACTION_INVOKE_SALESFORCE_NOTIFICATION_ACTION
-import com.salesforce.androidnativekotlintemplate.PushNotificationsAdapter.Companion.NotificationId.INVOKE_NOTIFICATION_ACTION
 import com.salesforce.androidsdk.R.drawable.sf__salesforce_logo
 import com.salesforce.androidsdk.app.SalesforceSDKManager
 import com.salesforce.androidsdk.push.PushNotificationInterface
@@ -156,7 +155,7 @@ internal class PushNotificationsAdapter : PushNotificationInterface {
             // Build and display the notification, if possible.
             if (context.checkSelfPermission(POST_NOTIFICATIONS) == PERMISSION_GRANTED) {
                 notificationManager.notify(
-                    INVOKE_NOTIFICATION_ACTION.id,
+                    actionableNotificationContent.nid.hashCode(),
                     builder.build()
                 )
             }
@@ -176,11 +175,6 @@ internal class PushNotificationsAdapter : PushNotificationInterface {
 
         /** Notification Intent Extra Keys: Salesforce actionable notification action key */
         internal const val NOTIFICATION_EXTRAS_KEY_SALESFORCE_ACTIONABLE_NOTIFICATION_ACTION_KEY = "SALESFORCE_ACTIONABLE_NOTIFICATION_ACTION_KEY"
-
-        /** Notification Ids */
-        enum class NotificationId(val id: Int) {
-            INVOKE_NOTIFICATION_ACTION(0)
-        }
 
         // endregion
     }
