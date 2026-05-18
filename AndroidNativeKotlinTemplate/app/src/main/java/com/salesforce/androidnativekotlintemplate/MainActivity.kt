@@ -240,7 +240,6 @@ class MainActivity : SalesforceActivity() {
                         SHARED_PREFERENCES_KEY_ANDROID_NATIVE_KOTLIN_POST_NOTIFICATIONS_PERMISSION_REQUESTED,
                         true
                     )
-                    apply()
                 }
             }
 
