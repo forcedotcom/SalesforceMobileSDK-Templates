@@ -117,7 +117,7 @@ class MainApplication : Application() {
             this,
             invokeNotificationActionBroadcastIntentReceiver,
             IntentFilter(BROADCAST_INTENT_ACTION_INVOKE_SALESFORCE_NOTIFICATION_ACTION),
-            ContextCompat.RECEIVER_EXPORTED
+            ContextCompat.RECEIVER_NOT_EXPORTED
         )
         this.invokeNotificationActionBroadcastIntentReceiver = invokeNotificationActionBroadcastIntentReceiver
 
