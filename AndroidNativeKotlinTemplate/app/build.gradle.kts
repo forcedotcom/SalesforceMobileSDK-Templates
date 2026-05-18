@@ -21,12 +21,6 @@ android {
         minSdk = 28
     }
 
-    buildTypes {
-        debug {
-            enableAndroidTestCoverage = true
-        }
-    }
-
     packaging {
         resources {
             excludes += setOf(
@@ -39,7 +33,6 @@ android {
     }
 
     buildFeatures {
-        aidl = true
         buildConfig = true
     }
 
@@ -47,9 +40,4 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-}
-
-repositories {
-    google()
-    mavenCentral()
 }
