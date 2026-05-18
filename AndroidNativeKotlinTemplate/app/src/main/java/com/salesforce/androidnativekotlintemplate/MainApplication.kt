@@ -30,10 +30,7 @@ import android.app.Application
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.util.Log
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.registerReceiver
 import com.salesforce.androidnativekotlintemplate.PushNotificationsAdapter.Companion.NOTIFICATION_EXTRAS_KEY_SALESFORCE_ACTIONABLE_NOTIFICATION_ACTION_KEY
 import com.salesforce.androidnativekotlintemplate.PushNotificationsAdapter.Companion.NOTIFICATION_EXTRAS_KEY_SALESFORCE_ACTIONABLE_NOTIFICATION_ID
 import com.salesforce.androidsdk.app.SalesforceSDKManager
@@ -232,7 +229,9 @@ class MainApplication : Application() {
                         actionKey = actionKey
                     )
 
-                    Log.i("AndroidNativeKotlinTemplate", "${notificationsActionsResponseBody?.message}")
+                    notificationsActionsResponseBody?.message?.let {
+                        Log.i("AndroidNativeKotlinTemplate", it)
+                    }
                 } catch (e: Exception) {
                     Log.e("AndroidNativeKotlinTemplate", "Failed to invoke notification action", e)
                 }

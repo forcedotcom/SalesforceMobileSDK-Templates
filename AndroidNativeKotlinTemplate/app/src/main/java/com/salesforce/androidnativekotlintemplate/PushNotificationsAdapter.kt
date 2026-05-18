@@ -61,9 +61,9 @@ internal class PushNotificationsAdapter : PushNotificationInterface {
         data: Map<String?, String?>?,
     ) {
 
-        val context = SalesforceSDKManager.getInstance().appContext
-        val notificationManager = NotificationManagerCompat.from(context)
         val salesforceSdkManager = SalesforceSDKManager.getInstance()
+        val context = salesforceSdkManager.appContext
+        val notificationManager = NotificationManagerCompat.from(context)
 
         // Guard such that no notification will be attempted when notifications are disabled.
         if (!notificationManager.areNotificationsEnabled()) return
@@ -155,7 +155,7 @@ internal class PushNotificationsAdapter : PushNotificationInterface {
             // Build and display the notification, if possible.
             if (context.checkSelfPermission(POST_NOTIFICATIONS) == PERMISSION_GRANTED) {
                 notificationManager.notify(
-                    actionableNotificationContent.nid.hashCode(),
+                    actionableNotificationContent.nid?.hashCode() ?: 0,
                     builder.build()
                 )
             }
