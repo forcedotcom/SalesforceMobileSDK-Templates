@@ -241,7 +241,4 @@ class MainApplication : Application() {
     }
 
     // endregion
-    // region Push Notification Receiver
-
-
 }
