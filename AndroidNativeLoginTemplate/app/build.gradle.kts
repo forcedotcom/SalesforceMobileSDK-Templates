@@ -1,19 +1,18 @@
 plugins {
     android
-    `kotlin-android`
     kotlin("plugin.compose") version "2.3.20"
 }
 
 dependencies {
     implementation("com.salesforce.mobilesdk:MobileSync:14.0.0")
-    implementation("com.google.android.material:material:1.13.0")
+    implementation("com.google.android.material:material:1.14.0")
     implementation("androidx.biometric:biometric:1.1.0")
 
-    val composeBom = platform("androidx.compose:compose-bom:2024.02.00")
+    val composeBom = platform("androidx.compose:compose-bom:2026.05.00")
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
-    implementation("androidx.activity:activity-ktx:1.10.1")
+    implementation("androidx.activity:activity-ktx:1.13.0")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.foundation:foundation")
 
@@ -21,50 +20,38 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     debugImplementation("androidx.compose.ui:ui-tooling")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation("com.google.android.recaptcha:recaptcha:18.6.1") // Update requires Kotlin 2.
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
+    implementation("com.google.android.recaptcha:recaptcha:18.7.1")
 }
 
 android {
     namespace = "com.salesforce.androidnativelogintemplate"
 
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
-        targetSdk = 36
+        targetSdk = 37
         minSdk = 28
-    }
-
-    buildTypes {
-        debug {
-            enableAndroidTestCoverage = true
-        }
     }
 
     packaging {
         resources {
-            excludes += setOf("META-INF/LICENSE", "META-INF/LICENSE.txt", "META-INF/DEPENDENCIES", "META-INF/NOTICE")
+            excludes += setOf(
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/DEPENDENCIES",
+                "META-INF/NOTICE"
+            )
         }
     }
 
     buildFeatures {
-        renderScript = true
-        aidl = true
         buildConfig = true
         compose = true
     }
 
-    @Suppress("UnstableApiUsage")
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.9"
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-}
-
-repositories {
-    google()
-    mavenCentral()
-}
-
-kotlin {
-    jvmToolchain(17)
 }
