@@ -1,6 +1,6 @@
 ---
 name: android-mobile-sdk
-description: Comprehensive guide for integrating Salesforce Mobile SDK into Android Kotlin applications. Covers creating new apps, adding SDK authentication, SmartStore (encrypted database), MobileSync (cloud sync), and biometric authentication.
+description: Add Salesforce Mobile SDK capabilities to Android Kotlin applications. Covers creating new apps with the SDK pre-integrated, or adding base SDK, SmartStore (encrypted database), MobileSync (cloud sync), and biometric authentication to existing applications.
 ---
 
 # Android Salesforce Mobile SDK Integration
@@ -159,7 +159,9 @@ Now proceed to the [Add Mobile SDK](#add-mobile-sdk) section below to create the
 <a name="add-mobile-sdk"></a>
 ## Add Mobile SDK
 
-This section integrates the Salesforce Mobile SDK into an existing Android Kotlin application, wiring up authentication so users are prompted to log in to Salesforce when the app launches.
+This section integrates the Salesforce Mobile SDK into an **existing** Android Kotlin application, wiring up authentication so users are prompted to log in to Salesforce when the app launches.
+
+> **Important — do not recreate Gradle scaffolding.** The app already has a working Gradle wrapper, `gradle.properties`, `settings.gradle.kts`, and root `build.gradle.kts`. Do **not** overwrite those files. The instructions below only modify `app/build.gradle.kts`, `AndroidManifest.xml`, and `MainActivity.kt`, and create `MainApplication.kt`, `bootconfig.xml`, `servers.xml`, and `strings.xml`. If you find yourself about to write a `gradle-wrapper.properties` or root `build.gradle.kts`, stop — you're confusing this scenario with **Create New App**.
 
 ### Prerequisites
 
@@ -172,11 +174,16 @@ Before starting, gather:
 
 ### Step 1: Add the SDK Dependency
 
-In `app/build.gradle.kts`, add `MobileSyncSDKManager`. Using `MobileSync` as the single dependency pulls in `SmartStore` and `SalesforceSDKCore` transitively.
+This scenario adds **Salesforce Mobile SDK Core only** — OAuth login and REST. Adding SmartStore (encrypted local database) or MobileSync (cloud data sync) is covered by the dedicated scenarios later in this skill; do not pre-emptively pull them in here.
+
+In `app/build.gradle.kts`, **add** the `SalesforceSDK` artifact (Mobile SDK Core) via Maven Central. Don't remove existing dependencies the app already declares:
 
 ```kotlin
 dependencies {
-    implementation("com.salesforce.mobilesdk:MobileSync:13.2.0")
+    implementation("com.salesforce.mobilesdk:SalesforceSDK:13.2.0")
+    // Required: SalesforceActivity (used in Step 7) extends AppCompatActivity.
+    // Keep the existing appcompat dependency if your app already has it, or add:
+    implementation("androidx.appcompat:appcompat:1.7.0")
 }
 ```
 
@@ -224,17 +231,19 @@ Create `MainApplication.kt` in the app's main package (same directory as `MainAc
 package <AppPackage>
 
 import android.app.Application
-import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
+import com.salesforce.androidsdk.app.SalesforceSDKManager
 
 class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        MobileSyncSDKManager.initNative(applicationContext, MainActivity::class.java)
+        SalesforceSDKManager.initNative(applicationContext, MainActivity::class.java)
     }
 }
 ```
 
-Replace `<AppPackage>` with your package name. `MobileSyncSDKManager.initNative()` must be called before any SDK class is used.
+Replace `<AppPackage>` with your package name. `SalesforceSDKManager.initNative()` must be called before any SDK class is used.
+
+> **Adding SmartStore or MobileSync later?** Those are separate scenarios in this same skill (see _Add SmartStore_ and _Add MobileSync_ below). They swap the dependency artifact and the SDK manager class. Don't pre-emptively pull them in here — start with `SalesforceSDK` and stay on it for the base authentication scenario.
 
 ### Step 3: Update AndroidManifest.xml
 

@@ -1,0 +1,10 @@
+{
+  "enabled": true,
+  "toolsets": [
+    "data",
+    "orgs",
+    "metadata",
+    "testing",
+    "users"
+  ]
+}

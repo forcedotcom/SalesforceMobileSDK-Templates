@@ -25,3 +25,10 @@ yarn.lock
 yarn-error.log
 .xcode.env
 .xcode.env.local
+
+# adk-eval
+.env
+eval/.runs/
+eval/output/
+!/package-lock.json
+.vibes-env

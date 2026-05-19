@@ -1,0 +1,21 @@
+{
+  "name": "salesforce-mobile-sdk-templates-eval",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Eval harness for skills shipped from this repo (consumes @sfdc-internal/adk-eval).",
+  "scripts": {
+    "eval:setup": "adk-eval --init",
+    "eval:validate-env": "adk-eval --validate-env",
+    "eval:download-vsix": "adk-eval --download-vsix",
+    "eval:baseline": "adk-eval --domain mobile-sdk-android --protocol baseline",
+    "eval:skill": "adk-eval --domain mobile-sdk-android --protocol skill",
+    "eval:both": "npm run eval:baseline && npm run eval:skill"
+  },
+  "devDependencies": {
+    "@sfdc-internal/adk-eval": "2.128.0",
+    "@types/node": "^20.0.0",
+    "langsmith": "^0.5.26",
+    "typescript": "^5.4.0",
+    "vitest": "^3.2.4"
+  }
+}
