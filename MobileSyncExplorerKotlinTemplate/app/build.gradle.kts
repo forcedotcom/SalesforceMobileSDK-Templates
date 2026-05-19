@@ -1,40 +1,37 @@
 plugins {
     android
-    `kotlin-android`
     kotlin("plugin.compose") version "2.3.20"
 }
 
 dependencies {
-    implementation("androidx.activity:activity-compose:1.10.1")
-    implementation("androidx.compose.material:material:1.8.2")
-    implementation("androidx.compose.material:material-android:1.8.2")
-    implementation("androidx.compose.material:material-icons-core-android:1.7.8")
-    implementation("androidx.compose.runtime:runtime-android:1.8.2")
-    implementation("androidx.compose.ui:ui:1.8.2")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.8.2")
-    implementation("androidx.core:core-ktx:1.16.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.1")
-    implementation("androidx.window:window:1.4.0")
+    implementation("androidx.activity:activity-compose:1.13.0")
+    implementation("androidx.compose.material:material:1.11.1")
+    implementation("androidx.compose.material:material-icons-core:1.7.8")
+    implementation("androidx.compose.runtime:runtime:1.11.1")
+    implementation("androidx.compose.ui:ui:1.11.1")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.11.1")
+    implementation("androidx.core:core-ktx:1.18.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
+    implementation("androidx.window:window:1.5.1")
 
     implementation("com.salesforce.mobilesdk:MobileSync:14.0.0")
 
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.8.2")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.8.2")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.8.2")
-    implementation("androidx.core:core-ktx:1.16.0")
+    androidTestImplementation("androidx.test.ext:junit:1.3.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.11.1")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.11.1")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.11.1")
 }
 
 android {
     namespace = "com.salesforce.mobilesyncexplorerkotlintemplate"
 
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.salesforce.mobilesyncexplorerkotlintemplate"
-        targetSdk = 36
+        targetSdk = 37
         minSdk = 28
         versionCode = 1
         versionName = "1.0"
@@ -57,20 +54,9 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlin {
-        jvmToolchain(17)
-    }
-
     buildFeatures {
         compose = true
-        aidl = true
-        renderScript = true
         buildConfig = true
-    }
-
-    @Suppress("UnstableApiUsage")
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.14"
     }
 
     packaging {
@@ -84,15 +70,8 @@ android {
             manifest.srcFile("AndroidManifest.xml")
             java.directories.add("src/main/java")
             resources.directories.add("src/main/java")
-            aidl.directories.add("src/main")
-            renderscript.directories.add("src/main")
             res.directories.add("src/main/res")
             assets.directories.add("src/main/assets")
         }
     }
-}
-
-repositories {
-    google()
-    mavenCentral()
 }
