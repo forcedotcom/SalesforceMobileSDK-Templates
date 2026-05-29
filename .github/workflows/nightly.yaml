@@ -10,11 +10,15 @@ permissions:
 
 jobs:
   ios-nightly:
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
     uses: ./.github/workflows/ios-reusable-workflow.yaml
 
   android-nightly:
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
     uses: ./.github/workflows/android-reusable-workflow.yaml

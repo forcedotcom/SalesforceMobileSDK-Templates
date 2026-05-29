@@ -155,6 +155,8 @@ jobs:
           fi
 
   ios-pr:
+    permissions:
+      contents: read
     needs: detect-changed-templates
     if: needs.detect-changed-templates.outputs.has-changes == 'true'
     uses: ./.github/workflows/ios-reusable-workflow.yaml
@@ -163,6 +165,8 @@ jobs:
       templates: ${{ needs.detect-changed-templates.outputs.templates }}
 
   android-pr:
+    permissions:
+      contents: read
     needs: detect-changed-templates
     if: needs.detect-changed-templates.outputs.has-changes == 'true'
     uses: ./.github/workflows/android-reusable-workflow.yaml
