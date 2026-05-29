@@ -60,7 +60,7 @@ Defines SDK dependencies and npm packages.
   
   "dependencies": {
     "react": "19.1.0",
-    "react-native": "0.82.1",
+    "react-native": "0.83.9",
     "react-native-force": "git+https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#dev",
     "@react-navigation/native": "7.1.10",
     "@react-navigation/native-stack": "7.16.0",
