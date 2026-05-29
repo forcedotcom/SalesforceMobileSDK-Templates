@@ -2,17 +2,23 @@ name: Nightly Tests
 
 on:
   schedule:
-    # Run at 2 AM PST (10 AM UTC) every day
-    - cron: '0 10 * * *'
+    - cron: '0 10 * * 1,3,5'  # cron is UTC; 2 AM PT Mon/Wed/Fri.
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   ios-nightly:
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
     uses: ./.github/workflows/ios-reusable-workflow.yaml
 
   android-nightly:
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
     uses: ./.github/workflows/android-reusable-workflow.yaml
@@ -23,18 +29,21 @@ jobs:
     if: always()
     steps:
       - name: Generate summary
+        env:
+          IOS_RESULT: ${{ needs.ios-nightly.result }}
+          ANDROID_RESULT: ${{ needs.android-nightly.result }}
         run: |
-          echo "## Nightly Template Test Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Results" >> $GITHUB_STEP_SUMMARY
-          echo "- iOS Tests: ${{ needs.ios-nightly.result }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Android Tests: ${{ needs.android-nightly.result }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Nightly Template Test Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "- iOS Tests: ${IOS_RESULT}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Android Tests: ${ANDROID_RESULT}" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
 
-          if [ "${{ needs.ios-nightly.result }}" == "success" ] && [ "${{ needs.android-nightly.result }}" == "success" ]; then
-            echo "✅ All template tests passed!" >> $GITHUB_STEP_SUMMARY
+          if [ "${IOS_RESULT}" == "success" ] && [ "${ANDROID_RESULT}" == "success" ]; then
+            echo "✅ All template tests passed!" >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "❌ Some tests failed - please review the workflow logs" >> $GITHUB_STEP_SUMMARY
+            echo "❌ Some tests failed - please review the workflow logs" >> "$GITHUB_STEP_SUMMARY"
           fi

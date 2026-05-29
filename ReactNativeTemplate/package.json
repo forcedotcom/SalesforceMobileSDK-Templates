@@ -20,7 +20,7 @@
     "react-native": "0.82.1",
     "@react-native/new-app-screen": "0.82.1",
     "react-native-safe-area-context": "5.8.0",
-    "react-native-force": "git+https://github.com/wmathurin/SalesforceMobileSDK-ReactNative.git#rn-upgrade-0.82",
+    "react-native-force": "git+https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#dev",
     "react-native-gesture-handler": "2.31.2",
     "react-native-screens": "4.25.2"
   },

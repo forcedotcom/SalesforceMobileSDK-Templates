@@ -15,6 +15,9 @@ on:
         required: false
         description: 'macOS runner version'
 
+permissions:
+  contents: read
+
 jobs:
   generate-template-list:
     runs-on: ubuntu-latest
@@ -22,25 +25,30 @@ jobs:
       templates: ${{ steps.set-templates.outputs.templates }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
         if: ${{ inputs.is_pr }}
         with:
+          persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
+        with:
+          persist-credentials: false
         if: ${{ !inputs.is_pr }}
 
       - name: Generate template list
         id: set-templates
+        env:
+          TEMPLATES: ${{ inputs.templates }}
         run: |
-          if [ -n "${{ inputs.templates }}" ]; then
+          if [ -n "${TEMPLATES}" ]; then
             # Use provided template list
-            echo 'templates=${{ inputs.templates }}' >> $GITHUB_OUTPUT
+            printf 'templates=%s\n' "${TEMPLATES}" >> "$GITHUB_OUTPUT"
           else
             # Generate list from templates.json filtered by iOS platform
-            TEMPLATES=$(jq -c '[.[] | select(.platforms[] == "ios") | .path]' templates.json)
-            echo "templates=$TEMPLATES" >> $GITHUB_OUTPUT
+            TEMPLATES_LIST=$(jq -c '[.[] | select(.platforms[] == "ios") | .path]' templates.json)
+            printf 'templates=%s\n' "${TEMPLATES_LIST}" >> "$GITHUB_OUTPUT"
           fi
 
   test-ios:
@@ -52,13 +60,16 @@ jobs:
         template: ${{ fromJson(needs.generate-template-list.outputs.templates) }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
         if: ${{ inputs.is_pr }}
         with:
+          persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
+        with:
+          persist-credentials: false
         if: ${{ !inputs.is_pr }}
 
       - name: Install jq
@@ -66,14 +77,30 @@ jobs:
 
       - name: Check template platform support
         id: check-platform
+        env:
+          TEMPLATE: ${{ matrix.template }}
         run: |
-          PLATFORMS=$(jq -r '.[] | select(.path == "${{ matrix.template }}") | .platforms[]' templates.json)
+          PLATFORMS=$(jq -r --arg t "$TEMPLATE" '.[] | select(.path == $t) | .platforms[]' templates.json)
           if echo "$PLATFORMS" | grep -q "^ios$"; then
-            echo "supported=true" >> $GITHUB_OUTPUT
+            printf 'supported=true\n' >> "$GITHUB_OUTPUT"
           else
-            echo "supported=false" >> $GITHUB_OUTPUT
+            printf 'supported=false\n' >> "$GITHUB_OUTPUT"
           fi
 
       - name: Test iOS template
+        id: test-template
         if: steps.check-platform.outputs.supported == 'true'
-        run: ./test_template.sh --template "${{ matrix.template }}" --platform ios
+        env:
+          TEMPLATE: ${{ matrix.template }}
+        run: |
+          mkdir -p build_logs
+          set -o pipefail
+          ./test_template.sh --template "${TEMPLATE}" --platform ios 2>&1 | tee "build_logs/${TEMPLATE}-ios.log"
+      - name: Archive build logs on failure
+        if: failure() && steps.test-template.outcome == 'failure'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: template-build-logs-${{ matrix.template }}-ios
+          path: build_logs/
+          if-no-files-found: ignore
+          retention-days: 14

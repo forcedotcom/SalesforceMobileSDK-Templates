@@ -62,6 +62,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                                                 communityUrl: loginUrl,
                                                 nativeLoginViewController: nativeLoginViewController,
                                                 scene:scene)
+
+        // Enable automatic biometric presentation:
+        // - Shows opt-in dialog after login (if user hasn't opted in yet)
+        // - Auto-triggers biometric unlock when the app is locked (if user has opted in)
+        SalesforceManager.shared.biometricAuthenticationManager().automaticPresentation = true
         
         //
         // To setup Password-less login:

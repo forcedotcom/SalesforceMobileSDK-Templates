@@ -1,7 +1,9 @@
 name: Pull Request
 
 on:
-  pull_request_target:
+  # pull_request_target is required for fork PRs to access secrets and the merged tree.
+  # Mitigated by permission-check job (Validate Write Permission step).
+  pull_request_target:  # zizmor: ignore[dangerous-triggers]
     branches: [dev, master]
     paths:
       - '*/install.js'
@@ -25,12 +27,15 @@ on:
       - 'templates.json'
       - 'test_template.sh'
 
+permissions:
+  contents: read
+
 jobs:
   permission-check:
     runs-on: ubuntu-latest
     steps:
       - name: Check Write Permission
-        uses: octokit/request-action@v2.x
+        uses: octokit/request-action@dad4362715b7fb2ddedf9772c8670824af564f0d  # v2.4.0
         id: check_permissions
         with:
           route: GET /repos/${{ github.repository }}/collaborators/${{ github.triggering_actor }}/permission
@@ -55,14 +60,15 @@ jobs:
       test-all: ${{ steps.set-templates.outputs.test-all }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
         with:
+          persist-credentials: false
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Get changed files
         id: changed-files
-        uses: tj-actions/changed-files@v44
+        uses: tj-actions/changed-files@c65cd883420fd2eb864698a825fc4162dd94482c  # v44.5.7
         with:
           files: |
             **/install.js
@@ -90,14 +96,16 @@ jobs:
 
       - name: Determine changed templates
         id: set-templates
+        env:
+          CHANGED_FILES_JSON: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
           # Store the JSON output and remove escaped quotes
-          CHANGED_FILES=$(echo '${{ steps.changed-files.outputs.all_changed_files }}' | sed 's/\\//g')
-          echo "Changed files: $CHANGED_FILES"
+          CHANGED_FILES=$(printf '%s' "${CHANGED_FILES_JSON}" | sed 's/\\//g')
+          echo "Changed files: ${CHANGED_FILES}"
 
           # Check if test script or templates.json changed (test all templates)
           TEST_ALL=false
-          for file in $(jq -r '.[]' <<< "$CHANGED_FILES"); do
+          for file in $(jq -r '.[]' <<< "${CHANGED_FILES}"); do
             if [[ "$file" == "test_template.sh" ]] || [[ "$file" == "templates.json" ]]; then
               TEST_ALL=true
               echo "Core test file changed: $file"
@@ -109,16 +117,16 @@ jobs:
           TEMPLATES=$(jq -r '.[].path' templates.json)
 
           if [ "$TEST_ALL" = true ]; then
-            echo "test-all=true" >> $GITHUB_OUTPUT
-            echo "has-changes=true" >> $GITHUB_OUTPUT
+            printf 'test-all=true\n' >> "$GITHUB_OUTPUT"
+            printf 'has-changes=true\n' >> "$GITHUB_OUTPUT"
             # Convert all templates to JSON array (compact format for GitHub Actions)
             TEMPLATES_JSON=$(echo "$TEMPLATES" | jq -R . | jq -sc .)
-            echo "templates=$TEMPLATES_JSON" >> $GITHUB_OUTPUT
+            printf 'templates=%s\n' "${TEMPLATES_JSON}" >> "$GITHUB_OUTPUT"
             echo "Testing all templates due to core file changes"
           else
             # Extract template directories from changed files
             CHANGED_TEMPLATES=()
-            for file in $(jq -r '.[]' <<< "$CHANGED_FILES"); do
+            for file in $(jq -r '.[]' <<< "${CHANGED_FILES}"); do
               # Get the first directory component
               TEMPLATE_DIR=$(echo "$file" | cut -d'/' -f1)
 
@@ -131,22 +139,24 @@ jobs:
               fi
             done
 
-            echo "test-all=false" >> $GITHUB_OUTPUT
+            printf 'test-all=false\n' >> "$GITHUB_OUTPUT"
 
             # Convert to JSON array (compact format for GitHub Actions)
             if [ ${#CHANGED_TEMPLATES[@]} -gt 0 ]; then
               TEMPLATES_JSON=$(printf '%s\n' "${CHANGED_TEMPLATES[@]}" | jq -R . | jq -sc .)
-              echo "templates=$TEMPLATES_JSON" >> $GITHUB_OUTPUT
-              echo "has-changes=true" >> $GITHUB_OUTPUT
+              printf 'templates=%s\n' "${TEMPLATES_JSON}" >> "$GITHUB_OUTPUT"
+              printf 'has-changes=true\n' >> "$GITHUB_OUTPUT"
               echo "Templates to test: ${CHANGED_TEMPLATES[@]}"
             else
-              echo "templates=[]" >> $GITHUB_OUTPUT
-              echo "has-changes=false" >> $GITHUB_OUTPUT
+              printf 'templates=[]\n' >> "$GITHUB_OUTPUT"
+              printf 'has-changes=false\n' >> "$GITHUB_OUTPUT"
               echo "No template changes detected"
             fi
           fi
 
   ios-pr:
+    permissions:
+      contents: read
     needs: detect-changed-templates
     if: needs.detect-changed-templates.outputs.has-changes == 'true'
     uses: ./.github/workflows/ios-reusable-workflow.yaml
@@ -155,6 +165,8 @@ jobs:
       templates: ${{ needs.detect-changed-templates.outputs.templates }}
 
   android-pr:
+    permissions:
+      contents: read
     needs: detect-changed-templates
     if: needs.detect-changed-templates.outputs.has-changes == 'true'
     uses: ./.github/workflows/android-reusable-workflow.yaml
@@ -168,31 +180,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PR Summary
+        env:
+          HAS_CHANGES: ${{ needs.detect-changed-templates.outputs.has-changes }}
+          TEST_ALL: ${{ needs.detect-changed-templates.outputs.test-all }}
+          TEMPLATES_JSON: ${{ needs.detect-changed-templates.outputs.templates }}
+          IOS_RESULT: ${{ needs.ios-pr.result }}
+          ANDROID_RESULT: ${{ needs.android-pr.result }}
         run: |
-          echo "## Template Test Results" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Template Test Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
 
-          if [ "${{ needs.detect-changed-templates.outputs.has-changes }}" != "true" ]; then
-            echo "✓ No template changes detected - tests skipped" >> $GITHUB_STEP_SUMMARY
+          if [ "${HAS_CHANGES}" != "true" ]; then
+            echo "✓ No template changes detected - tests skipped" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
 
-          if [ "${{ needs.detect-changed-templates.outputs.test-all }}" == "true" ]; then
-            echo "ℹ️ Core files changed - testing all templates" >> $GITHUB_STEP_SUMMARY
+          if [ "${TEST_ALL}" == "true" ]; then
+            echo "ℹ️ Core files changed - testing all templates" >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "ℹ️ Testing changed templates only" >> $GITHUB_STEP_SUMMARY
+            echo "ℹ️ Testing changed templates only" >> "$GITHUB_STEP_SUMMARY"
           fi
 
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Templates Tested" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          echo '${{ needs.detect-changed-templates.outputs.templates }}' | jq -r '.[]' >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Templates Tested" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          printf '%s' "${TEMPLATES_JSON}" | jq -r '.[]' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
 
-          if [ "${{ needs.ios-pr.result }}" == "failure" ] || [ "${{ needs.android-pr.result }}" == "failure" ]; then
-            echo "❌ Some tests failed" >> $GITHUB_STEP_SUMMARY
+          if [ "${IOS_RESULT}" == "failure" ] || [ "${ANDROID_RESULT}" == "failure" ]; then
+            echo "❌ Some tests failed" >> "$GITHUB_STEP_SUMMARY"
             exit 1
           else
-            echo "✅ All tests passed" >> $GITHUB_STEP_SUMMARY
+            echo "✅ All tests passed" >> "$GITHUB_STEP_SUMMARY"
           fi
