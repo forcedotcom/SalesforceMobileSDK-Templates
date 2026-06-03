@@ -605,17 +605,9 @@ npx skills add forcedotcom/SalesforceMobileSDK-Templates
 
 The `npx skills` CLI scans the root `./skills/` directory for subdirectories containing a `SKILL.md`.
 
-Available consumer skills:
-- `create-ios-app-with-mobile-sdk` - Create a new iOS Swift app from scratch with Mobile SDK
-- `create-android-app-with-mobile-sdk` - Create a new Android Kotlin app from scratch with Mobile SDK
-- `add-mobile-sdk-ios` - Add Mobile SDK to an existing iOS Swift app
-- `add-mobile-sdk-android` - Add Mobile SDK to an existing Android Kotlin app
-- `add-smartstore-ios` - Add SmartStore (encrypted local database) to an iOS app
-- `add-smartstore-android` - Add SmartStore to an Android app
-- `add-mobilesync-ios` - Add MobileSync (cloud data sync) to an iOS app
-- `add-mobilesync-android` - Add MobileSync to an Android app
-- `add-biometric-auth-ios` - Add biometric authentication (Face ID / Touch ID) to an iOS app
-- `add-biometric-auth-android` - Add biometric authentication (fingerprint / face / iris) to an Android app
+Available consumer skills (one per platform; each uses a thin `SKILL.md` router and a `references/` subdirectory with one file per scenario — create app, add SDK, add SmartStore, add MobileSync, add biometric auth, plus `api-reference.md` and `troubleshooting.md`):
+- `ios-mobile-sdk` — iOS Swift integration scenarios (create app, add SDK, SmartStore, MobileSync, biometric auth)
+- `android-mobile-sdk` — Android Kotlin integration scenarios (create app, add SDK, SmartStore, MobileSync, biometric auth)
 
 ### SDK Developer Skills (Internal)
 
