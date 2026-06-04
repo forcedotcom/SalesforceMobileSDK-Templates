@@ -136,7 +136,7 @@ build_ios() {
         return 1
     fi
     
-    if xcodebuild $BUILD_TARGET -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17' build CODE_SIGNING_ALLOWED=NO; then
+    if xcodebuild $BUILD_TARGET -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' build CODE_SIGNING_ALLOWED=NO; then
         print_status "SUCCESS" "$template_name (iOS): Build successful"
         for ((i=0; i<cd_back_count; i++)); do
             cd - > /dev/null
