@@ -8,7 +8,6 @@ var fs = require('fs');
 console.log('Installing npm dependencies');
 execSync('yarn install', {stdio:[0,1,2]});
 
-var rimraf = require('rimraf');
 
 console.log('Installing sdk dependencies');
 var sdkDependency = 'SalesforceMobileSDK-Android';
@@ -19,8 +18,8 @@ if (fs.existsSync(targetDir)) {
     console.log(targetDir + ' already exists - if you want to refresh it, please remove it and re-run install.js');
 } else {
     execSync('git clone --branch ' + branch + ' --single-branch --depth 1 ' + repoUrl + ' ' + targetDir, {stdio:[0,1,2]});
-    rimraf.sync(path.join('mobile_sdk', 'SalesforceMobileSDK-Android', 'hybrid'));
-    rimraf.sync(path.join('mobile_sdk', 'SalesforceMobileSDK-Android', 'libs', 'test'));
+    fs.rmSync(path.join('mobile_sdk', 'SalesforceMobileSDK-Android', 'hybrid'), {recursive: true, force: true});
+    fs.rmSync(path.join('mobile_sdk', 'SalesforceMobileSDK-Android', 'libs', 'test'), {recursive: true, force: true});
 
     // Patch settings.gradle.kts to exclude sample apps
     var settingsFile = path.join('mobile_sdk', 'SalesforceMobileSDK-Android', 'settings.gradle.kts');
