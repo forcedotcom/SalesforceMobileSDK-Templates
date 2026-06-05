@@ -59,14 +59,14 @@ Defines SDK dependencies and npm packages.
   },
   
   "dependencies": {
-    "react": "19.2.6",
-    "react-native": "0.83.9",
+    "react": "19.2.3",
+    "react-native": "0.84.1",
     "react-native-force": "git+https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#dev",
-    "@react-navigation/native": "7.1.10",
+    "@react-navigation/native": "7.2.5",
     "@react-navigation/native-stack": "7.16.0",
-    "react-native-safe-area-context": "5.5.2",
-    "react-native-gesture-handler": "2.29.1",
-    "react-native-screens": "4.20.0"
+    "react-native-safe-area-context": "5.8.0",
+    "react-native-gesture-handler": "2.31.2",
+    "react-native-screens": "4.25.2"
   }
 }
 ```
@@ -643,7 +643,7 @@ android {
     namespace "com.salesforce.reactnativetemplate"
     defaultConfig {
         applicationId "com.salesforce.reactnativetemplate"
-        minSdkVersion 28
+        minSdkVersion 31
         targetSdkVersion 35
         versionCode 1
         versionName "1.0"
