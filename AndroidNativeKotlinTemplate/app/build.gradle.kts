@@ -18,7 +18,7 @@ android {
 
     defaultConfig {
         targetSdk = 37
-        minSdk = 28
+        minSdk = 31
     }
 
     packaging {

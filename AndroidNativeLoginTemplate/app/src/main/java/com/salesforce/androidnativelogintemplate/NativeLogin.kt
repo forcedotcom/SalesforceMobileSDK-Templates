@@ -32,7 +32,6 @@ import android.os.Build.VERSION.SDK_INT
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK
-import android.os.Build.VERSION_CODES.S
 import android.os.Build.VERSION_CODES.TIRAMISU
 import android.os.Bundle
 import android.widget.Toast
@@ -75,10 +74,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -1192,22 +1189,10 @@ class NativeLogin : FragmentActivity() {
 
     @Composable
     fun LoginTheme(composable: @Composable () -> Unit) {
-        val dynamicColors = SDK_INT >= S
-        val isDarkTheme = isSystemInDarkTheme()
-        val colorScheme = when {
-            dynamicColors && isDarkTheme -> {
-                dynamicDarkColorScheme(LocalContext.current)
-            }
-
-            dynamicColors && !isDarkTheme -> {
-                dynamicLightColorScheme(LocalContext.current)
-            }
-
-            !dynamicColors && isDarkTheme -> {
-                darkColorScheme()
-            }
-
-            else -> lightColorScheme()
+        val colorScheme = if (isSystemInDarkTheme()) {
+            dynamicDarkColorScheme(LocalContext.current)
+        } else {
+            dynamicLightColorScheme(LocalContext.current)
         }
 
         MaterialTheme(colorScheme = colorScheme, content = composable)

@@ -31,9 +31,7 @@ import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.PendingIntent.getBroadcast
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
-import android.os.Build.VERSION_CODES.Q
 import android.os.Bundle
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.BigTextStyle
 import androidx.core.app.NotificationCompat.PRIORITY_DEFAULT
@@ -56,7 +54,6 @@ import java.util.UUID.randomUUID
 /* Actionable Notifications Template: When not using [PushNotificationsAdapter] and Actionable Notifications, this could be removed. */
 internal class PushNotificationsAdapter : PushNotificationInterface {
 
-    @RequiresApi(Q)
     override fun onPushMessageReceived(
         data: Map<String?, String?>?,
     ) {
