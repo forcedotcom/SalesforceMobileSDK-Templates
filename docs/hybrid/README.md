@@ -9,6 +9,19 @@ The Salesforce Mobile SDK provides two hybrid (Cordova) app templates. Both prod
 | `HybridLocalTemplate` | `hybrid_local` | Local HTML/JS/CSS app running in the Cordova WebView. All app code lives in `www/`. |
 | `HybridRemoteTemplate` | `hybrid_remote` | App that loads a Visualforce page or Experience Cloud site as its start page. The `startPage` field in `bootconfig.json` points to the remote URL. |
 
+## How `forcehybrid` Uses These Templates
+
+You never run `install.js` or `template.js` directly — `forcehybrid create` drives the whole sequence:
+
+1. Copies the selected template directory into the new app's `www/`
+2. Calls `template.js prepare()` (via `createHelper.js` → `templateHelper.prepareTemplate()`)
+3. `template.js prepare()` immediately calls `require('./install')` as its **first step**, running `install.js`
+4. The rest of `template.js prepare()` then configures OAuth, moves files, and cleans up
+
+So the effective order is: **`forcehybrid`** → copies template → **`template.js`** → **`install.js`** → back to `template.js` for the rest of setup.
+
+See [Package/docs/hybrid/README.md](../../SalesforceMobileSDK-Package/docs/hybrid/README.md) for the full `forcehybrid create` workflow.
+
 ## SDK Dependencies (`package.json`)
 
 Each hybrid template declares its SDK dependencies in `package.json`:
