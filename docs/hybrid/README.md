@@ -147,6 +147,23 @@ npm install
 node test/test_force.js --hybrid-local   # or --hybrid-remote
 ```
 
+## Version Management
+
+`setversion.sh` updates the SDK dependency branch in all template `package.json` files:
+
+```bash
+# On dev branch:
+./setversion.sh -v 14.0.0 -d yes
+# On master branch (after merging dev → master at release):
+./setversion.sh -v 14.0.0 -d no
+```
+
+For hybrid templates specifically, this rewrites the `sdkDependencies` branch in `HybridLocalTemplate/package.json` and `HybridRemoteTemplate/package.json`:
+- `-d yes` → `#dev` (e.g., `SalesforceMobileSDK-Shared.git#dev`)
+- `-d no` → `#v14.0.0` (e.g., `SalesforceMobileSDK-Shared.git#v14.0.0`)
+
+This controls whether `install.js` clones the dev branch or a specific release tag when generating a new hybrid app.
+
 ## Overriding SDK Dependencies
 
 To test with a custom SDK branch or fork, you have two options:
