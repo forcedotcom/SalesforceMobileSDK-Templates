@@ -239,6 +239,8 @@ Also detect which dependency manager the project uses:
 - Project has a `Podfile` → use the CocoaPods path
 - Project has `.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/` → use the SPM path
 
+**Do NOT regenerate the Xcode project.** If the project already ships an `.xcodeproj`, edit the existing `Podfile` and source files in place. Do not run `xcodegen generate`, do not author a new `project.yml`, and do not recreate the existing `<AppName>.xcodeproj/` directory. Regenerating the project drops the existing target/scheme configuration and produces a project that compiles but cannot resolve CocoaPods-supplied modules.
+
 ### Step 1: Add the SDK Dependency
 
 #### Option A — CocoaPods (project has a `Podfile`)
@@ -264,6 +266,12 @@ post_install do |installer|
   end
 end
 ```
+
+**Verify before installing.** Re-read the Podfile after editing and confirm:
+- The line `pod 'SalesforceSDKCore'` is present inside the `target` block.
+- Both sources are declared: `cdn.cocoapods.org` AND `github.com/forcedotcom/SalesforceMobileSDK-iOS-Specs`.
+
+If either is missing, your edit didn't land — `pod install` will succeed vacuously but the build will fail later with `Unable to find module dependency: 'SalesforceSDKCore'`.
 
 Then install:
 
@@ -692,9 +700,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 ### Step 3: Set Up Sync After Login in SceneDelegate.swift
 
-Add a `MobileSync` import and call `setupUserSyncsFromDefaultConfig()`, then trigger an initial sync.
+Add a `MobileSync` import and call `setupUserSyncsFromDefaultConfig()`, then run a registered sync.
 
-> **What `setupUserSyncsFromDefaultConfig()` actually does**: it reads `usersync.json` and **registers** the named sync configurations with the sync manager. It does **not** run them. To execute a registered sync, call `syncManager.reSync(named:onUpdate:)` after registration. The "Perform initial sync" example below shows the explicit, programmatic alternative — useful when you want a one-off sync that isn't declared in `usersync.json`.
+> **What `setupUserSyncsFromDefaultConfig()` actually does**: it reads `usersyncs.json` and **registers** the named sync configurations with the sync manager. It does **not** run them. To execute a registered sync, call `syncManager.reSync(named:onUpdate:)` after registration.
+
+> **The `onUpdate` block fires asynchronously** as the sync transitions through `.running` → `.done` / `.failed`. `reSync(named:onUpdate:)` returns the initial `SyncState` immediately, so any UI you build before the block fires will show pre-sync state. Reload your data source from SmartStore **inside** the `onUpdate` block when status reaches `.done`, otherwise your view stays empty even after the sync succeeds.
 
 **Before:**
 ```swift
@@ -712,7 +722,7 @@ func setupRootViewController() {
 **After:**
 ```swift
 import MobileSync
-import SalesforceSDKCore   // UserAccountManager lives in Core
+import SalesforceSDKCore
 
 // ...
 
@@ -720,49 +730,47 @@ func setupRootViewController() {
     MobileSyncSDKManager.shared.setupUserStoreFromDefaultConfig()
     MobileSyncSDKManager.shared.setupUserSyncsFromDefaultConfig()
 
-    // Trigger a sync registered in usersync.json by name.
+    // Build the post-login UI first; it will start empty.
+    let listVC = MyAccountsViewController()
+    window?.rootViewController = UINavigationController(rootViewController: listVC)
+
+    // Run the sync registered in usersyncs.json by name. The onUpdate
+    // block fires across .running → .done / .failed; reload the UI
+    // from SmartStore once the sync is .done.
     if let user = UserAccountManager.shared.currentUserAccount {
         let syncManager = SyncManager.sharedInstance(forUserAccount: user)
         try? syncManager.reSync(named: "<SyncName>") { sync in
-            print("Sync \(sync.syncName ?? "") status: \(sync.status)")
-        }
-
-        // Or run a one-off sync that isn't in usersync.json.
-        let target = SoqlSyncDownTarget.newSyncTarget("SELECT Id, Name FROM <SObjectType>")
-        let options = SyncOptions.newSyncOptions(forSyncDown: .overwrite)
-        syncManager.syncDown(target: target,
-                             options: options,
-                             soupName: "<SoupName>") { sync in
-            print("Initial sync status: \(sync.status)")
+            if sync.status == .done {
+                DispatchQueue.main.async {
+                    listVC.reloadFromStore()
+                }
+            } else if sync.status == .failed {
+                NSLog("Sync \(sync.syncName ?? "<unnamed>") failed")
+            }
         }
     }
-
-    let vc = UIViewController()
-    vc.view.backgroundColor = .systemBackground
-    let label = UILabel()
-    label.text = "SmartStore + MobileSync ready"
-    label.translatesAutoresizingMaskIntoConstraints = false
-    vc.view.addSubview(label)
-    NSLayoutConstraint.activate([
-        label.centerXAnchor.constraint(equalTo: vc.view.centerXAnchor),
-        label.centerYAnchor.constraint(equalTo: vc.view.centerYAnchor)
-    ])
-    window?.rootViewController = vc
 }
 ```
 
-Replace `<SObjectType>`, `<SoupName>`, and `<SyncName>` with actual values (e.g. `Contact`, `Item`, and a sync name from `usersync.json`).
+Replace `<SyncName>` with the `syncName` you declared in `usersyncs.json`. `MyAccountsViewController` stands in for whatever view you want to populate from SmartStore — its `reloadFromStore()` is your responsibility (typically a query against the soup followed by a `tableView.reloadData()` or equivalent).
 
-> **Swift name vs. Objective-C class**: the Mobile SDK is written in Objective-C and exposes Swift-native names via `NS_SWIFT_NAME` annotations. From Swift you write `SyncManager`, `SoqlSyncDownTarget`, `SyncOptions`, and `UserAccountManager`; the underlying ObjC classes are `SFMobileSyncSyncManager`, `SFSoqlSyncDownTarget`, `SFSyncOptions`, and `SFUserAccountManager`. They aren't deprecated — they're the same types under different names per language. See [API Reference](#api-reference) below.
+> **Swift name vs. Objective-C class**: the Mobile SDK is written in Objective-C and exposes Swift-native names via `NS_SWIFT_NAME` annotations. From Swift you write `UserAccountManager`, `SyncManager`, `SoqlSyncDownTarget`, and `SyncOptions`; the underlying ObjC classes are `SFUserAccountManager`, `SFMobileSyncSyncManager`, `SFSoqlSyncDownTarget`, and `SFSyncOptions`. They aren't deprecated — they're the same types under different names per language. A few specific gotchas:
+>
+> - `UserAccountManager.shared` is a **property**, not a method — write `UserAccountManager.shared.currentUserAccount`, not `UserAccountManager.shared().currentUser`. `currentUserAccount` is `Optional<UserAccount>`, so guard with `if let`.
+> - `SyncManager.sharedInstance` takes the label `forUserAccount:` from Swift (`NS_SWIFT_NAME(sharedInstance(forUserAccount:))`), not `for:`.
+> - `SoqlSyncDownTarget` has no Swift initializer; construct it via `SoqlSyncDownTarget.newSyncTarget(_:)`.
+>
+> See [API Reference](#api-reference) below for the full class mapping.
 
-### Step 4: Create usersync.json
+### Step 4: Create usersyncs.json
 
-Create `usersync.json` inside the app target's source folder:
+Create `usersyncs.json` inside the app target's source folder.
 
 ```json
 {
   "syncs": [
     {
+      "syncName": "<SyncName>",
       "syncType": "syncDown",
       "soupName": "<SoupName>",
       "target": {
@@ -772,18 +780,61 @@ Create `usersync.json` inside the app target's source folder:
       "options": {
         "mergeMode": "OVERWRITE"
       }
+    },
+    {
+      "syncName": "<SyncUpName>",
+      "syncType": "syncUp",
+      "soupName": "<SoupName>",
+      "target": {
+        "createFieldlist": ["Name"],
+        "updateFieldlist": ["Name"]
+      },
+      "options": {
+        "fieldlist": ["Name"],
+        "mergeMode": "OVERWRITE"
+      }
     }
   ]
 }
 ```
 
-Replace `<SoupName>` and `<SObjectType>` with actual values.
+Replace `<SyncName>`, `<SyncUpName>`, `<SoupName>`, and `<SObjectType>` with actual values, and tailor the field lists to the columns you want to push. The sync-up entry deliberately omits `target.type`; the SDK defaults to `"rest"` (`SFCollectionSyncUpTarget`), the standard sync-up target. Set `target.type` only if you ship a custom `SFSyncUpTarget` subclass (in which case use `"custom"` and add an `iOSImpl` key naming it).
 
-Add `usersync.json` to the Xcode target and verify it appears in **Copy Bundle Resources**.
+`syncName` is required on each entry — it's the identifier you pass to `syncManager.reSync(named:)` to run the sync.
 
-### Step 5: Build and Verify
+Add `usersyncs.json` to the Xcode target and verify it appears in **Copy Bundle Resources**.
 
-Build and run. After login, you should see **"SmartStore + MobileSync ready"** and data should begin syncing from Salesforce.
+### Step 5: Creating local rows from app code
+
+When the user creates a record in your app *before* it has been pushed to Salesforce, the row exists only in SmartStore and has no server `Id`. Flag it as locally created so sync-up will push it; the server `Id` is filled in on the next sync-up.
+
+```swift
+import MobileSync
+import SalesforceSDKCore
+
+func createLocalAccount(name: String, phone: String) {
+    guard let user = UserAccountManager.shared.currentUserAccount,
+          let store = SmartStore.shared(withName: SmartStore.defaultStoreName, forUserAccount: user)
+    else { return }
+
+    let entry: [String: Any] = [
+        "Name": name,
+        "Phone": phone,
+        "attributes": ["type": "Account"],
+        "__local__": true,
+        "__locally_created__": true,
+        "__locally_updated__": false,
+        "__locally_deleted__": false
+    ]
+    _ = store.upsert(entries: [entry], forSoupNamed: "<SoupName>")
+}
+```
+
+Use the two-arg `upsert(entries:forSoupNamed:)` overload for local creates — it keys on the soup's internal `_soupEntryId`. The three-arg `upsert(entries:forSoupNamed:withExternalIdPath:)` overload is for upsert-by-server-`Id` *after* a sync-down has populated the row; passing it for a brand-new local row throws because the external-id field is nil.
+
+### Step 6: Build and Verify
+
+Build and run. After login, you should see **"SmartStore + MobileSync ready"** and data should begin syncing from Salesforce. Confirm the launch log line `Setting up user syncs using config found in usersyncs.json` appears — if not, the file isn't in the bundle.
 
 ---
 
@@ -796,9 +847,7 @@ This section adds Face ID / Touch ID biometric authentication to an existing iOS
 
 **The app must already have the Mobile SDK wired up.** Check `AppDelegate.swift` for `SalesforceManager.initializeSDK()` (or one of its subclasses) and that `bootconfig.plist` exists. If not, complete the [Add Mobile SDK](#add-mobile-sdk) section first.
 
-Before starting, confirm:
-- **App target name** (e.g. `MyApp`)
-- **Biometric policy**: `deviceOwner` (Face ID / Touch ID / passcode fallback) or `deviceOwnerAuthenticationWithBiometrics` (biometric only, no passcode fallback)
+**The Connected App must already publish the biometric policy custom attributes.** This skill assumes that's done — if `BiometricAuthenticationManagerInternal.shared.enabled` returns `false` at runtime, talk to your Salesforce admin before debugging the client.
 
 ### Step 1: Update Info.plist for Biometric Permissions
 
@@ -809,55 +858,46 @@ Add the Face ID usage description to `Info.plist`:
 <string>This app uses Face ID to verify your identity before accessing Salesforce data.</string>
 ```
 
-### Step 2: Configure Biometric Authentication in AppDelegate.swift
+### Step 2: Prompt for Biometric Opt-In After Login
 
-Add biometric configuration after SDK initialization:
+In `SceneDelegate.swift`, present the SDK's opt-in dialog after successful login. Guard on `enabled` and `hasBiometricOptedIn()` so the dialog only appears once and only when the policy is in force for the current user.
 
 ```swift
-import UIKit
 import SalesforceSDKCore
 
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
-    var window: UIWindow?
+func setupRootViewController() {
+    // ... build your post-login root view controller ...
 
-    override init() {
-        super.init()
-        SalesforceManager.initializeSDK()
-        
-        // Configure biometric authentication
-        BiometricAuthenticationManager.shared.biometricAuthenticationEnabled = true
-        BiometricAuthenticationManager.shared.biometricAuthenticationPolicy = .deviceOwner
+    let bioAuth = BiometricAuthenticationManagerInternal.shared
+    if bioAuth.enabled, !bioAuth.hasBiometricOptedIn(), let root = window?.rootViewController {
+        bioAuth.presentOptInDialog(viewController: root)
     }
-    
-    // ... rest of AppDelegate
 }
 ```
 
-Use `.deviceOwner` for Face ID / Touch ID with passcode fallback, or `.deviceOwnerAuthenticationWithBiometrics` for biometric-only (no passcode fallback).
+Notes on the API:
 
-### Step 3: Prompt for Biometric Enrollment After Login
+- `BiometricAuthenticationManagerInternal.shared` is the singleton; it conforms to the public `BiometricAuthenticationManager` protocol (`@objc(SFBiometricAuthenticationManager)`).
+- `enabled` is a **read-only** `Bool` derived from the Connected App policy stored at login. There is no client-side switch — biometric is enabled server-side via the Connected App, not from the app code.
+- `hasBiometricOptedIn()` lets you avoid re-prompting users who have already opted in or out.
 
-In `SceneDelegate.swift`, add biometric enrollment prompt after successful login:
+### Step 3: (Optional) Lock the App On Demand
+
+To lock immediately — for example, from an overflow menu's "Lock now" action — call `lock()`:
 
 ```swift
-func setupRootViewController() {
-    // Show biometric opt-in if not already configured
-    if !BiometricAuthenticationManager.shared.locked {
-        BiometricAuthenticationManager.shared.showBiometricEnrollment(presentingController: nil) { enrolled in
-            if enrolled {
-                print("User opted in to biometric authentication")
-            }
-        }
-    }
-    
-    // ... rest of setupRootViewController
-}
+BiometricAuthenticationManagerInternal.shared.lock()
 ```
+
+The SDK also relocks automatically when the app comes to the foreground after the policy's configured idle timeout has elapsed.
 
 ### Step 4: Build and Verify
 
-Build and run. After login, the app should prompt the user to enable Face ID / Touch ID. On subsequent launches, the user will need to authenticate biometrically before accessing the app.
+Build and run. After login on a user whose Connected App has the biometric policy in force:
+
+1. The opt-in dialog appears once. Tap **Enable**.
+2. Background the app and wait the configured timeout, or call `lock()`.
+3. Bring the app to the foreground — the SDK presents the Face ID / Touch ID unlock screen with a "Log In with Biometric" button.
 
 ---
 
@@ -893,7 +933,7 @@ The target is missing `supportedDestinations` (Xcode 16+ excludes the simulator 
 ### Biometric Issues
 
 **Biometric prompt does not appear**
-Verify `NSFaceIDUsageDescription` is in `Info.plist` and `BiometricAuthenticationManager.shared.biometricAuthenticationEnabled` is set to `true`.
+Verify `NSFaceIDUsageDescription` is in `Info.plist` and `BiometricAuthenticationManagerInternal.shared.enabled` returns `true` at runtime. If `enabled` is `false`, the Connected App's biometric policy isn't in force for this user — talk to your Salesforce admin.
 
 ---
 
