@@ -49,7 +49,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Key files
     var templateBootconfigFile = path.join('bootconfig.json');
     var templateServersFile = path.join('servers.xml'); // android only
-    var templateInfoFile = path.join('..', 'platforms', 'ios', config.appname, config.appname + '-Info.plist'); // ios only
+    var templateInfoFile = path.join('..', 'platforms', 'ios', 'App', 'App-Info.plist'); // ios only
 
     //
     // Replace in files
