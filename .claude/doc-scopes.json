@@ -65,20 +65,6 @@
       "scope": ["ReactNativeTemplate", "ReactNativeTypeScriptTemplate", "ReactNativeDeferredTemplate", "MobileSyncExplorerReactNative"],
       "description": "Deep dive into React Native template structure and mechanics"
     },
-    {
-      "doc": "skills/README.md",
-      "scope": "skills",
-      "description": "Overview of consumer agent skills for developers building apps with Mobile SDK"
-    },
-    {
-      "doc": "skills/android-mobile-sdk/SKILL.md",
-      "scope": "skills/android-mobile-sdk",
-      "description": "Agent skill for integrating Salesforce Mobile SDK into Android Kotlin applications"
-    },
-    {
-      "doc": "skills/ios-mobile-sdk/SKILL.md",
-      "scope": "skills/ios-mobile-sdk",
-      "description": "Agent skill for integrating Salesforce Mobile SDK into iOS Swift applications"
-    }
+
   ]
 }
