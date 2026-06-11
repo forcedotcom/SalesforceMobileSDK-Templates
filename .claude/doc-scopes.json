@@ -1,0 +1,84 @@
+{
+  "docs": [
+    {
+      "doc": "CLAUDE.md",
+      "scope": ".",
+      "description": "AI instructions for working with the Salesforce Mobile SDK Templates repository"
+    },
+    {
+      "doc": "README.md",
+      "scope": ".",
+      "description": "Overview of the Salesforce Mobile SDK Templates library"
+    },
+    {
+      "doc": "TESTING.md",
+      "scope": ".",
+      "description": "Template testing guide covering test script usage and template validation"
+    },
+    {
+      "doc": "MobileSyncExplorerKotlinTemplate/README.md",
+      "scope": "MobileSyncExplorerKotlinTemplate",
+      "description": "Android native template demonstrating Mobile SDK with Jetpack Compose"
+    },
+    {
+      "doc": "MobileSyncExplorerReactNative/README.md",
+      "scope": "MobileSyncExplorerReactNative",
+      "description": "MobileSyncExplorer application written using React Native"
+    },
+    {
+      "doc": "MobileSyncExplorerSwift/README.md",
+      "scope": "MobileSyncExplorerSwift",
+      "description": "MobileSyncExplorer Sample in Swift"
+    },
+    {
+      "doc": "docs/hybrid/README.md",
+      "scope": "docs/hybrid",
+      "description": "Guide to Hybrid (Cordova) templates for local and remote apps"
+    },
+    {
+      "doc": "docs/react-native-templates/README.md",
+      "scope": "docs/react-native-templates",
+      "description": "Comprehensive guide covering all React Native templates"
+    },
+    {
+      "doc": "docs/react-native-templates/MobileSyncExplorerReactNative.md",
+      "scope": "docs/react-native-templates",
+      "description": "Complete sample application demonstrating offline data synchronization"
+    },
+    {
+      "doc": "docs/react-native-templates/ReactNativeDeferredTemplate.md",
+      "scope": "docs/react-native-templates",
+      "description": "Deferred authentication React Native template with guest mode"
+    },
+    {
+      "doc": "docs/react-native-templates/ReactNativeTemplate.md",
+      "scope": "docs/react-native-templates",
+      "description": "Basic JavaScript React Native template for Mobile SDK applications"
+    },
+    {
+      "doc": "docs/react-native-templates/ReactNativeTypeScriptTemplate.md",
+      "scope": "docs/react-native-templates",
+      "description": "TypeScript React Native template for Mobile SDK applications"
+    },
+    {
+      "doc": "docs/react-native-templates/TEMPLATE_ANATOMY.md",
+      "scope": "docs/react-native-templates",
+      "description": "Deep dive into React Native template structure and mechanics"
+    },
+    {
+      "doc": "skills/README.md",
+      "scope": "skills",
+      "description": "Overview of consumer agent skills for developers building apps with Mobile SDK"
+    },
+    {
+      "doc": "skills/android-mobile-sdk/SKILL.md",
+      "scope": "skills/android-mobile-sdk",
+      "description": "Agent skill for integrating Salesforce Mobile SDK into Android Kotlin applications"
+    },
+    {
+      "doc": "skills/ios-mobile-sdk/SKILL.md",
+      "scope": "skills/ios-mobile-sdk",
+      "description": "Agent skill for integrating Salesforce Mobile SDK into iOS Swift applications"
+    }
+  ]
+}
