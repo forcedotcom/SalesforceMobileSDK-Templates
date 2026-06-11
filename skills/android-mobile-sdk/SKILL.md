@@ -1,6 +1,6 @@
 ---
 name: android-mobile-sdk
-description: Comprehensive guide for integrating Salesforce Mobile SDK into Android Kotlin applications. Covers creating new apps, adding SDK authentication, SmartStore (encrypted database), MobileSync (cloud sync), and biometric authentication.
+description: Add Salesforce Mobile SDK capabilities to Android Kotlin applications. Covers creating new apps with the SDK pre-integrated, or adding base SDK, SmartStore (encrypted database), MobileSync (cloud sync), and biometric authentication to existing applications.
 ---
 
 # Android Salesforce Mobile SDK Integration
@@ -159,7 +159,9 @@ Now proceed to the [Add Mobile SDK](#add-mobile-sdk) section below to create the
 <a name="add-mobile-sdk"></a>
 ## Add Mobile SDK
 
-This section integrates the Salesforce Mobile SDK into an existing Android Kotlin application, wiring up authentication so users are prompted to log in to Salesforce when the app launches.
+This section integrates the Salesforce Mobile SDK into an **existing** Android Kotlin application, wiring up authentication so users are prompted to log in to Salesforce when the app launches.
+
+> **Important — do not recreate Gradle scaffolding.** The app already has a working Gradle wrapper, `gradle.properties`, `settings.gradle.kts`, and root `build.gradle.kts`. Do **not** overwrite those files. The instructions below only modify `app/build.gradle.kts`, `AndroidManifest.xml`, and `MainActivity.kt`, and create `MainApplication.kt`, `bootconfig.xml`, `servers.xml`, and `strings.xml`. If you find yourself about to write a `gradle-wrapper.properties` or root `build.gradle.kts`, stop — you're confusing this scenario with **Create New App**.
 
 ### Prerequisites
 
@@ -172,11 +174,16 @@ Before starting, gather:
 
 ### Step 1: Add the SDK Dependency
 
-In `app/build.gradle.kts`, add `MobileSyncSDKManager`. Using `MobileSync` as the single dependency pulls in `SmartStore` and `SalesforceSDKCore` transitively.
+This scenario adds **Salesforce Mobile SDK Core only** — OAuth login and REST. Adding SmartStore (encrypted local database) or MobileSync (cloud data sync) is covered by the dedicated scenarios later in this skill; do not pre-emptively pull them in here.
+
+In `app/build.gradle.kts`, **add** the `SalesforceSDK` artifact (Mobile SDK Core) via Maven Central. Don't remove existing dependencies the app already declares:
 
 ```kotlin
 dependencies {
-    implementation("com.salesforce.mobilesdk:MobileSync:13.2.0")
+    implementation("com.salesforce.mobilesdk:SalesforceSDK:13.2.0")
+    // Required: SalesforceActivity (used in Step 7) extends AppCompatActivity.
+    // Keep the existing appcompat dependency if your app already has it, or add:
+    implementation("androidx.appcompat:appcompat:1.7.0")
 }
 ```
 
@@ -224,17 +231,19 @@ Create `MainApplication.kt` in the app's main package (same directory as `MainAc
 package <AppPackage>
 
 import android.app.Application
-import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
+import com.salesforce.androidsdk.app.SalesforceSDKManager
 
 class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        MobileSyncSDKManager.initNative(applicationContext, MainActivity::class.java)
+        SalesforceSDKManager.initNative(applicationContext, MainActivity::class.java)
     }
 }
 ```
 
-Replace `<AppPackage>` with your package name. `MobileSyncSDKManager.initNative()` must be called before any SDK class is used.
+Replace `<AppPackage>` with your package name. `SalesforceSDKManager.initNative()` must be called before any SDK class is used.
+
+> **Adding SmartStore or MobileSync later?** Those are separate scenarios in this same skill (see _Add SmartStore_ and _Add MobileSync_ below). They swap the dependency artifact and the SDK manager class. Don't pre-emptively pull them in here — start with `SalesforceSDK` and stay on it for the base authentication scenario.
 
 ### Step 3: Update AndroidManifest.xml
 
@@ -584,6 +593,18 @@ Create `app/src/main/res/raw/usersyncs.json` (next to `userstore.json`):
       "options": {
         "mergeMode": "LEAVE_IF_CHANGED"
       }
+    },
+    {
+      "syncName": "syncUp<SoupName>",
+      "syncType": "syncUp",
+      "soupName": "<SoupName>",
+      "target": {
+        "createFieldlist": ["Name"],
+        "updateFieldlist": ["Name"]
+      },
+      "options": {
+        "mergeMode": "LEAVE_IF_CHANGED"
+      }
     }
   ]
 }
@@ -592,14 +613,75 @@ Create `app/src/main/res/raw/usersyncs.json` (next to `userstore.json`):
 Replace:
 - `<SoupName>` with the soup name used in `userstore.json` — this is the **local** SmartStore table name
 - `<SalesforceObject>` in the SOQL `FROM` clause with the **Salesforce sObject API name** to sync from (e.g. `Account`, `Contact`)
+- Tailor `createFieldlist` and `updateFieldlist` to the fields you want to push. Omitting `target.type` is intentional — the SDK defaults to `CollectionSyncUpTarget`, the standard sync-up target.
 
 > The soup name and the sObject name are often the same but they don't have to be. The soup is a local storage concept; the SOQL target is a server-side Salesforce object.
 
-The SDK reads `usersyncs.json` automatically from `res/raw/` — no code registration is needed beyond calling `setupUserSyncsFromDefaultConfig()`.
+The SDK reads `usersyncs.json` automatically from `res/raw/` when you call `setupUserSyncsFromDefaultConfig()`. That call **registers** each named sync as a `SyncState` record in SmartStore — it does **not** run any of them. To actually pull data from Salesforce, you must invoke a sync explicitly (Step 5).
 
-### Step 5: Build and Verify
+### Step 5: Trigger the Sync to Pull Data
 
-Build and run. After login, you should see **"SmartStore + MobileSync ready"** and data should begin syncing from Salesforce.
+After `setupUserSyncsFromDefaultConfig()` has registered the syncs, call `reSync` to run one.
+
+> **`onUpdate` fires asynchronously** as the sync transitions through `RUNNING` → `DONE` / `FAILED`. Re-query the soup and update your UI **inside** the `onUpdate` block when status reaches `DONE` — your view will stay empty if you query before that.
+
+> **Always pass the current user account** to `SyncManager.getInstance(userAccount)`. The no-arg overload uses the default org and will fail for sandbox or multi-org setups.
+
+```kotlin
+import com.salesforce.androidsdk.accounts.UserAccount
+import com.salesforce.androidsdk.mobilesync.manager.SyncManager
+import com.salesforce.androidsdk.mobilesync.util.SyncState
+
+override fun onResume(client: RestClient?) {
+    if (client == null) return
+    MobileSyncSDKManager.getInstance().setupUserStoreFromDefaultConfig()
+    MobileSyncSDKManager.getInstance().setupUserSyncsFromDefaultConfig()
+
+    val user: UserAccount = MobileSyncSDKManager.getInstance().userAccountManager.currentUser
+    SyncManager.getInstance(user).reSync("syncDown<SoupName>", object : SyncManager.SyncUpdateCallback {
+        override fun onUpdate(sync: SyncState) {
+            if (sync.status == SyncState.Status.DONE) {
+                // Re-query the soup and update your UI here.
+            } else if (sync.status == SyncState.Status.FAILED) {
+                Log.e(TAG, "Sync failed: ${sync.error}")
+            }
+        }
+    })
+}
+```
+
+> **`SyncUpdateCallback` is a regular `interface` (not `fun interface`).** SAM-conversion lambdas don't compile — use the `object :` expression shown above.
+
+### Step 6: Creating Local Records for Sync-Up
+
+When the user creates a record before it has been pushed to Salesforce, flag it as locally created so sync-up will push it. The server `Id` is filled in on the next sync-up.
+
+```kotlin
+import org.json.JSONObject
+
+fun createLocalRecord(name: String) {
+    val user = MobileSyncSDKManager.getInstance().userAccountManager.currentUser
+    val store = MobileSyncSDKManager.getInstance().getSmartStore(user)
+
+    val entry = JSONObject().apply {
+        put("attributes", JSONObject().put("type", "<SalesforceObject>"))  // e.g. "Account"
+        put("Name", name)
+        put("__local__", true)           // boolean true, not integer 1
+        put("__locally_created__", true)
+        put("__locally_updated__", false)
+        put("__locally_deleted__", false)
+    }
+    store.upsert("<SoupName>", entry)    // do NOT pre-set _soupEntryId
+}
+```
+
+> **`__local__` must be a JSON boolean `true`, not `1`.** The SDK's dirty-record query hardcodes `WHERE {soup:__local__} = 'true'` (string comparison). SmartStore serialises a JSON boolean as the string `"true"` when the index type is `"string"` (set in `userstore.json`). An integer `1` never matches.
+
+> **Do not pre-set `_soupEntryId`** before calling `upsert`. SmartStore treats a record that already carries `_soupEntryId` as an update request; if that ID doesn't exist the call is a silent no-op.
+
+### Step 7: Build and Verify
+
+Build and run. After login, you should see **"SmartStore + MobileSync ready"**, and `reSync` will fetch records from Salesforce into the local `<SoupName>` soup. Verify by querying the soup with `SmartStoreInspectorActivity` or your own SmartSQL `SELECT {<SoupName>:_soup} FROM {<SoupName>}` query.
 
 ---
 
@@ -613,6 +695,14 @@ This section adds fingerprint / face / iris biometric authentication to an exist
 **The app must already have the Mobile SDK integrated.** Check `MainApplication.kt` for `MobileSyncSDKManager.initNative()` (or `SmartStoreSDKManager`) and that `bootconfig.xml` exists. If not, complete the [Add Mobile SDK](#add-mobile-sdk) section first.
 
 The SDK handles all locking, unlocking, and the native biometric prompt automatically once the user opts in.
+
+**Connected App configuration (required, in your Salesforce org):**
+
+- **Setup → App Manager → your Connected App → drop-down → View → Custom Attributes → New**
+  - Key: `ENABLE_BIOMETRIC_AUTHENTICATION`
+  - Value: `"true"` (with the literal quotes — Custom Attribute values are JSON literals; `true` without quotes will not enable the policy)
+- **Setup → App Manager → your Connected App → Edit Policies → OAuth Policies**: **uncheck "Require Secret for Refresh Token Flow"**. Mobile SDK uses PKCE without a client secret. If this is checked, biometric success → token refresh → `invalid_client` 400 → SDK silently logs the user out and shows fresh OAuth (see Troubleshooting below).
+- The user must log in *fresh* after these changes — Custom Attributes and OAuth policies are read from the userinfo response at login time, so a re-login picks up the new values immediately.
 
 ### Step 1: Add the androidx.biometric Dependency
 
@@ -629,7 +719,7 @@ Sync Gradle after editing.
 
 ### Step 2: Update MainActivity.kt
 
-Add `onPostResume()` to check device biometric capability and present the SDK opt-in dialog if needed.
+Trigger the opt-in check from `onResume(client: RestClient?)` — the SDK callback that fires *after* the user account is bound. Triggering it from `onPostResume()` will silently skip the dialog on first login because the user isn't bound yet, and `enabled` reads `false`.
 
 **Add these imports** (at the top of `MainActivity.kt`):
 
@@ -640,27 +730,45 @@ import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 ```
 
-**Add `onPostResume()`** (after `onResume(client: RestClient?)`):
+**Drop a no-arg-state guard into `onCreate`** so activity recreate doesn't restore the SDK's opt-in dialog (it lacks a no-arg constructor — see Troubleshooting). Replace `super.onCreate(savedInstanceState)` with:
 
 ```kotlin
-override fun onPostResume() {
-    super.onPostResume()
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(null)   // Discard prior FragmentManager state — SDK's
+                           // BiometricAuthOptInPrompt has no no-arg ctor.
+    // ... rest of your onCreate ...
+}
+```
 
+**Extend your existing `onResume(client: RestClient?)`** to present the opt-in dialog at the right moment:
+
+```kotlin
+override fun onResume(client: RestClient?) {
+    if (client == null) return
+    // ... existing post-login logic (e.g. setupUserStoreFromDefaultConfig) ...
+    maybePresentBiometricOptIn()
+}
+
+private fun maybePresentBiometricOptIn() {
+    val mgr = MobileSyncSDKManager.getInstance().biometricAuthenticationManager ?: return
     val deviceHasBiometrics = BiometricManager.from(this).canAuthenticate(
         BIOMETRIC_STRONG or BIOMETRIC_WEAK
     ) == BiometricManager.BIOMETRIC_SUCCESS
-
-    MobileSyncSDKManager.getInstance().biometricAuthenticationManager?.run {
-        if (enabled && deviceHasBiometrics && !hasBiometricOptedIn()) {
-            presentOptInDialog(supportFragmentManager)
+    if (mgr.enabled && deviceHasBiometrics && !mgr.hasBiometricOptedIn()) {
+        // Defer to next main-thread tick: on fresh login, onResume(client) is
+        // invoked from a USERSWITCHED broadcast receiver while the
+        // FragmentManager is in saved state, which would otherwise crash with
+        // "Can not perform this action after onSaveInstanceState".
+        window.decorView.post {
+            if (!supportFragmentManager.isStateSaved && !mgr.hasBiometricOptedIn()) {
+                mgr.presentOptInDialog(supportFragmentManager)
+            }
         }
     }
 }
 ```
 
-> **`onPostResume()`** fires after `onResume()` and after the activity window is fully visible — the correct lifecycle point to present a dialog.
-
-> **`biometricAuthenticationManager`** is a nullable property on `SalesforceSDKManager`. The `?.run { }` block safely no-ops when no user is logged in.
+> **`biometricAuthenticationManager`** is a nullable property on `SalesforceSDKManager`. It's null until a user is authenticated.
 
 ### Step 3: Build and Verify
 
@@ -713,19 +821,42 @@ The `soupName` in `usersyncs.json` must exactly match the `soupName` in `usersto
 **`setupUserSyncsFromDefaultConfig()` silently does nothing**
 `usersyncs.json` must be in `app/src/main/res/raw/`.
 
+**No data appears in the soup after login**
+`setupUserSyncsFromDefaultConfig()` only **registers** the named syncs from `usersyncs.json`; it does not run them. Trigger one explicitly with `SyncManager.getInstance().reSync(syncName, callback)` (see "Add MobileSync" Step 5). Symptoms: `SyncManager.getInstance().getSyncStatus("<syncName>")` returns a `SyncState` with status `NEW` and `progress == 0`.
+
+**`Unresolved reference: SyncManager`**
+Add `import com.salesforce.androidsdk.mobilesync.manager.SyncManager`. The `MobileSyncSDKManager` does **not** expose `SyncManager` as a property — always access it via the `SyncManager.getInstance()` companion function.
+
 ### Biometric Issues
 
 **Opt-in dialog never appears**
-`enabled` is `false` — the connected app in your org does not have `ENABLE_BIOMETRIC_AUTHENTICATION` set. The dialog correctly does not appear.
+Three real causes:
+1. The Connected App doesn't have `ENABLE_BIOMETRIC_AUTHENTICATION` Custom Attribute set to `"true"` (with quotes).
+2. Your code triggers `presentOptInDialog` from `onPostResume()` rather than `onResume(client: RestClient?)` — on a fresh login the user account isn't bound during `onPostResume`, so `mgr.enabled` reads `false` and the `if` is skipped. Trigger from `onResume(client)` instead.
+3. The user wasn't logged in fresh after the Custom Attribute was added. Log out and back in.
 
-**`IllegalStateException`: Can not perform this action after onSaveInstanceState**
-The dialog is being presented too early in the lifecycle. Ensure you are calling `presentOptInDialog` from `onPostResume()`, not `onResume()`.
+**`IllegalStateException`: Can not perform this action after onSaveInstanceState (right after fresh login)**
+The SDK's `onResume(client)` is invoked from a `USERSWITCHED` broadcast receiver after a fresh login, when the FragmentManager has already saved state. Defer the dialog presentation to the next main-thread tick and guard against state loss:
+
+```kotlin
+window.decorView.post {
+    if (!supportFragmentManager.isStateSaved && !mgr.hasBiometricOptedIn()) {
+        mgr.presentOptInDialog(supportFragmentManager)
+    }
+}
+```
+
+**`Fragment$InstantiationException: could not find Fragment constructor` for `BiometricAuthOptInPrompt`**
+On activity recreate (rotation, theme change, process restore), FragmentManager tries to restore the SDK's opt-in dialog using a no-arg constructor that doesn't exist. Workaround: pass `null` to `super.onCreate(savedInstanceState)` in your `MainActivity.onCreate` to discard fragment state. The SDK fragments re-present themselves on next resume, so nothing is lost.
+
+**Biometric prompt succeeds, then app immediately shows fresh login screen**
+After successful biometric, the SDK refreshes the access token. If the Connected App has **"Require Secret for Refresh Token Flow"** *checked*, the refresh fails with `invalid_client` (visible in `adb logcat | grep ClientManager`: `Invalid Refresh Token: (Error: invalid_client, Status Code: 400)`), and the SDK silently logs the user out. Uncheck this setting on the Connected App (see Prerequisites above).
 
 **`Unresolved reference: BiometricManager`**
 The `androidx.biometric:biometric` dependency is missing or Gradle sync didn't complete.
 
 **`biometricAuthenticationManager` is null**
-No user is currently authenticated. This is expected before login. The `?.run { }` safe-call handles this correctly.
+No user is currently authenticated. This is expected before login.
 
 ---
 
