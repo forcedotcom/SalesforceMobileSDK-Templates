@@ -32,37 +32,37 @@
     },
     {
       "doc": "docs/hybrid/README.md",
-      "scope": "docs/hybrid",
+      "scope": ["HybridLocalTemplate", "HybridRemoteTemplate"],
       "description": "Guide to Hybrid (Cordova) templates for local and remote apps"
     },
     {
       "doc": "docs/react-native-templates/README.md",
-      "scope": "docs/react-native-templates",
+      "scope": ["ReactNativeTemplate", "ReactNativeTypeScriptTemplate", "ReactNativeDeferredTemplate", "MobileSyncExplorerReactNative"],
       "description": "Comprehensive guide covering all React Native templates"
     },
     {
       "doc": "docs/react-native-templates/MobileSyncExplorerReactNative.md",
-      "scope": "docs/react-native-templates",
+      "scope": "MobileSyncExplorerReactNative",
       "description": "Complete sample application demonstrating offline data synchronization"
     },
     {
       "doc": "docs/react-native-templates/ReactNativeDeferredTemplate.md",
-      "scope": "docs/react-native-templates",
+      "scope": "ReactNativeDeferredTemplate",
       "description": "Deferred authentication React Native template with guest mode"
     },
     {
       "doc": "docs/react-native-templates/ReactNativeTemplate.md",
-      "scope": "docs/react-native-templates",
+      "scope": "ReactNativeTemplate",
       "description": "Basic JavaScript React Native template for Mobile SDK applications"
     },
     {
       "doc": "docs/react-native-templates/ReactNativeTypeScriptTemplate.md",
-      "scope": "docs/react-native-templates",
+      "scope": "ReactNativeTypeScriptTemplate",
       "description": "TypeScript React Native template for Mobile SDK applications"
     },
     {
       "doc": "docs/react-native-templates/TEMPLATE_ANATOMY.md",
-      "scope": "docs/react-native-templates",
+      "scope": ["ReactNativeTemplate", "ReactNativeTypeScriptTemplate", "ReactNativeDeferredTemplate", "MobileSyncExplorerReactNative"],
       "description": "Deep dive into React Native template structure and mechanics"
     },
     {
