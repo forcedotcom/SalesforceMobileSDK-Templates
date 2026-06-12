@@ -1,0 +1,70 @@
+{
+  "docs": [
+    {
+      "doc": "CLAUDE.md",
+      "scope": ".",
+      "description": "AI instructions for working with the Salesforce Mobile SDK Templates repository"
+    },
+    {
+      "doc": "README.md",
+      "scope": ".",
+      "description": "Overview of the Salesforce Mobile SDK Templates library"
+    },
+    {
+      "doc": "TESTING.md",
+      "scope": ".",
+      "description": "Template testing guide covering test script usage and template validation"
+    },
+    {
+      "doc": "MobileSyncExplorerKotlinTemplate/README.md",
+      "scope": "MobileSyncExplorerKotlinTemplate",
+      "description": "Android native template demonstrating Mobile SDK with Jetpack Compose"
+    },
+    {
+      "doc": "MobileSyncExplorerReactNative/README.md",
+      "scope": "MobileSyncExplorerReactNative",
+      "description": "MobileSyncExplorer application written using React Native"
+    },
+    {
+      "doc": "MobileSyncExplorerSwift/README.md",
+      "scope": "MobileSyncExplorerSwift",
+      "description": "MobileSyncExplorer Sample in Swift"
+    },
+    {
+      "doc": "docs/hybrid/README.md",
+      "scope": ["HybridLocalTemplate", "HybridRemoteTemplate"],
+      "description": "Guide to Hybrid (Cordova) templates for local and remote apps"
+    },
+    {
+      "doc": "docs/react-native-templates/README.md",
+      "scope": ["ReactNativeTemplate", "ReactNativeTypeScriptTemplate", "ReactNativeDeferredTemplate", "MobileSyncExplorerReactNative"],
+      "description": "Comprehensive guide covering all React Native templates"
+    },
+    {
+      "doc": "docs/react-native-templates/MobileSyncExplorerReactNative.md",
+      "scope": "MobileSyncExplorerReactNative",
+      "description": "Complete sample application demonstrating offline data synchronization"
+    },
+    {
+      "doc": "docs/react-native-templates/ReactNativeDeferredTemplate.md",
+      "scope": "ReactNativeDeferredTemplate",
+      "description": "Deferred authentication React Native template with guest mode"
+    },
+    {
+      "doc": "docs/react-native-templates/ReactNativeTemplate.md",
+      "scope": "ReactNativeTemplate",
+      "description": "Basic JavaScript React Native template for Mobile SDK applications"
+    },
+    {
+      "doc": "docs/react-native-templates/ReactNativeTypeScriptTemplate.md",
+      "scope": "ReactNativeTypeScriptTemplate",
+      "description": "TypeScript React Native template for Mobile SDK applications"
+    },
+    {
+      "doc": "docs/react-native-templates/TEMPLATE_ANATOMY.md",
+      "scope": ["ReactNativeTemplate", "ReactNativeTypeScriptTemplate", "ReactNativeDeferredTemplate", "MobileSyncExplorerReactNative"],
+      "description": "Deep dive into React Native template structure and mechanics"
+    },
+
+  ]
+}
