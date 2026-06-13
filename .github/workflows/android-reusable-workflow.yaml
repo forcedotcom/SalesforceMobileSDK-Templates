@@ -91,6 +91,9 @@ jobs:
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
 
+      - name: Install Cordova CLI
+        run: npm install -g cordova@13
+
       - name: Check template platform support
         id: check-platform
         env:
