@@ -12,7 +12,7 @@ The `test_template.sh` script allows you to test templates locally or in CI/CD, 
 
 - **For iOS**: macOS with Xcode installed
 - **For Android**: Java 17+ and Gradle
-- **For all**: Node.js 20+ and `jq` command-line JSON processor
+- **For all**: Node.js 22+ and `jq` command-line JSON processor
 
 ### Basic Usage
 
