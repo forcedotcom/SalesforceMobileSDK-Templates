@@ -43,6 +43,7 @@ import {
     FlatList,
     ActivityIndicator,
     TouchableOpacity,
+    Platform,
 } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
@@ -479,15 +480,25 @@ const styles = StyleSheet.create({
     },
 
     // Header button (Logout in navigation bar)
-    headerButton: {
-        marginRight: 16,
-        paddingVertical: 6,
-        paddingHorizontal: 12,
-        backgroundColor: 'rgba(255, 255, 255, 0.2)',
-        borderRadius: 6,
-        borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.4)',
-    },
+    // On iOS 26 the system adds a pill behind TouchableOpacity in headers — suppress our own pill there.
+    headerButton: Platform.select({
+        ios: {
+            height: 44,
+            marginRight: 4,
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingHorizontal: 8,
+        },
+        android: {
+            marginRight: 16,
+            paddingVertical: 6,
+            paddingHorizontal: 12,
+            backgroundColor: 'rgba(255, 255, 255, 0.2)',
+            borderRadius: 6,
+            borderWidth: 1,
+            borderColor: 'rgba(255, 255, 255, 0.4)',
+        },
+    }),
 
     // Header button text
     headerButtonText: {
