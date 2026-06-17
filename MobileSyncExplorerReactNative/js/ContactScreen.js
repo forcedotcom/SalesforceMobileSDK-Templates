@@ -60,7 +60,7 @@ class ContactScreen extends React.Component {
         
         this.props.navigation.setOptions({
             title: 'Contact',
-            headerLeft: () => (<NavImgButton icon='arrow-back' color='white' onPress={() => this.onBack()} />),
+            headerLeft: () => (<View style={styles.navButtonsGroupLeft}><NavImgButton icon='arrow-back' color='white' onPress={() => this.onBack()} /></View>),
             headerRight: () => (
                     <View style={styles.navButtonsGroup}>
                         <NavImgButton icon={deleteUndeleteIconName} iconType='material-community' onPress={() => this.onDeleteUndeleteContact()} />

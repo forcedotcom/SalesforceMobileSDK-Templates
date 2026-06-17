@@ -31,13 +31,20 @@ export default StyleSheet.create({
         backgroundColor: 'red',
     },
     navBarButton: {
-        paddingLeft: 6,
+        width: 44,
+        height: 44,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     navButtonsGroup: {
         flexDirection: 'row',
+        alignItems: 'center',
+        marginRight: 4,
     },
-    navBarButton: {
-        paddingLeft: 6,
+    navButtonsGroupLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginLeft: 4,
     },
     navBarTitleText: {
         fontSize: 26,
