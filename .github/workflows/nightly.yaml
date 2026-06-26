@@ -24,7 +24,7 @@ jobs:
     uses: ./.github/workflows/android-reusable-workflow.yaml
 
   nightly-summary:
-    runs-on: ubuntu-latest
+    runs-on: forcedotcom-ubuntu  # forks: use ubuntu-latest (org-scoped runner)
     needs: [ios-nightly, android-nightly]
     if: always()
     steps:
