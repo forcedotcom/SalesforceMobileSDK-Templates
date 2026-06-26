@@ -32,7 +32,7 @@ permissions:
 
 jobs:
   permission-check:
-    runs-on: ubuntu-latest
+    runs-on: forcedotcom-ubuntu  # forks: use ubuntu-latest (org-scoped runner)
     steps:
       - name: Check Write Permission
         uses: octokit/request-action@dad4362715b7fb2ddedf9772c8670824af564f0d  # v2.4.0
@@ -53,7 +53,7 @@ jobs:
 
   detect-changed-templates:
     needs: permission-check
-    runs-on: ubuntu-latest
+    runs-on: forcedotcom-ubuntu  # forks: use ubuntu-latest (org-scoped runner)
     outputs:
       templates: ${{ steps.set-templates.outputs.templates }}
       has-changes: ${{ steps.set-templates.outputs.has-changes }}
@@ -177,7 +177,7 @@ jobs:
   pr-summary:
     needs: [detect-changed-templates, ios-pr, android-pr]
     if: always()
-    runs-on: ubuntu-latest
+    runs-on: forcedotcom-ubuntu  # forks: use ubuntu-latest (org-scoped runner)
     steps:
       - name: PR Summary
         env:

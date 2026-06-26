@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   generate-template-list:
-    runs-on: ubuntu-latest
+    runs-on: forcedotcom-ubuntu  # forks: use ubuntu-latest (org-scoped runner)
     outputs:
       templates: ${{ steps.set-templates.outputs.templates }}
     steps:
@@ -48,7 +48,7 @@ jobs:
 
   test-android:
     needs: generate-template-list
-    runs-on: ubuntu-latest
+    runs-on: forcedotcom-ubuntu  # forks: use ubuntu-latest (org-scoped runner)
     strategy:
       fail-fast: false
       matrix:

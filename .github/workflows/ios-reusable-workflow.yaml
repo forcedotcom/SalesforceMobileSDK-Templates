@@ -20,7 +20,7 @@ permissions:
 
 jobs:
   generate-template-list:
-    runs-on: ubuntu-latest
+    runs-on: forcedotcom-ubuntu  # forks: use ubuntu-latest (org-scoped runner)
     outputs:
       templates: ${{ steps.set-templates.outputs.templates }}
     steps:
