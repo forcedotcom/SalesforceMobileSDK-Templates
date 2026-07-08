@@ -96,6 +96,41 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
             moveFile(msdkAndroidPath, msdkAndroidNewPath);
         }
         moveFile('servers.xml', serversNewPath);
+
+        // Advanced Auth (browser-based) redirect intent-filter on the SDK LoginActivity.
+        // Under forceAdvancedAuthentication (default ON) the first interactive login runs in a
+        // browser Custom Tab; the OS delivers the OAuth redirect to LoginActivity.onNewIntent
+        // (launchMode=singleTask), which requires a BROWSABLE <intent-filter> whose <data> matches
+        // the connected app's callback URL. The Cordova-generated manifest ships no such filter,
+        // so inject it here from the callback URL that Package parsed onto config
+        // (config.callbackUrlScheme/Host/Path). Scheme is load-bearing; host is empty for a
+        // hostless callback (never "*") and the SDK reads intent.data directly, ignoring host/path.
+        if (config.callbackurl && config.callbackurl !== '' && config.callbackUrlScheme) {
+            var manifestFile = path.join('..', 'platforms', 'android', 'app', 'src', 'main', 'AndroidManifest.xml');
+            if (fs.existsSync(manifestFile)) {
+                var manifestContent = fs.readFileSync(manifestFile, 'utf8');
+                if (manifestContent.indexOf('com.salesforce.androidsdk.ui.LoginActivity') === -1) {
+                    var loginActivityBlock =
+                        '        <activity\n' +
+                        '            android:name="com.salesforce.androidsdk.ui.LoginActivity"\n' +
+                        '            android:exported="true"\n' +
+                        '            android:launchMode="singleTask"\n' +
+                        '            android:theme="@style/SalesforceSDK">\n' +
+                        '            <intent-filter>\n' +
+                        '                <action android:name="android.intent.action.VIEW" />\n' +
+                        '                <category android:name="android.intent.category.DEFAULT" />\n' +
+                        '                <category android:name="android.intent.category.BROWSABLE" />\n' +
+                        '                <data\n' +
+                        '                    android:scheme="' + config.callbackUrlScheme + '"\n' +
+                        '                    android:host="' + (config.callbackUrlHost || '') + '"\n' +
+                        '                    android:path="' + (config.callbackUrlPath || '') + '" />\n' +
+                        '            </intent-filter>\n' +
+                        '        </activity>\n';
+                    manifestContent = manifestContent.replace(/([ \t]*)<\/application>/, loginActivityBlock + '$1</application>');
+                    fs.writeFileSync(manifestFile, manifestContent, 'utf8');
+                }
+            }
+        }
     }
     removeFile('node_modules');
     removeFile('mobile_sdk');
