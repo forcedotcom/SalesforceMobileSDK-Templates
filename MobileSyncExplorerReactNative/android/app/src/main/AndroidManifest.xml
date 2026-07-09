@@ -56,7 +56,7 @@
                 <data
                     android:scheme="__INSERT_CALLBACK_URL_SCHEME_HERE__"
                     android:host="__INSERT_CALLBACK_URL_HOST_HERE__"
-                    android:path="__INSERT_CALLBACK_URL_PATH_HERE__" />
+                    android:path="/__INSERT_CALLBACK_URL_PATH_HERE__" />
             </intent-filter>
         </activity>
     </application>

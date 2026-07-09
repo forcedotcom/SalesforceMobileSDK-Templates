@@ -91,7 +91,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         replaceInFiles('__INSERT_CALLBACK_URL_HERE__', config.callbackurl, [templateBootconfigFile]);
         replaceInFiles('__INSERT_CALLBACK_URL_SCHEME_HERE__', config.callbackUrlScheme, [templateManifestFile]);
         replaceInFiles('__INSERT_CALLBACK_URL_HOST_HERE__', config.callbackUrlHost, [templateManifestFile]);
-        replaceInFiles('__INSERT_CALLBACK_URL_PATH_HERE__', config.callbackUrlPath, [templateManifestFile]);
+        replaceInFiles('/__INSERT_CALLBACK_URL_PATH_HERE__', config.callbackUrlPath, [templateManifestFile]);
     }
 
     // login server
