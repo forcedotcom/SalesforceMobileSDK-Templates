@@ -97,20 +97,24 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         }
         moveFile('servers.xml', serversNewPath);
 
-        // Advanced Auth (browser-based) redirect intent-filter on the SDK LoginActivity.
-        // Under forceAdvancedAuthentication (default ON) the first interactive login runs in a
-        // browser Custom Tab; the OS delivers the OAuth redirect to LoginActivity.onNewIntent
-        // (launchMode=singleTask), which requires a BROWSABLE <intent-filter> whose <data> matches
-        // the connected app's callback URL. The Cordova-generated manifest ships no such filter,
-        // so inject it here from the callback URL that Package parsed onto config
-        // (config.callbackUrlScheme/Host/Path). Scheme is load-bearing; host is empty for a
-        // hostless callback (never "*") and the SDK reads intent.data directly, ignoring host/path.
+        // Fill in the LoginActivity browser-redirect intent-filter. The CordovaPlugin post-install
+        // hook injects the block with placeholder tokens; substitute the real callback values here
+        // (like every other template type). If the block is missing (older plugin), inject it.
+        // Host is empty for a hostless callback (never "*").
         if (config.callbackurl && config.callbackurl !== '' && config.callbackUrlScheme) {
             var manifestFile = path.join('..', 'platforms', 'android', 'app', 'src', 'main', 'AndroidManifest.xml');
             if (fs.existsSync(manifestFile)) {
                 var manifestContent = fs.readFileSync(manifestFile, 'utf8');
-                if (manifestContent.indexOf('com.salesforce.androidsdk.ui.LoginActivity') === -1) {
+                if (manifestContent.indexOf('com.salesforce.androidsdk.ui.LoginActivity') !== -1) {
+                    // Substitute placeholders in the hook-injected block. The leading slash lives
+                    // outside the path token; config.callbackUrlPath already carries its own.
+                    replaceInFiles('__INSERT_CALLBACK_URL_SCHEME_HERE__', config.callbackUrlScheme, [manifestFile]);
+                    replaceInFiles('__INSERT_CALLBACK_URL_HOST_HERE__', (config.callbackUrlHost || ''), [manifestFile]);
+                    replaceInFiles('/__INSERT_CALLBACK_URL_PATH_HERE__', (config.callbackUrlPath || ''), [manifestFile]);
+                } else {
+                    // Fallback: block absent (older plugin). Inject it with real values.
                     var loginActivityBlock =
+                        '        <!-- Salesforce Mobile SDK OAuth redirect (from --callbackurl). -->\n' +
                         '        <activity\n' +
                         '            android:name="com.salesforce.androidsdk.ui.LoginActivity"\n' +
                         '            android:exported="true"\n' +
