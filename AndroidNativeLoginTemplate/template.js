@@ -45,6 +45,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var templateBuildGradleFile = path.join('app', 'build.gradle.kts');
     var templateStringsXmlFile = path.join('app', 'src', 'main', 'res', 'values', 'strings.xml');
     var templateBootconfigFile = path.join('app', 'src', 'main', 'res', 'values', 'bootconfig.xml');
+    var templateAndroidManifestFile = path.join('app', 'src', 'main', 'AndroidManifest.xml');
     var templateServersFile = path.join('app', 'src', 'main', 'res', 'xml', 'servers.xml');
     var templateMainActivityFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativelogintemplate', 'MainActivity.kt');
     var templateMainApplicationFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativelogintemplate', 'MainApplication.kt');
@@ -69,6 +70,9 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // callback URL
     if (config.callbackurl && config.callbackurl !== '') {
         replaceInFiles('__INSERT_CALLBACK_URL_HERE__', config.callbackurl, [templateBootconfigFile]);
+        replaceInFiles('__INSERT_CALLBACK_URL_SCHEME_HERE__', config.callbackUrlScheme, [templateAndroidManifestFile]);
+        replaceInFiles('__INSERT_CALLBACK_URL_HOST_HERE__', config.callbackUrlHost, [templateAndroidManifestFile]);
+        replaceInFiles('/__INSERT_CALLBACK_URL_PATH_HERE__', config.callbackUrlPath, [templateAndroidManifestFile]);
     }
 
     // login server

@@ -67,6 +67,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     const templateStringsXmlFile = path.join('app', 'src', 'main', 'res', 'values', 'strings.xml');
     const templateBootconfigFile = path.join('app', 'src', 'main', 'res', 'values', 'bootconfig.xml');
     const templateServersFile = path.join('app', 'src', 'main', 'res', 'xml', 'servers.xml');
+    const templateManifestFile = path.join('app', 'AndroidManifest.xml'); // NON-STANDARD PATH: app/AndroidManifest.xml, NOT app/src/main
     const javaDirPath = path.join('app', 'src', 'main', 'java');
     const ktFiles = listKtFiles(javaDirPath);
 
@@ -88,6 +89,9 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // callback URL
     if (config.callbackurl && config.callbackurl !== '') {
         replaceInFiles('__INSERT_CALLBACK_URL_HERE__', config.callbackurl, [templateBootconfigFile]);
+        replaceInFiles('__INSERT_CALLBACK_URL_SCHEME_HERE__', config.callbackUrlScheme, [templateManifestFile]);
+        replaceInFiles('__INSERT_CALLBACK_URL_HOST_HERE__', config.callbackUrlHost, [templateManifestFile]);
+        replaceInFiles('/__INSERT_CALLBACK_URL_PATH_HERE__', config.callbackUrlPath, [templateManifestFile]);
     }
 
     // login server
