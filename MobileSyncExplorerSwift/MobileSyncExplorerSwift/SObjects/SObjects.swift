@@ -31,6 +31,14 @@ import SmartStore
 import MobileSync
 import Combine
 
+// Salesforce Record IDs are exactly 15 or 18 alphanumeric characters.
+// Enforcing this blocks quote-based injection in SOQL/SmartSQL queries.
+func isValidSalesforceId(_ id: String) -> Bool {
+    let len = id.count
+    guard len == 15 || len == 18 else { return false }
+    return id.allSatisfy { $0.isLetter || $0.isNumber }
+}
+
 enum SObjectConstants {
     static let kSObjectIdField    = "Id"
 }
@@ -280,6 +288,11 @@ class SObjectDataManager: ObservableObject {
     }
 
     func fetchContact(id: String, completion: @escaping (ContactSObjectData?) -> ()) {
+        guard isValidSalesforceId(id) else {
+            MobileSyncLogger.e(SObjectDataManager.self, message: "fetchContact: invalid id rejected")
+            completion(nil)
+            return
+        }
         let request = RestClient.shared.request(forQuery: "SELECT Id, FirstName, LastName, Title, MobilePhone, Email, Department, HomePhone FROM Contact WHERE Id = '\(id)'", apiVersion: nil)
         RestClient.shared.publisher(for: request)
             .receive(on: RunLoop.main)
@@ -488,7 +501,7 @@ class SObjectDataManager: ObservableObject {
     }
 
     private func localRecord(id: String) -> [String: Any]? {
-        guard let store = store else {
+        guard let store = store, isValidSalesforceId(id) else {
             return nil
         }
         let queryResult = store.query("select {\(dataSpec.soupName):_soup} from {\(dataSpec.soupName)} where {\(dataSpec.soupName):Id} = '\(id)'")
