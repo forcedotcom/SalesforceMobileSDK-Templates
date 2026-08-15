@@ -54,7 +54,7 @@ struct ListView: View {
         List {
             ForEach(model.notifications, id: \.id) { notification in
                 VStack {
-                    if notification.targetId.starts(with: "003") { // Only contacts are tappable
+                    if notification.targetId.starts(with: "003") && isValidSalesforceId(notification.targetId) { // Only contacts are tappable
                         NavigationLink(destination: ContactDetailView(id: notification.targetId, sObjectDataManager: self.sObjectDataManager, onAppear: {
                             self.model.markNotificationRead(notificationId: notification.id)
                         })) {
