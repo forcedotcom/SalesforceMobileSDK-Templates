@@ -31,12 +31,18 @@ import SmartStore
 import MobileSync
 import Combine
 
-// Salesforce Record IDs are exactly 15 or 18 alphanumeric characters.
+// Salesforce Record IDs are exactly 15 or 18 ASCII alphanumeric characters.
 // Enforcing this blocks quote-based injection in SOQL/SmartSQL queries.
 func isValidSalesforceId(_ id: String) -> Bool {
     let len = id.count
     guard len == 15 || len == 18 else { return false }
-    return id.allSatisfy { $0.isLetter || $0.isNumber }
+    return id.allSatisfy { $0.isASCII && ($0.isLetter || $0.isNumber) }
+}
+
+// Soup entry IDs are numeric row identifiers assigned by SmartStore (e.g. "1", "42").
+// Enforcing this blocks injection when a soup entry id is interpolated into SmartSQL.
+func isValidSoupEntryId(_ id: String) -> Bool {
+    return !id.isEmpty && id.allSatisfy { $0 >= "0" && $0 <= "9" }
 }
 
 enum SObjectConstants {
@@ -519,7 +525,7 @@ class SObjectDataManager: ObservableObject {
     }
     
     func localRecord(soupID: String) -> ContactSObjectData? {
-        guard let store = store else {
+        guard let store = store, isValidSoupEntryId(soupID) else {
             return nil
         }
         let queryResult = store.query("select {\(dataSpec.soupName):_soup} from {\(dataSpec.soupName)} where {\(dataSpec.soupName):_soupEntryId} = '\(soupID)'")

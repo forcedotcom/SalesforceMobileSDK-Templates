@@ -64,7 +64,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             self.window?.rootViewController = UIHostingController(rootView: ContactListView(sObjectManager: sObjectManager, newContact: true))
         } else if let contactRange = url.absoluteString.range(of: "contact/") {
             let id = String(url.absoluteString[contactRange.upperBound...])
-            guard isValidSalesforceId(id) else { return }
+            guard isValidSoupEntryId(id) else { return }
             self.window?.rootViewController = UIHostingController(rootView: NavigationStack {
                 ContactDetailView(localId: id, sObjectDataManager: sObjectManager)
             })
@@ -93,7 +93,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         if let userActivity = userActivity, userActivity.title == openDetailPath,
            let selectionId = userActivity.userInfo?[openDetailRecordIdKey] as? String,
-           isValidSalesforceId(selectionId) {
+           isValidSoupEntryId(selectionId) {
             self.window?.rootViewController = UIHostingController(rootView:  NavigationStack {
                 ContactDetailView(localId: selectionId, sObjectDataManager: sObjectManager)
             })
