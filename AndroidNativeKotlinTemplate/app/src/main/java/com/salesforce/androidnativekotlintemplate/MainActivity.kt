@@ -137,7 +137,7 @@ class MainActivity : SalesforceActivity() {
      */
     @Suppress("UNUSED", "UNUSED_PARAMETER")
     fun onLogoutClick(v: View) {
-        SalesforceSDKManager.getInstance().logout(this)
+        SalesforceSDKManager.getInstance().logout(frontActivity = this)
     }
 
     /**

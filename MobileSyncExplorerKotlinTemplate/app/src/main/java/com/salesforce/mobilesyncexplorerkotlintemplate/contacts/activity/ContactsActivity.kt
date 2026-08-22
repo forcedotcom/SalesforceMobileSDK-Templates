@@ -157,7 +157,7 @@ class ContactsActivity
     override fun onResume(client: RestClient?) {
         val userAccount = MobileSyncSDKManager.getInstance().userAccountManager.currentUser
             ?: run {
-                MobileSyncSDKManager.getInstance().logout(this)
+                MobileSyncSDKManager.getInstance().logout(frontActivity = this)
                 return
             }
 
@@ -181,7 +181,7 @@ class ContactsActivity
     }
 
     override fun onLogoutClick() {
-        MobileSyncSDKManager.getInstance().logout(this)
+        MobileSyncSDKManager.getInstance().logout(frontActivity = this)
     }
 
     override fun onSwitchUserClick() {
