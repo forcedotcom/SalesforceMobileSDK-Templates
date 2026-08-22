@@ -44,6 +44,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.salesforce.androidnativelogintemplate.R.id.root
 import com.salesforce.androidsdk.app.SalesforceSDKManager
+import com.salesforce.androidsdk.auth.OAuth2.LogoutReason.USER_LOGOUT
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.androidsdk.rest.ApiVersionStrings
 import com.salesforce.androidsdk.rest.RestClient
@@ -127,7 +128,7 @@ class MainActivity : SalesforceActivity() {
      */
     @Suppress("UNUSED_PARAMETER")
     fun onLogoutClick(v: View) {
-        SalesforceSDKManager.getInstance().logout(frontActivity = this)
+        SalesforceSDKManager.getInstance().logout(frontActivity = this, reason = USER_LOGOUT)
     }
 
     /**
