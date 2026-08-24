@@ -51,6 +51,7 @@ import androidx.core.view.WindowInsetsCompat.Type.systemBars
 import androidx.core.view.updatePadding
 import com.salesforce.androidnativekotlintemplate.R.id.root
 import com.salesforce.androidsdk.app.SalesforceSDKManager
+import com.salesforce.androidsdk.auth.OAuth2.LogoutReason.USER_LOGOUT
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.androidsdk.rest.ApiVersionStrings
 import com.salesforce.androidsdk.rest.RestClient
@@ -137,7 +138,7 @@ class MainActivity : SalesforceActivity() {
      */
     @Suppress("UNUSED", "UNUSED_PARAMETER")
     fun onLogoutClick(v: View) {
-        SalesforceSDKManager.getInstance().logout(this)
+        SalesforceSDKManager.getInstance().logout(frontActivity = this, reason = USER_LOGOUT)
     }
 
     /**
