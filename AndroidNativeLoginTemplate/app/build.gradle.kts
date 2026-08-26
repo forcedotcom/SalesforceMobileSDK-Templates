@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    implementation("com.salesforce.mobilesdk:MobileSync:14.0.0")
+    implementation("com.salesforce.mobilesdk:MobileSync:14.0.0-rc.0")
     implementation("com.google.android.material:material:1.14.0")
     implementation("androidx.biometric:biometric:1.1.0")
 
