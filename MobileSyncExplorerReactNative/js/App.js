@@ -26,12 +26,12 @@
 
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import styles from './Styles';
 import SearchScreen from './SearchScreen';
 import ContactScreen from './ContactScreen';
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 export default function() {
     return (
@@ -41,7 +41,9 @@ export default function() {
                 screenOptions={{
                     headerStyle: styles.navBar,
                     headerTitleStyle: styles.navBarTitleText,
-                    tabBarVisible: false
+                    statusBarTranslucent: true,
+                    statusBarColor: '#1798c1',
+                    statusBarStyle: 'light',
                 }}
             >
             <Stack.Screen name="Contacts" component={SearchScreen} />

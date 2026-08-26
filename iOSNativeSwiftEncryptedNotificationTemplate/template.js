@@ -47,6 +47,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var templateProjectFile = path.join(templateProjectDir, 'project.pbxproj');
     var templateSchemeFile = path.join(templateAppName + '.xcodeproj', 'xcshareddata', 'xcschemes', templateAppName + '.xcscheme');
     var templateEntitlementsFile = path.join(templateAppName, templateAppName + '.entitlements');
+    var templateExtensionEntitlementsFile = path.join('NotificationServiceExtension', 'NotificationServiceExtension.entitlements');
     var templateBootconfigFile = path.join(templateAppName, 'bootconfig.plist');
     var templateInfoFile = path.join(templateAppName, 'Info.plist');
 
@@ -55,7 +56,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     //
 
     // app name
-    replaceInFiles(templateAppName, config.appname, [templatePodfile, templatePackageJsonFile, templateProjectFile, templateSchemeFile, templateEntitlementsFile]);
+    replaceInFiles(templateAppName, config.appname, [templatePodfile, templatePackageJsonFile, templateProjectFile, templateSchemeFile, templateEntitlementsFile, templateExtensionEntitlementsFile]);
 
     // package name
     replaceInFiles(templatePackageName, config.packagename, [templateProjectFile, templateEntitlementsFile]);

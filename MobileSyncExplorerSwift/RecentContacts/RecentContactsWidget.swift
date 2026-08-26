@@ -114,6 +114,7 @@ struct RecentContactsEntryView : View {
                 Cell(contact: nil)
             }
         }.padding()
+            .containerBackground(Color(uiColor: .systemBackground), for: .widget)
     }
 }
 
@@ -131,17 +132,13 @@ struct RecentContactsWidget: Widget {
     }
 }
 
-struct RecentContacts_Previews: PreviewProvider {
-    static var previews: some View {
-        let contacts =
-        [ContactSummary(id: "1", firstName: "Michelle", lastName: "Kim"),
-         ContactSummary(id: "2", firstName: "Benji", lastName: "Michaels"),
-         ContactSummary(id: "3", firstName: "Edward", lastName: "Stamos"),
-       ]
-        
-        Group {
-            RecentContactsEntryView(entry: ContactsEntry(date: Date(), contacts: contacts))
-                .previewContext(WidgetPreviewContext(family: .systemMedium))
-        }
-    }
+#Preview(as: .systemMedium) {
+    RecentContactsWidget()
+} timeline: {
+    let contacts = [
+        ContactSummary(id: "1", firstName: "Michelle", lastName: "Kim"),
+        ContactSummary(id: "2", firstName: "Benji", lastName: "Michaels"),
+        ContactSummary(id: "3", firstName: "Edward", lastName: "Stamos")
+    ]
+    ContactsEntry(date: Date(), contacts: contacts)
 }

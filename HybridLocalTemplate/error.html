@@ -1,19 +1,132 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
-    <link href="css/ratchet.css" rel="stylesheet">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <title>Error</title>
+
+    <!-- ===========================
+         Error Page Styles
+         =========================== -->
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f3f3f3;
+            color: #181818;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Error Header */
+        .error-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #c23934;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            /* Proper safe area handling for iOS notch */
+            padding-top: max(env(safe-area-inset-top), 20px);
+            padding-bottom: 16px;
+        }
+
+        .error-header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        /* Error Content */
+        .error-content {
+            /* Account for fixed header height */
+            margin-top: calc(56px + max(env(safe-area-inset-top), 20px));
+            padding: 48px 24px;
+            text-align: center;
+            min-height: calc(100vh - 56px - max(env(safe-area-inset-top), 20px));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .error-icon {
+            font-size: 64px;
+            margin-bottom: 24px;
+            opacity: 0.8;
+        }
+
+        .error-message {
+            font-size: 16px;
+            color: #706e6b;
+            line-height: 1.5;
+            max-width: 400px;
+        }
+
+        /* Error Details (optional) */
+        .error-details {
+            margin-top: 24px;
+            padding: 16px;
+            background-color: #fef4f4;
+            border: 1px solid #e84343;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #c23934;
+            text-align: left;
+            max-width: 400px;
+            font-family: 'Courier New', monospace;
+            word-break: break-word;
+            display: none; /* Hidden by default */
+        }
+    </style>
 </head>
 
 <body>
-
-    <header class="bar bar-nav">
-        <h1 class="title">Error</h1>
+    <!-- Error Header -->
+    <header class="error-header">
+        <h1>Error</h1>
     </header>
-    <div class="content">
-        <div class="content-padded">Failed to load the application.</div>
-    </div>
 
+    <!-- Error Content -->
+    <main class="error-content">
+        <div class="error-icon">⚠️</div>
+        <div class="error-message">
+            Failed to load the application.<br>
+            Please restart the app or contact support if the problem persists.
+        </div>
+        <!-- Optional: Add error details if available via URL params -->
+        <div id="errorDetails" class="error-details"></div>
+    </main>
+
+    <!-- ===========================
+         Optional: Display error details from URL
+         =========================== -->
+    <script>
+        /**
+         * Optionally display error details if passed via URL parameters.
+         * Example: error.html?message=Connection%20failed
+         */
+        (function() {
+            var params = new URLSearchParams(window.location.search);
+            var errorMessage = params.get('message');
+
+            if (errorMessage) {
+                var detailsElement = document.getElementById('errorDetails');
+                detailsElement.textContent = decodeURIComponent(errorMessage);
+                detailsElement.style.display = 'block';
+            }
+        })();
+    </script>
 </body>
 </html>

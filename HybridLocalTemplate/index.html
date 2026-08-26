@@ -1,67 +1,342 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-    <link href="ratchet.css" rel="stylesheet">
-    <link href="ratchet-theme.css" rel="stylesheet">
+    <title>Salesforce Contacts</title>
+
+    <!-- ===========================
+         Styles - Modern, clean design without external frameworks
+         =========================== -->
     <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --sf-blue: #0176d3;
+            --background: #f3f3f3;
+            --surface: #ffffff;
+            --text-primary: #181818;
+            --text-secondary: #706e6b;
+            --border: #dddbda;
+        }
+
         body {
-            top: env(safe-area-inset-top)
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
         }
-        .bar-nav {
-            top: env(safe-area-inset-top)
-        }        
+
+        /* Header */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--sf-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            /* Add padding for notch area + header height */
+            padding-top: max(env(safe-area-inset-top), 20px);
+            padding-bottom: 16px;
+        }
+
+        .app-header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        /* Content Area */
+        .app-content {
+            /* Account for dynamic header height */
+            margin-top: calc(56px + max(env(safe-area-inset-top), 20px));
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+        }
+
+        /* Contact List */
+        .contact-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .contact-item {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            /* Prevent overflow */
+            overflow: hidden;
+            min-height: 72px;
+        }
+
+        .contact-item:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+            background-color: #fafafa;
+        }
+
+        /* Remove tap highlight on iOS */
+        .contact-item {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Contact Avatar */
+        .contact-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0176d3, #1b96ff);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 600;
+            margin-right: 12px;
+            flex-shrink: 0; /* Prevent avatar from shrinking */
+            text-transform: uppercase;
+        }
+
+        .contact-details {
+            flex: 1;
+            min-width: 0; /* Allow flex item to shrink below content size */
+            overflow: hidden; /* Hide overflow */
+        }
+
+        .contact-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            /* Truncate long names with ellipsis */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .contact-id {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-family: 'Courier New', monospace;
+            /* Truncate long IDs with ellipsis */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .contact-chevron {
+            color: var(--text-secondary);
+            font-size: 20px;
+            flex-shrink: 0; /* Prevent chevron from shrinking */
+            margin-left: 8px;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--sf-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
-   <script src="cordova.js"></script>
-   <script src="force.js"></script>
-   
-   <script>
-    /* Do login */
-    force.login(
-        function() {
-            console.log("Auth succeeded"); 
-            showContactsList();
-        },
-        function(error) {
-            console.log("Auth failed: " + error); 
+
+    <!-- ===========================
+         Scripts - Load in order: Cordova, Force.js, then app logic
+         =========================== -->
+    <script src="cordova.js"></script>
+    <script src="force.js"></script>
+
+    <script>
+        /**
+         * Salesforce Mobile SDK Cordova Template
+         *
+         * This template demonstrates:
+         * 1. Authenticating with Salesforce using the Mobile SDK
+         * 2. Querying data from Salesforce using SOQL
+         * 3. Displaying results in a mobile-friendly interface
+         *
+         * Customize by modifying the SOQL query and display logic below.
+         */
+
+        // ===========================
+        // Authentication
+        // ===========================
+
+        /**
+         * Authenticate with Salesforce when the page loads.
+         * The Mobile SDK handles the OAuth flow automatically.
+         */
+        force.login(
+            function onAuthSuccess() {
+                console.log("Authentication succeeded");
+                fetchContacts();
+            },
+            function onAuthError(error) {
+                console.error("Authentication failed:", error);
+                showError("Unable to authenticate with Salesforce");
+            }
+        );
+
+        // ===========================
+        // Data Fetching
+        // ===========================
+
+        /**
+         * Fetches contact records from Salesforce using a SOQL query.
+         *
+         * To customize:
+         * - Change fields: Modify the SELECT clause
+         * - Query different objects: Change 'Contact' to another SObject
+         * - Add filters: Add a WHERE clause
+         * - Change limit: Modify the LIMIT value
+         */
+        function fetchContacts() {
+            console.log("Fetching contacts from Salesforce...");
+            showLoading();
+
+            // SOQL Query - customize this for your needs
+            var soql = 'SELECT Id, Name FROM Contact ORDER BY Name LIMIT 100';
+
+            force.query(
+                soql,
+                function onSuccess(response) {
+                    console.log("Query succeeded. Retrieved", response.totalSize, "contacts");
+                    displayContacts(response.records);
+                },
+                function onError(error) {
+                    console.error("Query failed:", error);
+                    showError("Failed to fetch contacts: " + JSON.stringify(error));
+                }
+            );
         }
-    );
 
-    /* This method will render a list of contacts from current salesforce org */
-    var showContactsList = function() {
+        // ===========================
+        // Display Functions
+        // ===========================
 
-        fetchRecords(function(data) {
-            var contacts = data.records;
+        /**
+         * Displays the list of contacts in the UI.
+         * Creates a list item for each contact with avatar and name.
+         *
+         * @param {Array} contacts - Array of contact records from Salesforce
+         */
+        function displayContacts(contacts) {
+            var listElement = document.getElementById('contactList');
 
-            var listItemsHtml = '';
-            for (var i=0; i < contacts.length; i++) {
-                listItemsHtml += ('<li class="table-view-cell"><div class="media-body">' + contacts[i].Name + '</div></li>');
+            // Handle empty results
+            if (!contacts || contacts.length === 0) {
+                listElement.innerHTML = '<div class="loading">No contacts found</div>';
+                return;
             }
 
-            document.querySelector('#contacts').innerHTML = listItemsHtml;
-        })
-    }
+            // Build HTML for contact list
+            var html = '';
+            for (var i = 0; i < contacts.length; i++) {
+                var contact = contacts[i];
+                var name = contact.Name || 'Unknown';
+                var initial = name.charAt(0).toUpperCase();
 
-    /* This method will fetch a list of contact records from salesforce.
-    Just change the soql query to fetch another sobject. */
-    var fetchRecords = function (successHandler) {
-        var soql = 'SELECT Id, Name FROM Contact LIMIT 100';
-        force.query(soql, successHandler, function(error) {
-            alert('Failed to fetch contacts: ' + error);
-        });
-    };
+                html += '<li class="contact-item">';
+                html += '  <div class="contact-avatar">' + escapeHtml(initial) + '</div>';
+                html += '  <div class="contact-details">';
+                html += '    <div class="contact-name" title="' + escapeHtml(name) + '">' + escapeHtml(name) + '</div>';
+                html += '    <div class="contact-id" title="' + escapeHtml(contact.Id) + '">' + escapeHtml(contact.Id) + '</div>';
+                html += '  </div>';
+                html += '  <span class="contact-chevron">›</span>';
+                html += '</li>';
+            }
+
+            // Update the DOM with contact list
+            listElement.innerHTML = html;
+        }
+
+        /**
+         * Shows a loading spinner with a message.
+         */
+        function showLoading() {
+            var listElement = document.getElementById('contactList');
+            listElement.innerHTML =
+                '<div class="loading">' +
+                '  <div class="spinner"></div>' +
+                '  <div>Loading contacts...</div>' +
+                '</div>';
+        }
+
+        /**
+         * Shows an error message to the user.
+         *
+         * @param {string} message - Error message to display
+         */
+        function showError(message) {
+            var listElement = document.getElementById('contactList');
+            var errorHtml = '<div class="loading" style="color: #c23934;">' + escapeHtml(message) + '</div>';
+            listElement.innerHTML = errorHtml;
+        }
+
+        // ===========================
+        // Security Utility
+        // ===========================
+
+        /**
+         * Escapes HTML special characters to prevent XSS attacks.
+         * Always use this function when inserting user data into HTML.
+         *
+         * @param {string} text - Text to escape
+         * @returns {string} Escaped HTML-safe text
+         */
+        function escapeHtml(text) {
+            var div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
     </script>
 </head>
 
 <body>
-
-    <header class="bar bar-nav">
-        <h1 class="title">Contacts</h1>
+    <!-- Application Header -->
+    <header class="app-header">
+        <h1>Contacts</h1>
     </header>
-    <ul id="contacts" class="table-view content">
-        <!-- Placeholder to add contacts list -->
-    </ul>
 
+    <!-- Main Content Area -->
+    <main class="app-content">
+        <!-- Contact list populated dynamically by JavaScript -->
+        <ul id="contactList" class="contact-list">
+            <div class="loading">
+                <div class="spinner"></div>
+                <div>Initializing...</div>
+            </div>
+        </ul>
+    </main>
 </body>
 </html>

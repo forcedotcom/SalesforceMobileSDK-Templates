@@ -49,7 +49,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // Key files
     var templateBootconfigFile = path.join('bootconfig.json');
     var templateServersFile = path.join('servers.xml'); // android only
-    var templateInfoFile = path.join('..', 'platforms', 'ios', config.appname, config.appname + '-Info.plist'); // ios only
+    var templateInfoFile = path.join('..', 'platforms', 'ios', 'App', 'App-Info.plist'); // ios only
 
     //
     // Replace in files
@@ -98,6 +98,45 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
             moveFile(msdkAndroidPath, msdkAndroidNewPath);
         }
         moveFile('servers.xml', serversNewPath);
+
+        // Fill in the LoginActivity browser-redirect intent-filter. The CordovaPlugin post-install
+        // hook injects the block with placeholder tokens; substitute the real callback values here
+        // (like every other template type). If the block is missing (older plugin), inject it.
+        // Host is empty for a hostless callback (never "*").
+        if (config.callbackurl && config.callbackurl !== '' && config.callbackUrlScheme) {
+            var manifestFile = path.join('..', 'platforms', 'android', 'app', 'src', 'main', 'AndroidManifest.xml');
+            if (fs.existsSync(manifestFile)) {
+                var manifestContent = fs.readFileSync(manifestFile, 'utf8');
+                if (manifestContent.indexOf('com.salesforce.androidsdk.ui.LoginActivity') !== -1) {
+                    // Substitute placeholders in the hook-injected block. The leading slash lives
+                    // outside the path token; config.callbackUrlPath already carries its own.
+                    replaceInFiles('__INSERT_CALLBACK_URL_SCHEME_HERE__', config.callbackUrlScheme, [manifestFile]);
+                    replaceInFiles('__INSERT_CALLBACK_URL_HOST_HERE__', (config.callbackUrlHost || ''), [manifestFile]);
+                    replaceInFiles('/__INSERT_CALLBACK_URL_PATH_HERE__', (config.callbackUrlPath || ''), [manifestFile]);
+                } else {
+                    // Fallback: block absent (older plugin). Inject it with real values.
+                    var loginActivityBlock =
+                        '        <!-- Salesforce Mobile SDK OAuth redirect (from --callbackurl). -->\n' +
+                        '        <activity\n' +
+                        '            android:name="com.salesforce.androidsdk.ui.LoginActivity"\n' +
+                        '            android:exported="true"\n' +
+                        '            android:launchMode="singleTask"\n' +
+                        '            android:theme="@style/SalesforceSDK">\n' +
+                        '            <intent-filter>\n' +
+                        '                <action android:name="android.intent.action.VIEW" />\n' +
+                        '                <category android:name="android.intent.category.DEFAULT" />\n' +
+                        '                <category android:name="android.intent.category.BROWSABLE" />\n' +
+                        '                <data\n' +
+                        '                    android:scheme="' + config.callbackUrlScheme + '"\n' +
+                        '                    android:host="' + (config.callbackUrlHost || '') + '"\n' +
+                        '                    android:path="' + (config.callbackUrlPath || '') + '" />\n' +
+                        '            </intent-filter>\n' +
+                        '        </activity>\n';
+                    manifestContent = manifestContent.replace(/([ \t]*)<\/application>/, loginActivityBlock + '$1</application>');
+                    fs.writeFileSync(manifestFile, manifestContent, 'utf8');
+                }
+            }
+        }
     }
     removeFile('node_modules');
     removeFile('mobile_sdk');

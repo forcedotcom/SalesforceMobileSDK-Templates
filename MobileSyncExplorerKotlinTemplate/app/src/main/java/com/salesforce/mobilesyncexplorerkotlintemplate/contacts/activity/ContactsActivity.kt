@@ -46,6 +46,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.lifecycle.*
 import androidx.window.layout.WindowMetricsCalculator
 import com.salesforce.androidsdk.app.SalesforceSDKManager
+import com.salesforce.androidsdk.auth.OAuth2.LogoutReason.USER_LOGOUT
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.androidsdk.rest.RestClient
 import com.salesforce.androidsdk.smartstore.ui.SmartStoreInspectorActivity
@@ -157,7 +158,7 @@ class ContactsActivity
     override fun onResume(client: RestClient?) {
         val userAccount = MobileSyncSDKManager.getInstance().userAccountManager.currentUser
             ?: run {
-                MobileSyncSDKManager.getInstance().logout(this)
+                MobileSyncSDKManager.getInstance().logout(frontActivity = this)
                 return
             }
 
@@ -181,7 +182,7 @@ class ContactsActivity
     }
 
     override fun onLogoutClick() {
-        MobileSyncSDKManager.getInstance().logout(this)
+        MobileSyncSDKManager.getInstance().logout(frontActivity = this, reason = USER_LOGOUT)
     }
 
     override fun onSwitchUserClick() {

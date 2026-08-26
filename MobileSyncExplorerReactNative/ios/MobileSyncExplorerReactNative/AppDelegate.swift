@@ -42,7 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // Salesforce you will also need to implement the
     // application:didRegisterForRemoteNotificationsWithDeviceToken:
     // method below.
-    registerForRemotePushNotifications()
+    // registerForRemotePushNotifications()
     
     // Uncomment the code below to see how you can customize the color,
     // text color, font and font size of the navigation bar.
@@ -91,7 +91,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
   func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
     // Uncomment the code below to register your device token with the push notification manager
-    didRegisterForRemoteNotifications(withDeviceToken: deviceToken)
+    // didRegisterForRemoteNotifications(withDeviceToken: deviceToken)
   }
   
   private func didRegisterForRemoteNotifications(withDeviceToken deviceToken:Data) {

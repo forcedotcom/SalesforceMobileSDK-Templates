@@ -60,7 +60,7 @@ class ContactScreen extends React.Component {
         
         this.props.navigation.setOptions({
             title: 'Contact',
-            headerLeft: () => (<NavImgButton icon='arrow-back' color='white' onPress={() => this.onBack()} />),
+            headerLeft: () => (<View style={styles.navButtonsGroupLeft}><NavImgButton icon='arrow-back' color='white' onPress={() => this.onBack()} /></View>),
             headerRight: () => (
                     <View style={styles.navButtonsGroup}>
                         <NavImgButton icon={deleteUndeleteIconName} iconType='material-community' onPress={() => this.onDeleteUndeleteContact()} />
@@ -151,18 +151,20 @@ class ContactScreen extends React.Component {
     
     render() {
         return (
-                <ScrollView>
-                  <View style={this.props.style}>
-                    {this.renderErrorIfAny()}
-                    <Field fieldLabel="First name" fieldValue={this.state.contact.FirstName} onChange={(text) => this.onChange("FirstName", text)}/>
-                    <Field fieldLabel="Last name" fieldValue={this.state.contact.LastName} onChange={(text) => this.onChange("LastName", text)}/>
-                    <Field fieldLabel="Title" fieldValue={this.state.contact.Title} onChange={(text) => this.onChange("Title", text)}/>
-                    <Field fieldLabel="Mobile phone" fieldValue={this.state.contact.MobilePhone} onChange={(text) => this.onChange("MobilePhone", text)}/>
-                    <Field fieldLabel="Email address" fieldValue={this.state.contact.Email} onChange={(text) => this.onChange("Email", text)}/>
-                    <Field fieldLabel="Department" fieldValue={this.state.contact.Department} onChange={(text) => this.onChange("Department", text)}/>
-                    {this.renderSaveButton()}
-                  </View>
-                </ScrollView>
+                <View style={{flex: 1}}>
+                  <ScrollView>
+                    <View style={this.props.style}>
+                      {this.renderErrorIfAny()}
+                      <Field fieldLabel="First name" fieldValue={this.state.contact.FirstName} onChange={(text) => this.onChange("FirstName", text)}/>
+                      <Field fieldLabel="Last name" fieldValue={this.state.contact.LastName} onChange={(text) => this.onChange("LastName", text)}/>
+                      <Field fieldLabel="Title" fieldValue={this.state.contact.Title} onChange={(text) => this.onChange("Title", text)}/>
+                      <Field fieldLabel="Mobile phone" fieldValue={this.state.contact.MobilePhone} onChange={(text) => this.onChange("MobilePhone", text)}/>
+                      <Field fieldLabel="Email address" fieldValue={this.state.contact.Email} onChange={(text) => this.onChange("Email", text)}/>
+                      <Field fieldLabel="Department" fieldValue={this.state.contact.Department} onChange={(text) => this.onChange("Department", text)}/>
+                    </View>
+                  </ScrollView>
+                  {this.renderSaveButton()}
+                </View>
                );
     }
 }

@@ -20,6 +20,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.salesforce.androidsdk.ui.LoginActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:theme="@style/SalesforceSDK">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="__INSERT_CALLBACK_URL_SCHEME_HERE__"
+                    android:host="__INSERT_CALLBACK_URL_HOST_HERE__"
+                    android:path="/__INSERT_CALLBACK_URL_PATH_HERE__" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

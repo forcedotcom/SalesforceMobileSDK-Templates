@@ -21,7 +21,6 @@ These templates are consumed by the Mobile SDK CLI tools and SFDX plugin to gene
 | Template | Description |
 |----------|-------------|
 | **iOSNativeSwiftTemplate** | Basic Swift template with MobileSync, SwiftUI, and Combine *(most common)* |
-| **iOSNativeTemplate** | Basic Objective-C template with classic UIKit |
 | **iOSNativeSwiftPackageManagerTemplate** | Swift template using Swift Package Manager instead of CocoaPods |
 | **iOSNativeSwiftEncryptedNotificationTemplate** | Swift template with notification service extension |
 | **iOSNativeLoginTemplate** | SwiftUI native login screen example |
@@ -33,7 +32,6 @@ These templates are consumed by the Mobile SDK CLI tools and SFDX plugin to gene
 | Template | Description |
 |----------|-------------|
 | **AndroidNativeKotlinTemplate** | Basic Kotlin template with Jetpack Compose *(most common)* |
-| **AndroidNativeTemplate** | Basic Java template with XML layouts |
 | **AndroidNativeLoginTemplate** | Jetpack Compose native login screen example |
 | **AndroidIDPTemplate** | Identity Provider implementation sample |
 | **MobileSyncExplorerKotlinTemplate** | Full-featured sample app demonstrating MobileSync CRUD and sync |

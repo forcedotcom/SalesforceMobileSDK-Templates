@@ -49,9 +49,7 @@ struct AccountsListView: View {
   }
 }
 
-struct AccountsList_Previews: PreviewProvider {
-  static var previews: some View {
-    AccountsListView()
-  }
+#Preview {
+  AccountsListView()
 }
 

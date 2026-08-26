@@ -11,5 +11,12 @@ includeBuild('../node_modules/@react-native/gradle-plugin')
 
 def salesforceMobileSdkRoot = new File('../mobile_sdk/SalesforceMobileSDK-Android')
 if (salesforceMobileSdkRoot.exists()) {
-    includeBuild(salesforceMobileSdkRoot)
+    includeBuild(salesforceMobileSdkRoot) {
+        dependencySubstitution {
+            substitute(module('com.salesforce.mobilesdk:SalesforceSDK')).using(project(':libs:SalesforceSDK'))
+            substitute(module('com.salesforce.mobilesdk:SalesforceAnalytics')).using(project(':libs:SalesforceAnalytics'))
+            substitute(module('com.salesforce.mobilesdk:SmartStore')).using(project(':libs:SmartStore'))
+            substitute(module('com.salesforce.mobilesdk:MobileSync')).using(project(':libs:MobileSync'))
+        }
+    }
 }

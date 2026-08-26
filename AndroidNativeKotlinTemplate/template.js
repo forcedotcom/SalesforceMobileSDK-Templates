@@ -45,10 +45,12 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var templateBuildGradleFile = path.join('app', 'build.gradle.kts');
     var templateStringsXmlFile = path.join('app', 'src', 'main', 'res', 'values', 'strings.xml');
     var templateBootconfigFile = path.join('app', 'src', 'main', 'res', 'values', 'bootconfig.xml');
+    var templateAndroidManifestFile = path.join('app', 'src', 'main', 'AndroidManifest.xml');
     var templateServersFile = path.join('app', 'src', 'main', 'res', 'xml', 'servers.xml');
     var templateMainActivityFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativekotlintemplate', 'MainActivity.kt');
     var templateMainApplicationFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativekotlintemplate', 'MainApplication.kt');
     var templateQrCodeEnabledLoginActivityFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativekotlintemplate', 'QrCodeEnabledLoginActivity.kt');
+    var templatePushNotificationsAdapterFile = path.join('app', 'src', 'main', 'java', 'com', 'salesforce', 'androidnativekotlintemplate', 'PushNotificationsAdapter.kt');
 
     //
     // Replace in files
@@ -58,7 +60,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     replaceInFiles(templateAppName, config.appname, [templatePackageJsonFile, templateSettingsGradle, templateStringsXmlFile]);
 
     // package name
-    replaceInFiles(templatePackageName, config.packagename, [templateBuildGradleFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile, templateQrCodeEnabledLoginActivityFile]);
+    replaceInFiles(templatePackageName, config.packagename, [templateBuildGradleFile, templateStringsXmlFile, templateMainActivityFile, templateMainApplicationFile, templateQrCodeEnabledLoginActivityFile, templatePushNotificationsAdapterFile]);
 
     // consumer key
     if (config.consumerkey && config.consumerkey !== '') {
@@ -68,6 +70,11 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     // callback URL
     if (config.callbackurl && config.callbackurl !== '') {
         replaceInFiles('__INSERT_CALLBACK_URL_HERE__', config.callbackurl, [templateBootconfigFile]);
+    }
+    if (config.callbackUrlScheme) {
+        replaceInFiles('__INSERT_CALLBACK_URL_SCHEME_HERE__', config.callbackUrlScheme, [templateAndroidManifestFile]);
+        replaceInFiles('__INSERT_CALLBACK_URL_HOST_HERE__', config.callbackUrlHost, [templateAndroidManifestFile]);
+        replaceInFiles('/__INSERT_CALLBACK_URL_PATH_HERE__', config.callbackUrlPath, [templateAndroidManifestFile]);
     }
 
     // login server
@@ -80,13 +87,16 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
     var tmpPathActivityFile = path.join('app', 'src', 'MainActivity.kt');
     var tmpPathApplicationFile = path.join('app', 'src', 'MainApplication.kt');
     var tmpPathQrCodeEnabledLoginActivityFile = path.join('app', 'src', 'QrCodeEnabledLoginActivity.kt');
+    var tmpPathPushNotificationsAdapterFile = path.join('app', 'src', 'PushNotificationsAdapter.kt');
     moveFile(templateMainActivityFile, tmpPathActivityFile);
     moveFile(templateMainApplicationFile, tmpPathApplicationFile);
     moveFile(templateQrCodeEnabledLoginActivityFile, tmpPathQrCodeEnabledLoginActivityFile);
+    moveFile(templatePushNotificationsAdapterFile, tmpPathPushNotificationsAdapterFile);
     removeFile(path.join('app', 'src', 'main', 'java', 'com'));
     moveFile(tmpPathActivityFile, path.join.apply(null, ['app', 'src', 'main', 'java'].concat(config.packagename.split('.')).concat(['MainActivity.kt'])));
     moveFile(tmpPathApplicationFile, path.join.apply(null, ['app', 'src', 'main', 'java'].concat(config.packagename.split('.')).concat(['MainApplication.kt'])));
     moveFile(tmpPathQrCodeEnabledLoginActivityFile, path.join.apply(null, ['app', 'src', 'main', 'java'].concat(config.packagename.split('.')).concat(['QrCodeEnabledLoginActivity.kt'])));
+    moveFile(tmpPathPushNotificationsAdapterFile, path.join.apply(null, ['app', 'src', 'main', 'java'].concat(config.packagename.split('.')).concat(['PushNotificationsAdapter.kt'])));
 
     //
     // Run install.js

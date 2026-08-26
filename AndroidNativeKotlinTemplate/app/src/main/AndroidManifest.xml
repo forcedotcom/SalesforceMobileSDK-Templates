@@ -34,23 +34,33 @@
 
         <!-- Login activity -->
         <!--
-            To enable browser based authentication, uncomment the lines below and replace
-            'scheme', 'host' and 'path' with their corresponding values from your connected app.
+            This activity enables browser based authentication. The redirect intent-filter's
+            'scheme', 'host' and 'path' are populated from your connected app's callback URL.
 
             For example, if the callback URL of your connected app is
             "testsfdc:///mobilesdk/detect/oauth/done",
-            'scheme' would be "testsfdc", 'host' would be "*" since it doesn't exist, and
-            'path' would be "/mobilesdk/detect/oauth/done".
+            'scheme' would be "testsfdc", 'host' would be empty since this callback URL has no
+            host component (never use "*"), and 'path' would be "/mobilesdk/detect/oauth/done".
 
             If the callback URL is "sfdc://login.salesforce.com/oauth/done",
             'scheme' would be "sfdc", 'host' would be "login.salesforce.com",
             and 'path' would be "/oauth/done".
         -->
         <!-- Use `android:name="com.salesforce.androidnativekotlintemplate.QrCodeEnabledLoginActivity"` when enabling log in via Salesforce UI Bridge API generated QR codes -->
-<!--        <activity-->
-<!--            android:name="com.salesforce.androidsdk.ui.LoginActivity"-->
-<!--            android:exported="true"-->
-<!--            android:launchMode="singleTask"-->
-<!--            android:theme="@style/SalesforceSDK" />-->
+        <activity
+            android:name="com.salesforce.androidsdk.ui.LoginActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:theme="@style/SalesforceSDK">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="__INSERT_CALLBACK_URL_SCHEME_HERE__"
+                    android:host="__INSERT_CALLBACK_URL_HOST_HERE__"
+                    android:path="/__INSERT_CALLBACK_URL_PATH_HERE__" />
+            </intent-filter>
+        </activity>
     </application>
 </manifest>

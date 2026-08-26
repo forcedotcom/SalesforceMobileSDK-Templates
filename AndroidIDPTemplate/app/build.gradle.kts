@@ -1,26 +1,29 @@
 plugins {
     android
-    `kotlin-android`
 }
 
 dependencies {
-    implementation("com.salesforce.mobilesdk:MobileSync:13.2.1")
+    implementation("com.salesforce.mobilesdk:MobileSync:14.0.0")
 }
 
 android {
     namespace = "com.salesforce.samples.salesforceandroididptemplateapp"
 
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
-        targetSdk = 36
-        minSdk = 28
+        targetSdk = 37
+        minSdk = 31
     }
 
     buildTypes {
         debug {
-            enableAndroidTestCoverage = true
         }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     packaging {
@@ -29,18 +32,6 @@ android {
         }
     }
     buildFeatures {
-        renderScript = true
-        aidl = true
         buildConfig = true
     }
 }
-
-repositories {
-    google()
-    mavenCentral()
-}
-
-kotlin {
-    jvmToolchain(17)
-}
-

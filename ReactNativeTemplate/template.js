@@ -163,6 +163,11 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
         if (config.callbackurl && config.callbackurl !== '') {
             replaceInFiles('__INSERT_CALLBACK_URL_HERE__', config.callbackurl, [templateBootconfigFile]);
         }
+        if (config.callbackUrlScheme) {
+            replaceInFiles('__INSERT_CALLBACK_URL_SCHEME_HERE__', config.callbackUrlScheme, [templateAndroidManifestFile]);
+            replaceInFiles('__INSERT_CALLBACK_URL_HOST_HERE__', config.callbackUrlHost, [templateAndroidManifestFile]);
+            replaceInFiles('/__INSERT_CALLBACK_URL_PATH_HERE__', config.callbackUrlPath, [templateAndroidManifestFile]);
+        }
 
         // login server
         var loginServer = (config.loginserver && config.loginserver !== '') ? config.loginserver : 'https://login.salesforce.com';

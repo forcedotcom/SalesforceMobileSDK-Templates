@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<resources>
-    <string name="remoteAccessConsumerKey">__INSERT_CONSUMER_KEY_HERE__</string>
-    <string name="oauthRedirectURI">__INSERT_CALLBACK_URL_HERE__</string>
-</resources>

@@ -26,10 +26,13 @@
  */
 package com.salesforce.androidnativekotlintemplate
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.net.Uri
 import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.TIRAMISU
 import android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE
 import android.os.Bundle
 import android.view.View
@@ -38,6 +41,9 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.requestPermissions
+import androidx.core.content.edit
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.Type.displayCutout
@@ -45,6 +51,7 @@ import androidx.core.view.WindowInsetsCompat.Type.systemBars
 import androidx.core.view.updatePadding
 import com.salesforce.androidnativekotlintemplate.R.id.root
 import com.salesforce.androidsdk.app.SalesforceSDKManager
+import com.salesforce.androidsdk.auth.OAuth2.LogoutReason.USER_LOGOUT
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 import com.salesforce.androidsdk.rest.ApiVersionStrings
 import com.salesforce.androidsdk.rest.RestClient
@@ -60,7 +67,6 @@ import com.salesforce.androidsdk.ui.LoginActivity.Companion.qrCodeLoginUrlPath
 import com.salesforce.androidsdk.ui.SalesforceActivity
 import com.salesforce.androidsdk.util.SalesforceSDKLogger.e
 import java.io.UnsupportedEncodingException
-import java.util.*
 
 /**
  * Main activity
@@ -93,6 +99,13 @@ class MainActivity : SalesforceActivity() {
                 WindowInsetsCompat.CONSUMED
             }
         }
+
+        // Review notifications permissions.
+        /*
+         * Actionable Notifications Template: Un-comment the line below to
+         * enable push notifications in this app.
+         */
+        // reviewNotificationsPermissions()
     }
 
     override fun onResume() {
@@ -125,7 +138,7 @@ class MainActivity : SalesforceActivity() {
      */
     @Suppress("UNUSED", "UNUSED_PARAMETER")
     fun onLogoutClick(v: View) {
-        SalesforceSDKManager.getInstance().logout(this)
+        SalesforceSDKManager.getInstance().logout(frontActivity = this, reason = USER_LOGOUT)
     }
 
     /**
@@ -193,6 +206,56 @@ class MainActivity : SalesforceActivity() {
         })
     }
 
+    // region Notifications: Permissions Set Up
+
+    /**
+     * Reviews and, if needed, requests permissions to post notifications.
+     */
+     /* Actionable Notifications Template: When not using [PushNotificationsAdapter] and Actionable Notifications, this method could be removed. */
+    @Suppress("unused")
+    private fun reviewNotificationsPermissions() {
+        /*
+         * Review required Android post-notifications permission.
+         * Note: The permission check and return must be in the same method as
+         * the notification manager's "notify" method to pass Android Studio's
+         * inspector.
+         */
+        if (SDK_INT >= TIRAMISU && ActivityCompat.checkSelfPermission(
+                this,
+                POST_NOTIFICATIONS
+            ) != PERMISSION_GRANTED
+        ) {
+            // Guard such that the permissions prompt is only displayed once as a consideration for the user's chosen preferences.
+            getSharedPreferences(
+                SHARED_PREFERENCES_NAME_ANDROID_NATIVE_KOTLIN,
+                MODE_PRIVATE
+            ).run {
+                val postNotificationsPermissionRequested = getBoolean(
+                    SHARED_PREFERENCES_KEY_ANDROID_NATIVE_KOTLIN_POST_NOTIFICATIONS_PERMISSION_REQUESTED,
+                    false
+                )
+                if (postNotificationsPermissionRequested) return
+
+                edit {
+                    putBoolean(
+                        SHARED_PREFERENCES_KEY_ANDROID_NATIVE_KOTLIN_POST_NOTIFICATIONS_PERMISSION_REQUESTED,
+                        true
+                    )
+                }
+            }
+
+            // Prompt for the post notifications permission.
+            requestPermissions(
+                this,
+                arrayOf(POST_NOTIFICATIONS),
+                1
+            )
+
+            return
+        }
+    }
+
+    // endregion
     // region QR Code Login Via Salesforce Identity API UI Bridge Public Implementation
 
     /**
@@ -258,6 +321,24 @@ class MainActivity : SalesforceActivity() {
 
         // Clear the intent data so that the QR code login URL is used only once.
         intent.data = null
+    }
+
+    // endregion
+    // region Companion
+
+    companion object {
+
+        // region Notifications: Shared Preferences
+
+        /** A shared preferences name for notifications set up */
+        /* Actionable Notifications Template: When not using [PushNotificationsAdapter] and Actionable Notifications, this could be removed. */
+        private const val SHARED_PREFERENCES_NAME_ANDROID_NATIVE_KOTLIN = "ANDROID_NATIVE_KOTLIN"
+
+        /** A shared preferences key for post notifications permission requested */
+        /* Actionable Notifications Template: When not using [PushNotificationsAdapter] and Actionable Notifications, this could be removed. */
+        private const val SHARED_PREFERENCES_KEY_ANDROID_NATIVE_KOTLIN_POST_NOTIFICATIONS_PERMISSION_REQUESTED = "ANDROID_NATIVE_KOTLIN_POST_NOTIFICATIONS_PERMISSION_REQUESTED"
+
+        // endregion
     }
 
     // endregion

@@ -20,13 +20,6 @@
         "platforms": ["ios"]
     },
     {
-
-        "path": "iOSNativeTemplate",
-        "description": "Basic Objective-C application",
-        "appType": "native",
-        "platforms": ["ios"]
-    },
-    {
         "path": "AndroidNativeKotlinTemplate",
         "description": "Basic Kotlin application",
         "appType": "native_kotlin",
@@ -36,12 +29,6 @@
         "path": "AndroidNativeLoginTemplate",
         "description": "Sample application with a native login screen created with Jetpack Compose",
         "appType": "native_kotlin",
-        "platforms": ["android"]
-    },
-    {
-        "path": "AndroidNativeTemplate",
-        "description": "Basic Java application",
-        "appType": "native",
         "platforms": ["android"]
     },
     {

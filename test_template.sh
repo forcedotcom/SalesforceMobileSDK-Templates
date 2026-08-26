@@ -19,6 +19,9 @@ MSDK_ANDROID_BRANCH=""
 RN_FORCE_ORG=""
 RN_FORCE_BRANCH=""
 
+# Hybrid plugin override
+PLUGIN_REPO_URI="https://github.com/forcedotcom/SalesforceMobileSDK-CordovaPlugin#dev"
+
 # Template and platform parameters
 TEMPLATE_NAME=""
 PLATFORM=""
@@ -136,7 +139,7 @@ build_ios() {
         return 1
     fi
     
-    if xcodebuild $BUILD_TARGET -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17' build CODE_SIGNING_ALLOWED=NO; then
+    if xcodebuild $BUILD_TARGET -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' build CODE_SIGNING_ALLOWED=NO; then
         print_status "SUCCESS" "$template_name (iOS): Build successful"
         for ((i=0; i<cd_back_count; i++)); do
             cd - > /dev/null
@@ -334,6 +337,135 @@ test_android_react_native() {
     build_android "$template_name" 2
 }
 
+# Function to test a hybrid template (HybridLocalTemplate or HybridRemoteTemplate)
+#
+# IMPORTANT: The steps below mirror createHybridApp() in
+# SalesforceMobileSDK-Package/shared/createHelper.js.
+# If the hybrid app creation workflow changes there, update this function accordingly.
+#
+# Cordova platform versions must match SalesforceMobileSDK-CordovaPlugin/plugin.xml
+# <engines> block and SalesforceMobileSDK-Package/shared/constants.js platformVersion.
+#   cordova-ios:     8.1.0
+#   cordova-android: 15.0.0
+test_hybrid() {
+    local template_path=$1
+    local template_name=$2
+    local platform=$3
+    local script_dir=$4
+
+    ((TOTAL_TESTS++))
+    echo ""
+    echo "========================================"
+    echo "Testing Hybrid ($platform): $template_name"
+    echo "========================================"
+
+    # Create temp directory inside the repo (gitignored via tmp/)
+    local timestamp=$(date +%Y%m%dT%H%M%S)
+    local app_name="test${template_name// /}${platform}"
+    local package_name="com.salesforce.test.$(echo "$template_name" | tr '[:upper:]' '[:lower:]' | tr -d '_')"
+    local tmp_dir="$script_dir/tmp/${template_name}-${platform}-${timestamp}"
+    mkdir -p "$tmp_dir"
+
+    # Step 0: Run install.js from the template directory to clone mobile_sdk/ (Android SDK source).
+    # This is needed so postinstall-android.js sets up a composite build (dev mode) rather than
+    # falling back to Maven Central artifacts which may not be published yet.
+    # Override SDK dependencies if needed before running install.js.
+    echo "Running template install.js to clone SDK dependencies..."
+    local install_dir="$tmp_dir/install"
+    mkdir -p "$install_dir"
+    cp -R "$template_path/." "$install_dir/"
+    override_sdk_dependencies "$install_dir/package.json"
+    if ! (cd "$install_dir" && node install.js); then
+        print_status "FAILURE" "$template_name ($platform): template install.js failed"
+        rm -rf "$tmp_dir"
+        return 1
+    fi
+
+    # Step 1: Create bare Cordova project
+    echo "Creating Cordova project..."
+    if ! cordova create "$tmp_dir/app" "$package_name" "$app_name"; then
+        print_status "FAILURE" "$template_name ($platform): cordova create failed"
+        rm -rf "$tmp_dir"
+        return 1
+    fi
+
+    local app_dir="$tmp_dir/app"
+
+    # Step 2: Install shelljs (required by postinstall-android.js hook)
+    echo "Installing shelljs..."
+    (cd "$app_dir" && npm install shelljs@0.8.5 --save-dev) || true
+
+    # Step 3: Add platform
+    echo "Adding $platform platform..."
+    local platform_version
+    if [ "$platform" == "ios" ]; then
+        platform_version="8.1.0"
+    else
+        platform_version="15.0.0"
+    fi
+    if ! (cd "$app_dir" && cordova platform add "${platform}@${platform_version}"); then
+        print_status "FAILURE" "$template_name ($platform): cordova platform add failed"
+        rm -rf "$tmp_dir"
+        return 1
+    fi
+
+    # Move mobile_sdk/SalesforceMobileSDK-Android into platforms/android/mobile_sdk/ so
+    # the composite build in settings.gradle can find it. This mirrors what template.js does
+    # (it moves mobile_sdk/ to platforms/android/mobile_sdk/ via moveFile).
+    # Must happen AFTER cordova platform add (which creates platforms/android/).
+    if [ -d "$install_dir/mobile_sdk/SalesforceMobileSDK-Android" ] && [ "$platform" == "android" ]; then
+        echo "Moving SalesforceMobileSDK-Android into platforms/android/mobile_sdk/..."
+        mkdir -p "$app_dir/platforms/android/mobile_sdk"
+        mv "$install_dir/mobile_sdk/SalesforceMobileSDK-Android" "$app_dir/platforms/android/mobile_sdk/SalesforceMobileSDK-Android"
+    fi
+
+    # Step 4: Install CordovaPlugin
+    echo "Installing CordovaPlugin from: $PLUGIN_REPO_URI"
+    if ! (cd "$app_dir" && cordova plugin add "$PLUGIN_REPO_URI" --force); then
+        print_status "FAILURE" "$template_name ($platform): cordova plugin add failed"
+        rm -rf "$tmp_dir"
+        return 1
+    fi
+
+    # Step 5: Copy template www/ content
+    echo "Copying template www/ content..."
+    if [ -d "$template_path/www" ] || ls "$template_path"/*.html "$template_path"/*.json 2>/dev/null | head -1 > /dev/null; then
+        # HybridLocalTemplate has html/json at root, HybridRemoteTemplate has just config files
+        cp -R "$template_path"/. "$app_dir/www/" 2>/dev/null || true
+        # Remove template-specific scripts that shouldn't be in www
+        rm -f "$app_dir/www/install.js" "$app_dir/www/template.js" "$app_dir/www/package.json"
+    fi
+
+    # Step 6: cordova prepare
+    echo "Running cordova prepare..."
+    if ! (cd "$app_dir" && cordova prepare "$platform"); then
+        print_status "FAILURE" "$template_name ($platform): cordova prepare failed"
+        rm -rf "$tmp_dir"
+        return 1
+    fi
+
+    # Step 7: Build
+    local build_result=0
+    if [ "$platform" == "ios" ]; then
+        cd "$app_dir/platforms/ios" || { rm -rf "$tmp_dir"; return 1; }
+        build_ios "$template_name" 1
+        build_result=$?
+    else
+        cd "$app_dir/platforms/android" || { rm -rf "$tmp_dir"; return 1; }
+        build_android "$template_name" 1
+        build_result=$?
+    fi
+
+    # Cleanup on success, keep on failure for debugging
+    if [ $build_result -eq 0 ]; then
+        rm -rf "$tmp_dir"
+    else
+        print_status "INFO" "Build artifacts kept for debugging at: $tmp_dir"
+    fi
+
+    return $build_result
+}
+
 # Function to test a single template
 test_template() {
     local template_name=$1
@@ -351,12 +483,6 @@ test_template() {
     local app_type=$(echo "$template_info" | jq -r '.appType')
     local platforms=$(echo "$template_info" | jq -r '.platforms[]')
     local template_path="$script_dir/$template_name"
-
-    # Check if template is hybrid
-    if [[ "$app_type" == hybrid* ]]; then
-        print_status "INFO" "$template_name: Hybrid templates are not supported"
-        return 0
-    fi
 
     # Determine which platforms to test
     local platforms_to_test=()
@@ -386,6 +512,8 @@ test_template() {
             elif [ "$plat" == "android" ]; then
                 test_android_native "$template_path" "$template_name"
             fi
+        elif [[ "$app_type" == hybrid* ]]; then
+            test_hybrid "$template_path" "$template_name" "$plat" "$script_dir"
         fi
     done
 }
@@ -426,6 +554,10 @@ parse_args() {
                 RN_FORCE_BRANCH="$2"
                 shift 2
                 ;;
+            --plugin-repo-uri)
+                PLUGIN_REPO_URI="$2"
+                shift 2
+                ;;
             --help|-h)
                 print_help
                 exit 0
@@ -455,6 +587,7 @@ Options:
   --msdk-android-branch BRANCH    Override Android SDK branch (default: dev)
   --rn-force-org ORG              Override React Native SDK GitHub organization (default: forcedotcom)
   --rn-force-branch BRANCH        Override React Native SDK branch (default: dev)
+  --plugin-repo-uri URI           Override CordovaPlugin repo URI for hybrid templates (default: forcedotcom dev branch)
   -h, --help                      Show this help message
 
 Examples:

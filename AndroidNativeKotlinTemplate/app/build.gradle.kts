@@ -1,13 +1,12 @@
 plugins {
     android
-    `kotlin-android`
 }
 
 dependencies {
-    implementation("com.salesforce.mobilesdk:MobileSync:13.2.1")
-    implementation("androidx.compose.runtime:runtime-android:1.8.2")
+    implementation("com.salesforce.mobilesdk:MobileSync:14.0.0")
+    implementation("androidx.compose.runtime:runtime-android:1.11.1")
     // Comment when disabling log in via Salesforce UI Bridge API generated QR codes
-    implementation("com.google.zxing:core:3.5.3")
+    implementation("com.google.zxing:core:3.5.4")
     // Comment when disabling log in via Salesforce UI Bridge API generated QR codes
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 }
@@ -15,17 +14,11 @@ dependencies {
 android {
     namespace = "com.salesforce.androidnativekotlintemplate"
 
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
-        targetSdk = 36
-        minSdk = 28
-    }
-
-    buildTypes {
-        debug {
-            enableAndroidTestCoverage = true
-        }
+        targetSdk = 37
+        minSdk = 31
     }
 
     packaging {
@@ -40,17 +33,11 @@ android {
     }
 
     buildFeatures {
-        renderScript = true
-        aidl = true
         buildConfig = true
     }
-}
 
-repositories {
-    google()
-    mavenCentral()
-}
-
-kotlin {
-    jvmToolchain(17)
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 }

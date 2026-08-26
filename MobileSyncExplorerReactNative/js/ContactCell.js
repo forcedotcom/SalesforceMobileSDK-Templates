@@ -32,18 +32,18 @@ class ContactCell extends React.Component {
     render() {
         let statusIcon
         if (this.props.contact.__local__) {
-            if (this.props.contact.__locally_updated__) statusIcon = (<Icon name='sync' color='blue'/>);
-            if (this.props.contact.__locally_created__) statusIcon = (<Icon name='add' color='green'/>);
-            if (this.props.contact.__locally_deleted__) statusIcon = (<Icon name='delete' color='red'/>);
-            if (this.props.contact.__last_error__) statusIcon = (<Icon name='sync-problem' color='red'/>);
+            if (this.props.contact.__locally_updated__) statusIcon = (<Icon key="status" name='sync' color='blue'/>);
+            if (this.props.contact.__locally_created__) statusIcon = (<Icon key="status" name='add' color='green'/>);
+            if (this.props.contact.__locally_deleted__) statusIcon = (<Icon key="status" name='delete' color='red'/>);
+            if (this.props.contact.__last_error__) statusIcon = (<Icon key="status" name='sync-problem' color='red'/>);
         }
 
         const fullName = [this.props.contact.FirstName, this.props.contact.LastName].filter(x=>x).join(' ')
         const title = this.props.contact.Title;
         
         return (<ListItem onPress={this.props.onSelect} bottomDivider>
-                  <ContactBadge contact={this.props.contact}/>
-                  <ListItem.Content>
+                  <ContactBadge key="badge" contact={this.props.contact}/>
+                  <ListItem.Content key="content">
                     <ListItem.Title>{fullName}</ListItem.Title>
                     <ListItem.Subtitle>{title}</ListItem.Subtitle>
                   </ListItem.Content>

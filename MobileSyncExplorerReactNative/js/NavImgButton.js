@@ -25,15 +25,15 @@
  */
 
 import React from 'react';
-import { View } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { Icon} from 'react-native-elements';
 import styles from './Styles';
 
-class NavImgButton extends React.Component { 
+class NavImgButton extends React.Component {
     render() {
-        return (<View style={styles.navBarButton}>
-                  <Icon size={32} name={this.props.icon} type={this.props.iconType} color='white' underlayColor='red' onPress={() => this.props.onPress()} />
-                </View>);
+        return (<TouchableOpacity style={styles.navBarButton} onPress={() => this.props.onPress()}>
+                  <Icon size={32} name={this.props.icon} type={this.props.iconType} color={this.props.color || 'white'} />
+                </TouchableOpacity>);
     }
 }
 

@@ -32,8 +32,11 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
     
     override init() {
         super.init()
+        // Set the delegate here in init() rather than later in registerForRemotePushNotifications()
+        // to avoid a race condition where a notification could arrive before the delegate is assigned.
+        UNUserNotificationCenter.current().delegate = self
         MobileSyncSDKManager.initializeSDK()
-        
+
         AuthHelper.registerBlock(forCurrentUserChangeNotifications: {
             self.resetViewState {
                 self.setupRootViewController()
@@ -42,6 +45,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
     }
     
     // MARK: - App delegate lifecycle
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.initializeAppViewState()
@@ -78,6 +82,17 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
                 switch (result) {
                     case .success:
                         SalesforceLogger.e(AppDelegate.self, message: "Registration for Salesforce notifications succeeded")
+                        Task {
+                            do {
+                                // Fetch notification type definitions from the server and register
+                                // them as UNNotificationCategory objects with iOS. This is what
+                                // enables action buttons to appear on notifications — iOS must know
+                                // the category and its actions before a notification arrives.
+                                try await PushNotificationManager.sharedInstance().fetchAndStoreNotificationTypes()
+                            } catch {
+                                SalesforceLogger.e(AppDelegate.self, message: "Failed to fetch notification types: \(error)")
+                            }
+                        }
                     case .failure(let error):
                         SalesforceLogger.e(AppDelegate.self, message: "Registration for Salesforce notifications failed with error: \(error as Error)")
                 }
@@ -116,5 +131,46 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
             }
         }
         postResetBlock()
+    }
+}
+
+// MARK: - UNUserNotificationCenterDelegate
+extension AppDelegate: UNUserNotificationCenterDelegate {
+
+    // Show notifications as banners even when the app is in the foreground
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                willPresent notification: UNNotification,
+                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner, .sound, .badge])
+    }
+
+    // Handle action button taps
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                didReceive response: UNNotificationResponse,
+                                withCompletionHandler completionHandler: @escaping () -> Void) {
+        let actionIdentifier = response.actionIdentifier
+        let userInfo = response.notification.request.content.userInfo
+
+        // Skip default tap (opens app) and dismiss — only handle custom action buttons.
+        // nid is nested inside the "sfdc" dictionary in the payload, not at the top level.
+        let sfdc = userInfo["sfdc"] as? [String: Any]
+        guard actionIdentifier != UNNotificationDefaultActionIdentifier,
+              actionIdentifier != UNNotificationDismissActionIdentifier,
+              let nid = sfdc?["nid"] as? String else {
+            completionHandler()
+            return
+        }
+
+        Task {
+            do {
+                _ = try await PushNotificationManager.sharedInstance().invokeServerNotificationAction(
+                    notificationId: nid,
+                    actionIdentifier: actionIdentifier
+                )
+            } catch {
+                SalesforceLogger.e(AppDelegate.self, message: "Failed to invoke notification action: \(error)")
+            }
+            completionHandler()
+        }
     }
 }
