@@ -14,7 +14,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
     implementation("androidx.window:window:1.5.1")
 
-    implementation("com.salesforce.mobilesdk:MobileSync:14.0.0")
+    implementation("com.salesforce.mobilesdk:MobileSync:14.0.0-rc.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")

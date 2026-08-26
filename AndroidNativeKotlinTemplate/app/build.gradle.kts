@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation("com.salesforce.mobilesdk:MobileSync:14.0.0")
+    implementation("com.salesforce.mobilesdk:MobileSync:14.0.0-rc.0")
     implementation("androidx.compose.runtime:runtime-android:1.11.1")
     // Comment when disabling log in via Salesforce UI Bridge API generated QR codes
     implementation("com.google.zxing:core:3.5.4")
