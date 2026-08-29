@@ -27,6 +27,11 @@
 package com.salesforce.androidnativelogintemplate
 
 import android.app.Application
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.google.android.material.color.DynamicColors
 import com.google.android.recaptcha.Recaptcha
 import com.google.android.recaptcha.RecaptchaAction
@@ -112,10 +117,16 @@ class MainApplication : Application() {
         // region Google reCAPTCHA Integration
 
         /** The reCAPTCHA client used to obtain reCAPTCHA tokens when needed for Salesforce Headless Identity API requests. */
-        private var recaptchaClient: RecaptchaClient? = null
+        private var recaptchaClient: RecaptchaClient? by mutableStateOf(null)
 
-        /** Whether reCAPTCHA has been configured and is available for use. */
-        val isReCaptchaEnabled: Boolean get() = recaptchaClient != null
+        /**
+         * Whether reCAPTCHA has been configured and is available for use.
+         * Derived from Compose state so observers recompose once client
+         * initialization finishes asynchronously, rather than reading a
+         * one-time snapshot at first composition.
+         */
+        val isReCaptchaEnabledState: State<Boolean> =
+            derivedStateOf { recaptchaClient != null }
 
         /**
          * Initializes the Google reCAPTCHA client.
