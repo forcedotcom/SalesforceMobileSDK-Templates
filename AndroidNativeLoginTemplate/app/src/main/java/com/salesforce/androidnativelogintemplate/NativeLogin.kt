@@ -198,7 +198,7 @@ class NativeLogin : FragmentActivity() {
                             }
                         },
                         biometricAuthenticationUsername = bioUsername,
-                        reCaptchaEnabled = MainApplication.isReCaptchaEnabled,
+                        reCaptchaEnabled = MainApplication.isReCaptchaEnabledState.value,
                         onBiometricLogin = if (shouldShowBiometricPrompt) {
                             { nativeLoginManager.presentBiometricAuth(this@NativeLogin) }
                         } else null,
