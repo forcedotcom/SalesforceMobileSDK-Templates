@@ -28,6 +28,7 @@ package com.salesforce.androidnativelogintemplate
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build.VERSION.SDK_INT
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
@@ -100,6 +101,8 @@ import androidx.compose.ui.text.input.KeyboardType.Companion.Password
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED
 import androidx.fragment.app.FragmentActivity
 import com.google.android.recaptcha.RecaptchaAction.Companion.LOGIN
 import com.google.android.recaptcha.RecaptchaAction.Companion.SIGNUP
@@ -117,6 +120,7 @@ import com.salesforce.androidnativelogintemplate.R.drawable.radio_button_checked
 import com.salesforce.androidnativelogintemplate.R.drawable.radio_button_unchecked_24px
 import com.salesforce.androidnativelogintemplate.R.drawable.sf__salesforce_logo
 import com.salesforce.androidsdk.R.drawable.sf__action_back
+import com.salesforce.androidsdk.accounts.UserAccountManager
 import com.salesforce.androidsdk.app.SalesforceSDKManager
 import com.salesforce.androidsdk.auth.interfaces.NativeLoginManager
 import com.salesforce.androidsdk.auth.interfaces.NativeLoginResult
@@ -128,6 +132,7 @@ import com.salesforce.androidsdk.auth.interfaces.NativeLoginResult.Success
 import com.salesforce.androidsdk.auth.interfaces.NativeLoginResult.UnknownError
 import com.salesforce.androidsdk.auth.interfaces.OtpVerificationMethod
 import com.salesforce.androidsdk.auth.interfaces.OtpVerificationMethod.Email
+import com.salesforce.androidsdk.util.UserSwitchReceiver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -162,11 +167,34 @@ class NativeLogin : FragmentActivity() {
             } ?: false
         }
 
+    /*
+     * onAuthFlowComplete() broadcasts USER_SWITCH_INTENT_ACTION on every
+     * successful native-login sub-flow after starting MainActivity, but has
+     * no reference back to this activity to finish it.  This receiver closes
+     * that gap so MainActivity isn't left occluded by this activity.
+     */
+    private val userSwitchReceiver = object : UserSwitchReceiver() {
+        override fun onUserSwitch() {
+            if (nativeLoginManager.biometricAuthenticationUsername != null) {
+                moveTaskToBack(true)
+            } else {
+                finish()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         nativeLoginManager = SalesforceSDKManager.getInstance().nativeLoginManager!!
         val bioUsername = nativeLoginManager.biometricAuthenticationUsername
+
+        ContextCompat.registerReceiver(
+            this,
+            userSwitchReceiver,
+            IntentFilter(UserAccountManager.USER_SWITCH_INTENT_ACTION),
+            RECEIVER_NOT_EXPORTED
+        )
 
         setContentView(
             ComposeView(this).apply {
@@ -241,6 +269,11 @@ class NativeLogin : FragmentActivity() {
         if (shouldShowBiometricPrompt) {
             nativeLoginManager.presentBiometricAuth(this)
         }
+    }
+
+    override fun onDestroy() {
+        unregisterReceiver(userSwitchReceiver)
+        super.onDestroy()
     }
 
     /**
