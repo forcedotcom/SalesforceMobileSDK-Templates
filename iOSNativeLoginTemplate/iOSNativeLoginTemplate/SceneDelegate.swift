@@ -181,7 +181,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 @MainActor class ReCaptchaClientObservable: ObservableObject {
     
     @Published var reCaptchaClient: RecaptchaClient? = nil
-    
+
+    /// Creates an observable with no reCAPTCHA client configured, for injection where password-less login setup is not enabled.
+    nonisolated init() {
+    }
+
     init(reCaptchaSiteKey: String) {
         Task(priority: .medium) {
             await initializeReCaptchaClient(reCaptchaSiteKey: reCaptchaSiteKey)
