@@ -164,6 +164,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
        self.window?.rootViewController = UIHostingController(
            rootView: AccountsListView()
        )
+       self.window?.makeKeyAndVisible()
    }
    
    func resetViewState(_ postResetBlock: @escaping () -> ()) {
