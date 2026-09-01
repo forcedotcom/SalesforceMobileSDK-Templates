@@ -420,12 +420,18 @@ struct NativeLoginView: View {
     private func onRequestOtpForRegistrationTapped() {
         // Reset the message.
         messageReset()
-        
+
+        // Guard for a configured reCAPTCHA client.
+        guard let reCaptchaClient = reCaptchaClientObservable.reCaptchaClient else {
+            errorMessage("reCAPTCHA isn't configured.  See SceneDelegate.swift to enable password-less login.")
+            return
+        }
+
         // Show the progress indicator.
         isAuthenticating = true
-        
+
         // Execute for a new reCAPTCHA token.
-        reCaptchaClientObservable.reCaptchaClient?.execute(
+        reCaptchaClient.execute(
             withAction: .signup
         ) {reCaptchaExecuteResult, error in
             
@@ -497,15 +503,21 @@ struct NativeLoginView: View {
     private func onRequestOtpForResetPasswordTapped() {
         // Reset the message.
         messageReset()
-        
+
+        // Guard for a configured reCAPTCHA client.
+        guard let reCaptchaClient = reCaptchaClientObservable.reCaptchaClient else {
+            errorMessage("reCAPTCHA isn't configured.  See SceneDelegate.swift to enable password-less login.")
+            return
+        }
+
         // Clear the user's previous password entry.
         password = ""
-        
+
         // Show the progress indicator.
         isAuthenticating = true
-        
+
         // Execute for a new reCAPTCHA token.
-        reCaptchaClientObservable.reCaptchaClient?.execute(
+        reCaptchaClient.execute(
             withAction: .init(customAction: "forgot_password")
         ) {reCaptchaExecuteResult, error in
             
@@ -574,12 +586,18 @@ struct NativeLoginView: View {
     private func onRequestOtpTapped() {
         // Reset the message.
         messageReset()
-        
+
+        // Guard for a configured reCAPTCHA client.
+        guard let reCaptchaClient = reCaptchaClientObservable.reCaptchaClient else {
+            errorMessage("reCAPTCHA isn't configured.  See SceneDelegate.swift to enable password-less login.")
+            return
+        }
+
         // Show the progress indicator.
         isAuthenticating = true
-        
+
         // Execute for a new reCAPTCHA token.
-        reCaptchaClientObservable.reCaptchaClient?.execute(withAction: .login) {reCaptchaExecuteResult, error in
+        reCaptchaClient.execute(withAction: .login) {reCaptchaExecuteResult, error in
             
             // Guard for the new reCAPTCHA token.
             guard let reCaptchaToken = reCaptchaExecuteResult else {
