@@ -217,6 +217,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         } catch let error {
             reCaptchaClientState = .failed(error)
             SalesforceLogger.e(SceneDelegate.self, message: "Cannot get reCAPTCHA client due to an error with description '\(error.localizedDescription).'.")
+
+            /*
+             * This template does not retry reCAPTCHA client initialization
+             * after a failure -- reCaptchaClientState remains .failed
+             * permanently. Apps that need resilience to transient
+             * initialization failures should add their own retry logic here,
+             * such as re-invoking initializeReCaptchaClient with a backoff
+             * policy.
+             */
         }
     }
 }
