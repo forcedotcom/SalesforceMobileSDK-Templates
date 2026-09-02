@@ -679,8 +679,9 @@ struct NativeLoginView: View {
     
     // MARK: Private reCAPTCHA Utilities
 
-    /// Returns the reCAPTCHA client if it has finished initializing successfully, otherwise sets an
-    /// appropriate user message for its current state and returns nil.
+    /// Returns the reCAPTCHA client if it has finished initializing
+    /// successfully, otherwise sets an appropriate user message for its current
+    /// state and returns nil.
     private func readyReCaptchaClient() -> RecaptchaClient? {
         switch reCaptchaClientObservable.reCaptchaClientState {
         case .disabled:

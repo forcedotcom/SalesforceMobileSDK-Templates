@@ -180,10 +180,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 @MainActor class ReCaptchaClientObservable: ObservableObject {
 
-    /// The state of the reCAPTCHA client used to obtain reCAPTCHA tokens for Salesforce Headless Identity API requests.
+    /// The state of the reCAPTCHA client used to obtain reCAPTCHA tokens for
+    /// Salesforce Headless Identity API requests.
     enum ReCaptchaClientState {
 
-        /// No reCAPTCHA site key was provided, so password-less login features are disabled.
+        /// No reCAPTCHA site key was provided, so password-less login features
+        /// are disabled.
         case disabled
 
         /// The reCAPTCHA client is being initialized.
