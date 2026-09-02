@@ -435,7 +435,12 @@ struct NativeLoginView: View {
             
             // Guard for the new reCAPTCHA token.
             guard let reCaptchaToken = reCaptchaExecuteResult else {
-                SalesforceLogger.e(AppDelegate.self, message: "Could not obtain a reCAPTCHA signup action token due to error with description '\(error?.localizedDescription ?? "(A description wasn't provided.)")'.")
+                let description = error?.localizedDescription ?? "(A description wasn't provided.)"
+                SalesforceLogger.e(AppDelegate.self, message: "Could not obtain a reCAPTCHA signup action token due to error with description '\(description)'.")
+
+                // Clear the progress indicator and inform the user.
+                isAuthenticating = false
+                errorMessage("Could not obtain a reCAPTCHA token due to an error with description '\(description)'.")
                 return
             }
             
@@ -518,7 +523,12 @@ struct NativeLoginView: View {
             
             // Guard for the new reCAPTCHA token.
             guard let reCaptchaToken = reCaptchaExecuteResult else {
-                SalesforceLogger.e(AppDelegate.self, message: "Could not obtain a reCAPTCHA forgot password action token due to error with description '\(error?.localizedDescription ?? "(A description wasn't provided.)")'.")
+                let description = error?.localizedDescription ?? "(A description wasn't provided.)"
+                SalesforceLogger.e(AppDelegate.self, message: "Could not obtain a reCAPTCHA forgot password action token due to error with description '\(description)'.")
+
+                // Clear the progress indicator and inform the user.
+                isAuthenticating = false
+                errorMessage("Could not obtain a reCAPTCHA token due to an error with description '\(description)'.")
                 return
             }
             
@@ -593,7 +603,12 @@ struct NativeLoginView: View {
             
             // Guard for the new reCAPTCHA token.
             guard let reCaptchaToken = reCaptchaExecuteResult else {
-                SalesforceLogger.e(AppDelegate.self, message: "Could not obtain a reCAPTCHA login action token due to error with description '\(error?.localizedDescription ?? "(A description wasn't provided.)")'.")
+                let description = error?.localizedDescription ?? "(A description wasn't provided.)"
+                SalesforceLogger.e(AppDelegate.self, message: "Could not obtain a reCAPTCHA login action token due to error with description '\(description)'.")
+
+                // Clear the progress indicator and inform the user.
+                isAuthenticating = false
+                errorMessage("Could not obtain a reCAPTCHA token due to an error with description '\(description)'.")
                 return
             }
             
