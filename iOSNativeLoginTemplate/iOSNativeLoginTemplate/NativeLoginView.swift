@@ -25,6 +25,7 @@
 //  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
 //  WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import RecaptchaEnterprise
 import SwiftUI
 import SalesforceSDKCore
 
@@ -421,11 +422,8 @@ struct NativeLoginView: View {
         // Reset the message.
         messageReset()
 
-        // Guard for a configured reCAPTCHA client.
-        guard let reCaptchaClient = reCaptchaClientObservable.reCaptchaClient else {
-            errorMessage("reCAPTCHA isn't configured.  See SceneDelegate.swift to enable password-less login.")
-            return
-        }
+        // Guard for a ready reCAPTCHA client.
+        guard let reCaptchaClient = readyReCaptchaClient() else { return }
 
         // Show the progress indicator.
         isAuthenticating = true
@@ -504,11 +502,8 @@ struct NativeLoginView: View {
         // Reset the message.
         messageReset()
 
-        // Guard for a configured reCAPTCHA client.
-        guard let reCaptchaClient = reCaptchaClientObservable.reCaptchaClient else {
-            errorMessage("reCAPTCHA isn't configured.  See SceneDelegate.swift to enable password-less login.")
-            return
-        }
+        // Guard for a ready reCAPTCHA client.
+        guard let reCaptchaClient = readyReCaptchaClient() else { return }
 
         // Clear the user's previous password entry.
         password = ""
@@ -587,11 +582,8 @@ struct NativeLoginView: View {
         // Reset the message.
         messageReset()
 
-        // Guard for a configured reCAPTCHA client.
-        guard let reCaptchaClient = reCaptchaClientObservable.reCaptchaClient else {
-            errorMessage("reCAPTCHA isn't configured.  See SceneDelegate.swift to enable password-less login.")
-            return
-        }
+        // Guard for a ready reCAPTCHA client.
+        guard let reCaptchaClient = readyReCaptchaClient() else { return }
 
         // Show the progress indicator.
         isAuthenticating = true
@@ -670,8 +662,28 @@ struct NativeLoginView: View {
         }
     }
     
+    // MARK: Private reCAPTCHA Utilities
+
+    /// Returns the reCAPTCHA client if it has finished initializing successfully, otherwise sets an
+    /// appropriate user message for its current state and returns nil.
+    private func readyReCaptchaClient() -> RecaptchaClient? {
+        switch reCaptchaClientObservable.reCaptchaClientState {
+        case .disabled:
+            errorMessage("reCAPTCHA isn't configured.  See SceneDelegate.swift to enable password-less login.")
+            return nil
+        case .loading:
+            errorMessage("reCAPTCHA is still initializing.  Please try again in a moment.")
+            return nil
+        case .failed(let error):
+            errorMessage("reCAPTCHA failed to initialize due to an error with description '\(error.localizedDescription)'.")
+            return nil
+        case .ready(let reCaptchaClient):
+            return reCaptchaClient
+        }
+    }
+
     // MARK: Private User Messsaging Utilities
-    
+
     /// Sets the error message displayed to the user.
     private func errorMessage(_ text: String) {
         messageReset()
