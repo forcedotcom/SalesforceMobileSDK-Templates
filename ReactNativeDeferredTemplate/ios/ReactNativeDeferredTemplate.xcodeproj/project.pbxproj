@@ -13,6 +13,7 @@
 		C533827A9B18EA3D06F3253F /* Pods_ReactNativeDeferredTemplate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 117C4F7DD8AE72D6A18A2028 /* Pods_ReactNativeDeferredTemplate.framework */; };
 		CEA8CA061F071C3300448B51 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEA8CA051F071C3300448B51 /* Images.xcassets */; };
 		D3290F0F2DFB617F0095B81E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3290F0E2DFB617F0095B81E /* AppDelegate.swift */; };
+		F5413AA12F61A00100E52D27 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5413AA02F61A00100E52D27 /* SceneDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 		B77BD8AE2113632C0036B284 /* bootconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = bootconfig.plist; path = ReactNativeDeferredTemplate/bootconfig.plist; sourceTree = "<group>"; };
 		CEA8CA051F071C3300448B51 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "../mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/Images.xcassets"; sourceTree = "<group>"; };
 		D3290F0E2DFB617F0095B81E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = ReactNativeDeferredTemplate/AppDelegate.swift; sourceTree = "<group>"; };
+		F5413AA02F61A00100E52D27 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SceneDelegate.swift; path = ReactNativeDeferredTemplate/SceneDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +57,7 @@
 			isa = PBXGroup;
 			children = (
 				D3290F0E2DFB617F0095B81E /* AppDelegate.swift */,
+				F5413AA02F61A00100E52D27 /* SceneDelegate.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -258,6 +261,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D3290F0F2DFB617F0095B81E /* AppDelegate.swift in Sources */,
+				F5413AA12F61A00100E52D27 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
