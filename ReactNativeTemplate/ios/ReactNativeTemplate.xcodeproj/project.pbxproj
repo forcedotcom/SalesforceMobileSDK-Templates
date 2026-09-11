@@ -13,6 +13,7 @@
 		C955C9F2B54461750DCC56B1 /* Pods_ReactNativeTemplate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 070C882A5C716392B7B11A01 /* Pods_ReactNativeTemplate.framework */; };
 		CEA8CA061F071C3300448B51 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEA8CA051F071C3300448B51 /* Images.xcassets */; };
 		D32109E02DFA158700A206F1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32109DF2DFA158700A206F1 /* AppDelegate.swift */; };
+		F5413A912F61A00100E52D27 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5413A902F61A00100E52D27 /* SceneDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 		B77BD8AE2113632C0036B284 /* bootconfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = bootconfig.plist; path = ReactNativeTemplate/bootconfig.plist; sourceTree = "<group>"; };
 		CEA8CA051F071C3300448B51 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = "../mobile_sdk/SalesforceMobileSDK-iOS/shared/resources/Images.xcassets"; sourceTree = "<group>"; };
 		D32109DF2DFA158700A206F1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = ReactNativeTemplate/AppDelegate.swift; sourceTree = "<group>"; };
+		F5413A902F61A00100E52D27 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SceneDelegate.swift; path = ReactNativeTemplate/SceneDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +57,7 @@
 			isa = PBXGroup;
 			children = (
 				D32109DF2DFA158700A206F1 /* AppDelegate.swift */,
+				F5413A902F61A00100E52D27 /* SceneDelegate.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -258,6 +261,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D32109E02DFA158700A206F1 /* AppDelegate.swift in Sources */,
+				F5413A912F61A00100E52D27 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
