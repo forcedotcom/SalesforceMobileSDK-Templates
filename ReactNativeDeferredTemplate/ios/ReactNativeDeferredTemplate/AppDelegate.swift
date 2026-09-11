@@ -10,7 +10,6 @@ import UserNotificationsUI
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
   private var launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-  var window: UIWindow?
   
   var reactNativeDelegate: ReactNativeDelegate?
   var reactNativeFactory: RCTReactNativeFactory?
@@ -35,8 +34,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     reactNativeDelegate = delegate
     reactNativeFactory = factory
     
-    window = UIWindow(frame: UIScreen.main.bounds)
-    
     // If you wish to register for push notifications uncomment the line
     // below.  Note that if you want to receive push notifications from
     // Salesforce you will also need to implement the
@@ -48,15 +45,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // text color, font and font size of the navigation bar.
     customizeLoginView()
     
-    AuthHelper.loginIfRequired() {
+    return true
+  }
+
+  func application(
+    _ application: UIApplication,
+    configurationForConnecting connectingSceneSession: UISceneSession,
+    options: UIScene.ConnectionOptions
+  ) -> UISceneConfiguration {
+    UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+  }
+
+  func startReactNative(in window: UIWindow, scene: UIScene) {
+    guard let factory = reactNativeFactory else { return }
+    let launchOptions = launchOptions
+
+    AuthHelper.loginIfRequired(scene) {
       factory.startReactNative(
         withModuleName: "ReactNativeDeferredTemplate",
-        in: self.window,
+        in: window,
         launchOptions: launchOptions
       )
     }
-    
-    return true
   }
   
   private func registerForRemotePushNotifications() {

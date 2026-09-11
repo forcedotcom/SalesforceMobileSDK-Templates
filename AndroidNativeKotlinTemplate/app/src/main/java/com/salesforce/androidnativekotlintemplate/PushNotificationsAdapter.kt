@@ -31,6 +31,8 @@ import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.PendingIntent.getBroadcast
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.TIRAMISU
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.BigTextStyle
@@ -150,7 +152,7 @@ internal class PushNotificationsAdapter : PushNotificationInterface {
         }.also { builder ->
 
             // Build and display the notification, if possible.
-            if (context.checkSelfPermission(POST_NOTIFICATIONS) == PERMISSION_GRANTED) {
+            if (SDK_INT < TIRAMISU || context.checkSelfPermission(POST_NOTIFICATIONS) == PERMISSION_GRANTED) {
                 notificationManager.notify(
                     actionableNotificationContent.nid?.hashCode() ?: 0,
                     builder.build()

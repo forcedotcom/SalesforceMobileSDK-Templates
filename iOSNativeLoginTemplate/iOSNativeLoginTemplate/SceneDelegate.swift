@@ -164,6 +164,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
        self.window?.rootViewController = UIHostingController(
            rootView: AccountsListView()
        )
+       self.window?.makeKeyAndVisible()
    }
    
    func resetViewState(_ postResetBlock: @escaping () -> ()) {
@@ -178,21 +179,53 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 }
 
 @MainActor class ReCaptchaClientObservable: ObservableObject {
-    
-    @Published var reCaptchaClient: RecaptchaClient? = nil
-    
+
+    /// The state of the reCAPTCHA client used to obtain reCAPTCHA tokens for
+    /// Salesforce Headless Identity API requests.
+    enum ReCaptchaClientState {
+
+        /// No reCAPTCHA site key was provided, so password-less login features
+        /// are disabled.
+        case disabled
+
+        /// The reCAPTCHA client is being initialized.
+        case loading
+
+        /// The reCAPTCHA client initialized successfully and is ready to use.
+        case ready(RecaptchaClient)
+
+        /// The reCAPTCHA client failed to initialize.
+        case failed(Error)
+    }
+
+    @Published var reCaptchaClientState: ReCaptchaClientState = .disabled
+
+    /// Creates an observable with no reCAPTCHA client configured, for injection where password-less login setup is not enabled.
+    nonisolated init() {
+    }
+
     init(reCaptchaSiteKey: String) {
+        reCaptchaClientState = .loading
         Task(priority: .medium) {
             await initializeReCaptchaClient(reCaptchaSiteKey: reCaptchaSiteKey)
         }
     }
-    
+
     final func initializeReCaptchaClient(reCaptchaSiteKey: String) async {
         do {
-
-            reCaptchaClient = try await Recaptcha.getClient(withSiteKey: reCaptchaSiteKey)
+            reCaptchaClientState = .ready(try await Recaptcha.getClient(withSiteKey: reCaptchaSiteKey))
         } catch let error {
+            reCaptchaClientState = .failed(error)
             SalesforceLogger.e(SceneDelegate.self, message: "Cannot get reCAPTCHA client due to an error with description '\(error.localizedDescription).'.")
+
+            /*
+             * This template does not retry reCAPTCHA client initialization
+             * after a failure -- reCaptchaClientState remains .failed
+             * permanently. Apps that need resilience to transient
+             * initialization failures should add their own retry logic here,
+             * such as re-invoking initializeReCaptchaClient with a backoff
+             * policy.
+             */
         }
     }
 }

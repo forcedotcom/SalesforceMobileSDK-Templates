@@ -31,7 +31,8 @@ import SwiftUI
 class NativeLoginViewFactory: NSObject {
     
     static func create() -> UIViewController {
-        return NativeLoginTemplateHostingController(rootView: NativeLoginView())
+        return NativeLoginTemplateHostingController(rootView: NativeLoginView()
+            .environmentObject(ReCaptchaClientObservable()))
     }
     
     static func create(
