@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		4BF46C03ACFCD0FCB870426C /* Pods_NotificationServiceExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB17A355E8227F1EE53B73C3 /* Pods_NotificationServiceExtension.framework */; };
 		4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */; };
+		E77B27DB56ECCF66DEECB219 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4755F1D3B62F14611FE94100 /* SceneDelegate.swift */; };
 		4FD6C49F1B755242002F9F90 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C49C1B755242002F9F90 /* RootViewController.swift */; };
 		4FD6C4A01B755242002F9F90 /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C49D1B755242002F9F90 /* InitialViewController.swift */; };
 		696BA50F2367942600F38AEF /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696BA50E2367942600F38AEF /* NotificationService.swift */; };
@@ -50,6 +51,7 @@
 		4FD6C4741B754AF1002F9F90 /* EncryptedNotificationTemplate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EncryptedNotificationTemplate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FD6C4781B754AF1002F9F90 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4755F1D3B62F14611FE94100 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		4FD6C49A1B755242002F9F90 /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		4FD6C49C1B755242002F9F90 /* RootViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 		4FD6C49D1B755242002F9F90 /* InitialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitialViewController.swift; sourceTree = "<group>"; };
@@ -139,6 +141,7 @@
 				4FD6C49C1B755242002F9F90 /* RootViewController.swift */,
 				4FD6C49D1B755242002F9F90 /* InitialViewController.swift */,
 				4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */,
+				4755F1D3B62F14611FE94100 /* SceneDelegate.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -347,6 +350,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */,
+				E77B27DB56ECCF66DEECB219 /* SceneDelegate.swift in Sources */,
 				4FD6C49F1B755242002F9F90 /* RootViewController.swift in Sources */,
 				4FD6C4A01B755242002F9F90 /* InitialViewController.swift in Sources */,
 			);
