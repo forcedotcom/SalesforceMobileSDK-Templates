@@ -39,7 +39,7 @@ update_build_gradle_dependencies ()
 {
     local file=$1
     local version=$2
-    gsed -i "s/\(com.salesforce.mobilesdk:[^:]\+:\)[0-9]\+.[0-9]\+.[0-9]\+/\1$version/g" ${file}
+    gsed -i "s/\(com\.salesforce\.mobilesdk:[^:]\+:\)[^\"]\+/\1$version/g" ${file}
 }
 
 update_package_json ()
@@ -90,5 +90,4 @@ update_package_json "./iOSNativeSwiftEncryptedNotificationTemplate/package.json"
 update_package_json "./iOSNativeSwiftPackageManagerTemplate/package.json"  "${SDK_TAG_SPM}"
 update_package_json "./iOSNativeSwiftTemplate/package.json"  "${SDK_TAG}"
 update_package_json "./iOSNativeLoginTemplate/package.json"  "${SDK_TAG}"
-
 
