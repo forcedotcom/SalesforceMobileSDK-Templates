@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */; };
+		8F3D2A1C9E4B5607F8A1B2C3 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3D2A1C9E4B5607F8A1B2C4 /* SceneDelegate.swift */; };
 		4FD6C4A01B755242002F9F90 /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD6C49D1B755242002F9F90 /* InitialViewController.swift */; };
 		696A8B6E2AD103AE00A85A1D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 696A8B6D2AD103AE00A85A1D /* PrivacyInfo.xcprivacy */; };
 		78A235BD93AB7D080D67CD51 /* Pods_Authenticator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82A29C75280BDF73123F14B4 /* Pods_Authenticator.framework */; };
@@ -35,6 +36,7 @@
 		4FD6C4741B754AF1002F9F90 /* Authenticator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Authenticator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FD6C4781B754AF1002F9F90 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		8F3D2A1C9E4B5607F8A1B2C4 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		4FD6C49A1B755242002F9F90 /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		4FD6C49D1B755242002F9F90 /* InitialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitialViewController.swift; sourceTree = "<group>"; };
 		4FF12F8A1DCA91F5004D9EF9 /* Authenticator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Authenticator.entitlements; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 				4FD6C49A1B755242002F9F90 /* Bridging-Header.h */,
 				4FD6C49D1B755242002F9F90 /* InitialViewController.swift */,
 				4FD6C4791B754AF1002F9F90 /* AppDelegate.swift */,
+				8F3D2A1C9E4B5607F8A1B2C4 /* SceneDelegate.swift */,
 				B79B0CBB1F665B06005F56CC /* UserListViewController.swift */,
 				B79B0CC11F67104D005F56CC /* AppsViewController.swift */,
 				B79B0CC31F671151005F56CC /* UserTableViewCell.swift */,
@@ -280,6 +283,7 @@
 				B79B0CB71F6658CC005F56CC /* UIView+constraints.swift in Sources */,
 				B79B0CBC1F665B06005F56CC /* UserListViewController.swift in Sources */,
 				4FD6C47A1B754AF1002F9F90 /* AppDelegate.swift in Sources */,
+				8F3D2A1C9E4B5607F8A1B2C3 /* SceneDelegate.swift in Sources */,
 				B79B0CB41F6658CC005F56CC /* ActionsPopoverTableViewController.swift in Sources */,
 				B79B0D451F6B68F1005F56CC /* PermissionsNavViewController.swift in Sources */,
 				B79B0CC51F671151005F56CC /* UserTableViewCell.swift in Sources */,

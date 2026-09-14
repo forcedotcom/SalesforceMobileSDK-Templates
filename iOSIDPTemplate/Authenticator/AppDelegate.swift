@@ -28,25 +28,28 @@ import SalesforceSDKCore
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate
 {
-    var window: UIWindow?
-    
     override init() {
         super.init()
-        
+
         SalesforceManager.initializeSDK()
         SalesforceManager.shared.isIdentityProvider = true
-        AuthHelper.registerBlock(forCurrentUserChangeNotifications: {
-            self.resetViewState {
-                self.setupRootViewController()
-            }
-        })
     }
-    
+
+    // MARK: UISceneSession Lifecycle
+    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        // Called when a new scene session is being created.
+        // Use this method to select a configuration to create the new scene with.
+        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+    }
+
+    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
+        // Called when the user discards a scene session.
+        // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
+        // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
+    }
+
     // MARK: - App delegate lifecycle
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        self.initializeAppViewState()
-        
         // If you wish to register for push notifications, uncomment the line below.  Note that,
         // if you want to receive push notifications from Salesforce, you will also need to
         // implement the application(application, didRegisterForRemoteNotificationsWithDeviceToken) method (below).
@@ -55,13 +58,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate
         //Uncomment the code below to see how you can customize the color, textcolor,
         //font and fontsize of the navigation bar
 //        self.customizeLoginView()
-        AuthHelper.loginIfRequired {
-            self.setupRootViewController()
-        }
-        
+
         return true
     }
-    
+
     func registerForRemotePushNotifications() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
             if granted {
@@ -114,42 +114,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error ) {
         // Respond to any push notification registration errors here.
-    }
-    
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        return UserAccountManager.shared.handleIdentityProviderResponse(from: url, with: options)
-    }
-    
-    // MARK: - Private methods
-    func initializeAppViewState() {
-        if !Thread.isMainThread {
-            DispatchQueue.main.async {
-                self.initializeAppViewState()
-            }
-            return
-        }
-        
-        self.window?.rootViewController = InitialViewController(nibName: nil, bundle: nil)
-        self.window?.makeKeyAndVisible()
-    }
-    
-    func setupRootViewController() {
-        var mainView: UIStoryboard!
-        mainView = UIStoryboard(name: "AppsMain", bundle: nil)
-        
-        self.window?.rootViewController = mainView.instantiateInitialViewController()
-
-    }
-    
-    func resetViewState(_ postResetBlock: @escaping () -> Void) {
-        
-        if let rootViewController = self.window?.rootViewController {
-            if rootViewController.presentedViewController != nil {
-                rootViewController.dismiss(animated: false, completion: postResetBlock)
-                return
-            }
-        }
-        
-        postResetBlock()
     }
 }
