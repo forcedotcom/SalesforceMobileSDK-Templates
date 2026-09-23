@@ -18,6 +18,7 @@ Pick the reference file that matches the task. Scenarios are layered: each later
 | Add SmartStore (encrypted local DB) | [`references/add-smartstore.md`](references/add-smartstore.md) | `SalesforceSDKManager.initNative(...)` called and `bootconfig.xml` exists |
 | Add MobileSync (sObject ⇄ soup sync) | [`references/add-mobilesync.md`](references/add-mobilesync.md) | `SmartStoreSDKManager.initNative(...)` called and `userstore.json` exists |
 | Add Biometric Authentication (fingerprint / face / iris) | [`references/add-biometric-auth.md`](references/add-biometric-auth.md) | Mobile SDK is initialized in the `Application` subclass |
+| Add Dark Mode (system / forced / user toggle) | [`references/add-dark-mode.md`](references/add-dark-mode.md) | Mobile SDK is initialized in the `Application` subclass |
 
 Cross-cutting references:
 

@@ -28,37 +28,36 @@ import MobileSync
 
 @UIApplicationMain
 class AppDelegate : UIResponder, UIApplicationDelegate {
-    var window: UIWindow?
-    
+
     override init() {
         super.init()
         // Set the delegate here in init() rather than later in registerForRemotePushNotifications()
         // to avoid a race condition where a notification could arrive before the delegate is assigned.
         UNUserNotificationCenter.current().delegate = self
         MobileSyncSDKManager.initializeSDK()
-
-        AuthHelper.registerBlock(forCurrentUserChangeNotifications: {
-            self.resetViewState {
-                self.setupRootViewController()
-            }
-        })
     }
-    
+
+    // MARK: UISceneSession Lifecycle
+    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        // Called when a new scene session is being created.
+        // Use this method to select a configuration to create the new scene with.
+        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+    }
+
+    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
+        // Called when the user discards a scene session.
+        // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
+        // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
+    }
+
     // MARK: - App delegate lifecycle
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        self.initializeAppViewState()
-        
         registerForRemotePushNotifications()
 
-        AuthHelper.loginIfRequired {
-            self.setupRootViewController()
-        }
-        
         return true
     }
-    
+
     func registerForRemotePushNotifications() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
             if granted {
@@ -102,35 +101,6 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error ) {
          SalesforceLogger.e(AppDelegate.self, message: "Failed to register for remote notifications with error: \(error as NSError)")
-    }
-    
-    // MARK: - Private methods
-    func initializeAppViewState() {
-        if (!Thread.isMainThread) {
-            DispatchQueue.main.async {
-                self.initializeAppViewState()
-            }
-            return
-        }
-        
-        self.window?.rootViewController = InitialViewController(nibName: nil, bundle: nil)
-        self.window?.makeKeyAndVisible()
-    }
-    
-    func setupRootViewController() {
-        let rootVC = RootViewController(nibName: nil, bundle: nil)
-        let navVC = UINavigationController(rootViewController: rootVC)
-        self.window?.rootViewController = navVC
-    }
-    
-    func resetViewState(_ postResetBlock: @escaping () -> ()) {
-        if let rootViewController = self.window?.rootViewController {
-            if let _ = rootViewController.presentedViewController {
-                rootViewController.dismiss(animated: false, completion: postResetBlock)
-                return
-            }
-        }
-        postResetBlock()
     }
 }
 

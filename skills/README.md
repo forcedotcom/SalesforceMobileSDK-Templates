@@ -12,6 +12,10 @@ npx skills add forcedotcom/SalesforceMobileSDK-Templates
 |---|---|
 | [`ios-mobile-sdk/`](./ios-mobile-sdk/) | Integrate the Mobile SDK into iOS Swift apps: create a new app, add SDK auth, SmartStore, MobileSync, biometric auth (Face ID / Touch ID). |
 | [`android-mobile-sdk/`](./android-mobile-sdk/) | Integrate the Mobile SDK into Android Kotlin apps: create a new app, add SDK auth, SmartStore, MobileSync, biometric auth (fingerprint / face / iris). |
+| [`ios-upgrade-mobile-sdk-12-to-13/`](./ios-upgrade-mobile-sdk-12-to-13/) | Upgrade an existing iOS app from Salesforce Mobile SDK 12.x to 13.2.1. |
+| [`android-upgrade-mobile-sdk-12-to-13/`](./android-upgrade-mobile-sdk-12-to-13/) | Upgrade an existing Android app from Salesforce Mobile SDK 12.x to 13.2.1. |
+| [`ios-upgrade-mobile-sdk-13-to-14/`](./ios-upgrade-mobile-sdk-13-to-14/) | Upgrade an existing iOS app from Salesforce Mobile SDK 13.x to 14.0. |
+| [`android-upgrade-mobile-sdk-13-to-14/`](./android-upgrade-mobile-sdk-13-to-14/) | Upgrade an existing Android app from Salesforce Mobile SDK 13.x to 14.0. |
 
 ## Skill Layout
 
