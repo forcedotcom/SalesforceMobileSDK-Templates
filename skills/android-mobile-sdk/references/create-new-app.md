@@ -45,8 +45,7 @@ include(":app")
 buildscript {
     repositories { google(); mavenCentral() }
     dependencies {
-        classpath("com.android.tools.build:gradle:8.12.0")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.24")
+        classpath("com.android.tools.build:gradle:9.1.1")
     }
 }
 allprojects { repositories { google(); mavenCentral() } }
@@ -64,7 +63,7 @@ org.gradle.jvmargs=-Xmx2g -XX:MaxMetaspaceSize=512m
 ```properties
 distributionBase=GRADLE_USER_HOME
 distributionPath=wrapper/dists
-distributionUrl=https\://services.gradle.org/distributions/gradle-8.14.3-bin.zip
+distributionUrl=https\://services.gradle.org/distributions/gradle-9.4.1-bin.zip
 networkTimeout=10000
 validateDistributionUrl=true
 zipStoreBase=GRADLE_USER_HOME
@@ -76,7 +75,7 @@ zipStorePath=wrapper/dists
 **Required.** From the project root, run:
 
 ```bash
-gradle wrapper --gradle-version 8.14.3
+gradle wrapper --gradle-version 9.4.1
 ```
 
 This produces `gradlew`, `gradlew.bat`, and `gradle/wrapper/gradle-wrapper.jar` alongside the `gradle-wrapper.properties` you wrote above. The build will fail without these — do not skip this step, and do not fabricate `gradle-wrapper.jar` by hand (it is a binary).
@@ -86,14 +85,13 @@ This produces `gradlew`, `gradlew.bat`, and `gradle/wrapper/gradle-wrapper.jar` 
 ```kotlin
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
 }
 android {
     namespace = "<PackageName>"
     compileSdk = 36
     defaultConfig {
         applicationId = "<PackageName>"
-        minSdk = 28
+        minSdk = 31
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -115,7 +113,9 @@ android {
     }
 }
 dependencies {
-    implementation("com.salesforce.mobilesdk:SalesforceSDK:13.2.0")
+    implementation("com.salesforce.mobilesdk:SalesforceSDK:14.0.0-rc.2")
+    // Required: SalesforceActivity extends AppCompatActivity.
+    implementation("androidx.appcompat:appcompat:1.7.0")
 }
 kotlin {
     jvmToolchain(17)

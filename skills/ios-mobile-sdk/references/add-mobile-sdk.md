@@ -12,6 +12,18 @@ Wires `SalesforceSDKCore` into an existing iOS Swift app so the OAuth login scre
 | `<CallbackURL>` | `myapp://oauth/callback` | OAuth redirect URI, or leave as the placeholder |
 | `<LoginHost>` | `login.salesforce.com` | `test.salesforce.com` for sandboxes |
 
+## Credentials — ask before writing any file
+
+Before writing any files, ask the user for:
+
+| Value | Where to find it | Where it goes |
+|---|---|---|
+| **Consumer key** | Salesforce Setup → App Manager → [Connected App] → View → Consumer Key | `bootconfig.plist` `remoteAccessConsumerKey` |
+| **Callback URL** | Same Connected App → Callback URLs | `bootconfig.plist` `oauthRedirectURI` |
+| **Login server** | Your Salesforce org — hostname only, no `https://` (e.g. `login.salesforce.com`) | `Info.plist` `SFDCOAuthLoginHost` |
+
+Substitute the real values in Steps 6 and 7. If any value is unavailable, leave the `<ConsumerKey>`, `<CallbackURL>`, `<LoginHost>` placeholders — the app will build but the login screen will not function until all three are filled in.
+
 > **Anti-pattern: do not author a `Package.swift`.** A standalone `Package.swift` is **not one of the four supported integration paths** below. The Salesforce Mobile SDK is consumed via either CocoaPods (Option A — edit the existing `Podfile`), xcodegen (Option B-i — edit `project.yml`'s `packages:` map), or the Xcode UI (Option B-ii). If your initial plan included "create Package.swift" or "generate Package.swift for SPM dependencies," **drop that step now** before reading further — it does not match any option and produces a project that does not build.
 
 ## Step 0 — Detect Project Shape (required first action)
@@ -100,7 +112,7 @@ targets:
         product: SalesforceSDKCommon
 ```
 
-To pin a specific release instead of tracking `master`, replace `branch: master` with `version: <tag>` (e.g. `version: 13.1.0`).
+To pin a specific release instead of tracking `master`, replace `branch: master` with `version: <tag>` (e.g. `version: 14.0.0-rc.2`).
 
 **Verify before regenerating.** Re-read `project.yml` after editing and confirm both blocks landed: the `packages:` map at the top level, and the three `dependencies:` entries inside the `<AppName>` target. Without both, `xcodegen generate` will succeed silently and the build will fail later with `No such module 'SalesforceSDKCore'`.
 
