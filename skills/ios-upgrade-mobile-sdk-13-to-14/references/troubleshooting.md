@@ -13,7 +13,7 @@ Symptom-first reference for failures that arise when upgrading from Salesforce M
 ```
 [!] CocoaPods could not find compatible versions for pod "SQLCipher":
   In Podfile:
-    SmartStore (14.0.0-rc.1) was resolved to 14.0.0-rc.1, which depends on
+    SmartStore (14.0.0-rc.2) was resolved to 14.0.0-rc.2, which depends on
       SQLCipher (~> 4.17.0)
 
   In snapshot (Podfile.lock):
@@ -174,7 +174,7 @@ The package graph is out of date. Update the package graph to fix this issue.
 Or `xcodebuild` fails with:
 
 ```
-error: package at '.../SalesforceMobileSDK-iOS-SPM' @ 14.0.0-rc.1 does not match resolved version 13.2.1
+error: package at '.../SalesforceMobileSDK-iOS-SPM' @ 14.0.0-rc.2 does not match resolved version 13.2.1
 ```
 
 **Cause:** For hand-managed SPM projects (version pinned in `project.pbxproj` only), Xcode caches the resolved package state. After bumping the version number in `project.pbxproj`, the cache must be explicitly cleared.

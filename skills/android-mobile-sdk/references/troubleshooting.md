@@ -6,7 +6,7 @@ Symptom-first reference for Android Mobile SDK integration failures.
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `Unresolved reference: SalesforceSDKManager` (or `SmartStoreSDKManager`, `MobileSyncSDKManager`) | The SDK Maven artifact is not on the classpath, or Gradle has not synced. | Add the matching `implementation("com.salesforce.mobilesdk:<artifact>:14.0.0-rc.1")` to `app/build.gradle.kts` and run `./gradlew assembleDebug` to force resolution. |
+| `Unresolved reference: SalesforceSDKManager` (or `SmartStoreSDKManager`, `MobileSyncSDKManager`) | The SDK Maven artifact is not on the classpath, or Gradle has not synced. | Add the matching `implementation("com.salesforce.mobilesdk:<artifact>:14.0.0-rc.2")` to `app/build.gradle.kts` and run `./gradlew assembleDebug` to force resolution. |
 | `Unresolved reference: SalesforceActivity` | Same cause — SDK artifact not synced. | Run `./gradlew assembleDebug`. |
 | `Unresolved reference: SyncManager` | Missing import or wrong access path. | Add `import com.salesforce.androidsdk.mobilesync.manager.SyncManager`. The `MobileSyncSDKManager` does **not** expose `SyncManager` as a property — always access it via `SyncManager.getInstance(user)`. |
 | `Unresolved reference: BiometricManager` | `androidx.biometric:biometric` dependency missing. | Add `implementation("androidx.biometric:biometric:1.1.0")`. |

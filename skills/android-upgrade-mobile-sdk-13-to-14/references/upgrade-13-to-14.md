@@ -29,13 +29,13 @@ Before making any changes, determine:
 
 ---
 
-## Step 1 — Bump SDK dependency versions to 14.0.0-rc.1
+## Step 1 — Bump SDK dependency versions to 14.0.0-rc.2
 
 ### Option A — Version catalog (`gradle/libs.versions.toml`)
 
 ```toml
 [versions]
-salesforceSDK = "14.0.0-rc.1"  # was "13.2.1" — use 14.0.0-rc.1 until GA is published
+salesforceSDK = "14.0.0-rc.2"  # was "13.2.1" — use 14.0.0-rc.2 until GA is published
 
 [libraries]
 # Only include entries that already exist in the project — do not add new ones
@@ -46,13 +46,13 @@ salesforce-mobilesync = { module = "com.salesforce.mobilesdk:MobileSync", versio
 
 ### Option B — Inline versions in `app/build.gradle.kts`
 
-> **Release candidate note:** The current published 14.0 artifact is the release candidate `14.0.0-rc.1`, not `14.0.0`. Use `14.0.0-rc.1` until the GA release is published; plain `14.0.0` returns a 404 from Maven Central.
+> **Release candidate note:** The current published 14.0 artifact is the release candidate `14.0.0-rc.2`, not `14.0.0`. Use `14.0.0-rc.2` until the GA release is published; plain `14.0.0` returns a 404 from Maven Central.
 
 ```kotlin
 dependencies {
-    implementation("com.salesforce.mobilesdk:SalesforceSDK:14.0.0-rc.1")
-    implementation("com.salesforce.mobilesdk:SmartStore:14.0.0-rc.1")      // only if present in project
-    implementation("com.salesforce.mobilesdk:MobileSync:14.0.0-rc.1")      // only if present in project
+    implementation("com.salesforce.mobilesdk:SalesforceSDK:14.0.0-rc.2")
+    implementation("com.salesforce.mobilesdk:SmartStore:14.0.0-rc.2")      // only if present in project
+    implementation("com.salesforce.mobilesdk:MobileSync:14.0.0-rc.2")      // only if present in project
 }
 ```
 

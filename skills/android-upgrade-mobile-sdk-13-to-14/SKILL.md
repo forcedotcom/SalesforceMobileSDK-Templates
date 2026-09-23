@@ -53,4 +53,4 @@ These hold regardless of the project shape (version catalog or inline dependenci
 
 When the SDK API in this skill disagrees with reality, the upstream Kotlin source in the release wins.
 
-Release: <https://github.com/forcedotcom/SalesforceMobileSDK-Android/releases/tag/v14.0.0-rc.1>
+Release: <https://github.com/forcedotcom/SalesforceMobileSDK-Android/releases/tag/v14.0.0-rc.2>

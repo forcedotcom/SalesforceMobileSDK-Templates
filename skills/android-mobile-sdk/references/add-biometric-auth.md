@@ -25,7 +25,7 @@ In `app/build.gradle.kts`, add the AndroidX Biometric library. The SDK's `biomet
 
 ```kotlin
 dependencies {
-    implementation("com.salesforce.mobilesdk:MobileSync:14.0.0-rc.1")
+    implementation("com.salesforce.mobilesdk:MobileSync:14.0.0-rc.2")
     implementation("androidx.biometric:biometric:1.1.0")
 }
 ```

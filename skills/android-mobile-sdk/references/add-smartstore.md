@@ -22,7 +22,7 @@ Swap the Maven artifact from `SalesforceSDK` to `SmartStore`. `SmartStore` trans
 
 ```kotlin
 dependencies {
-    implementation("com.salesforce.mobilesdk:SmartStore:14.0.0-rc.1")  // was: SalesforceSDK
+    implementation("com.salesforce.mobilesdk:SmartStore:14.0.0-rc.2")  // was: SalesforceSDK
 }
 ```
 

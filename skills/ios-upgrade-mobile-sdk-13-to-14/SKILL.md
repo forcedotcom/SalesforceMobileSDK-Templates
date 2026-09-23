@@ -50,4 +50,4 @@ These hold regardless of the project shape (CocoaPods, hand-managed SPM, or xcod
 
 When the SDK API in this skill disagrees with reality, the upstream release notes and Objective-C headers win.
 
-Release: <https://github.com/forcedotcom/SalesforceMobileSDK-iOS/releases/tag/v14.0.0-rc.1>
+Release: <https://github.com/forcedotcom/SalesforceMobileSDK-iOS/releases/tag/v14.0.0-rc.2>

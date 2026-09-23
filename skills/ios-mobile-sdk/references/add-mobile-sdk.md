@@ -112,7 +112,7 @@ targets:
         product: SalesforceSDKCommon
 ```
 
-To pin a specific release instead of tracking `master`, replace `branch: master` with `version: <tag>` (e.g. `version: 14.0.0-rc.1`).
+To pin a specific release instead of tracking `master`, replace `branch: master` with `version: <tag>` (e.g. `version: 14.0.0-rc.2`).
 
 **Verify before regenerating.** Re-read `project.yml` after editing and confirm both blocks landed: the `packages:` map at the top level, and the three `dependencies:` entries inside the `<AppName>` target. Without both, `xcodegen generate` will succeed silently and the build will fail later with `No such module 'SalesforceSDKCore'`.
 
