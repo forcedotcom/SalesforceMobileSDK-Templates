@@ -15,11 +15,23 @@ Wires the Salesforce Mobile SDK into an **existing** Android Kotlin app so the O
 | `<CallbackURL>` | `myapp://oauth/callback` | OAuth redirect URI, or leave as the placeholder |
 | `<LoginHost>` | `https://login.salesforce.com` | `https://test.salesforce.com` for sandboxes |
 
+## Step 0 — Gather credentials
+
+Before writing any files, ask the user for these three values. Without real values the app builds but the login screen cannot connect.
+
+| Value | Where to find it |
+|---|---|
+| **Consumer key** | Salesforce Setup → App Manager → [Connected App] → View → Consumer Key |
+| **Callback URL** | Same Connected App → Callback URLs (the URI you registered, e.g. `myapp://success/done`) |
+| **Login server** | Your Salesforce org URL — `login.salesforce.com`, `test.salesforce.com`, or a My Domain URL (e.g. `myorg.my.salesforce.com`) |
+
+Substitute the real values throughout Steps 4–6 in place of `<ConsumerKey>`, `<CallbackURL>`, and `<LoginHost>`. If any value is unavailable, leave the placeholder — the app will build but the login screen will not function.
+
 ## Step 1 — Edit `app/build.gradle.kts`
 
 Open `app/build.gradle.kts` and edit it in place — do not delete or rewrite the file.
 
-**Keep the existing `plugins { }` block as-is.** It applies the Android Gradle Plugin and the Kotlin Gradle plugin; without those plugin ids applied, references inside `android { }` and `kotlin { }` are unresolved and the build fails. Don't switch the block to a different syntax form (e.g. from `id("com.android.application")` to `alias(libs.plugins.android.application)`) — version-catalog aliases require a `libs.versions.toml` the project may not have.
+**Keep the existing `plugins { }` block as-is.** It applies the Android Gradle Plugin; in AGP 9.0+ Kotlin support is built in and `id("org.jetbrains.kotlin.android")` must NOT be present (applying it alongside AGP 9 throws a fatal error). Don't switch the block to a different syntax form (e.g. from `id("com.android.application")` to `alias(libs.plugins.android.application)`) — version-catalog aliases require a `libs.versions.toml` the project may not have.
 
 Merge the additions below into the existing blocks rather than replacing them.
 
@@ -27,7 +39,7 @@ In `dependencies { }`, **add** the `SalesforceSDK` artifact (Mobile SDK Core) vi
 
 ```kotlin
 dependencies {
-    implementation("com.salesforce.mobilesdk:SalesforceSDK:13.2.0")
+    implementation("com.salesforce.mobilesdk:SalesforceSDK:14.0.0-rc.1")
     // Required: SalesforceActivity (used in Step 7) extends AppCompatActivity.
     // Keep the existing appcompat dependency if your app already has it, or add:
     implementation("androidx.appcompat:appcompat:1.7.0")
@@ -41,7 +53,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        minSdk = 28
+        minSdk = 31
         targetSdk = 36
     }
 
@@ -118,6 +130,28 @@ class MainApplication : Application() {
             </intent-filter>
         </activity>
 
+        <!-- Required: handles the OAuth redirect back from the browser after login.
+             Derive the three data attributes by parsing <CallbackURL>:
+               scheme = everything before "://"
+               host   = segment between "://" and the first "/"
+               path   = the remainder including the leading "/" (omit android:path if there is no path segment)
+             Example: "myapp://success/done" → scheme="myapp" host="success" path="/done"
+             Without this, the OAuth flow completes in the browser but the redirect never returns to the app. -->
+        <activity
+            android:name="com.salesforce.androidsdk.ui.LoginActivity"
+            android:theme="@style/SalesforceSDK"
+            android:launchMode="singleTask"
+            android:exported="true">
+            <intent-filter>
+                <data android:scheme="<CallbackScheme>"
+                      android:host="<CallbackHost>"
+                      android:path="<CallbackPath>" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>
@@ -156,8 +190,11 @@ Multiple `<server>` entries are allowed — the SDK presents them as login-host 
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name"><AppName></string>
+    <string name="account_type"><AppPackage>.salesforce.account</string>
 </resources>
 ```
+
+> **`account_type` is required in SDK 14.0.** The SDK uses this string to register an Android Account Manager account type. If it is absent or left at the SDK default, the app crashes at startup with `IllegalStateException`. The value must be unique to your app — using `<AppPackage>.salesforce.account` is the recommended pattern.
 
 ## Step 7 — `app/src/main/java/<PackagePath>/MainActivity.kt`
 
@@ -199,6 +236,13 @@ class MainActivity : SalesforceActivity() {
 ```
 
 Expected: `BUILD SUCCESSFUL`. Install the resulting `app/build/outputs/apk/debug/app-debug.apk` on an emulator or device. On first launch, the Salesforce login screen appears; after a successful login, the placeholder "Mobile SDK ready" view installs.
+
+> **SDK 14.0 defaults:** DPoP token binding and Advanced Authentication (Chrome Custom Tab for all login servers, including `login.salesforce.com`) are both **enabled by default**. No code changes are needed to get DPoP or browser-based login — they work out of the box. To temporarily opt out during development:
+> ```kotlin
+> SalesforceSDKManager.getInstance().useDPoP = false                   // opt out of DPoP
+> SalesforceSDKManager.getInstance().forceAdvancedAuthentication = false // opt out of browser login
+> ```
+> Both opt-outs are deprecated and will be removed in SDK 15.0.
 
 ## Next
 

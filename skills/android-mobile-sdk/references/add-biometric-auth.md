@@ -25,7 +25,7 @@ In `app/build.gradle.kts`, add the AndroidX Biometric library. The SDK's `biomet
 
 ```kotlin
 dependencies {
-    implementation("com.salesforce.mobilesdk:MobileSync:13.2.0")
+    implementation("com.salesforce.mobilesdk:MobileSync:14.0.0-rc.1")
     implementation("androidx.biometric:biometric:1.1.0")
 }
 ```
@@ -47,17 +47,7 @@ import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK
 import com.salesforce.androidsdk.mobilesync.app.MobileSyncSDKManager
 ```
 
-**Drop a no-arg-state guard into `onCreate`** so activity recreate doesn't restore the SDK's opt-in dialog (it lacks a no-arg constructor — see Troubleshooting). Replace `super.onCreate(savedInstanceState)` with:
-
-```kotlin
-override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(null)   // Discard prior FragmentManager state — SDK's
-                           // BiometricAuthOptInPrompt has no no-arg ctor.
-    // … rest of your onCreate …
-}
-```
-
-**Extend your existing `onResume(client: RestClient?)`** to present the opt-in dialog at the right moment:
+**Extend your existing `onResume(client: RestClient?)`** to enable automatic biometric presentation:
 
 ```kotlin
 override fun onResume(client: RestClient?) {
@@ -71,19 +61,13 @@ private fun maybePresentBiometricOptIn() {
     val deviceHasBiometrics = BiometricManager.from(this).canAuthenticate(
         BIOMETRIC_STRONG or BIOMETRIC_WEAK
     ) == BiometricManager.BIOMETRIC_SUCCESS
-    if (mgr.enabled && deviceHasBiometrics && !mgr.hasBiometricOptedIn()) {
-        // Defer to next main-thread tick: on fresh login, onResume(client) is
-        // invoked from a USERSWITCHED broadcast receiver while the
-        // FragmentManager is in saved state, which would otherwise crash with
-        // "Can not perform this action after onSaveInstanceState".
-        window.decorView.post {
-            if (!supportFragmentManager.isStateSaved && !mgr.hasBiometricOptedIn()) {
-                mgr.presentOptInDialog(supportFragmentManager)
-            }
-        }
+    if (mgr.enabled && deviceHasBiometrics) {
+        mgr.automaticPresentation = true
     }
 }
 ```
+
+Setting `automaticPresentation = true` tells the SDK to present the OS biometric prompt automatically whenever the session needs to be unlocked — no manual opt-in dialog invocation required.
 
 > **`biometricAuthenticationManager`** is a nullable property on `SalesforceSDKManager`. It's null until a user is authenticated.
 
@@ -100,10 +84,9 @@ Expected: `BUILD SUCCESSFUL`. After login, the SDK presents the biometric opt-in
 ### Runtime verification (emulator or device)
 
 1. Launch the app — Salesforce login screen appears.
-2. Log in — the SDK opt-in dialog appears: **"Use biometrics to unlock?"**
-3. Tap **Enable** — biometric authentication is now active.
-4. Background the app, then foreground — the OS biometric prompt appears.
-5. Authenticate successfully — the app unlocks without re-entering credentials.
+2. Log in — the OS biometric prompt appears automatically on next foreground.
+3. Authenticate successfully — the app unlocks without re-entering credentials.
+4. Background the app, then foreground again — the OS biometric prompt reappears.
 
 > **Emulator note:** Fingerprint can be enrolled in the emulator via **Extended controls → Fingerprint**. Use `adb -e emu finger touch 1` to simulate a fingerprint scan.
 

@@ -19,6 +19,13 @@ Symptom-first reference for iOS Mobile SDK integration failures.
 | Login screen renders with black bars above and below content | `LaunchScreen.storyboard` is missing or `UILaunchStoryboardName` is not set in `Info.plist`. | Add `LaunchScreen.storyboard` to the target and set `UILaunchStoryboardName=LaunchScreen` in `Info.plist`. |
 | User enters credentials, login UI dismisses, app never advances to the post-login UI | Keychain entitlement missing or stripped. The SDK writes OAuth tokens to the keychain — without `keychain-access-groups` it cannot persist them and silently fails. Device log shows `errSecMissingEntitlement` / OSStatus `-34018` plus `Authentication failed: ... access token`. | (1) Verify `<AppName>.entitlements` contains `keychain-access-groups` with `$(AppIdentifierPrefix)<BundleID>`. (2) Build Settings → **Code Signing Entitlements** points at it. (3) The build is **not** using `CODE_SIGNING_ALLOWED=NO` (which strips entitlements). Ad-hoc signing (`CODE_SIGN_IDENTITY=-`) is sufficient on the simulator. |
 
+## Dark Mode
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| SDK windows revert to the default appearance after an app relaunch | `SFSDKWindowManager.userInterfaceStyle` is set at runtime and is **not persisted by the SDK** across launches; on a cold start it returns to `.unspecified` (follow the system). | Re-apply the style on launch (e.g. from your `AppDelegate` / `SceneDelegate`). For a user toggle, persist the choice yourself (e.g. `UserDefaults`) and restore it on launch. See [`add-dark-mode.md`](add-dark-mode.md). |
+| SDK-managed windows don't match your app's theme (only your own screens, or only the SDK windows, changed) | `SFSDKWindowManager.userInterfaceStyle` governs **SDK-managed windows only** (login, host picker, Switch User, screen lock, snapshot). App-owned UI is not governed by it, and the SDK never drives it. | Set both to the same appearance: SDK windows via `SFSDKWindowManager.sharedManager().userInterfaceStyle`; app-owned view controllers via standard iOS dark-mode handling (`overrideUserInterfaceStyle`, or the app-wide `UIUserInterfaceStyle` in `Info.plist`). See [`add-dark-mode.md`](add-dark-mode.md). |
+
 ## SmartStore
 
 | Symptom | Cause | Fix |

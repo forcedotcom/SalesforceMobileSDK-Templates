@@ -26,7 +26,7 @@ Swap the Maven artifact from `SmartStore` to `MobileSync`. `MobileSync` transiti
 
 ```kotlin
 dependencies {
-    implementation("com.salesforce.mobilesdk:MobileSync:13.2.0")  // was: SmartStore
+    implementation("com.salesforce.mobilesdk:MobileSync:14.0.0-rc.1")  // was: SmartStore
 }
 ```
 

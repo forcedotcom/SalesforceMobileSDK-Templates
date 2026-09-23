@@ -6,7 +6,7 @@ Symptom-first reference for Android Mobile SDK integration failures.
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `Unresolved reference: SalesforceSDKManager` (or `SmartStoreSDKManager`, `MobileSyncSDKManager`) | The SDK Maven artifact is not on the classpath, or Gradle has not synced. | Add the matching `implementation("com.salesforce.mobilesdk:<artifact>:13.2.0")` to `app/build.gradle.kts` and run `./gradlew assembleDebug` to force resolution. |
+| `Unresolved reference: SalesforceSDKManager` (or `SmartStoreSDKManager`, `MobileSyncSDKManager`) | The SDK Maven artifact is not on the classpath, or Gradle has not synced. | Add the matching `implementation("com.salesforce.mobilesdk:<artifact>:14.0.0-rc.1")` to `app/build.gradle.kts` and run `./gradlew assembleDebug` to force resolution. |
 | `Unresolved reference: SalesforceActivity` | Same cause — SDK artifact not synced. | Run `./gradlew assembleDebug`. |
 | `Unresolved reference: SyncManager` | Missing import or wrong access path. | Add `import com.salesforce.androidsdk.mobilesync.manager.SyncManager`. The `MobileSyncSDKManager` does **not** expose `SyncManager` as a property — always access it via `SyncManager.getInstance(user)`. |
 | `Unresolved reference: BiometricManager` | `androidx.biometric:biometric` dependency missing. | Add `implementation("androidx.biometric:biometric:1.1.0")`. |
@@ -19,6 +19,14 @@ Symptom-first reference for Android Mobile SDK integration failures.
 |---|---|---|
 | Login screen does not appear at launch | `MainApplication` not registered in `AndroidManifest.xml`, or `initNative(...)` not called. | Set `android:name=".MainApplication"` on the `<application>` element and verify `<Manager>.initNative(applicationContext, MainActivity::class.java)` runs in `onCreate()`. |
 | `MainActivity.onResume(client)` is never called | `MainActivity` does not extend `SalesforceActivity`, or its `onResume()` override doesn't call `super.onResume()`. | Make `MainActivity : SalesforceActivity()`. If `onResume()` is overridden, the override must call `super.onResume()`. |
+
+## Dark Mode
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| SDK screens revert to the default appearance after a process restart | `SalesforceSDKManager.theme` is **not persisted by the SDK** across process launches (KDoc: *"not persistent across instances of Salesforce SDK Manager"*). | Re-apply `theme` every launch in `MainApplication.onCreate()` after `initNative(...)`. For a user toggle, persist the choice yourself (e.g. `SharedPreferences`) and restore it at launch. See [`add-dark-mode.md`](add-dark-mode.md) Options A and B. |
+| SDK-managed screens don't match your app's theme (only your own screens, or only the SDK screens, changed) | `SalesforceSDKManager.theme` governs **SDK-managed screens only** (login, host picker, Switch User, screen lock). App-owned UI is themed separately, and the SDK never drives it. | Set both levers to the same appearance: SDK screens via `SalesforceSDKManager.theme`; app-owned UI via the standard Android lever — **View / AppCompat** → `AppCompatDelegate.setDefaultNightMode(...)`, **Jetpack Compose** → `isSystemInDarkTheme()` / your own app state. See [`add-dark-mode.md`](add-dark-mode.md). |
+| Toggling appearance at runtime doesn't change the screen currently on-screen | Each SDK screen reads its color scheme once when composed; a `theme` change repaints only **subsequently presented** SDK screens. The activity on-screen at the toggle moment is your own app-owned UI and won't repaint from the property change alone. | No action needed for SDK screens — the next SDK screen presented picks up the new value. To update the app-owned activity the user is on, call `recreate()` on it (or recompose from your own state). See [`add-dark-mode.md`](add-dark-mode.md) Option B. |
 
 ## SmartStore
 
