@@ -113,7 +113,7 @@ android {
     }
 }
 dependencies {
-    implementation("com.salesforce.mobilesdk:SalesforceSDK:14.0.0-rc.3")
+    implementation("com.salesforce.mobilesdk:SalesforceSDK:14.0.0")
     // Required: SalesforceActivity extends AppCompatActivity.
     implementation("androidx.appcompat:appcompat:1.7.0")
 }
