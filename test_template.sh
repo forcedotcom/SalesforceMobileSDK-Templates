@@ -20,7 +20,7 @@ RN_FORCE_ORG=""
 RN_FORCE_BRANCH=""
 
 # Hybrid plugin override
-PLUGIN_REPO_URI="https://github.com/forcedotcom/SalesforceMobileSDK-CordovaPlugin#dev"
+PLUGIN_REPO_URI="https://github.com/forcedotcom/SalesforceMobileSDK-CordovaPlugin#dev141"
 
 # Template and platform parameters
 TEMPLATE_NAME=""
@@ -64,7 +64,7 @@ override_sdk_dependencies() {
     # Override iOS SDK dependency
     if [ -n "$MSDK_IOS_ORG" ] || [ -n "$MSDK_IOS_BRANCH" ]; then
         local ios_org="${MSDK_IOS_ORG:-forcedotcom}"
-        local ios_branch="${MSDK_IOS_BRANCH:-dev}"
+        local ios_branch="${MSDK_IOS_BRANCH:-dev141}"
         local new_ios_url="https://github.com/${ios_org}/SalesforceMobileSDK-iOS.git#${ios_branch}"
 
         if jq -e '.sdkDependencies."SalesforceMobileSDK-iOS"' "$temp_file" > /dev/null 2>&1; then
@@ -78,7 +78,7 @@ override_sdk_dependencies() {
     # Override Android SDK dependency
     if [ -n "$MSDK_ANDROID_ORG" ] || [ -n "$MSDK_ANDROID_BRANCH" ]; then
         local android_org="${MSDK_ANDROID_ORG:-forcedotcom}"
-        local android_branch="${MSDK_ANDROID_BRANCH:-dev}"
+        local android_branch="${MSDK_ANDROID_BRANCH:-dev141}"
         local new_android_url="https://github.com/${android_org}/SalesforceMobileSDK-Android.git#${android_branch}"
 
         if jq -e '.sdkDependencies."SalesforceMobileSDK-Android"' "$temp_file" > /dev/null 2>&1; then
@@ -92,7 +92,7 @@ override_sdk_dependencies() {
     # Override React Native Force dependency
     if [ -n "$RN_FORCE_ORG" ] || [ -n "$RN_FORCE_BRANCH" ]; then
         local rn_org="${RN_FORCE_ORG:-forcedotcom}"
-        local rn_branch="${RN_FORCE_BRANCH:-dev}"
+        local rn_branch="${RN_FORCE_BRANCH:-dev141}"
         local new_rn_url="git+https://github.com/${rn_org}/SalesforceMobileSDK-ReactNative.git#${rn_branch}"
 
         if jq -e '.dependencies."react-native-force"' "$temp_file" > /dev/null 2>&1; then

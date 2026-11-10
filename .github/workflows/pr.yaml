@@ -4,7 +4,7 @@ on:
   # pull_request_target is required for fork PRs to access secrets and the merged tree.
   # Mitigated by permission-check job (Validate Write Permission step).
   pull_request_target:  # zizmor: ignore[dangerous-triggers]
-    branches: [dev, master]
+    branches: [dev, dev141, master]
     paths:
       - '*/install.js'
       - '*/installios.js'
