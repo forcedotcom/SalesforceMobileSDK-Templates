@@ -4,6 +4,24 @@
 
 **Important**: Testing verifies that templates can be **installed and built successfully**. It does not run the generated applications or execute unit/integration tests. The test validates template structure, dependency resolution, and basic compilation.
 
+The separate React Native JavaScript and TypeScript workflow runs Jest for all
+four React Native templates and checks templates containing TypeScript with
+`tsc --noEmit`. It includes the TypeScript sample's logout regression tests.
+It runs on pull requests without secrets or native SDK setup. The bridge is
+packed from the target branch, so companion upgrades must land bridge-first;
+manual dispatch can select a reviewed bridge repository and exact commit.
+
+Run the same checks locally with Node 22.18+ and Yarn Classic installed:
+
+```bash
+export MSDK_REACT_NATIVE_FORCE_PACKAGE=file:/path/to/react-native-force.tgz
+node scripts/check-react-native-template.ts ReactNativeTypeScriptTemplate /tmp/new-template-check
+```
+
+The output directory must be new. It retains dependency provenance, TypeScript
+results in `checks.json`, and Jest results in `jest-results.json`. These checks
+complement native builds and authenticated runtime testing.
+
 ## Test Script Usage
 
 ### React Native bridge source selection
