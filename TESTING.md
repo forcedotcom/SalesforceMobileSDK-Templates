@@ -24,6 +24,61 @@ complement native builds and authenticated runtime testing.
 
 ## Test Script Usage
 
+### Generated React Native consumer acceptance
+
+React Native 0.87 templates pair Gesture Handler 2.33.1 with Screens 4.27.0.
+Earlier pins fail against removed React headers and nullable Android bitmap
+APIs. [Screens 4.27](https://github.com/software-mansion/react-native-screens/releases/tag/4.27.0)
+adds RN 0.87 support, including an iOS runtime crash fix. Native consumer builds
+must cover these dependencies as well as the Salesforce bridge.
+
+Template copies and Metro bundles do not exercise CLI substitution, native
+autolinking or SDK initialization. For a companion upgrade, generate both the
+JavaScript and TypeScript apps with `forcereact createwithtemplate`, selecting
+the reviewed template directory and bridge package explicitly:
+
+```bash
+export MSDK_REACT_NATIVE_FORCE_PACKAGE=file:/absolute/path/react-native-force.tgz
+forcereact createwithtemplate --platform=ios,android \
+  --templaterepouri=/absolute/path/Templates/ReactNativeTemplate \
+  --appname=UpgradeJSConsumer --packagename=com.example.upgrade.jsconsumer \
+  --organization=Example --outputdir=/absolute/path/new-js-consumer \
+  --consumerkey= --callbackurl= --loginserver=https://login.salesforce.com
+```
+
+Repeat with `ReactNativeTypeScriptTemplate`, a different app name/package, and
+a new output directory. Retain each generated app's
+`node_modules/.msdk-source.json`, lockfiles, native SDK commit IDs and the bridge
+archive's SHA-256. Confirm the installed bridge's native and distribution sources
+match the intended artifact. Preserve the installer patches when recording SDK
+provenance; a native SDK commit ID alone does not describe a patched checkout.
+
+Build Debug and Release for both platforms from each generated app. For local
+compilation, use an explicit Android ABI and an explicit iOS simulator
+destination; an unsigned simulator build proves compilation, not device signing
+or App Store readiness. Keep build logs and exact toolchain versions with the
+source receipts. Run the TypeScript app's `tsc --noEmit` and Jest checks after CLI
+generation as well.
+
+Complete this runtime matrix on dedicated test resources, using protected local
+OAuth/test configuration and an approved test account:
+
+| Scenario | JavaScript app | TypeScript app | Platforms/modes |
+|----------|----------------|----------------|-----------------|
+| Cold start, Hermes and native module loading | Required | Required | iOS/Android, Debug/Release |
+| Login, cancellation/failure and recovery | Required | Required | iOS/Android |
+| Contact REST query, logout and re-login | Required | Required | iOS/Android |
+| SmartStore local CRUD and cleanup | Required | Required | iOS/Android |
+| Representative MobileSync down/up and cleanup | Required | Required | iOS/Android |
+| Guest start and deferred login | Deferred template | Not applicable | iOS/Android |
+
+Use explicit simulator IDs and Android serials. Run selected bridge test cases
+against the same reviewed bridge/native SDK sources; use sharded CI for the full
+Android suite. Record an unavailable account, device or test environment as
+missing coverage. Neither successful compilation nor an unconfigured login page
+establishes authenticated runtime acceptance. Keep credentials and raw
+authenticated responses out of commits and shared logs.
+
 ### Supported JavaScript engine
 
 Mobile SDK's React Native templates use Hermes on Android and iOS, following

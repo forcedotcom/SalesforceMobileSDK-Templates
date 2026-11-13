@@ -21,8 +21,8 @@
     "@react-native/new-app-screen": "0.87.0",
     "react-native-safe-area-context": "5.8.0",
     "react-native-force": "git+https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#dev141",
-    "react-native-gesture-handler": "2.31.2",
-    "react-native-screens": "4.25.2"
+    "react-native-gesture-handler": "2.33.1",
+    "react-native-screens": "4.27.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
