@@ -30,9 +30,12 @@ import {
     AppState,
     View,
     FlatList,
-    Keyboard
+    Keyboard,
+    Text,
+    TouchableOpacity,
+    TextInput,
+    ActivityIndicator
 } from 'react-native';
-import { SearchBar } from 'react-native-elements';
 import { oauth } from  'react-native-force';
 import styles from './Styles';
 import NavImgButton from './NavImgButton';
@@ -107,14 +110,24 @@ class SearchScreen extends React.Component {
     render() {
         return (
                 <View style={this.props.style}>
-                  <SearchBar
-                    lightTheme
-                    autoCorrect={false}
-                    onChangeText={this.onSearchChange}
-                    showLoadingIcon={this.state.isLoading}
-                    value={this.state.filter}    
-                    placeholder='Search a contact...'
-                  />
+                  <View style={styles.searchContainer}>
+                    <TextInput
+                      accessibilityLabel='Search contacts'
+                      style={styles.searchInput}
+                      autoCorrect={false}
+                      onChangeText={this.onSearchChange}
+                      value={this.state.filter}
+                      placeholder='Search a contact...'
+                      placeholderTextColor='#666'
+                    />
+                    {this.state.filter.length > 0 && (
+                      <TouchableOpacity accessibilityRole='button' accessibilityLabel='Clear search'
+                        style={styles.navBarButton} onPress={() => this.onSearchChange('')}>
+                        <Text>✕</Text>
+                      </TouchableOpacity>
+                    )}
+                    {this.state.isLoading && <ActivityIndicator accessibilityLabel='Searching contacts' />}
+                  </View>
                   <FlatList
                     data={this.state.data}
                     keyExtractor={this.extractKey}

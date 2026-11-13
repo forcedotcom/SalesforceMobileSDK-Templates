@@ -23,7 +23,6 @@
     "react-native-force": "git+https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#dev141",
     "react-native-gesture-handler": "2.31.2",
     "react-native-screens": "4.25.2",
-    "react-native-elements": "3.4.3",
     "react-native-vector-icons": "10.0.2"
   },
   "devDependencies": {

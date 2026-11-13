@@ -27,6 +27,34 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
+    searchContainer: {
+        flexDirection: 'row', alignItems: 'center', padding: 8,
+        backgroundColor: '#f2f2f2',
+    },
+    searchInput: {
+        flex: 1, minHeight: 44, paddingHorizontal: 12,
+        color: '#222', backgroundColor: 'white',
+    },
+    contactRow: {
+        flexDirection: 'row', alignItems: 'center', padding: 16,
+        borderBottomWidth: 1, borderBottomColor: '#ddd',
+    },
+    contactContent: {flex: 1, marginHorizontal: 8},
+    contactName: {fontSize: 17, color: '#222'},
+    contactTitle: {fontSize: 15, color: '#666'},
+    fieldContainer: {paddingHorizontal: 10, marginBottom: 20},
+    fieldLabel: {fontWeight: 'bold', color: '#666', fontSize: 16},
+    fieldInput: {
+        minHeight: 44, fontSize: 18, color: '#222',
+        borderBottomWidth: 1, borderBottomColor: '#888',
+    },
+    errorContainer: {backgroundColor: 'red', padding: 12, flexDirection: 'row'},
+    errorMessage: {color: 'white', flex: 1, marginLeft: 8},
+    saveButton: {
+        backgroundColor: '#2089dc', minHeight: 44, alignItems: 'center',
+        justifyContent: 'center', flexDirection: 'row',
+    },
+    saveButtonText: {color: 'white', fontSize: 18, marginLeft: 8},
     navBar: {
         backgroundColor: 'red',
     },
