@@ -43,7 +43,7 @@ import com.salesforce.androidsdk.reactnative.app.SalesforceReactSDKManager
 class MainApplication : Application(), ReactApplication {
 
     override val reactNativeHost: ReactNativeHost =
-        object : DefaultReactNativeHost(this) {
+        object : DefaultReactNativeHost(this@MainApplication) {
             override fun getPackages(): List<ReactPackage> =
                 PackageList(this).packages
 

@@ -31,24 +31,24 @@ if (fs.existsSync(targetDir)) {
         console.log('Patched settings.gradle.kts to exclude sample apps');
     }
 
-    // Patch buildSrc build.gradle.kts to use AGP 8.12.0 for React Native compatibility
+    // Patch buildSrc build.gradle.kts to use AGP 9.2.1 for React Native compatibility
     var buildSrcGradle = path.join('mobile_sdk', 'SalesforceMobileSDK-Android', 'buildSrc', 'build.gradle.kts');
     if (fs.existsSync(buildSrcGradle)) {
         var buildSrcContent = fs.readFileSync(buildSrcGradle, 'utf8');
-        // Replace AGP version with 8.12.0
-        buildSrcContent = buildSrcContent.replace(/"com\.android\.tools\.build:gradle:[^"]+"/g, '"com.android.tools.build:gradle:8.12.0"');
+        // Replace AGP version with 9.2.1
+        buildSrcContent = buildSrcContent.replace(/"com\.android\.tools\.build:gradle:[^"]+"/g, '"com.android.tools.build:gradle:9.2.1"');
         fs.writeFileSync(buildSrcGradle, buildSrcContent, 'utf8');
-        console.log('Patched buildSrc/build.gradle.kts to use AGP 8.12.0');
+        console.log('Patched buildSrc/build.gradle.kts to use AGP 9.2.1');
     }
 
-    // Patch build.gradle.kts to use AGP 8.12.0
+    // Patch build.gradle.kts to use AGP 9.2.1
     var buildGradle = path.join('mobile_sdk', 'SalesforceMobileSDK-Android', 'build.gradle.kts');
     if (fs.existsSync(buildGradle)) {
         var buildContent = fs.readFileSync(buildGradle, 'utf8');
-        // Replace AGP version with 8.12.0
-        buildContent = buildContent.replace(/"com\.android\.tools\.build:gradle:[^"]+"/g, '"com.android.tools.build:gradle:8.12.0"');
+        // Replace AGP version with 9.2.1
+        buildContent = buildContent.replace(/"com\.android\.tools\.build:gradle:[^"]+"/g, '"com.android.tools.build:gradle:9.2.1"');
         fs.writeFileSync(buildGradle, buildContent, 'utf8');
-        console.log('Patched build.gradle.kts to use AGP 8.12.0');
+        console.log('Patched build.gradle.kts to use AGP 9.2.1');
     }
 }
 

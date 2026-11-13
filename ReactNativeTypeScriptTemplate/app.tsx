@@ -197,7 +197,7 @@ class ContactListScreen extends React.Component<ContactListProps, ContactListSta
         console.log('Logout initiated');
         oauth.logout(() => {
             console.log('Logout completed - restarting authentication');
-            this.setState({data: [], loading: true}, () => {
+            this.setState({data: [], loading: true, error: null}, () => {
                 // After logout, restart the authentication flow
                 oauth.authenticate(
                     () => this.fetchData(),
@@ -209,6 +209,11 @@ class ContactListScreen extends React.Component<ContactListProps, ContactListSta
                         });
                     }
                 );
+            });
+        }, () => {
+            this.setState({
+                loading: false,
+                error: 'Unable to log out of Salesforce. Please try again.'
             });
         });
     }
@@ -532,7 +537,6 @@ function App(): React.JSX.Element {
                         fontWeight: '600',
                     },
                     statusBarTranslucent: true,
-                    statusBarColor: colors.sfBlue,
                     statusBarStyle: 'light',
                 }}
             >
