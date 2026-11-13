@@ -14,7 +14,7 @@
     "SalesforceMobileSDK-iOS": "https://github.com/forcedotcom/SalesforceMobileSDK-iOS.git#dev141"
   },
   "dependencies": {
-    "@react-navigation/native": "7.2.5",
+    "@react-navigation/native": "7.5.1",
     "@react-navigation/native-stack": "7.16.0",
     "react": "19.2.3",
     "react-native": "0.87.0",
