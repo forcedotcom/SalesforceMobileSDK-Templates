@@ -24,6 +24,15 @@ complement native builds and authenticated runtime testing.
 
 ## Test Script Usage
 
+### Supported JavaScript engine
+
+Mobile SDK's React Native templates use Hermes on Android and iOS, following
+React Native's [bundled Hermes configuration](https://reactnative.dev/docs/0.87/hermes).
+Keep `hermesEnabled=true` on Android. Disabling it fails configuration before
+an app can be built without its required runtime. The iOS Podfiles explicitly
+enable Hermes. JavaScriptCore support requires separate community runtime
+integration and is outside the supported template verification matrix.
+
 ### React Native bridge source selection
 
 React Native installers verify the installed bridge's React Native and React
