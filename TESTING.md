@@ -6,6 +6,26 @@
 
 ## Test Script Usage
 
+### React Native bridge source selection
+
+React Native installers verify the installed bridge's React Native and React
+peer requirements and write a source receipt in
+`node_modules/.msdk-source.json`. A version upgrade must not test an older bridge
+from the release branch and interpret that result as coverage of the proposed
+bridge changes.
+
+For local companion verification, select the reviewed package before installing:
+
+```bash
+export MSDK_REACT_NATIVE_FORCE_PACKAGE=file:/path/to/react-native-force.tgz
+./test_template.sh --template ReactNativeTypeScriptTemplate --platform android
+```
+
+An approved Git URL with an exact commit can be used instead of a local tarball.
+CI using the default release-branch dependency requires the matching bridge
+upgrade to land first. Keep the bridge receipt with the test results, and verify
+the resolved source against the intended checkout/artifact before acceptance.
+
 The `test_template.sh` script allows you to test templates locally or in CI/CD, with support for overriding SDK dependencies.
 
 ### Prerequisites
