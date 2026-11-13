@@ -57,9 +57,17 @@ The `test_template.sh` script allows you to test templates locally or in CI/CD, 
 
 ### Prerequisites
 
-- **For iOS**: macOS with Xcode installed
+- **For iOS**: macOS with Xcode 16.1+ for React Native templates
 - **For Android**: Java 17+ and Gradle
 - **For all**: Node.js 22+ and `jq` command-line JSON processor
+
+React Native 0.87 templates require Node `^22.13.0 || ^24.3.0 || >=26.0.0`.
+The TypeScript check helper above requires Node 22.18+ for native type stripping.
+Android keeps `android.builtInKotlin=false` and `android.newDsl=false` with AGP 9
+to retain the Kotlin plugin and Android DSL expected by React Native's Gradle
+integration. The Jest preset now comes from `@react-native/jest-preset`.
+These settings match the [React Native 0.87 template](https://github.com/react-native-community/template/tree/0.87-stable/template).
+Mobile SDK's minimum deployment versions remain iOS 18 and Android API 31.
 
 ### Basic Usage
 

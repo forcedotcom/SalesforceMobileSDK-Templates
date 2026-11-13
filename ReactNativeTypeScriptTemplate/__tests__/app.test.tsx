@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026-present, salesforce.com, inc.
+ * All rights reserved.
+ */
+
 import React from 'react';
 import {ActivityIndicator, Text, TouchableOpacity} from 'react-native';
 import {act, create, ReactTestRenderer} from 'react-test-renderer';
