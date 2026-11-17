@@ -4,6 +4,6 @@
   "private": true,
   "sdkDependencies": {
     "SalesforceMobileSDK-Shared": "https://github.com/forcedotcom/SalesforceMobileSDK-Shared.git#dev141",
-    "SalesforceMobileSDK-Android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#dev141"
+    "SalesforceMobileSDK-Android": "https://github.com/JohnsonEricAtSalesforce/SalesforceMobileSDK-Android.git#feature/hybrid-android-move-to-cordova-android-15-1-0"
   }
 }

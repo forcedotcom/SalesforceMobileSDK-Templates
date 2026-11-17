@@ -20,7 +20,7 @@ RN_FORCE_ORG=""
 RN_FORCE_BRANCH=""
 
 # Hybrid plugin override
-PLUGIN_REPO_URI="https://github.com/forcedotcom/SalesforceMobileSDK-CordovaPlugin#dev141"
+PLUGIN_REPO_URI="https://github.com/JohnsonEricAtSalesforce/SalesforceMobileSDK-CordovaPlugin#feature/hybrid-android-move-to-cordova-android-15-1-0"
 
 # Template and platform parameters
 TEMPLATE_NAME=""
