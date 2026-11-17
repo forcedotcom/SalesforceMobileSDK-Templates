@@ -12,11 +12,11 @@ on:
     inputs:
       bridge_repository:
         description: Reviewed bridge repository
-        default: forcedotcom/SalesforceMobileSDK-ReactNative
+        default: JohnsonEricAtSalesforce/SalesforceMobileSDK-ReactNative
         type: string
       bridge_ref:
         description: Reviewed bridge commit or branch
-        default: dev141
+        default: feature/reactnative-upgrade-react-native-from-0-86-to-0-87
         type: string
 
 permissions:
@@ -37,8 +37,8 @@ jobs:
           persist-credentials: false
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
-          repository: ${{ inputs.bridge_repository || 'forcedotcom/SalesforceMobileSDK-ReactNative' }}
-          ref: ${{ inputs.bridge_ref || github.base_ref || 'dev141' }}
+          repository: ${{ inputs.bridge_repository || 'JohnsonEricAtSalesforce/SalesforceMobileSDK-ReactNative' }}
+          ref: ${{ inputs.bridge_ref || 'feature/reactnative-upgrade-react-native-from-0-86-to-0-87' }}
           path: bridge
           persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
