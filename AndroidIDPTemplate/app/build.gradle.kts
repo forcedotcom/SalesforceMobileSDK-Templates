@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation("com.salesforce.mobilesdk:MobileSync:14.0.1-rc.1")
+    implementation("com.salesforce.mobilesdk:MobileSync:14.0.1")
 }
 
 android {
