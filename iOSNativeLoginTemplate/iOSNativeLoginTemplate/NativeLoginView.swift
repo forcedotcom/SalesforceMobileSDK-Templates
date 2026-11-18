@@ -119,7 +119,7 @@ struct NativeLoginView: View {
                     .padding(.top, 0)
                 
                 VStack {
-                    Image(.msdkPhone)
+                    Image("msdk-phone")
                         .resizable()
                         .frame(width: 100, height: 100)
                         .padding(.bottom, 10)
