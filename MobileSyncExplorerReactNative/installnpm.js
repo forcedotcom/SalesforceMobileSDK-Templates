@@ -7,7 +7,7 @@ const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
-const {execFileSync} = require('node:child_process');
+const {execSync} = require('node:child_process');
 const {createRequire} = require('node:module');
 
 function verify(root) {
@@ -45,7 +45,7 @@ function install(root = __dirname) {
         app.dependencies['react-native-force'] = override;
         fs.writeFileSync(manifest, JSON.stringify(app, null, 2) + '\n');
     }
-    execFileSync('yarn', ['install'], {cwd: root, stdio: 'inherit'});
+    execSync('yarn install', {cwd: root, stdio: 'inherit'});
     return verify(root);
 }
 

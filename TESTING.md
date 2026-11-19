@@ -22,6 +22,17 @@ The output directory must be new. It retains dependency provenance, TypeScript
 results in `checks.json`, and Jest results in `jest-results.json`. These checks
 complement native builds and authenticated runtime testing.
 
+The installer launcher checks use temporary app directories and a fixture Yarn
+executable, without downloading packages or modifying SDK sources:
+
+```bash
+node --test scripts/__tests__/installnpm.test.js
+```
+
+Run this command on Windows to exercise a real `yarn.cmd` shim. On macOS and
+Linux it exercises the Unix launcher. All four cases check an app path with
+spaces and verify that dependency provenance is still recorded after install.
+
 ## Test Script Usage
 
 ### Generated React Native consumer acceptance
