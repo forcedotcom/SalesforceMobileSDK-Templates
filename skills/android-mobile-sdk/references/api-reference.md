@@ -24,7 +24,7 @@ Each artifact transitively pulls the lower one:
 | `com.salesforce.mobilesdk:SmartStore` | `SalesforceSDK` | Encrypted local DB |
 | `com.salesforce.mobilesdk:MobileSync` | `SmartStore` (and `SalesforceSDK`) | Cloud sync |
 
-Pin a single version per app (e.g. `14.0.1`).
+Pin a single version per app (e.g. `14.0.1-rc.1`).
 
 ## Key Types
 
