@@ -7,6 +7,7 @@ on:
       - 'ReactNative*/**'
       - 'MobileSyncExplorerReactNative/**'
       - 'scripts/check-react-native-template.ts'
+      - 'scripts/__tests__/**'
       - '.github/workflows/react-native-checks.yaml'
   workflow_dispatch:
     inputs:
@@ -23,6 +24,18 @@ permissions:
   contents: read
 
 jobs:
+  installer-tooling:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24'
+      - name: Test installer launchers
+        run: node --test scripts/__tests__/installnpm.test.js
+
   checks:
     runs-on: ubuntu-latest
     strategy:
