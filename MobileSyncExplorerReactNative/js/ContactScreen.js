@@ -28,9 +28,8 @@ import React from 'react';
 import {
     Platform,
     ScrollView,
-    StyleSheet,
     View,
-    TouchableHighlight,
+    TouchableOpacity,
     Text
 } from 'react-native';
 
@@ -38,7 +37,7 @@ import styles from './Styles';
 import NavImgButton from './NavImgButton';
 import Field from './Field';
 import storeMgr from './StoreMgr';
-import { Card, Button } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 // State: contact
 // Props: contact
@@ -125,11 +124,10 @@ class ContactScreen extends React.Component {
 
             return (
                     <View style={{marginTop:10}}>
-                    <Button
-                      icon={{name: 'error', size: 15, color: 'white'}}
-                      title={errorMessage}
-                      buttonStyle={{backgroundColor:'red'}}
-                    />
+                    <View accessibilityRole='alert' style={styles.errorContainer}>
+                      <Icon name='error' size={20} color='white' />
+                      <Text style={styles.errorMessage}>{errorMessage}</Text>
+                    </View>
                     </View>
             );
         }
@@ -138,13 +136,15 @@ class ContactScreen extends React.Component {
     renderSaveButton() {
         return (
                 <View style={{marginTop:10}}>
-                <Button
-                  backgroundColor='blue'
-                  containerStyle={{alignItems:'stretch'}}
-                  icon={{name: 'save'}}
-                  title='Save'
+                <TouchableOpacity
+                  accessibilityRole='button'
+                  accessibilityLabel='Save contact'
+                  style={styles.saveButton}
                   onPress={this.onSave}
-                />
+                >
+                  <Icon name='save' size={24} color='white' />
+                  <Text style={styles.saveButtonText}>Save</Text>
+                </TouchableOpacity>
                 </View>
         );
     }

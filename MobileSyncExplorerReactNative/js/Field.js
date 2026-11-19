@@ -25,19 +25,23 @@
  */
 
 import React from 'react';
-import { View } from 'react-native';
-import { Text,Input } from 'react-native-elements';
+import styles from './Styles';
+import {Text, TextInput, View} from 'react-native';
 
 // Props: fieldLabel, fieldValue
 class Field extends React.Component {
     render() {
-        return (<Input 
-                    key={this.props.fieldLabel} 
-                    label={this.props.fieldLabel} 
-                    onChangeText={this.props.onChange} 
-                    value={this.props.fieldValue}
-                />                
-               );
+        return (
+            <View style={styles.fieldContainer}>
+              <Text style={styles.fieldLabel}>{this.props.fieldLabel}</Text>
+              <TextInput
+                accessibilityLabel={this.props.fieldLabel}
+                style={styles.fieldInput}
+                onChangeText={this.props.onChange}
+                value={this.props.fieldValue || ''}
+              />
+            </View>
+        );
     }
 }
 
