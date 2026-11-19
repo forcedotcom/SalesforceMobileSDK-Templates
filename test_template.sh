@@ -20,7 +20,7 @@ RN_FORCE_ORG=""
 RN_FORCE_BRANCH=""
 
 # Hybrid plugin override
-PLUGIN_REPO_URI="https://github.com/forcedotcom/SalesforceMobileSDK-CordovaPlugin#dev141"
+PLUGIN_REPO_URI="https://github.com/JohnsonEricAtSalesforce/SalesforceMobileSDK-CordovaPlugin#feature/hybrid-android-move-to-cordova-android-15-1-0"
 
 # Template and platform parameters
 TEMPLATE_NAME=""
@@ -346,7 +346,7 @@ test_android_react_native() {
 # Cordova platform versions must match SalesforceMobileSDK-CordovaPlugin/plugin.xml
 # <engines> block and SalesforceMobileSDK-Package/shared/constants.js platformVersion.
 #   cordova-ios:     8.1.0
-#   cordova-android: 15.0.0
+#   cordova-android: 15.1.0
 test_hybrid() {
     local template_path=$1
     local template_name=$2
@@ -401,7 +401,7 @@ test_hybrid() {
     if [ "$platform" == "ios" ]; then
         platform_version="8.1.0"
     else
-        platform_version="15.0.0"
+        platform_version="15.1.0"
     fi
     if ! (cd "$app_dir" && cordova platform add "${platform}@${platform_version}"); then
         print_status "FAILURE" "$template_name ($platform): cordova platform add failed"

@@ -1,10 +1,8 @@
 name: Pull Request
 
 on:
-  # pull_request_target is required for fork PRs to access secrets and the merged tree.
-  # Mitigated by permission-check job (Validate Write Permission step).
-  pull_request_target:  # zizmor: ignore[dangerous-triggers]
-    branches: [dev, dev141, master]
+  pull_request:
+    branches: [dev, 'dev[0-9]*', master]
     paths:
       - '*/install.js'
       - '*/installios.js'
@@ -31,29 +29,8 @@ permissions:
   contents: read
 
 jobs:
-  permission-check:
-    runs-on: forcedotcom-ubuntu  # forks: use ubuntu-latest (org-scoped runner)
-    steps:
-      - name: Check Write Permission
-        uses: octokit/request-action@dad4362715b7fb2ddedf9772c8670824af564f0d  # v2.4.0
-        id: check_permissions
-        with:
-          route: GET /repos/${{ github.repository }}/collaborators/${{ github.triggering_actor }}/permission
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Validate Write Permission
-        run: |
-          permission=$(echo "${{ fromJson(steps.check_permissions.outputs.data).permission }}")
-          echo "User ${{ github.triggering_actor }} has permission: $permission"
-          if [[ "$permission" != "write" && "$permission" != "admin" ]]; then
-            echo "::error::User ${{ github.triggering_actor }} does not have sufficient permission (write or admin) to proceed. Someone from the team needs to rerun this workflow AFTER it has been deemed safe."
-            exit 1
-          fi
-
   detect-changed-templates:
-    needs: permission-check
-    runs-on: forcedotcom-ubuntu  # forks: use ubuntu-latest (org-scoped runner)
+    runs-on: ubuntu-latest
     outputs:
       templates: ${{ steps.set-templates.outputs.templates }}
       has-changes: ${{ steps.set-templates.outputs.has-changes }}
@@ -177,7 +154,7 @@ jobs:
   pr-summary:
     needs: [detect-changed-templates, ios-pr, android-pr]
     if: always()
-    runs-on: forcedotcom-ubuntu  # forks: use ubuntu-latest (org-scoped runner)
+    runs-on: ubuntu-latest
     steps:
       - name: PR Summary
         env:
