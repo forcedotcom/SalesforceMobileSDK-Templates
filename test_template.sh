@@ -20,7 +20,7 @@ RN_FORCE_ORG=""
 RN_FORCE_BRANCH=""
 
 # Hybrid plugin override
-PLUGIN_REPO_URI="https://github.com/JohnsonEricAtSalesforce/SalesforceMobileSDK-CordovaPlugin#feature/hybrid-android-move-to-cordova-android-15-1-0"
+PLUGIN_REPO_URI="https://github.com/forcedotcom/SalesforceMobileSDK-CordovaPlugin#dev141"
 
 # Template and platform parameters
 TEMPLATE_NAME=""
@@ -345,7 +345,7 @@ test_android_react_native() {
 #
 # Cordova platform versions must match SalesforceMobileSDK-CordovaPlugin/plugin.xml
 # <engines> block and SalesforceMobileSDK-Package/shared/constants.js platformVersion.
-#   cordova-ios:     8.1.0
+#   cordova-ios:     8.2.0
 #   cordova-android: 15.1.0
 test_hybrid() {
     local template_path=$1
@@ -399,7 +399,7 @@ test_hybrid() {
     echo "Adding $platform platform..."
     local platform_version
     if [ "$platform" == "ios" ]; then
-        platform_version="8.1.0"
+        platform_version="8.2.0"
     else
         platform_version="15.1.0"
     fi
@@ -582,12 +582,12 @@ Options:
   --template TEMPLATE_NAME        Name of template to test (optional, tests all if not specified)
   --platform PLATFORM             Platform to test: ios or android (optional, tests all supported if not specified)
   --msdk-ios-org ORG              Override iOS SDK GitHub organization (default: forcedotcom)
-  --msdk-ios-branch BRANCH        Override iOS SDK branch (default: dev)
+  --msdk-ios-branch BRANCH        Override iOS SDK branch (default: dev141)
   --msdk-android-org ORG          Override Android SDK GitHub organization (default: forcedotcom)
-  --msdk-android-branch BRANCH    Override Android SDK branch (default: dev)
+  --msdk-android-branch BRANCH    Override Android SDK branch (default: dev141)
   --rn-force-org ORG              Override React Native SDK GitHub organization (default: forcedotcom)
-  --rn-force-branch BRANCH        Override React Native SDK branch (default: dev)
-  --plugin-repo-uri URI           Override CordovaPlugin repo URI for hybrid templates (default: forcedotcom dev branch)
+  --rn-force-branch BRANCH        Override React Native SDK branch (default: dev141)
+  --plugin-repo-uri URI           Override CordovaPlugin repo URI for hybrid templates (default: forcedotcom dev141 branch)
   -h, --help                      Show this help message
 
 Examples:
