@@ -1,0 +1,74 @@
+name: React Native JavaScript and TypeScript
+
+on:
+  pull_request:
+    branches: [dev, dev141, master]
+    paths:
+      - 'ReactNative*/**'
+      - 'MobileSyncExplorerReactNative/**'
+      - 'scripts/check-react-native-template.ts'
+      - 'scripts/__tests__/**'
+      - '.github/workflows/react-native-checks.yaml'
+  workflow_dispatch:
+    inputs:
+      bridge_repository:
+        description: Reviewed bridge repository
+        default: forcedotcom/SalesforceMobileSDK-ReactNative
+        type: string
+      bridge_ref:
+        description: Reviewed bridge commit or branch
+        default: dev141
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  installer-tooling:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24'
+      - name: Test installer launchers
+        run: node --test scripts/__tests__/installnpm.test.js
+
+  checks:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        template: [ReactNativeTemplate, ReactNativeTypeScriptTemplate,
+          ReactNativeDeferredTemplate, MobileSyncExplorerReactNative]
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          path: templates
+          persist-credentials: false
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          repository: ${{ inputs.bridge_repository || 'forcedotcom/SalesforceMobileSDK-ReactNative' }}
+          ref: ${{ inputs.bridge_ref || github.base_ref || 'dev141' }}
+          path: bridge
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24'
+      - name: Prepare reviewed bridge package
+        working-directory: bridge
+        run: |
+          npm install --ignore-scripts --no-audit --no-fund
+          npm run build
+          npm pack --ignore-scripts --pack-destination "$RUNNER_TEMP"
+          npm install --global yarn@1.22.22
+      - name: Check template
+        env:
+          TEMPLATE: ${{ matrix.template }}
+        run: |
+          bridge_package=$(find "$RUNNER_TEMP" -maxdepth 1 -name 'react-native-force-*.tgz' -print -quit)
+          test -n "$bridge_package"
+          export MSDK_REACT_NATIVE_FORCE_PACKAGE="file:$bridge_package"
+          node templates/scripts/check-react-native-template.ts "templates/$TEMPLATE" "$RUNNER_TEMP/checks-$TEMPLATE"

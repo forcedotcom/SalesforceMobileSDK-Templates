@@ -26,13 +26,16 @@
 
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { Icon} from 'react-native-elements';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import styles from './Styles';
 
 class NavImgButton extends React.Component {
     render() {
-        return (<TouchableOpacity style={styles.navBarButton} onPress={() => this.props.onPress()}>
-                  <Icon size={32} name={this.props.icon} type={this.props.iconType} color={this.props.color || 'white'} />
+        const Icon = this.props.iconType === 'material-community' ? MaterialCommunityIcons : MaterialIcons;
+        return (<TouchableOpacity accessibilityRole='button' accessibilityLabel={this.props.label || this.props.icon}
+                  style={styles.navBarButton} onPress={() => this.props.onPress()}>
+                  <Icon size={32} name={this.props.icon} color={this.props.color || 'white'} />
                 </TouchableOpacity>);
     }
 }
