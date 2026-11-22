@@ -25,7 +25,9 @@
  */
 
 import React from 'react';
-import { ListItem, Icon } from 'react-native-elements';
+import styles from './Styles';
+import {Text, TouchableOpacity, View} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import ContactBadge from './ContactBadge';
 
 class ContactCell extends React.Component {
@@ -41,14 +43,15 @@ class ContactCell extends React.Component {
         const fullName = [this.props.contact.FirstName, this.props.contact.LastName].filter(x=>x).join(' ')
         const title = this.props.contact.Title;
         
-        return (<ListItem onPress={this.props.onSelect} bottomDivider>
+        return (<TouchableOpacity accessibilityRole='button' onPress={this.props.onSelect}
+                  style={styles.contactRow}>
                   <ContactBadge key="badge" contact={this.props.contact}/>
-                  <ListItem.Content key="content">
-                    <ListItem.Title>{fullName}</ListItem.Title>
-                    <ListItem.Subtitle>{title}</ListItem.Subtitle>
-                  </ListItem.Content>
+                  <View key="content" style={styles.contactContent}>
+                    <Text style={styles.contactName}>{fullName}</Text>
+                    <Text style={styles.contactTitle}>{title}</Text>
+                  </View>
                   {statusIcon}
-                </ListItem>);
+                </TouchableOpacity>);
     }
 }
 
