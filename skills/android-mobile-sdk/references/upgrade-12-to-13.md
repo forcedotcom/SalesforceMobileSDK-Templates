@@ -1,12 +1,28 @@
 # Android — Upgrade Salesforce Mobile SDK 12.x to 13.2.1
 
-Step-by-step guide for upgrading an existing Android app from SDK 12.x to 13.2.1.
+Step-by-step guide for upgrading an existing Android app from SDK 12.x to 13.2.1. Covers the minSdk bump (26→28), compileSdk bump (34→36), Gradle/AGP upgrade, removed API fixes (`OAuthWebviewHelper`, `LoginOptions`, `ServerPickerActivity`, `LogoutCompleteReceiver`), login customization migration to `LoginViewModel`, and ProGuard/R8 rule cleanup. Does NOT cover React Native or Hybrid/Cordova upgrades.
+
+**Targeting 14.0?** Finish this guide first (build green), then continue with [`upgrade-13-to-14.md`](upgrade-13-to-14.md). Do not skip 13.
 
 ## Preconditions
 
 - App already integrates Salesforce Mobile SDK 12.x
 - Android Studio Ladybug (2024.2.1) or later (required for AGP 8.12.0 support)
 - JDK 17+
+
+## Invariants
+
+These hold regardless of the project shape (version catalog or inline dependencies):
+
+- **Do NOT recreate the Android project from scratch.** Preserve all hand-maintained module configuration, signing config, and build variants.
+- **Do NOT rename or move app source files.** Only SDK version identifiers and removed/renamed APIs change.
+- **Do NOT change applicationId, signing config, or non-SDK build settings** unless the upgrade explicitly requires it.
+- **`minSdk` MUST be raised to 28.** SDK 13.x requires Android 9 (API 28) as the minimum. This drops support for Android 8.0 (API 26) and 8.1 (API 27) — confirm the app's Play Store minimum version policy before applying.
+- **`compileSdk` and `targetSdk` MUST be raised to 36.**
+- **Gradle wrapper MUST be updated to 8.14.3; AGP MUST be updated to 8.12.0.**
+- **Build target**: `./gradlew assembleDebug` from the project root unless there is reason to use a different variant.
+
+When the SDK API in this guide disagrees with reality, the upstream Kotlin/Java in the release wins. Release: <https://github.com/forcedotcom/SalesforceMobileSDK-Android/releases/tag/v13.2.1>
 
 ## Inputs
 
@@ -94,7 +110,7 @@ cdvMinSdkVersion=28
 
 ## Step 3 — Upgrade Gradle wrapper and AGP
 
-**`gradle/wrapper/gradle-wrapper.properties`** — update the distribution URL:
+**`gradle/wrapper/gradle-wrapper.properties`** — update the distribution URL. This edit is required; skipping it breaks the build (see the AGP note below). The "don't touch Gradle scaffolding" rule in `SKILL.md` does not apply to upgrades:
 
 ```properties
 distributionUrl=https\://services.gradle.org/distributions/gradle-8.14.3-bin.zip
@@ -125,7 +141,7 @@ implementation("com.android.tools.build:gradle:8.12.0")          // was 8.6.1
 
 > **Kotlin stays on 1.9.24 for SDK 13.2.1** — do not bump your app's Kotlin version as part of this upgrade. Kotlin 2.0 only becomes a requirement in SDK 14.0; defer that bump until you upgrade to 14.0.
 
-> **AGP 8.12.0 requires Gradle 8.7 or higher.** Gradle 8.14.3 satisfies this. If you see a Gradle sync error about incompatible versions, verify `gradle-wrapper.properties` was saved correctly and re-sync.
+> **AGP 8.12.0 requires Gradle 8.13 or higher**, so a project still on an older wrapper (e.g. 8.7) fails with `Failed to apply plugin 'com.android.internal.version-check'` until the wrapper is bumped. Gradle 8.14.3 satisfies this. If you see a Gradle sync error about incompatible versions, verify `gradle-wrapper.properties` was saved correctly and re-sync.
 
 ---
 
@@ -172,19 +188,25 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 
 ### 4c. Fix `LogoutCompleteReceiver` method signature
 
-The `onLogoutComplete()` override now requires a `reason` parameter.
+The parameterless `onLogoutComplete()` is removed in SDK 13. Override `onLogoutComplete(reason, userAccount)`. The `onLogoutComplete(reason)` overload also exists, but it's deprecated and scheduled for removal.
 
 ```kotlin
-// BEFORE (SDK 12) — missing parameter
+// BEFORE (SDK 12)
+import com.salesforce.androidsdk.util.LogoutCompleteReceiver
+
 class MyLogoutReceiver : LogoutCompleteReceiver() {
     override fun onLogoutComplete() {
         // cleanup
     }
 }
 
-// AFTER (SDK 13) — reason parameter required
+// AFTER (SDK 13)
+import com.salesforce.androidsdk.accounts.UserAccount
+import com.salesforce.androidsdk.auth.OAuth2
+import com.salesforce.androidsdk.util.LogoutCompleteReceiver
+
 class MyLogoutReceiver : LogoutCompleteReceiver() {
-    override fun onLogoutComplete(reason: OAuth2.LogoutReason) {
+    override fun onLogoutComplete(reason: OAuth2.LogoutReason, userAccount: UserAccount?) {
         // cleanup
     }
 }
@@ -405,13 +427,22 @@ Test a release build to confirm no runtime `ClassNotFoundException`:
 
 ## Step 9 — Build verification
 
+First confirm the Step 3 edits landed. Both checks must print a match:
+
+```bash
+grep 'gradle-8.14.3-bin.zip' gradle/wrapper/gradle-wrapper.properties
+grep -rn '8.12.0' build.gradle.kts gradle/libs.versions.toml buildSrc/build.gradle.kts 2>/dev/null
+```
+
+If either prints nothing, go back to Step 3. Then build:
+
 ```bash
 ./gradlew assembleDebug
 ```
 
 Expected output: `BUILD SUCCESSFUL`
 
-If there are remaining compilation errors, consult [API Changes Reference](api-changes.md) for the full list of removed/changed symbols, and [Troubleshooting](troubleshooting.md) for common failure patterns.
+If there are remaining compilation errors, consult [API Changes Reference](upgrade-12-to-13-api-changes.md) for the full list of removed/changed symbols, and [Troubleshooting](upgrade-12-to-13-troubleshooting.md) for common failure patterns.
 
 ---
 
@@ -427,5 +458,6 @@ If there are remaining compilation errors, consult [API Changes Reference](api-c
 
 ## Next
 
-- [API Changes Reference](api-changes.md) — complete list of removed classes, removed methods, and changed signatures
-- [Troubleshooting](troubleshooting.md) — symptom-first guide for build and runtime errors
+- [API Changes Reference](upgrade-12-to-13-api-changes.md) — complete list of removed classes, removed methods, and changed signatures
+- [Troubleshooting](upgrade-12-to-13-troubleshooting.md) — symptom-first guide for build and runtime errors
+- Targeting 14.0 → [Upgrade 13.x to 14.0](upgrade-13-to-14.md)

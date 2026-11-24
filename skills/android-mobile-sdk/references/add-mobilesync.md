@@ -158,7 +158,7 @@ Constraints:
 
 - `syncType` is `"syncDown"` or `"syncUp"`.
 - `soupName` must match a `soupName` declared in `userstore.json`.
-- `target.type` for sync-down is one of `"soql"`, `"sosl"`, `"mru"`, `"refresh"`, `"parent_children"`, `"layout"`, `"metadata"`, `"briefcase"`, `"custom"`.
+- `target.type` for sync-down is one of `"soql"`, `"sosl"`, `"mru"`, `"refresh"`, `"parent_children"`, `"layout"`, `"metadata"`, `"briefcase"` (see [`add-briefcase-sync.md`](add-briefcase-sync.md)), `"custom"`.
 - `options.mergeMode` is `"OVERWRITE"` or `"LEAVE_IF_CHANGED"`.
 
 ## Step 5 — Trigger the Sync to Pull Data
@@ -231,6 +231,7 @@ Expected: `BUILD SUCCESSFUL`. After login, you should see **"SmartStore + Mobile
 
 ## Next
 
+- Sync a Salesforce briefcase (offline priming records) instead of a SOQL query: [`add-briefcase-sync.md`](add-briefcase-sync.md)
 - Biometric session locking: [`add-biometric-auth.md`](add-biometric-auth.md)
 - API class map: [`api-reference.md`](api-reference.md)
 - Symptoms: [`troubleshooting.md`](troubleshooting.md)

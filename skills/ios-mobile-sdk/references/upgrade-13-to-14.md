@@ -1,6 +1,8 @@
 # iOS — Upgrade Salesforce Mobile SDK 13.x to 14.0
 
-Step-by-step guide for upgrading an existing iOS app from SDK 13.x to 14.0.
+Step-by-step guide for upgrading an existing iOS app from SDK 13.x to 14.0. Covers the iOS deployment target bump (17→18), Podfile signposts removal, SwiftUI preview macro migration, removed API fixes, and DPoP/AA default changes. Does NOT cover React Native or Hybrid/Cordova upgrades.
+
+**Still on 12.x?** Run [`upgrade-12-to-13.md`](upgrade-12-to-13.md) first and get a green build, then come back here.
 
 ## Preconditions
 
@@ -8,12 +10,26 @@ Step-by-step guide for upgrading an existing iOS app from SDK 13.x to 14.0.
 - Xcode 16 installed
 - CocoaPods up to date (`gem install cocoapods` or `brew upgrade cocoapods`) if using CocoaPods
 
+## Invariants
+
+These hold regardless of the project shape (CocoaPods, hand-managed SPM, or xcodegen + SPM):
+
+- **Do NOT recreate the Xcode project from scratch.** Preserve all hand-maintained target configuration, signing settings, and scheme setup.
+- **Do NOT rename or move app source files.** Only the SDK version identifiers and any removed/renamed APIs change.
+- **Do NOT change non-SDK build settings** (bundle ID, signing identity, capabilities) unless the upgrade explicitly requires it.
+- **Raise deployment target ONLY in both places simultaneously.** The Podfile/project.yml/project.pbxproj declaration AND the Xcode project's `IPHONEOS_DEPLOYMENT_TARGET` must match. A mismatch causes CocoaPods to refuse install or produces an archive that fails App Store validation.
+- **After `pod install`, stage `.xcworkspace` and `Podfile.lock` changes but do NOT stage the full `Pods/` directory.** The `Pods/` directory is a generated artifact; committing it bloats the repo and causes merge conflicts.
+- **Never pass `CODE_SIGNING_ALLOWED=NO` to xcodebuild.** It strips the keychain entitlement and silently breaks login after the upgrade.
+
+When the SDK API in this guide disagrees with reality, the upstream release notes and Objective-C headers win. Release: <https://github.com/forcedotcom/SalesforceMobileSDK-iOS/releases/tag/v14.0.1-rc.1>
+
 ## Inputs
 
 | Variable | Example | Notes |
 |---|---|---|
 | `<ProjectName>` | `MyApp` | Xcode project name (without `.xcodeproj`) |
 | `<TargetName>` | `MyApp` | Main app target name |
+| `<CallbackUrl>` | `com.example.myapp://oauth/done` | OAuth callback URL registered in the Connected App — the app's `oauthRedirectURI`. Locate it in Step 0 and classify it in Step 9. |
 
 ---
 
@@ -28,6 +44,14 @@ Before any file edits, determine which dependency manager and project generation
 | `XCRemoteSwiftPackageReference` inside `<ProjectName>.xcodeproj/project.pbxproj` only (no `Podfile`, no `project.yml`) | Hand-managed SPM — follow the **[Hand-managed SPM]** sub-steps below |
 
 State your shape choice before continuing: *"CocoaPods — found `Podfile`"*, *"Hand-managed SPM — found `XCRemoteSwiftPackageReference` in project.pbxproj"*, or *"xcodegen + SPM — found `project.yml`"*.
+
+**Also locate the OAuth callback URL (`oauthRedirectURI`).** SDK 14 moves login to `ASWebAuthenticationSession`, and login only completes if the callback URL can be routed back to the app: a custom scheme, or `https` on a domain the app owns with Universal Links (see Step 9). Find every definition before editing anything:
+
+```bash
+grep -rn "oauthRedirectURI\|SFDCOAuthRedirectUri" --include='*.plist' --include='*.swift' --include='*.m' --include='*.xcconfig' --include='project.yml' .
+```
+
+Check `bootconfig.plist`, `Info.plist`, any per-configuration or per-target bootconfig, and code that sets `redirectUri` on the login config. If any value starts with `https://`, classify it in Step 9: on a host the app doesn't control (row C), browser login **cannot** work without a Connected App change, and the user must decide how to proceed. Ask before continuing.
 
 **Files modified per path:**
 
@@ -79,11 +103,10 @@ After:
 platform :ios, '18.0'
 ```
 
-Also update the `post_install` block if it sets `IPHONEOS_DEPLOYMENT_TARGET`:
+Also update the `post_install` block if it sets `IPHONEOS_DEPLOYMENT_TARGET`. Leave any helper calls already in the block (e.g. `mobile_sdk_post_install(installer)` in a `use_mobile_sdk!` Podfile) as they are:
 
 ```ruby
 post_install do |installer|
-  mobile_sdk_post_install(installer)
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '18.0'
@@ -110,7 +133,7 @@ deploymentTarget: "18.0"
 
 ## Step 2 — Update SDK version
 
-Use the release candidate version `14.0.1-rc.1` for every version pin (CocoaPods pods, SPM `exactVersion`, xcodegen `version`).
+Use version `14.0.1-rc.1` for every version pin (CocoaPods pods, SPM `exactVersion`, xcodegen `version`).
 
 ### [CocoaPods] — Detect Podfile style before editing
 
@@ -144,8 +167,6 @@ target '<TargetName>' do
 end
 
 post_install do |installer|
-  mobile_sdk_post_install(installer)
-  signposts_post_install(installer)    # REMOVE THIS LINE
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '18.0'
@@ -171,7 +192,6 @@ target '<TargetName>' do
 end
 
 post_install do |installer|
-  mobile_sdk_post_install(installer)
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '18.0'
@@ -182,13 +202,13 @@ end
 
 Key changes:
 - Version bumped from `13.x` to `14.0.1-rc.1` on all SDK pods.
-- `signposts_post_install(installer)` and its comment removed from `post_install`. Only `mobile_sdk_post_install(installer)` should remain.
+- No `mobile_sdk_post_install` / `signposts_post_install` calls. Those helpers are defined only in `mobilesdk_pods.rb`, which a Case A Podfile doesn't load, so `pod install` fails with `undefined method` if they're called. Don't add them. Remove any that are present unless the Podfile `require`s `mobilesdk_pods.rb`, in which case it's Case B.
 - Both sources declared — `https://github.com/forcedotcom/SalesforceMobileSDK-iOS-Specs` is required for SQLCipher 4.17.0.
 
 Verify before running `pod install`:
 - `platform :ios` is `'18.0'`
 - All `13.x` version strings replaced with `14.0.1-rc.1`
-- `signposts_post_install(installer)` is removed
+- No `*_post_install` helper calls in `post_install`
 - Both sources declared at the top of the Podfile
 
 Then run:
@@ -453,7 +473,7 @@ refresher.refreshSession { updatedCredentials in
 }
 
 // AFTER — refresh(credentials:) uses a Result callback and returns Bool
-let started = UserAccountManager.shared().refresh(credentials: credentials) { result in
+let started = UserAccountManager.shared.refresh(credentials: credentials) { result in
     switch result {
     case .success(let (userAccount, authInfo)):
         // use userAccount / authInfo
@@ -465,7 +485,7 @@ let started = UserAccountManager.shared().refresh(credentials: credentials) { re
 }
 
 // Or the async form:
-// let (userAccount, authInfo) = try await UserAccountManager.shared().refresh(credentials: credentials)
+// let (userAccount, authInfo) = try await UserAccountManager.shared.refresh(credentials: credentials)
 ```
 
 Objective-C:
@@ -500,7 +520,7 @@ DPoP (Demonstration of Proof-of-Possession) is enabled by default in SDK 14.0. T
 override init() {
     super.init()
     SalesforceManager.initializeSDK()
-    SalesforceManager.shared().usesDPoP = false  // remove before production
+    SalesforceManager.shared.usesDPoP = false  // remove before production
 }
 ```
 
@@ -508,36 +528,62 @@ override init() {
 
 **Option B — Enable DPoP on the Connected App and upgrade existing users:**
 
-Configure the Connected App in Salesforce Setup to support DPoP, then use the migration API for users who previously authenticated without DPoP:
-
-```swift
-UserAccountManager.shared().upgradeToDPoP(userAccount,
-    success: { authInfo, userAccount in
-        // user's tokens are now DPoP-bound
-    },
-    failure: { authInfo, error in
-        // handle upgrade failure (e.g. re-authenticate)
-    }
-)
-```
-
-`upgradeToDPoP(_:success:failure:)` is a method on `UserAccountManager` (Obj-C `SFUserAccountManager`), not `SalesforceManager`. The `success` block receives `(AuthInfo, UserAccount)` and `failure` receives `(AuthInfo, Error)`. Call it once per user account on first launch after the upgrade. Store a migration flag in `UserDefaults` keyed to the user's account ID so it is not called again on subsequent launches.
+Configure the Connected App / External Client App in Salesforce Setup to support DPoP. Users who signed in with SDK 13 keep a Bearer refresh token until the app migrates them with `UserAccountManager.shared.upgradeToDPoP(_:success:failure:)` (a method on `UserAccountManager`, Obj-C `SFUserAccountManager`, not `SalesforceManager`). Do not hand-roll the call: from SDK 14.0.1 the SDK ships `DPoPMigrationManager` (only migrates when the session is not already DPoP-bound, keeps the session on failure). Follow [`add-dpop-token-migration.md`](add-dpop-token-migration.md) for the localized progress screen and the launch wiring in `SceneDelegate`.
 
 ---
 
-## Step 9 — Handle Advanced Authentication on by default for all hosts (if applicable)
+## Step 9 — Make the OAuth callback work with Advanced Authentication (on by default)
 
-Advanced Authentication (browser-based login via `SFSafariViewController`) is now enabled for **all** login hosts, including `login.salesforce.com`. In SDK 13, it was enabled only for specific hosts.
+Advanced Authentication (browser-based login via `ASWebAuthenticationSession`) is now enabled for **all** login hosts, including `login.salesforce.com`. In SDK 13, it was enabled only for specific hosts, and other hosts used the in-app `WKWebView`, which intercepted the callback URL itself.
 
-If your app must preserve the in-app `WKWebView` login flow:
+In SDK 14 the browser session has to hand the callback back to the app. A custom-scheme callback only needs the scheme registered in `Info.plist`. An `https` callback is handed back to the app only through Universal Links, so the app must own the callback's domain (the same constraint as Android App Links).
 
-```swift
-SalesforceManager.shared().forceAdvancedAuthentication = false
+### 9a — Classify `<CallbackUrl>` (found in Step 0)
+
+| Row | `<CallbackUrl>` | Works with Advanced Auth? | Action |
+|---|---|---|---|
+| A | Custom scheme, e.g. `com.example.myapp://oauth/done` or `testsfdc:///mobilesdk/detect/oauth/done` | Yes | Confirm the scheme is registered in `Info.plist` (9b). No other change needed. |
+| B | `https` on a domain the app owner controls, e.g. `https://auth.example.com/oauth/done` | Only with Universal Links | Add the Associated Domains capability with `applinks:<host>` to the main target's entitlements, and publish `https://<host>/.well-known/apple-app-site-association` listing the app's `<TeamID>.<BundleID>` and the callback path. See Apple's [Supporting associated domains](https://developer.apple.com/documentation/xcode/supporting-associated-domains). Without it, the browser sheet loads the callback page instead of returning to the app. |
+| C | `https` on a host the app does **not** control, e.g. `https://mobileauth.salesforce.com/oauth/done` | **No.** You can't publish an `apple-app-site-association` file on that host, so Universal Links can't be set up. For `mobileauth.salesforce.com` the sheet shows a page reading "Please contact support if you see this page". | **Stop and ask the user** which row C option to take (below). |
+
+Row C options:
+
+1. **Recommended — add a routable callback to the existing Connected App / External Client App.** Either a custom scheme (e.g. `com.example.myapp://oauth/done`, then 9b) or an `https` URL on a domain the app owner controls (then row B). Keep the old callback registered during rollout, so builds that are already shipped keep working. Then update **every** `oauthRedirectURI` found in Step 0 to the exact new URL. This is a server-side change and usually needs an org admin.
+2. **Temporary — keep WebView login.** Use this if the Callback URLs can't be changed yet. Set this after `initializeSDK()` and before the first auth flow:
+
+   ```swift
+   // MSDK 14 defaults to browser login, which can't return this oauthRedirectURI to the app.
+   // Use WebView login (deprecated; removed in MSDK 15).
+   SalesforceManager.shared.forceAdvancedAuthentication = false
+   ```
+
+   This only postpones the fix. WebView login goes away in SDK 15, so option 1 is still required before then.
+
+> **`forceAdvancedAuthentication` is deprecated in 14.0.** The header marks it `SFSDK_DEPRECATED(14.0, 15.0, "Advanced Authentication is becoming mandatory; this flag will be removed.")` (`SalesforceSDKManager.h:298`). It defaults to on, and setting it emits a deprecation warning.
+
+Reference: [Advanced Authentication for iOS — App Configuration](https://developer.salesforce.com/docs/platform/mobile-sdk/guide/auth-ios-advanced.html#app-configuration).
+
+### 9b — Register the custom scheme in `Info.plist` (row A, or row C option 1 with a custom scheme)
+
+Add the callback URL's scheme to the main target's `Info.plist`. Skip this if `CFBundleURLSchemes` already contains it.
+
+```xml
+<key>CFBundleURLTypes</key>
+<array>
+    <dict>
+        <key>CFBundleURLName</key>
+        <string>com.example.myapp</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+            <string>com.example.myapp</string>
+        </array>
+    </dict>
+</array>
 ```
 
-Set this after `initializeSDK()` and before the first auth flow. Remove this line once the Connected App and user base are ready for browser-based login.
+`CFBundleURLSchemes` holds the scheme only: the text before `://`, with no colon or path. For `testsfdc:///mobilesdk/detect/oauth/done`, that's `testsfdc`. If `CFBundleURLTypes` already exists, add a new `<dict>` to its array instead of replacing it. For xcodegen projects, put the same entry under the target's `info.properties` in `project.yml` so `xcodegen generate` doesn't drop it.
 
-> **`forceAdvancedAuthentication` is deprecated in 14.0** — the header marks it `SFSDK_DEPRECATED(14.0, 15.0, "Advanced Authentication is becoming mandatory; this flag will be removed.")` (`SalesforceSDKManager.h:282`). It defaults to on, and setting it emits a deprecation warning. Treat the opt-out above as temporary — the flag will be removed in 15.0.
+> A mismatch between the app's `oauthRedirectURI` and the Connected App's Callback URLs fails immediately with `redirect_uri_mismatch`. The URL must match **exactly**.
 
 ---
 
@@ -583,13 +629,31 @@ xcodebuild \
 
 Expected: `** BUILD SUCCEEDED **`
 
-> **FMDB duplicate-class warning on SPM path:** You may see a message like `objc[]: Class FMDatabase is implemented in both SmartStore.framework/SmartStore and .../debug.dylib` in the build log. This is harmless — see [troubleshooting.md](troubleshooting.md) for an explanation.
+> **FMDB duplicate-class warning on SPM path:** You may see a message like `objc[]: Class FMDatabase is implemented in both SmartStore.framework/SmartStore and .../debug.dylib` in the build log. This is harmless — see [troubleshooting.md](upgrade-13-to-14-troubleshooting.md) for an explanation.
 
-If the build fails, see [troubleshooting.md](troubleshooting.md) or [breaking-changes.md](breaking-changes.md) for the specific error.
+If the build fails, see [troubleshooting.md](upgrade-13-to-14-troubleshooting.md) or [breaking-changes.md](upgrade-13-to-14-breaking-changes.md) for the specific error.
+
+---
+
+## Step 12 — Verify login on a simulator
+
+A green build doesn't prove login works: the callback problem from Step 9 only shows up at runtime. Start from a clean install so no cached credentials skip the login flow:
+
+```bash
+xcrun simctl uninstall booted <BundleId>
+# Build and run from Xcode, or: xcodebuild ... build, then xcrun simctl install booted <path>.app && xcrun simctl launch booted <BundleId>
+```
+
+Log in with a real user, then check the SDK log in the Xcode console:
+
+- `Initiating native browser flow with URL …` means browser login (Advanced Auth) is active. Check that the `redirect_uri=` in that URL is the expected `<CallbackUrl>`.
+- If this line is absent, WebView login is active (the opt-out from Step 9, option 2, is in effect).
+
+Login passes when the app returns from the browser sheet to its signed-in screen. If the sheet stays on a page reading "Please contact support if you see this page", or never dismisses, the `https` callback isn't routed back to the app (Step 9 rows B and C).
 
 ---
 
 ## Next
 
-- [Breaking Changes Reference](breaking-changes.md)
-- [Troubleshooting](troubleshooting.md)
+- [Breaking Changes Reference](upgrade-13-to-14-breaking-changes.md)
+- [Troubleshooting](upgrade-13-to-14-troubleshooting.md)

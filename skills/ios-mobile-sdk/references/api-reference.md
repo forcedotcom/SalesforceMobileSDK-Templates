@@ -21,13 +21,15 @@ When the compiler reports `cannot find 'X' in scope` from Swift, the fix is the 
 | `SoqlSyncDownTarget` | `SFSoqlSyncDownTarget` | `MobileSync` |
 | `SoslSyncDownTarget` | `SFSoslSyncDownTarget` | `MobileSync` |
 | `MruSyncDownTarget` | `SFMruSyncDownTarget` | `MobileSync` |
+| `BriefcaseSyncDownTarget` | `SFBriefcaseSyncDownTarget` | `MobileSync` |
+| `BriefcaseObjectInfo` | `SFBriefcaseObjectInfo` | `MobileSync` |
 | `SyncUpTarget` | `SFSyncUpTarget` | `MobileSync` |
 
 The `SDKManager` chain extends linearly: `SalesforceSDKManager` ← `SmartStoreSDKManager` ← `MobileSyncSDKManager`. The same singleton is reachable through any superclass. The Swift name `SalesforceManager` exists only because the original Obj-C class was named `SalesforceSDKManager` and the Swift alias was added later.
 
 ## Method/Property Quirks
 
-- `UserAccountManager.shared` is a **property**, not a method — `UserAccountManager.shared.currentUserAccount`, not `UserAccountManager.shared().currentUser`. `currentUserAccount` is `Optional<UserAccount>`, so guard with `if let`.
+- `UserAccountManager.shared` is a **property**, not a method — `UserAccountManager.shared.currentUserAccount`, not `UserAccountManager.shared.currentUser`. `currentUserAccount` is `Optional<UserAccount>`, so guard with `if let`.
 - `SyncManager.sharedInstance` is overloaded — three Swift forms exist:
   - `sharedInstance(forUserAccount:)` — for an `SFUserAccount` (the most common direct use).
   - `sharedInstance(named:forUserAccount:)` — for a named store under a user.
@@ -39,6 +41,7 @@ The `SDKManager` chain extends linearly: `SalesforceSDKManager` ← `SmartStoreS
   - `SyncOptions.newSyncOptions(forSyncUp:)` — argument is the field-list array.
   - `SyncOptions.newSyncOptions(forSyncUp:mergeMode:)` — field list plus merge mode.
 - `SyncState.name` is the sync's human name. It is **not** `syncName` — that is only a JSON-config key (`kSyncsConfigSyncName = @"syncName"`). When logging from inside a `reSync(named:onUpdate:)` closure, use `sync.name`.
+- `UserAccountManager.shared.upgradeToDPoP(_:success:failure:)` (14.0+) takes a `UserAccount`; `success` receives `(AuthInfo, UserAccount)` and `failure` receives `(AuthInfo, Error)`. For an already-DPoP user it calls `success` synchronously with a `nil` `authInfo`, so do not rely on `authInfo`. Whether a session is DPoP-bound: `DPoPRequestDecorator.isDPoPTokenType(user.credentials.tokenType)` (case-insensitive compare to `"DPoP"`; `tokenType` is optional). `SalesforceManager.shared.usesDPoP` (Obj-C `useDPoP`, default `true` in 14) affects **new logins only**; it does not change an existing session and is not read by `upgradeToDPoP`. From 14.0.1 the SDK wraps it in `DPoPMigrationManager.shared` (`isMigrationNeeded`, `migrateIfNeeded(completion:)` / `await migrateIfNeeded()` returning `.notNeeded`, `.migrated` or `.failed(Error)`); use that instead of calling `upgradeToDPoP` directly. See [`add-dpop-token-migration.md`](add-dpop-token-migration.md).
 - `SalesforceManager.shared.biometricAuthenticationManager()` is the concrete singleton conforming to the public `BiometricAuthenticationManager` protocol. The protocol has no static `.shared`.
 
 ## Resolving the Source of Truth

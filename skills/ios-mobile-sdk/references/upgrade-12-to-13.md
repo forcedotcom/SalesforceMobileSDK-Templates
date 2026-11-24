@@ -1,12 +1,27 @@
 # iOS — Upgrade Salesforce Mobile SDK 12.x to 13.2.1
 
-Step-by-step guide for upgrading an existing iOS app from SDK 12.x to 13.2.1.
+Step-by-step guide for upgrading an existing iOS app from SDK 12.x to 13.2.1. Covers the iOS deployment target bump (16→17), removed API fixes, login customization migration, Xcode 16 compatibility, and the SQLCipher upgrade. Does NOT cover React Native or Hybrid/Cordova upgrades.
+
+**Targeting 14.0?** Finish this guide first (build green), then continue with [`upgrade-13-to-14.md`](upgrade-13-to-14.md). Do not skip 13.
 
 ## Preconditions
 
 - App already integrates Salesforce Mobile SDK 12.x (CocoaPods or SPM)
 - Xcode 16 installed
 - CocoaPods up to date (`gem install cocoapods` or `brew upgrade cocoapods`) if using CocoaPods
+
+## Invariants
+
+These hold regardless of the project shape (CocoaPods or SPM):
+
+- **Do NOT recreate the Xcode project from scratch.** Preserve all hand-maintained target configuration, signing settings, and scheme setup.
+- **Do NOT rename or move app source files.** Only the SDK version identifiers and any removed/renamed APIs change.
+- **Do NOT change non-SDK build settings** (bundle ID, signing identity, capabilities) unless the upgrade explicitly requires it.
+- **Raise deployment target ONLY in both places simultaneously.** The Podfile/Package.swift declaration AND the Xcode project's `IPHONEOS_DEPLOYMENT_TARGET` must match. A mismatch causes CocoaPods to refuse install or produces an archive that fails App Store validation.
+- **After `pod install`, stage `.xcworkspace` and `Podfile.lock` changes but do NOT stage the full `Pods/` directory.** The `Pods/` directory is a generated artifact; committing it bloats the repo and causes merge conflicts.
+- **Never pass `CODE_SIGNING_ALLOWED=NO` to xcodebuild.** It strips the keychain entitlement and silently breaks login after the upgrade.
+
+When the SDK API in this guide disagrees with reality, the upstream release notes and Objective-C headers win. Release: <https://github.com/forcedotcom/SalesforceMobileSDK-iOS/releases/tag/v13.2.1>
 
 ## Inputs
 
@@ -571,11 +586,12 @@ xcodebuild build \
   | tail -5
 ```
 
-If the build fails, see the categorized fixes in [Step 4](#step-4--fix-compilation-errors), or consult [Troubleshooting](troubleshooting.md).
+If the build fails, see the categorized fixes in [Step 4](#step-4--fix-compilation-errors), or consult [Troubleshooting](upgrade-12-to-13-troubleshooting.md).
 
 ---
 
 ## Next
 
-- [Troubleshooting](troubleshooting.md)
-- [API Changes Reference](api-changes.md)
+- [Troubleshooting](upgrade-12-to-13-troubleshooting.md)
+- [API Changes Reference](upgrade-12-to-13-api-changes.md)
+- Targeting 14.0 → [Upgrade 13.x to 14.0](upgrade-13-to-14.md)

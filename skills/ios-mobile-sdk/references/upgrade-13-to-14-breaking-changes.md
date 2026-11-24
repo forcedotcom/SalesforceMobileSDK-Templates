@@ -119,7 +119,7 @@ refresher.refreshSession { updatedCredentials in
 }
 
 // AFTER — SDK 14: UserAccountManager.refresh(credentials:) uses a Result callback and returns Bool
-let started = UserAccountManager.shared().refresh(credentials: credentials) { result in
+let started = UserAccountManager.shared.refresh(credentials: credentials) { result in
     switch result {
     case .success(let (userAccount, authInfo)):
         // use userAccount / authInfo
@@ -131,7 +131,7 @@ let started = UserAccountManager.shared().refresh(credentials: credentials) { re
 }
 
 // Or the async form:
-// let (userAccount, authInfo) = try await UserAccountManager.shared().refresh(credentials: credentials)
+// let (userAccount, authInfo) = try await UserAccountManager.shared.refresh(credentials: credentials)
 ```
 
 Objective-C:
@@ -202,31 +202,24 @@ In SDK 13 `usesDPoP` defaulted to `false`. In SDK 14 it defaults to `true`.
 override init() {
     super.init()
     SalesforceManager.initializeSDK()
-    SalesforceManager.shared().usesDPoP = false
+    SalesforceManager.shared.usesDPoP = false
 }
 ```
 
-**To upgrade existing users to DPoP (once Connected App is configured):**
-
-```swift
-UserAccountManager.shared().upgradeToDPoP(userAccount,
-    success: { authInfo, userAccount in /* tokens are now DPoP-bound */ },
-    failure: { authInfo, error in /* handle */ }
-)
-```
+**To upgrade existing users to DPoP (once Connected App is configured):** follow [`add-dpop-token-migration.md`](add-dpop-token-migration.md) (the SDK's `DPoPMigrationManager`, a progress screen, launch wiring, failure policy).
 
 ---
 
 ### forceAdvancedAuthentication — now defaults to true for all hosts
 
-In SDK 13, Advanced Authentication (browser-based login via `SFSafariViewController`) was enabled only for specific hosts. In SDK 14, it is on for **all** login hosts including `login.salesforce.com`.
+In SDK 13, Advanced Authentication (browser-based login via `ASWebAuthenticationSession`) was enabled only for specific hosts. In SDK 14, it is on for **all** login hosts including `login.salesforce.com`.
 
-**Impact:** Users will see a browser-based login prompt instead of an in-app `WKWebView` flow on first login after upgrade.
+**Impact:** Users will see a browser-based login prompt instead of an in-app `WKWebView` flow on first login after upgrade. Login only completes if `oauthRedirectURI` uses a **custom scheme** registered in `Info.plist` `CFBundleURLTypes`. An `https` callback (e.g. `https://mobileauth.salesforce.com/oauth/done`) never returns to the app. See [`upgrade-13-to-14.md`](upgrade-13-to-14.md) Step 9.
 
-**To preserve the in-app WKWebView login flow:**
+**To preserve the in-app WKWebView login flow (temporary; the flag is deprecated and removed in 15.0):**
 
 ```swift
-SalesforceManager.shared().forceAdvancedAuthentication = false
+SalesforceManager.shared.forceAdvancedAuthentication = false
 ```
 
 ---
@@ -237,19 +230,7 @@ SalesforceManager.shared().forceAdvancedAuthentication = false
 
 New method on `UserAccountManager` (Obj-C `SFUserAccountManager`) for migrating an existing authenticated user account from non-DPoP tokens to DPoP-bound tokens. The `success` block receives `(AuthInfo, UserAccount)` and the `failure` block receives `(AuthInfo, Error)`.
 
-```swift
-UserAccountManager.shared().upgradeToDPoP(
-    userAccount,
-    success: { authInfo, userAccount in
-        // tokens refreshed and bound to a new DPoP key pair
-    },
-    failure: { authInfo, error in
-        // handle: re-authenticate if needed
-    }
-)
-```
-
-Call once per user account. Use a `UserDefaults` flag keyed to the account ID to avoid calling it on subsequent launches.
+Signature: `upgradeToDPoP(_ user: UserAccount, success: (AuthInfo, UserAccount) -> Void, failure: (AuthInfo, Error) -> Void)`. Refreshes the user's tokens and binds them to a new DPoP key pair; it is a synchronous no-op (`success` with a `nil` `authInfo`) for a user who is already DPoP-bound. Do not call it directly from app code: from 14.0.1 use the SDK's `DPoPMigrationManager` as shown in [`add-dpop-token-migration.md`](add-dpop-token-migration.md).
 
 ---
 

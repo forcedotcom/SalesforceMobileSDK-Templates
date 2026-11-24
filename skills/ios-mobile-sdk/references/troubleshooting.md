@@ -26,6 +26,17 @@ Symptom-first reference for iOS Mobile SDK integration failures.
 | SDK windows revert to the default appearance after an app relaunch | `SFSDKWindowManager.userInterfaceStyle` is set at runtime and is **not persisted by the SDK** across launches; on a cold start it returns to `.unspecified` (follow the system). | Re-apply the style on launch (e.g. from your `AppDelegate` / `SceneDelegate`). For a user toggle, persist the choice yourself (e.g. `UserDefaults`) and restore it on launch. See [`add-dark-mode.md`](add-dark-mode.md). |
 | SDK-managed windows don't match your app's theme (only your own screens, or only the SDK windows, changed) | `SFSDKWindowManager.userInterfaceStyle` governs **SDK-managed windows only** (login, host picker, Switch User, screen lock, snapshot). App-owned UI is not governed by it, and the SDK never drives it. | Set both to the same appearance: SDK windows via `SFSDKWindowManager.sharedManager().userInterfaceStyle`; app-owned view controllers via standard iOS dark-mode handling (`overrideUserInterfaceStyle`, or the app-wide `UIUserInterfaceStyle` in `Info.plist`). See [`add-dark-mode.md`](add-dark-mode.md). |
 
+## DPoP Migration
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| Build error `cannot find 'DPoPMigrationManager' in scope`, or `value of type 'UserAccountManager' has no member 'upgradeToDPoP'` | The app is on SDK 13.x or 14.0.0 (for CocoaPods, `Podfile.lock` shows the old version); `DPoPMigrationManager` ships in 14.0.1. | Upgrade to 14 first if needed ([`upgrade-13-to-14.md`](upgrade-13-to-14.md)), then pin the SDK pods to `14.0.1-rc.1` or later and run `pod install --repo-update`. |
+| Build error `cannot find 'DPoPMigrationView' in scope` | The new file is on disk but not in the app target (hand-maintained `.xcodeproj`, or `xcodegen generate` was not re-run). | `project.yml` projects: run `xcodegen generate` (then `pod install` for hybrid). Hand-maintained projects: drag the file into the target in Xcode (Target Membership) and confirm it is in Compile Sources. See [`add-dpop-token-migration.md`](add-dpop-token-migration.md) Step 4. |
+| Migration screen appears as raw keys (`dpop_migration_title`) | `Localizable.strings` is not in the target's Copy Bundle Resources, or the keys were added to a different table. | Add the file (or the two keys) to the app target's existing `Localizable.strings`; check Build Phases → Copy Bundle Resources. |
+| Migration never runs (`DPoPMigration: not needed, ...` in the log) | `not needed, already DPoP-bound` — the session is already DPoP-bound (a fresh login with `usesDPoP` on is); `not needed, no current user` — nobody is signed in. | Expected. To re-test, log in with `SalesforceManager.shared.usesDPoP = false`, remove that line, relaunch. |
+| Every launch logs `DPoPMigration: upgrade failed: ...` and the user stays on Bearer | The Connected App / External Client App is not DPoP-enabled in the org, the device is offline, or the user cancels the SDK's web view. The SDK keeps the session and the next launch retries. | Enable DPoP on the Connected App / External Client App in Salesforce Setup. Check the logged reason; no code change is needed for offline or cancel. |
+| Main UI flashes or is rebuilt under the SDK's web view during migration | `proceedAfterLogin()` is missing the `isMigrating` guard; the SDK posts current-user-change notifications while the upgrade runs. | Add the `isMigrating` property and the `if isMigrating { return }` guard as in [`add-dpop-token-migration.md`](add-dpop-token-migration.md) Step 3a. |
+
 ## SmartStore
 
 | Symptom | Cause | Fix |
@@ -41,6 +52,9 @@ Symptom-first reference for iOS Mobile SDK integration failures.
 | Sync fails: `Soup not found` | `soupName` in `usersyncs.json` does not match a declared soup in `userstore.json`. | Align names between the two files. |
 | `usersyncs.json` is ignored | File missing from the bundle, or named wrong. The SDK looks for the literal filename `usersyncs.json` (plural). | Add the file at `<AppName>/usersyncs.json` (sibling to `userstore.json`), then confirm it appears in Build Phases → Copy Bundle Resources for the app target. For xcodegen projects, re-run `xcodegen generate`; for hand-maintained `.xcodeproj`, drag into the project navigator and tick target membership. |
 | UI stays empty after sync completes | Reload was issued before `onUpdate` fired with `.done`. `reSync(named:onUpdate:)` returns immediately while the sync runs asynchronously. | Move the data-source reload **inside** the `onUpdate` block, gated on `sync.status == .done`. See [`add-mobilesync.md`](add-mobilesync.md) Step 3. |
+| Briefcase sync completes but soups are empty | The user has no briefcase assigned, or the briefcase is empty. The sync succeeds with zero records rather than failing. | Check in the org that a briefcase exists and is assigned to the logged-in user. Nothing to fix client-side. |
+| Records of one object type never arrive | That type has no entry in `target.infos` (types in the briefcase but not in `infos` are skipped), or its `sobjectType` is misspelled. | Add an `infos` entry with `sobjectType`, `soupName` and `fieldlist` for the type. |
+| Briefcase sync fails or drops records for a type: soup not found | An `infos[].soupName` is not declared in `userstore.json`. The top-level `soupName` of a briefcase sync is ignored; each `infos` entry needs its own soup. | Declare one soup per object type in `userstore.json` and align the names. |
 
 ## Biometric
 

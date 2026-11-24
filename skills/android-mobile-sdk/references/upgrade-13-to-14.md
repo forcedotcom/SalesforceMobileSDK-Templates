@@ -1,6 +1,8 @@
 # Android — Upgrade Salesforce Mobile SDK 13.x to 14.0
 
-Step-by-step guide for upgrading an existing Android Kotlin app from SDK 13.x to 14.0.
+Step-by-step guide for upgrading an existing Android Kotlin app from SDK 13.x to 14.0. Covers the AGP 8→9 migration (plugin removal), minSdk/compileSdk/targetSdk bump, Gradle 9.4.1 upgrade, Kotlin plugin removal, `account_type` enforcement, manifest `LoginActivity` intent-filter, DPoP/AA defaults, the biometric API change, the `logout()` signature, and the `ClientManager` redesign. Does NOT cover React Native, Hybrid/Cordova, or Java apps.
+
+**Still on 12.x?** Run [`upgrade-12-to-13.md`](upgrade-12-to-13.md) first and get a green build, then come back here.
 
 ## Preconditions
 
@@ -9,13 +11,28 @@ Step-by-step guide for upgrading an existing Android Kotlin app from SDK 13.x to
 - Android Studio Meerkat (2024.3) or later (required for AGP 9.1.1 support)
 - JDK 17+
 
+## Invariants
+
+These hold regardless of the project shape (version catalog or inline dependencies):
+
+- **Do NOT recreate the Android project from scratch.** Preserve all hand-maintained module configuration, signing config, and build variants.
+- **Do NOT rename or move app source files.** Only SDK version identifiers and removed/renamed APIs change.
+- **Do NOT change `applicationId`, signing config, or non-SDK build settings** unless the upgrade explicitly requires it.
+- **`minSdk` MUST be raised to 31.** SDK 14.0 requires Android 12 (API 31) as the minimum. This drops support for Android 9, 10, and 11 — confirm the app's Play Store minimum version policy before applying.
+- **`compileSdk` and `targetSdk` must be at least 36.** The SDK 14.0 library itself targets `compileSdk = 36` (`libs/SalesforceSDK/build.gradle.kts` has an explicit `// TODO: MSDK 14 will remain on 36. The next increment will be in MSDK 15.`), so an app on 36 is fully compatible — this matches the "Create New App" scenario, which generates apps at 36. `37` also builds but is not required; it comes only from sample apps. Do not force a bump to 37.
+- **Gradle wrapper MUST be updated to 9.4.1; AGP MUST be updated to 9.1.1.**
+- **Reconcile the Kotlin plugin with the `android.builtInKotlin` flag.** Two valid configurations exist: with AGP built-in Kotlin active (`android.builtInKotlin` true/unset) remove `id("org.jetbrains.kotlin.android")` from `plugins { }`, since leaving it in conflicts; or set `android.builtInKotlin=false` in `gradle.properties` and keep the plugin. (The Mobile SDK library itself sets `builtInKotlin=false`, but that is the library's internal build choice and does **not** propagate to consuming apps via Maven — a consuming app on AGP 9 gets built-in Kotlin by default, so prefer Path A and choose Path B only deliberately.) Do not remove the plugin without confirming the flag. See Step 4 below.
+- **Build target**: `./gradlew assembleDebug` from the project root unless there is reason to use a different variant.
+
+When the SDK API in this guide disagrees with reality, the upstream Kotlin source in the release wins. Release: <https://github.com/forcedotcom/SalesforceMobileSDK-Android/releases/tag/v14.0.1-rc.1>
+
 ## Inputs
 
 | Variable | Example | Notes |
 |---|---|---|
 | `<AppModule>` | `app` | Gradle module name for the app (usually `app`) |
 | `<PackageName>` | `com.example.myapp` | Application package / `applicationId` |
-| `<CallbackUrl>` | `myapp://success/done` | OAuth callback URL registered in the Connected App |
+| `<CallbackUrl>` | `myapp://success/done` | OAuth callback URL registered in the Connected App. This is the app's `oauthRedirectURI` — locate it in Step 0 and classify it before Step 8. |
 
 ---
 
@@ -26,6 +43,13 @@ Before making any changes, determine:
 1. **Dependency style** — does the project use a version catalog (`libs.versions.toml`) or inline versions in `app/build.gradle.kts`?
 2. **SDK libraries in use** — search for `com.salesforce.mobilesdk:` across all `*.gradle.kts` and `*.toml` files. Note which artifacts appear: `SalesforceSDK`, `SmartStore`, `MobileSync`. Only update artifacts that are already present.
 3. **`buildSrc/` directory** — if present, check `buildSrc/build.gradle.kts` for Kotlin plugin or stdlib references that must be removed.
+4. **OAuth callback URL (`oauthRedirectURI`)** — SDK 14 moves login to a Chrome Custom Tab, and login only works if the browser can hand the callback URL back to the app. Find every place the value is defined; it is not always in `bootconfig.xml`:
+
+   ```bash
+   grep -rn "oauthRedirectURI" --include='*.xml' --include='*.kts' --include='*.gradle' --include='*.properties' .
+   ```
+
+   Check `res/raw/bootconfig.xml`, `res/values/*.xml`, and `resValue("string", "oauthRedirectURI", ...)` in `build.gradle(.kts)` — including per-flavor or per-build-type overrides and values injected from `gradle.properties` / CI. Record each value and classify it with the table in Step 8. **Do this before editing anything:** if the callback is an `https` URL on a host the app does not own, browser login cannot work without a Connected App change (Step 8, row C), and the user must decide how to proceed.
 
 ---
 
@@ -44,9 +68,11 @@ salesforce-smartstore = { module = "com.salesforce.mobilesdk:SmartStore", versio
 salesforce-mobilesync = { module = "com.salesforce.mobilesdk:MobileSync", version.ref = "salesforceSDK" }
 ```
 
-### Option B — Inline versions in `app/build.gradle.kts`
+The version key name varies by project (e.g. `mobileSdk`, `salesforceSdk`), and some projects use a rich version such as `{ strictly = "13.1.3" }`. Find the key by searching for the current 13.x version string rather than assuming `salesforceSDK`. Keep any `strictly` constraint and change only the version inside it.
 
-Use the release candidate version `14.0.1-rc.1` for every SDK dependency version.
+Use version `14.0.1-rc.1` for every SDK dependency version.
+
+### Option B — Inline versions in `app/build.gradle.kts`
 
 ```kotlin
 dependencies {
@@ -315,17 +341,39 @@ If the file already contains an `account_type` entry, verify it uses the app's `
 
 ---
 
-## Step 8 — Add LoginActivity intent-filter to AndroidManifest.xml
+## Step 8 — Make the OAuth callback routable (LoginActivity intent-filter)
 
-SDK 14.0 uses Chrome Custom Tabs for browser-based OAuth. Without the `intent-filter`, the OAuth redirect after login never returns to the app.
+SDK 14.0 uses Chrome Custom Tabs for browser-based OAuth. After the user signs in, the browser navigates to the callback URL, and Android must route that URL to the app's `LoginActivity`. In SDK 13 the in-app WebView intercepted the redirect itself, so apps that never needed an `intent-filter` (or a custom-scheme callback) break on upgrade.
 
-Parse the app's callback URL to derive the three data attributes:
+Reference: [Android advanced authentication — browser-based app configuration](https://developer.salesforce.com/docs/platform/mobile-sdk/guide/auth-android-advanced.html#browser-based-app-configuration).
+
+### 8a — Classify the callback URL (from Step 0)
+
+| Row | Callback URL shape | Example | Will browser login work? | Action |
+|---|---|---|---|---|
+| A | Custom scheme | `myapp://success/done`, `testsfdc:///mobilesdk/detect/oauth/done` | Yes, once the `intent-filter` is added | Go to 8b. |
+| B | `https` on a domain the app owner controls | `https://auth.example.com/oauth/done` | Only with verified Android App Links | Go to 8b, add `android:autoVerify="true"` to the `<intent-filter>`, and publish `https://<host>/.well-known/assetlinks.json` that lists the app's package name and signing-cert SHA-256. Without verification, Chrome opens the URL itself instead of handing it to the app. |
+| C | `https` on a host the app does **not** control | `https://mobileauth.salesforce.com/oauth/done`, `https://login.salesforce.com/services/oauth2/success` | **No.** Android cannot verify App Links for a host you don't control, so the browser shows the page itself. For `mobileauth.salesforce.com` this is a blank page reading "Please contact support if you see this page". | Do **not** add an `intent-filter` for this host — it has no effect. **Stop and ask the user** which row C option to take (below). |
+
+Row C options:
+
+1. **Recommended — add a routable callback to the existing Connected App / External Client App.** Either a custom scheme (e.g. `<applicationId>://oauth/done`) or an `https` URL on a domain the app owner controls (then follow row B). Keep the old callback registered during rollout, so builds that are already shipped keep working. Update every `oauthRedirectURI` found in Step 0 to match the new URL exactly, then do 8b. This is a server-side change and usually needs an org admin. The callback must match a registered Callback URL exactly, or the authorize request fails with `redirect_uri_mismatch`.
+2. **Temporary — keep the current callback and opt out of browser login** with `forceAdvancedAuthentication = false` (Step 11). Use this if the Callback URLs can't be changed yet. The opt-out is removed in SDK 15, so record it as debt.
+
+### 8b — Add the intent-filter
+
+Parse the callback URL to derive the three data attributes:
 
 ```
 Given callback URL: myapp://success/done
   scheme = "myapp"       (everything before "://")
   host   = "success"     (segment after "://" up to the first "/")
   path   = "/done"       (remainder, with leading "/"; omit android:path if no path segment)
+
+Given callback URL with no host: testsfdc:///mobilesdk/detect/oauth/done
+  scheme = "testsfdc"
+  host   = "*"           (empty host → use "*", per the Mobile SDK developer guide)
+  path   = "/mobilesdk/detect/oauth/done"
 ```
 
 **`AndroidManifest.xml`** — add inside `<application>`:
@@ -349,7 +397,9 @@ Given callback URL: myapp://success/done
 
 If an `<activity android:name="com.salesforce.androidsdk.ui.LoginActivity" ...>` entry already exists in the manifest, add the `<intent-filter>` block inside it rather than creating a duplicate `<activity>` entry.
 
-> **If the callback URL is not known:** check `bootconfig.xml` (usually at `app/src/main/res/raw/bootconfig.xml`) for the `oauthRedirectURI` field, or look up the Connected App definition in Salesforce Setup.
+If the app has several `oauthRedirectURI` values (flavors, build types, CI overrides), add one `<data>` element per distinct scheme/host/path, or one `<intent-filter>` per value.
+
+> **If the callback URL is not known:** run the Step 0 grep (`bootconfig.xml`, `res/values`, and `resValue` in Gradle files), or look up the Connected App definition in Salesforce Setup.
 
 ---
 
@@ -398,17 +448,7 @@ DPoP (Demonstrating Proof of Possession) token binding is enabled by default in 
 SalesforceSDKManager.getInstance().useDPoP = false
 ```
 
-**Option B — Migrate existing users to DPoP without requiring re-login:**
-
-```kotlin
-// upgradeToDPoP is an extension on UserAccountManager.
-// onSuccess receives the upgraded UserAccount; onFailure receives (error, errorDesc, throwable).
-UserAccountManager.getInstance().upgradeToDPoP(
-    userAccount,
-    onSuccess = { account -> /* handle success */ },
-    onFailure = { error, errorDesc, e -> /* handle failure */ }
-)
-```
+**Option B — Migrate existing users to DPoP without requiring re-login:** follow [`add-dpop-token-migration.md`](add-dpop-token-migration.md). It needs SDK 14.0.1 or later and uses the SDK's `DpopMigrationManager` (which wraps `UserAccountManager.upgradeToDPoP`), plus a "Securing your session…" screen at launch and the failure behavior (existing session kept, retried next launch). Do it after this upgrade builds green; it is not required to finish the 13 → 14 upgrade.
 
 > **Required for all apps.** Even apps that did not previously use DPoP must handle this default. Configure the Connected App for DPoP in Salesforce Setup, or explicitly opt out with Option A until ready.
 
@@ -418,14 +458,20 @@ UserAccountManager.getInstance().upgradeToDPoP(
 
 Browser-based login via Chrome Custom Tab is now the default for all hosts in SDK 14.0. In SDK 13 it was opt-in per-host.
 
-If the app relies on in-app WebView login and is not ready for browser-based OAuth:
+Decide from the Step 8a classification:
+
+- **Row A, or row B with verified App Links:** leave the default (`true`). The Step 8b `intent-filter` is all that is needed.
+- **Row C, and the Connected App callback can't change yet:** opt out so login returns to the in-app WebView, which intercepts the redirect itself and works with any callback URL:
 
 ```kotlin
 // In Application.onCreate(), after SalesforceSDKManager.initNative(...)
+// The callback (<CallbackUrl>) is an https URL the browser can't route back to this app.
+// Remove once the Connected App has a custom-scheme callback (WebView login is removed in SDK 15).
+@Suppress("DEPRECATION")
 SalesforceSDKManager.getInstance().forceAdvancedAuthentication = false
 ```
 
-> **Most apps should leave this at the default (`true`)** and instead ensure the `LoginActivity` `intent-filter` (Step 8) is configured correctly.
+> **Use the `forceAdvancedAuthentication` property, not other login flags.** `isBrowserLoginEnabled` is set from the org's My Domain configuration and its setter is not public API. Don't call `setBrowserLoginEnabled(...)` — in Kotlin it resolves to an `internal` two-argument overload and won't compile. If the org's My Domain enables browser login, the Custom Tab is used regardless of this flag, and only Step 8a row C option 1 fixes login.
 >
 > **`forceAdvancedAuthentication` is deprecated in 14.0** (`@Deprecated("Will be removed in 15.0 when WebView login is removed entirely.")` on `SalesforceSDKManager.forceAdvancedAuthentication`) and defaults to `true`. Setting it emits a deprecation warning. Treat the opt-out above as a temporary measure — the flag will be removed in 15.0.
 
@@ -498,21 +544,47 @@ These were generated by older Cordova/forcedroid tooling and have no effect in S
 
 ## Step 15 — Build verification
 
+First confirm the Step 3 wrapper edit landed. This must print a match:
+
+```bash
+grep 'gradle-9.4.1-bin.zip' gradle/wrapper/gradle-wrapper.properties
+```
+
+If it prints nothing, go back to Step 3. Then build:
+
 ```bash
 ./gradlew assembleDebug
 ```
 
 Expected output: `BUILD SUCCESSFUL`
 
-If there are remaining compilation errors, consult [Breaking Changes](breaking-changes.md) for the full list of removed/changed symbols, and [Troubleshooting](troubleshooting.md) for common failure patterns.
+If there are remaining compilation errors, consult [Breaking Changes](upgrade-13-to-14-breaking-changes.md) for the full list of removed/changed symbols, and [Troubleshooting](upgrade-13-to-14-troubleshooting.md) for common failure patterns.
+
+## Step 16 — Verify login on a device
+
+A green build does not prove login works — the Step 8 redirect and Step 10 DPoP defaults only fail at runtime. Test on a clean install:
+
+```bash
+adb uninstall <PackageName>            # `pm clear` is not enough: AccountManager accounts survive it
+adb shell am force-stop com.android.chrome   # close any Custom Tab left over from an earlier failed attempt
+./gradlew installDebug
+```
+
+Sign in, then confirm the app reaches its post-login screen. To see which flow ran, check logcat for the authorize URL. `auth_trigger=force_advanced_auth` and a `com.android.chrome/...CustomTabActivity` start mean browser login. Confirm its `redirect_uri=` matches the Step 8b `intent-filter`.
+
+```bash
+adb logcat -d | grep -oE "redirect_uri=[^&]*|auth_trigger=[^&]*|CustomTabActivity" | sort -u
+```
+
+If the Custom Tab ends on a blank Salesforce page instead of returning to the app, the callback is not routable. Go back to Step 8a.
 
 ---
 
-> **SDK 14.0 defaults:** DPoP and Advanced Authentication (browser-based login) are both enabled by default. The first launch after upgrade will use Chrome Custom Tab for login. Ensure the app's Connected App is configured for browser-based OAuth and that the `LoginActivity` `intent-filter` is in place before testing on a device.
+> **SDK 14.0 defaults:** DPoP and Advanced Authentication (browser-based login) are both enabled by default. The first launch after upgrade will use Chrome Custom Tab for login. Before testing on a device, make sure the callback URL is routable (Step 8a) and the `LoginActivity` `intent-filter` is in place (Step 8b).
 
 ---
 
 ## Next
 
-- [Breaking Changes](breaking-changes.md) — complete list of removed classes, removed methods, and changed signatures
-- [Troubleshooting](troubleshooting.md) — symptom-first guide for build and runtime errors
+- [Breaking Changes](upgrade-13-to-14-breaking-changes.md) — complete list of removed classes, removed methods, and changed signatures
+- [Troubleshooting](upgrade-13-to-14-troubleshooting.md) — symptom-first guide for build and runtime errors

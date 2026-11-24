@@ -249,7 +249,7 @@ Constraints:
 
 - `syncType` is `"syncDown"` or `"syncUp"`.
 - `soupName` must match a `soupName` from `userstore.json`.
-- `target.type` for sync-down is one of `"soql"`, `"sosl"`, `"mru"`, `"refresh"`, `"parent_children"`, `"layout"`, `"metadata"`, `"briefcase"`, `"custom"`. SOQL is the default for record-set syncs.
+- `target.type` for sync-down is one of `"soql"`, `"sosl"`, `"mru"`, `"refresh"`, `"parent_children"`, `"layout"`, `"metadata"`, `"briefcase"` (see [`add-briefcase-sync.md`](add-briefcase-sync.md)), `"custom"`. SOQL is the default for record-set syncs.
 - `options.mergeMode` is `"OVERWRITE"` or `"LEAVE_IF_CHANGED"`.
 
 <!-- CANONICAL: copy-bundle-resources mechanism — keep identical across add-smartstore / add-mobilesync except the resource filename (userstore.json vs usersyncs.json) -->
@@ -327,6 +327,7 @@ After login, the configured sync runs and populates the soup. Confirm the launch
 
 ## Next
 
+- Sync a Salesforce briefcase (offline priming records) instead of a SOQL query: [`add-briefcase-sync.md`](add-briefcase-sync.md)
 - Biometric session locking: [`add-biometric-auth.md`](add-biometric-auth.md)
 - API name resolution: [`api-reference.md`](api-reference.md)
 - Symptoms: [`troubleshooting.md`](troubleshooting.md)

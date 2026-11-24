@@ -206,7 +206,7 @@ override init() {
 
 **Fix:** Confirm Build Phases → Copy Bundle Resources includes `bootconfig.plist`.
 
-**Cause (tertiary):** An API that returned a non-optional in SDK 12 now returns an optional in SDK 13 (see [api-changes.md](api-changes.md)). The force-unwrap at the call site was safe before and is now nil.
+**Cause (tertiary):** An API that returned a non-optional in SDK 12 now returns an optional in SDK 13 (see [api-changes.md](upgrade-12-to-13-api-changes.md)). The force-unwrap at the call site was safe before and is now nil.
 
 **Fix:** Audit the crash stack trace to identify the exact call site, then add proper optional handling (guard/if-let) instead of force-unwrapping.
 

@@ -43,7 +43,12 @@ Pin a single version per app (e.g. `14.0.1-rc.1`).
 | `SyncOptions` | `com.salesforce.androidsdk.mobilesync.util` | Sync-up / sync-down options builder |
 | `SyncState` | `com.salesforce.androidsdk.mobilesync.util` | Sync result/state object; `SyncState.Status.{NEW,RUNNING,DONE,FAILED}` |
 | `SoqlSyncDownTarget` | `com.salesforce.androidsdk.mobilesync.target` | SOQL-based sync-down target |
+| `BriefcaseSyncDownTarget` | `com.salesforce.androidsdk.mobilesync.target` | Sync-down target for briefcase priming records; takes a `List<BriefcaseObjectInfo>` |
+| `BriefcaseObjectInfo` | `com.salesforce.androidsdk.mobilesync.util` | Per-object-type config for a briefcase target: `(soupName, sobjectType, fieldlist, idFieldName?, modificationDateFieldName?)` — `soupName` comes first |
 | `BiometricAuthenticationManager` | `com.salesforce.androidsdk.security` | Reachable as `SalesforceSDKManager.getInstance().biometricAuthenticationManager` |
+| `UserAccountManager.upgradeToDPoP` | `com.salesforce.androidsdk.accounts` | **Kotlin extension function** (needs `import com.salesforce.androidsdk.accounts.upgradeToDPoP`): `upgradeToDPoP(userAccount, onSuccess = { account -> }, onFailure = { error, errorDesc, throwable -> })`. Upgrades a Bearer refresh token to DPoP in place; no-op (synchronous `onSuccess`) if already DPoP. Callbacks may arrive off the main thread. Wrapped by the SDK's `DpopMigrationManager` (14.0.1+); prefer it, see [`add-dpop-token-migration.md`](add-dpop-token-migration.md) |
+| `DPoPKeyManager.isDPoPTokenType` | `com.salesforce.androidsdk.auth.dpop` | `isDPoPTokenType(user.tokenType)`: case-insensitive check that an account's refresh token is DPoP-bound |
+| `DpopMigrationManager` | `com.salesforce.androidsdk.auth.dpop` | SDK object (14.0.1+), headless. `isMigrationNeeded(user = currentUser)`; `migrateIfNeeded(user = currentUser, timeoutMs = DEFAULT_TIMEOUT_MS) { outcome -> }` (callback, main thread, once) or the `suspend migrateIfNeeded(...)` overload. `Outcome` is `NotNeeded(reason)`, `Migrated` or `Failed(reason)` (`Failed("timed out")` after 90 s if the SDK never calls back). No persisted flag: the token type decides. Used by [`add-dpop-token-migration.md`](add-dpop-token-migration.md) |
 | `PushService` | `com.salesforce.androidsdk.push` | Push registration entry point — subclass to handle Salesforce push registration |
 | `PushMessaging` | `com.salesforce.androidsdk.push` | Static helper for triggering push registration / unregistration |
 
