@@ -12,9 +12,13 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:9.2.1")
+        classpath("com.android.tools.build:gradle:9.1.1")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    }
+    // RNGP 0.87 depends on AGP 9.2.1; keep the MSDK 14.x toolchain at 9.1.1.
+    configurations.classpath {
+        resolutionStrategy.force("com.android.tools.build:gradle:9.1.1")
     }
 }
 
