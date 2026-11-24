@@ -116,7 +116,7 @@ function prepare(config, replaceInFiles, moveFile, removeFile) {
                 } else {
                     // Fallback: block absent (older plugin). Inject it with real values.
                     var loginActivityBlock =
-                        '        <!-- Salesforce Mobile SDK OAuth redirect (from --callbackurl). -->\n' +
+                        '        <!-- Salesforce Mobile SDK OAuth redirect (from callback URL). -->\n' +
                         '        <activity\n' +
                         '            android:name="com.salesforce.androidsdk.ui.LoginActivity"\n' +
                         '            android:exported="true"\n' +
