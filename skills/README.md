@@ -10,12 +10,8 @@ npx skills add forcedotcom/SalesforceMobileSDK-Templates
 
 | Skill | Description |
 |---|---|
-| [`ios-mobile-sdk/`](./ios-mobile-sdk/) | Integrate the Mobile SDK into iOS Swift apps: create a new app, add SDK auth, SmartStore, MobileSync, biometric auth (Face ID / Touch ID). |
-| [`android-mobile-sdk/`](./android-mobile-sdk/) | Integrate the Mobile SDK into Android Kotlin apps: create a new app, add SDK auth, SmartStore, MobileSync, biometric auth (fingerprint / face / iris). |
-| [`ios-upgrade-mobile-sdk-12-to-13/`](./ios-upgrade-mobile-sdk-12-to-13/) | Upgrade an existing iOS app from Salesforce Mobile SDK 12.x to 13.2.1. |
-| [`android-upgrade-mobile-sdk-12-to-13/`](./android-upgrade-mobile-sdk-12-to-13/) | Upgrade an existing Android app from Salesforce Mobile SDK 12.x to 13.2.1. |
-| [`ios-upgrade-mobile-sdk-13-to-14/`](./ios-upgrade-mobile-sdk-13-to-14/) | Upgrade an existing iOS app from Salesforce Mobile SDK 13.x to 14.0. |
-| [`android-upgrade-mobile-sdk-13-to-14/`](./android-upgrade-mobile-sdk-13-to-14/) | Upgrade an existing Android app from Salesforce Mobile SDK 13.x to 14.0. |
+| [`ios-mobile-sdk/`](./ios-mobile-sdk/) | Integrate the Mobile SDK into iOS Swift apps: create a new app, add SDK auth, SmartStore, MobileSync, biometric auth (Face ID / Touch ID), DPoP refresh-token migration. Upgrade an existing app 12.x → 13.2.1 → 14.0. |
+| [`android-mobile-sdk/`](./android-mobile-sdk/) | Integrate the Mobile SDK into Android Kotlin apps: create a new app, add SDK auth, SmartStore, MobileSync, biometric auth (fingerprint / face / iris), DPoP refresh-token migration for existing users. Upgrade an existing app 12.x → 13.2.1 → 14.0. |
 
 ## Skill Layout
 
@@ -31,13 +27,15 @@ Each skill follows the same shape:
     ├── add-smartstore.md          # Add encrypted local DB
     ├── add-mobilesync.md          # Add cloud sync on top of SmartStore
     ├── api-reference.md           # Class/symbol map
-    └── troubleshooting.md         # Symptom → cause → fix table
+    ├── troubleshooting.md         # Symptom → cause → fix table
+    ├── upgrade-<from>-to-<to>.md  # Upgrade an existing app one major SDK version
+    └── upgrade-<from>-to-<to>-*.md  # Per-upgrade API changes + troubleshooting
 ```
 
 `SKILL.md` is the entry point an agent loads. Each scenario file is self-contained — the agent reads exactly one reference per task.
 
 ## Testing a Consumer Skill
 
-Skills must build a working app end-to-end before merging. The eval suite under [`../skills-eval/`](../skills-eval/README.md) is the merge gate: `npm run eval:ios:skill` and `npm run eval:android:skill` exercise the agent path that consumes these skills and asserts the generated project builds.
+Skills must build a working app end-to-end before merging. The eval suite under [`../eval/`](../eval/README.md) exercises the agent path that consumes these skills and asserts the generated project builds: run `scripts/eval.sh mobile-sdk-ios` or `scripts/eval.sh mobile-sdk-android` locally (the app build only runs locally; CI scores with the judge alone).
 
-Per-domain evals follow the same pattern; see [`../skills-eval/README.md`](../skills-eval/README.md) for setup, env config, and how to add new domains.
+Per-domain evals follow the same pattern; see [`../eval/README.md`](../eval/README.md) for setup, env config, and how to add new domains.

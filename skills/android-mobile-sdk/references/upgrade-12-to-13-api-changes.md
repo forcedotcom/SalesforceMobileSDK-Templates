@@ -38,7 +38,7 @@ Complete reference for classes, methods, and signatures that changed between Sal
 | Class | Old Signature | New Signature |
 |---|---|---|
 | `ClientManager` constructor | `ClientManager(context, accountType, loginOptions, isBackground)` | `ClientManager(context, accountType, isBackground)` — `loginOptions` parameter removed |
-| `LogoutCompleteReceiver` | `onLogoutComplete()` | `onLogoutComplete(reason: OAuth2.LogoutReason)` — `reason` parameter required |
+| `LogoutCompleteReceiver` | `onLogoutComplete()` | `onLogoutComplete(reason: OAuth2.LogoutReason, userAccount: UserAccount?)`. The `onLogoutComplete(reason)` overload also exists but is deprecated. |
 | `SalesforceAnalyticsManager` | `setPublishFrequencyInHours(hours: Int)` | `setPublishPeriodicallyFrequencyHours(hours: Int)` |
 | `SalesforceAnalyticsManager` | `publishFrequencyInHours: Int` (property) | `publishPeriodicallyFrequencyHours: Int` |
 

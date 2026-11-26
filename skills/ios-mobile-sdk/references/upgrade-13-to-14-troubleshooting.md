@@ -106,7 +106,7 @@ Add to `AppDelegate.init()` immediately after `SalesforceManager.initializeSDK()
 override init() {
     super.init()
     SalesforceManager.initializeSDK()
-    SalesforceManager.shared().usesDPoP = false
+    SalesforceManager.shared.usesDPoP = false
 }
 ```
 
@@ -115,32 +115,49 @@ Remove this line before shipping to production.
 **Fix (Option B — configure Connected App for DPoP):**
 
 1. In Salesforce Setup, open the Connected App and enable DPoP under OAuth Settings.
-2. Use the migration API for existing users:
-
-```swift
-UserAccountManager.shared().upgradeToDPoP(userAccount,
-    success: { authInfo, userAccount in /* tokens are now DPoP-bound */ },
-    failure: { authInfo, error in /* re-authenticate */ }
-)
-```
+2. Migrate existing users with [`add-dpop-token-migration.md`](add-dpop-token-migration.md). If the migration itself fails at runtime, see [`troubleshooting.md`](troubleshooting.md) → DPoP Migration.
 
 ---
 
-### 5. Runtime: unexpected browser-based login popup (SFSafariViewController)
+### 5. Runtime: unexpected browser-based login sheet (ASWebAuthenticationSession)
 
-**Symptom:** After upgrading, users see an in-browser login screen (`SFSafariViewController` or the external browser) where previously they saw an in-app `WKWebView` login screen.
+**Symptom:** After upgrading, users see a browser login sheet ("<App> Wants to Use salesforce.com to Sign In") where previously they saw an in-app `WKWebView` login screen.
 
 **Cause:** `forceAdvancedAuthentication` now defaults to `true` for all login hosts in SDK 14. In SDK 13 it was enabled only for specific hosts. `login.salesforce.com` now triggers browser-based login by default.
 
-**Fix (to preserve WKWebView login):**
-
-Add after `SalesforceManager.initializeSDK()`:
+**Fix:** This is expected. Make sure the callback can be routed back to the app: a custom scheme, or `https` with Universal Links on a domain the app owns (see 5a and [`upgrade-13-to-14.md`](upgrade-13-to-14.md) Step 9). To keep WKWebView login temporarily, add this after `SalesforceManager.initializeSDK()`:
 
 ```swift
-SalesforceManager.shared().forceAdvancedAuthentication = false
+SalesforceManager.shared.forceAdvancedAuthentication = false
 ```
 
-Plan to remove this opt-out once the app and Connected App configuration are ready for Advanced Authentication.
+The flag is deprecated and removed in 15.0, so treat this as temporary.
+
+---
+
+### 5a. Runtime: login sheet shows "Please contact support if you see this page", or never returns to the app
+
+**Symptom:** After the user enters username/password in the browser sheet, it lands on a blank page reading "Please contact support if you see this page" (often on `mobileauth.salesforce.com`). Or the sheet just never dismisses. The app stays signed out.
+
+**Cause:** `oauthRedirectURI` (in `bootconfig.plist`) is an `https` URL that isn't set up as a Universal Link for the app. In SDK 13 the in-app WKWebView intercepted the redirect, which is why it used to work. In SDK 14 the browser sheet hands an `https` callback back to the app only through Universal Links. If the callback host is one the app doesn't control (e.g. `https://mobileauth.salesforce.com/oauth/done`), Universal Links can't be set up there.
+
+**Fix:** Either:
+
+- **Callback on a domain the app owns:** set up Universal Links for it (Associated Domains `applinks:<host>` entitlement plus an `apple-app-site-association` file on the host). See Step 9 row B.
+- **Callback on a host the app doesn't control (recommended):** add a custom-scheme Callback URL (e.g. `com.example.myapp://oauth/done`) to the existing Connected App, set `oauthRedirectURI` to it, and register the scheme under `CFBundleURLTypes` in `Info.plist`. See Step 9 row C.
+- **Temporary:** set `SalesforceManager.shared.forceAdvancedAuthentication = false`.
+
+See [`upgrade-13-to-14.md`](upgrade-13-to-14.md) Step 9.
+
+---
+
+### 5b. Runtime: browser login fails immediately with `redirect_uri_mismatch`
+
+**Symptom:** The login sheet shows `error=redirect_uri_mismatch` (or "invalid redirect_uri") before or right after credentials are entered.
+
+**Cause:** The app's `oauthRedirectURI` was changed (e.g. to a custom scheme), but that exact URL isn't in the Connected App / External Client App's Callback URLs. Or another bootconfig / build configuration still uses the old value.
+
+**Fix:** Add the exact URL to the Connected App's Callback URLs. Changes can take a few minutes to propagate. Then re-run the Step 0 `oauthRedirectURI` grep to catch per-target or per-configuration overrides.
 
 ---
 
@@ -210,7 +227,9 @@ NoMethodError - undefined method `signposts_post_install' for main:Object
 
 **Cause:** The `signposts_post_install` helper was removed from `mobilesdk_pods.rb` in SDK 14. The call in the `post_install` block refers to a method that no longer exists.
 
-**Fix:** Remove the `signposts_post_install(installer)` line from the `post_install` block in the Podfile:
+If the error names `mobile_sdk_post_install` instead (or `signposts_post_install` in a Podfile that pins explicit pod versions), the Podfile doesn't load `mobilesdk_pods.rb` at all, so none of its helpers exist. Remove every `*_post_install(installer)` helper call from the `post_install` block. See [`upgrade-13-to-14.md`](upgrade-13-to-14.md) Step 2, Case A.
+
+**Fix (Podfile that loads `mobilesdk_pods.rb`):** Remove the `signposts_post_install(installer)` line from the `post_install` block in the Podfile:
 
 ```ruby
 # BEFORE

@@ -191,21 +191,13 @@ val restClient2 = SalesforceSDKManager.getInstance().clientManager?.peekRestClie
 
 | API | Notes |
 |---|---|
-| `UserAccountManager.upgradeToDPoP(userAccount, onSuccess, onFailure)` | Extension on `UserAccountManager`. Migrates an existing non-DPoP account to DPoP without requiring re-login. |
+| `UserAccountManager.upgradeToDPoP(userAccount, onSuccess, onFailure)` | Extension on `UserAccountManager`. Migrates an existing non-DPoP account to DPoP without requiring re-login. App-side flow: [`add-dpop-token-migration.md`](add-dpop-token-migration.md). |
 | `SalesforceSDKManager.clientManager` | `ClientManager?` property for the current user (null when no account is current). Call `peekRestClient()` on it. |
 | `ClientManager.peekRestClient()` | Non-blocking REST client accessor. Does not trigger login. Returns `null` if no user is authenticated. |
 
 ### upgradeToDPoP()
 
-`upgradeToDPoP` is an extension function on `UserAccountManager`. `onSuccess` receives the upgraded `UserAccount`; `onFailure` receives `(error: String, errorDesc: String?, e: Throwable?)`.
-
-```kotlin
-UserAccountManager.getInstance().upgradeToDPoP(
-    userAccount,
-    onSuccess = { account -> /* DPoP migration succeeded */ },
-    onFailure = { error, errorDesc, e -> /* handle error */ }
-)
-```
+`upgradeToDPoP` is an extension function on `UserAccountManager` (`import com.salesforce.androidsdk.accounts.upgradeToDPoP`). `onSuccess` receives the upgraded `UserAccount`; `onFailure` receives `(error: String, errorDesc: String?, e: Throwable?)`, and either callback may run off the main thread. For the full app-side flow (SDK 14.0.1+ `DpopMigrationManager`, the migration screen, failure handling) see [`add-dpop-token-migration.md`](add-dpop-token-migration.md) rather than calling `upgradeToDPoP` directly.
 
 ---
 
